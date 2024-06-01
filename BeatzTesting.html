@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Beatz Testing 1.7.0</title>
+    <link rel="icon" type="image/x-icon" href="Resources/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="middleCanvas.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif; /* Change font family to Arial */
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background-image: url('Resources/BeatzBanner.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        button {
+            display: inline-block;
+            margin: 5px;
+            padding: 5px 15px;
+        }
+        canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
+            cursor: none;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(255, 255, 255);
+            background-color: rgba(0, 0, 0, 0);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #00000070;
+            margin: 5% auto;
+            padding: 20px;
+            border: 5px solid #000000;
+            width: 80%;
+            color: rgb(255, 255, 255); /* Set text color to white */
+        }
+        .close {
+            color: #ffffff;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: rgb(255, 152, 152);
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="myCanvas" width="1280" height="720"></canvas>
+    <h1>Beatz.io</h1>
+
+    <button id="startButton">Start! (Enter)</button>
+    <button onclick="NewTab()">My YouTube!</button>
+    <button id="toggleNoteStyleButton">Toggle Note Style</button>
+    <button id="previousButton" style="display: none;">Previous Song</button>
+    <button id="restartButton" style="display: none;">Restart Song</button>
+    <button id="nextButton" style="display: none;">Next Song</button>
+    <button id="toggleAutoHit" style="display: none;">Toggle Auto Hit</button>
+    <button id="fullscreen" onclick="toggleFullScreen()">Fullscreen</button>
+    <button id="keybindsButton">Settings (Beta)</button>
+
+    <!-- The Modal -->
+    <div id="keybindsModal" class="modal">
+    <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Customize Settings!</h2>
+    <form id="keybindsForm">
+    <label for="up">Note Left:</label>
+    <input type="text" id="left" name="left"><br><br>
+    <label for="left">Note Up:</label>
+    <input type="text" id="up" name="up"><br><br>
+    <label for="down">Note Down:</label>
+    <input type="text" id="down" name="down"><br><br>
+    <label for="right">Note Right:</label>
+    <input type="text" id="right" name="right"><br><br>
+    <label for="pause">Pause Game:</label>
+    <input type="text" id="pause" name="pause"><br><br>
+    <label for="autoHit">Toggle Auto Hit:</label>
+    <input type="text" id="autoHit" name="autoHit"><br><br>
+    <label for="previousInput">Previous Song:</label>
+    <input type="text" id="previousInput" name="previous"><br><br>
+    <label for="restartInput">Restart Song:</label>
+    <input type="text" id="restartInput" name="restart"><br><br>
+    <label for="nextButton">Next Song:</label>
+    <input type="text" id="nextInput" name="next"><br><br>
+    <label for="randomize">Randomize Song:</label>
+    <input type="text" id="randomize" name="randomize"><br><br>
+    <label for="toggleNoteStyleInput">Toggle Note Style:</label>
+    <input type="text" id="toggleNoteStyleInput" name="toggleNoteStyle"><br><br>
+    <button type="button" onclick="saveKeybinds()">Save</button>
+</form>
+</div>
+</div>
+
+    <h3>Each perfect note you hit equals 1 point, each early or late equals a half point. Each missed note decreases your score by 1 point</h3>
+    <h2>Background image from: <a href="https://github.com/Uproxide/Texture-Workshop/commit/457788213d900a980f559ae8f241febad3322bdd#diff-1dbd3c28454ab3b1596af576394661ba03597f51326dbbff288c6b8ccc353041">Uproxide's "Texture Workshop"</a></h2>
+    <h2>Notes from: <a href="https://github.com/Simply-Love/Simply-Love-SM5?tab=readme-ov-file">Teejusb's "Simply Love" osu! mania skins</a></h2>
+    <h2><a href="https://www.youtube.com/watch?v=tOZNh8veU_Y">Song list (40 songs)</a></h2>
+
+    <script>
+        var canvas = document.getElementById('myCanvas');
+        document.addEventListener("DOMContentLoaded", function() {
+            loadKeybinds();
+        });
+
+        function NewTab() {
+            window.open("https://www.youtube.com/@GuayabR", "_blank");
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                canvas.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'F' || event.key === 'f') {
+                toggleFullScreen();
+            }
+        });
+
+        document.addEventListener('fullscreenchange', function() {
+            if (document.fullscreenElement) {
+                canvas.style.cursor = 'none';
+            } else {
+                canvas.style.cursor = 'default';
+            }
+        });
+
+        // Keybinds Modal
+        var modal = document.getElementById("keybindsModal");
+        var btn = document.getElementById("keybindsButton");
+        var span = document.getElementsByClassName("close")[0];
+
+        btn.onclick = function() {
+            modal.style.display = "block";
+            loadKeybinds();
+        }
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        function toggleModal() {
+        if (modal.style.display === "block") {
+            modal.style.display = "none";
+        } else {
+            modal.style.display = "block";
+            // Load keybinds when the modal is opened
+            loadKeybinds();
+            }
+        }
+
+        document.addEventListener("keydown", function(event) {
+                if (event.key === "p" || event.key === "P") {
+            toggleModal();
+            }
+        });
+
+
+const defaultKeybinds = {
+    up: ["w", "x"],
+    left: ["a", "z"],
+    down: ["s", "n"],
+    right: ["d", "m"],
+    pause: ["g"],
+    autoHit: ["1"],
+    previous: ["q"],
+    restart: ["r"],
+    next: ["e"],
+    randomize: ["b"],
+    toggleNoteStyle: ["c"],
+};
+
+let keybinds = { ...defaultKeybinds };
+
+function loadKeybinds() {
+    const savedKeybinds = JSON.parse(localStorage.getItem('keybinds'));
+    if (savedKeybinds) {
+        keybinds = savedKeybinds;
+    }
+    document.getElementById('up').value = keybinds.up.join(", ");
+    document.getElementById('left').value = keybinds.left.join(", ");
+    document.getElementById('down').value = keybinds.down.join(", ");
+    document.getElementById('right').value = keybinds.right.join(", ");
+    document.getElementById('pause').value = keybinds.pause.join(", ");
+    document.getElementById('autoHit').value = keybinds.autoHit.join(", ");
+    document.getElementById('previousInput').value = keybinds.previous.join(", ");
+    document.getElementById('restartInput').value = keybinds.restart.join(", ");
+    document.getElementById('nextInput').value = keybinds.next.join(", ");
+    document.getElementById('randomize').value = keybinds.randomize.join(", ");
+    document.getElementById('toggleNoteStyleInput').value = keybinds.toggleNoteStyle.join(", ");
+}
+
+function saveKeybinds() {
+    keybinds.up = document.getElementById('up').value.split(", ");
+    keybinds.left = document.getElementById('left').value.split(", ");
+    keybinds.down = document.getElementById('down').value.split(", ");
+    keybinds.right = document.getElementById('right').value.split(", ");
+    keybinds.pause = document.getElementById('pause').value.split(", ");
+    keybinds.autoHit = document.getElementById('autoHit').value.split(", ");
+    keybinds.previous = document.getElementById('previousInput').value.split(", ");
+    keybinds.restart = document.getElementById('restartInput').value.split(", ");
+    keybinds.next = document.getElementById('nextInput').value.split(", ");
+    keybinds.randomize = document.getElementById('randomize').value.split(", ");
+    keybinds.toggleNoteStyle = document.getElementById('toggleNoteStyleInput').value.split(", ");
+    localStorage.setItem('keybinds', JSON.stringify(keybinds));
+    modal.style.display = "none";
+}
+
+        function keyDownFunction(keyboardEvent) {
+            var keyDown = keyboardEvent.key.toLowerCase();
+            console.log("Pressed:", keyDown);
+
+            if (!gameStarted) {
+                if (keyDown == "enter") {
+                    document.getElementById("startButton").click();
+                    gameStarted = true;
+                }
+                return;
+            }
+
+            if (gameStarted && keyDown == "enter") {
+                return;
+            }
+
+            if (keybinds.up.includes(keyDown)) {
+        upPressed = true;
+    }
+    if (keybinds.left.includes(keyDown)) {
+        leftPressed = true;
+    }
+    if (keybinds.down.includes(keyDown)) {
+        downPressed = true;
+    }
+    if (keybinds.right.includes(keyDown)) {
+        rightPressed = true;
+    }
+    if (keybinds.pause.includes(keyDown)) {
+        togglePause();
+    }
+    if (keybinds.autoHit.includes(keyDown)) {
+        toggleAutoHit();
+    }
+    if (keybinds.previous.includes(keyDown)) {
+        previousSong();
+    }
+    if (keybinds.restart.includes(keyDown)) {
+        restartSong();
+    }
+    if (keybinds.next.includes(keyDown)) {
+        nextSong();
+    }
+    if (keybinds.randomize.includes(keyDown)) {
+        randomizeSong();
+    }
+    if (keybinds.toggleNoteStyle.includes(keyDown)) {
+        switchImage(noteLeftIMG, 'NoteLeftHQ.png', 'CircleLeftHQ.png');
+        switchImage(noteDownIMG, 'NoteDownHQ.png', 'CircleDownHQ.png');
+        switchImage(noteUpIMG, 'NoteUpHQ.png', 'CircleUpHQ.png');
+        switchImage(noteRightIMG, 'NoteRightHQ.png', 'CircleRightHQ.png');
+        switchImage(noteLeftPressIMG, 'NoteLeftPressHQ.png', 'CircleLeftPressHQ.png');
+        switchImage(noteDownPressIMG, 'NoteDownPressHQ.png', 'CircleDownPressHQ.png');
+        switchImage(noteUpPressIMG, 'NoteUpPressHQ.png', 'CircleUpPressHQ.png');
+        switchImage(noteRightPressIMG, 'NoteRightPressHQ.png', 'CircleRightPressHQ.png');
+        console.log("Changed textures");
+        draw(); // Redraw the canvas with the new images
+    }
+}
+
+function keyUpFunction(keyboardEvent) {
+    var keyUp = keyboardEvent.key.toLowerCase();
+    console.log("Released:", keyUp);
+
+    if (keybinds.up.includes(keyUp)) {
+        upPressed = false;
+    }
+    if (keybinds.left.includes(keyUp)) {
+        leftPressed = false;
+    }
+    if (keybinds.down.includes(keyUp)) {
+        downPressed = false;
+    }
+    if (keybinds.right.includes(keyUp)) {
+        rightPressed = false;
+    }
+}
+
+        document.addEventListener("keydown", keyDownFunction);
+        document.addEventListener("keyup", keyUpFunction);
+
+    </script>
+    <script src="BeatzGameTesting.js"></script>
+</body>
+</html>

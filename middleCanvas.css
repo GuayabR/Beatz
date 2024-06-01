@@ -1,0 +1,13 @@
+body {
+    text-align: center;
+}
+
+button {
+    margin: 5px;
+}
+
+canvas {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}

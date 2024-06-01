@@ -1,0 +1,109 @@
+1.0.0 (17/05/2024)
+added note pressing. (no collisions or songs or anything YET)
+
+1.0.1 (17/05/2024)
+Added z, x, n, m as keybinds.
+(wasd and zxnm)
+
+1.0.2 (22/05/2024)
+Added arrow keys as keybinds
+Added "Epilogue" as song #1
+Used chat gpt to help me, i went overboard... maybe i shouldnt use that code xd
+Added "BeatzGameChat.js" in game files, used for getting inspiration from chat gpt and playing around
+Still no collisions or notes to press.
+
+1.0.21 (23/05/2024)
+Organized files, added Resources folder, songs folder and added an icon to the page.
+
+1.1.0 (24/05/2024)
+NOTES WORK
+ALMOST ON THE BEAT
+YOOOOOOOOOO
+UPDATE 1.1 OUT BABYYYY YESSSSSSSSSSSSSSSSSSSSS
+
+1.1.1 / 1.1.2 / 1.1.3 / 1.1.31 (24/05/2024)
+Added a missed note system. (1 point is reduced each time you miss)
+/
+Added a pause keybind (P)
+Changed song volume to 50%.
+/
+Pause function now draws "Game paused" text while not affecting anything else in the canvas, took long bruh.
+/
+Added "Reloading" text when F5 is pressed. (appears on canvas and on console, for debugging purposes)
+//
+
+1.1.4 / 1.1.5/.55 / 1.1.6 / 1.1.7 / 1.1.8 / 1.1.9 (25/05/2024)
+The missed note system now displays each note you've missed.
+/
+Added a Early/Late note hit counter and a perfect note hit counter, like in osu or fnf.
+It bugged for a sec but fixed in .55
+/
+Missed notes now decrease 1 point of your score.
+/
+Early/Late/Perfect/Missed notes now display a small text in the bottom for 0.5 seconds accordingly.
+/
+New high quality textures, courtesy from Uproxide and Teejusb.
+/
+Added Auto Hit feature, made a button to toggle and made a flag that detects if the js file's code name is "BeatzGame.js" if it the button to toggle it on will not appear, so its a developer only feature.
+//
+
+1.2.0 / 1.2.1 / 1.2.2 / 1.2.3 / 1.2.4 / 1.3.0 / 1.3.1 / 1.3.2 / 1.3.3 (27/05/2024)
+Added 24 more songs that are picked randomly.
+/
+BPM and MPB changes individually depending on the song.
+(Biggest bug fix session yet)
+/
+Trying to add album covers and text that displays BPM and Song selected.
+/
+Aligned every text and texture to its corresponding side.
+/
+Got song name, artist name and bpm / note speed.
+Cover missing.
+/
+Added a white outline to the notes that shows when you hit a perfect.
+/
+Aligned everything in the html to the middle so it looks more organized.
+/
+Fixed bug where auto hit would not always hit perfectly and completely miss some notes. (skill issue)
+
+1.4.0 / 1.4.1 (28/05/2024)
+
+Bugfixes
+Added album covers. (Images don't flicker)
+
+took me 4 hours to fix album covers not being recognized.
+
+1.4.2 / 1.4.3 / 1.4.4 (29/05/2024)
+
+Added more songs, added a function to reroll the song.
+(many bugfixes later)
+/
+Added keybinds to start the game and reroll the song.
+/
+Holding down on the keys is now punishable by exile. (1 point and increases if you hold down for long)
+//
+
+1.4.5 / 1.4.6 / 1.4.7(30/05/2024)
+
+Made the canvas bigger, now 1280 by 720 pixels.
+/
+Songs now dont randomize, instead when you start the game, it starts from the first song, and when you reroll the song, it goes in the order that the songList is made in.
+/
+Added Streaks
+FE!N BEST SYNCRONIZED SONG SO FAR
+
+1.4.9 / 1.5.0 / 1.6.0 (31/05/2024)
+
+Organized the UI.
+/
+Added Toggle Note Style, changes the notes from arrows to circles.
+/
+Game can now be Fullscreen!
+Removed pulsing effect when hitting perfectly, looked ugly, might rework in further updates.
+//
+
+1.6.1 / 1.6.2 (1/06/2024)
+
+Fixed bug where pausing the game would only pause the song and notes would bug out
+
+Re-added Song randomizer (B)
