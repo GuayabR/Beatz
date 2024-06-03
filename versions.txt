@@ -109,7 +109,7 @@ Fixed bug where pausing the game would only pause the song and notes would bug o
 Re-added Song randomizer (B)
 //
 
-1.7.0 (2/06/2024)
+1.7.0 / 1.7.0 (Sub-update) (2/06/2024)
 
 PUBLISHED TO GITHUB SITES!
 Beatz.io is now accessible worldwide from "https://guayabr.github.io/Beatz"! (PC Only)
@@ -125,5 +125,10 @@ Previous song: Q, Restart song: R, Randomize song: T, Next song: E.
 
 Other:
 Toggle Auto Hit: 1, Toggle note style (Arrows or circles): C.
+/
+Settings modal is now styled modernly, and new buttons have been added:
+Reset keybinds button and redo/undo buttons.
+
+Small changes when saving.
 
 

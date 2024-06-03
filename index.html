@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Beatz 1.7.0</title>
-    <link rel="icon" type="image/x-icon" href="Resources/favicon1.ico">
+    <link rel="icon" type="image/x-icon" href="Resources/favicon.ico">
     <link rel="stylesheet" type="text/css" href="middleCanvas.css">
 </head>
 <body>
@@ -16,14 +16,17 @@
     <button id="previousButton" style="display: none;">Previous Song</button>
     <button id="restartButton" style="display: none;">Restart Song</button>
     <button id="nextButton" style="display: none;">Next Song</button>
-    <button id="toggleAutoHit" style="display: none;">Toggle Auto Hit</button>
     <button id="fullscreen" onclick="toggleFullScreen()">Fullscreen</button>
     <button id="keybindsButton">Settings (Beta)</button>
+    
 
     <!-- The Modal -->
     <div id="keybindsModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
+            <button id="resetKeybindsButton" class="reset-keybinds-button">&#x21bb;</button>
+                <button id="redoKeybindsButton" class="redo-keybinds-button">&#x21aa;</button>
+                <button id="undoKeybindsButton" class="undo-keybinds-button">&#x21a9;</button>
             <h2>Customize Settings!</h2>
             <form id="keybindsForm">
                 <label for="up">Note Left:</label>
@@ -46,6 +49,8 @@
                 <input type="text" id="randomize" name="randomize"><br><br>
                 <label for="toggleNoteStyleInput">Toggle Note Style:</label>
                 <input type="text" id="toggleNoteStyleInput" name="toggleNoteStyle"><br><br>
+                <span id="settingsSaved" style="color: white; display: none;">Settings saved!</span>
+                <span id="settingsSaved01" style="color: white; display: none;">(Reload browser)</span>
                 <button type="button" onclick="saveKeybinds()">Save</button>
             </form>
         </div>
@@ -60,7 +65,14 @@
         var canvas = document.getElementById('myCanvas');
         document.addEventListener("DOMContentLoaded", function() {
             loadKeybinds();
+            updateKeybindsFields();
         });
+
+        document.getElementById('undoKeybindsButton').addEventListener('click', undoKeybinds);
+        document.getElementById('redoKeybindsButton').addEventListener('click', redoKeybinds);
+
+        let keybindsHistory = [];
+        let keybindsIndex = -1;
 
         function NewTab() {
             window.open("https://www.youtube.com/@GuayabR", "_blank");
@@ -93,19 +105,43 @@
         var modal = document.getElementById("keybindsModal");
         var btn = document.getElementById("keybindsButton");
         var span = document.getElementsByClassName("close")[0];
+        var resetButton = document.getElementById("resetKeybindsButton");
+        const saveMessage = document.getElementById("settingsSaved"); 
+        const saveMessage01 = document.getElementById("settingsSaved01");
+
+        function convertToLowerCase(inputElement) {
+            inputElement.value = inputElement.value.toLowerCase();
+        }
+        document.querySelectorAll('input[type="text"]').forEach(function(input) {
+            input.addEventListener('input', function() {
+                convertToLowerCase(input);
+                hideSaveMessage();
+            });
+        });
+
+        function hideSaveMessage() {
+            saveMessage.style.display = 'none';
+            saveMessage01.style.display = 'none';
+        }
 
         btn.onclick = function() {
             openModal();
         }
 
         span.onclick = function() {
-            closeModal();
+            modal.style.display = "none";
+            document.getElementById("settingsSaved").style.display = "none";
+            document.getElementById("settingsSaved01").style.display = "none";
         }
 
         window.onclick = function(event) {
             if (event.target == modal) {
                 closeModal();
             }
+        }
+
+        resetButton.onclick = function() {
+            resetKeybinds();
         }
 
         function openModal() {
@@ -116,6 +152,8 @@
 
         function closeModal() {
             modal.style.display = "none";
+            saveMessage.style.display = "none";
+            saveMessage01.style.display = "none";
             activateKeybinds();
         }
 
@@ -148,7 +186,7 @@
             previous: ["q"],
             restart: ["r"],
             next: ["e"],
-            randomize: ["b"],
+            randomize: ["t"],
             toggleNoteStyle: ["c"],
         };
 
@@ -164,6 +202,7 @@
             document.getElementById('down').value = keybinds.down.join(", ");
             document.getElementById('right').value = keybinds.right.join(", ");
             document.getElementById('pause').value = keybinds.pause.join(", ");
+            document.getElementById('autoHit').value = keybinds.autoHit.join(", ");
             document.getElementById('previousInput').value = keybinds.previous.join(", ");
             document.getElementById('restartInput').value = keybinds.restart.join(", ");
             document.getElementById('nextInput').value = keybinds.next.join(", ");
@@ -172,18 +211,68 @@
         }
 
         function saveKeybinds() {
-            keybinds.up = document.getElementById('up').value.split(", ");
-            keybinds.left = document.getElementById('left').value.split(", ");
-            keybinds.down = document.getElementById('down').value.split(", ");
-            keybinds.right = document.getElementById('right').value.split(", ");
-            keybinds.pause = document.getElementById('pause').value.split(", ");
-            keybinds.previous = document.getElementById('previousInput').value.split(", ");
-            keybinds.restart = document.getElementById('restartInput').value.split(", ");
-            keybinds.next = document.getElementById('nextInput').value.split(", ");
-            keybinds.randomize = document.getElementById('randomize').value.split(", ");
-            keybinds.toggleNoteStyle = document.getElementById('toggleNoteStyleInput').value.split(", ");
-            localStorage.setItem('keybinds', JSON.stringify(keybinds));
-            closeModal();
+            const newKeybinds = {
+                up: document.getElementById('up').value.split(", "),
+                left: document.getElementById('left').value.split(", "),
+                down: document.getElementById('down').value.split(", "),
+                right: document.getElementById('right').value.split(", "),
+                pause: document.getElementById('pause').value.split(", "),
+                autoHit: document.getElementById('autoHit').value.split(", "),
+                previous: document.getElementById('previousInput').value.split(", "),
+                restart: document.getElementById('restartInput').value.split(", "),
+                next: document.getElementById('nextInput').value.split(", "),
+                randomize: document.getElementById('randomize').value.split(", "),
+                toggleNoteStyle: document.getElementById('toggleNoteStyleInput').value.split(", "),
+            };
+            if (JSON.stringify(newKeybinds) === JSON.stringify(keybinds)) {
+                // No changes have been made
+                saveMessage.textContent = "No changes have been made.";
+                saveMessage.style.display = 'block';
+                saveMessage01.style.display = 'none';
+            } else {
+                // Changes have been made
+                keybinds = newKeybinds;
+                localStorage.setItem('keybinds', JSON.stringify(keybinds));
+
+                keybindsHistory.push({ ...keybinds });
+                keybindsIndex = keybindsHistory.length - 1;
+
+                saveMessage.textContent = "Settings saved!";
+                saveMessage.style.display = 'block';
+                saveMessage01.style.display = 'block';
+            }
+        }
+
+        function resetKeybinds() {
+            for (let key in defaultKeybinds) {
+                const inputField = document.getElementById(key);
+            if (inputField) {
+                inputField.value = defaultKeybinds[key].join(', ');
+                }
+            }
+            saveKeybinds();
+            loadKeybinds();
+        }
+
+        function undoKeybinds() {
+            if (keybindsIndex > 0) {
+                keybindsIndex--;
+                keybinds = { ...keybindsHistory[keybindsIndex] };
+                updateKeybindsFields();
+            }
+        }
+
+        function redoKeybinds() {
+            if (keybindsIndex < keybindsHistory.length - 1) {
+                keybindsIndex++;
+                keybinds = { ...keybindsHistory[keybindsIndex] };
+                updateKeybindsFields();
+            }
+        }
+
+        function updateKeybindsFields() {
+            document.getElementById('up').value = keybinds.up.join(", ");
+            document.getElementById('left').value = keybinds.left.join(", ");
         }
 
         function keyDownFunction(keyboardEvent) {
@@ -239,7 +328,7 @@
                 switchImage(noteUpPressIMG, 'NoteUpPressHQ.png', 'CircleUpPressHQ.png');
                 switchImage(noteRightPressIMG, 'NoteRightPressHQ.png', 'CircleRightPressHQ.png');
                 console.log("Changed textures");
-                draw(); // Redraw the canvas with the new images
+                draw();
             }
         }
 

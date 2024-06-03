@@ -38,8 +38,31 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     padding: 20px;
     border: 3px solid #ffffff;
     border-radius: 15px;
+    position: relative;
     width: 80%;
-    color: rgb(255, 255, 255); /* Set text color to white */
+    color: rgb(255, 255, 255);
+}
+.reset-keybinds-button {
+    float: left;
+    color: #ffffff;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 28px;
+    font-weight: bold;
+    background: none;
+}
+.undo-keybinds-button,
+.redo-keybinds-button {
+    float: left;
+    color: #ffffff;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 28px;
+    font-weight: bold;
+    background: none;
+    margin-right: 5px;
 }
 .close {
     color: #ffffff;
@@ -52,4 +75,9 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     color: rgb(255, 86, 86);
     text-decoration: none;
     cursor: pointer;
+}
+.reset-keybinds-button:hover,
+.undo-keybinds-button:hover,
+.redo-keybinds-button:hover {
+    color: rgb(255, 86, 86);
 }

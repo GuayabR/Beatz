@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 1.7.0 GitHub
+ * Version: 1.7.0 Github
  **/
 
 // CONSTANTS
