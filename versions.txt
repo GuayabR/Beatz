@@ -105,5 +105,25 @@ Removed pulsing effect when hitting perfectly, looked ugly, might rework in furt
 1.6.1 / 1.6.2 (1/06/2024)
 
 Fixed bug where pausing the game would only pause the song and notes would bug out
-
+/
 Re-added Song randomizer (B)
+//
+
+1.7.0 (2/06/2024)
+
+PUBLISHED TO GITHUB SITES!
+Beatz.io is now accessible worldwide from "https://guayabr.github.io/Beatz"! (PC Only)
+
+ADDED SETTINGS!
+Customizable settings allow you to change multiple keybinds for different actions in the game!
+Game starts up with the default settings, which are:
+Notes:
+Note left: A, Note up: W, Note down: S, Note right: D.
+
+Song controlling:
+Previous song: Q, Restart song: R, Randomize song: T, Next song: E.
+
+Other:
+Toggle Auto Hit: 1, Toggle note style (Arrows or circles): C.
+
+

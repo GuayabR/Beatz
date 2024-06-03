@@ -2,12 +2,12 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 1.7.0 Testing
+ * Version: 1.7.0 GitHub
  **/
 
 // CONSTANTS
 
-const VERSION = "1.7.0";
+const VERSION = "1.7.0 (GitHub Port)";
 
 const WIDTH = 1280;
 const HEIGHT = 720;
@@ -67,7 +67,7 @@ var songList = [
     "Resources/Songs/VVV.mp3",
     "Resources/Songs/WTF 2.mp3",
     "Resources/Songs/Somewhere I Belong.mp3",
-    "Resources/Songs/Cant Slow Me Down.mp3",
+    "Resources/Songs/Can't Slow Me Down.mp3",
 	"Resources/Songs/Butterfly Effect.mp3",
 	"Resources/Songs/SWIM.mp3",
     "Resources/Songs/FE!N.mp3",
@@ -113,7 +113,7 @@ const songConfigs = {
     "Resources/Songs/VVV.mp3": { BPM: 131, noteSpeed: 10 },
     "Resources/Songs/WTF 2.mp3": { BPM: 93, noteSpeed: 10 },
     "Resources/Songs/MY EYES.mp3": { BPM: 132, noteSpeed: 12 },
-    "Resources/Songs/Cant Slow Me Down.mp3": { BPM: 122, noteSpeed: 11 },
+    "Resources/Songs/Can't Slow Me Down.mp3": { BPM: 122, noteSpeed: 11 },
 	"Resources/Songs/Butterfly Effect.mp3": { BPM: 141, noteSpeed: 10 },
 	"Resources/Songs/SWIM.mp3": { BPM: 120, noteSpeed: 10 },
     "Resources/Songs/You Need Jesus.mp3": { BPM: 110, noteSpeed: 11 },
@@ -840,7 +840,7 @@ function getArtist(songSrc) {
     "Stressed Out": "twenty one pilots",
     "Ticking Away": "VALORANT",
     "MY EYES": "Travis Scott",
-    "Cant Slow Me Down": "VALORANT",
+    "Can't Slow Me Down": "VALORANT",
 	"Butterfly Effect": "Travis Scott",
 	"SWIM": "Chase Atlantic",
     "You Need Jesus": "BABY GRAVY",
