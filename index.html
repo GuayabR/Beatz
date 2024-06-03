@@ -164,7 +164,6 @@
             document.getElementById('down').value = keybinds.down.join(", ");
             document.getElementById('right').value = keybinds.right.join(", ");
             document.getElementById('pause').value = keybinds.pause.join(", ");
-            document.getElementById('autoHit').value = keybinds.autoHit.join(", ");
             document.getElementById('previousInput').value = keybinds.previous.join(", ");
             document.getElementById('restartInput').value = keybinds.restart.join(", ");
             document.getElementById('nextInput').value = keybinds.next.join(", ");
@@ -178,7 +177,6 @@
             keybinds.down = document.getElementById('down').value.split(", ");
             keybinds.right = document.getElementById('right').value.split(", ");
             keybinds.pause = document.getElementById('pause').value.split(", ");
-            keybinds.autoHit = document.getElementById('autoHit').value.split(", ");
             keybinds.previous = document.getElementById('previousInput').value.split(", ");
             keybinds.restart = document.getElementById('restartInput').value.split(", ");
             keybinds.next = document.getElementById('nextInput').value.split(", ");
@@ -218,9 +216,6 @@
             }
             if (keybinds.pause.includes(keyDown)) {
                 togglePause();
-            }
-            if (keybinds.autoHit.includes(keyDown)) {
-                toggleAutoHit();
             }
             if (keybinds.previous.includes(keyDown)) {
                 previousSong();
