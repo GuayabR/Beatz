@@ -506,7 +506,6 @@ function startGame(index) {
             document.getElementById("nextButton").style.display = "inline";
             document.getElementById("restartButton").style.display = "inline";
             document.getElementById("previousButton").style.display = "inline";
-            document.getElementById("toggleAutoHit").style.display = "inline";
         };
 }
 
