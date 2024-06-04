@@ -79,8 +79,6 @@ Added more songs, added a function to reroll the song.
 (many bugfixes later)
 /
 Added keybinds to start the game and reroll the song.
-/
-Holding down on the keys is now punishable by exile. (1 point and increases if you hold down for long)
 //
 
 1.4.5 / 1.4.6 / 1.4.7(30/05/2024)
@@ -130,5 +128,9 @@ Settings modal is now styled modernly, and new buttons have been added:
 Reset keybinds button and redo/undo buttons.
 
 Small changes when saving.
+//
 
+1.7.1 (4/06/2024)
+
+Added endscreens
 

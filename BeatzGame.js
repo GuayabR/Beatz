@@ -2,12 +2,12 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 1.7.0 Github
+ * Version: 1.7.1 GitHub
  **/
 
 // CONSTANTS
 
-const VERSION = "1.7.0 (GitHub Port)";
+const VERSION = "1.7.1 (GitHub Port)";
 
 const WIDTH = 1280;
 const HEIGHT = 720;
@@ -82,6 +82,7 @@ var songList = [
     "Resources/Songs/I Wonder.mp3",
     "Resources/Songs/Godzilla.mp3",
     "Resources/Songs/Houdini.mp3",
+    "Resources/Songs/testingsong.mp3",
 ];
 
 console.log("Songs loaded: " + songList)
@@ -203,7 +204,6 @@ for (const coverPath of albumCovers) {
 preloadImages();
 console.log("Loaded images:", loadedImages);
 
-
 var currentSong;
 var songStarted = false;
 var songStartTime;
@@ -217,6 +217,229 @@ for (let i = 0; i < MAX_HIT_SOUNDS; i++) {
     let hitSound = new Audio("Resources/SFX/hitSound.mp3");
     hitSound.volume = 0.05;
     hitSounds.push(hitSound);
+}
+
+// Song controllers
+
+let currentSongIndex = 0; // Keep track of the index of the current song
+
+function nextSong() {
+    if (currentSong) {
+        currentSong.pause();
+        currentSong.currentTime = 0; // Reset the song to the beginning
+    }
+
+    // Reset variables
+    songStarted = false;
+    notes = []; // Clear the notes array
+    points = 0;
+    totalMisses = 0;
+    perfectHits = 0;
+    earlyLateHits = 0;
+    songPausedTime = null;
+    BPM = 0; // Reset BPM
+    noteSpeed = 0; // Reset note speed
+    maxStreak = 0;
+    currentStreak = 0;
+
+    // Clear the existing interval
+    if (timer) {
+        clearInterval(timer);
+    }
+
+    // Increment currentSongIndex and loop back to 0 if it exceeds the array length
+    currentSongIndex = (currentSongIndex + 1) % songList.length;
+
+    // Start the game with the next song in the songList array
+    currentSongPath = songList[currentSongIndex];
+    console.log("Spinning again from index: " + currentSongIndex);
+    startGame(currentSongIndex);
+}
+
+function restartSong() {
+    if (currentSong) {
+        currentSong.pause();
+        currentSong.currentTime = 0; // Reset the song to the beginning
+    }
+
+    songStarted = false;
+    notes = []; // Clear the notes array
+    points = 0;
+    totalMisses = 0;
+    perfectHits = 0;
+    earlyLateHits = 0;
+    songPausedTime = null;
+    BPM = 0; // Reset BPM
+    noteSpeed = 0; // Reset note speed
+    maxStreak = 0;
+    currentStreak = 0;
+
+    if (timer) {
+        clearInterval(timer);
+    }
+    
+    console.log("Restarting song from index: " + currentSongIndex);
+    startGame(currentSongIndex);
+}
+
+function previousSong() {
+    if (currentSong) {
+        currentSong.pause();
+        currentSong.currentTime = 0; // Reset the song to the beginning
+    }
+
+    // Reset variables
+    songStarted = false;
+    notes = []; // Clear the notes array
+    points = 0;
+    totalMisses = 0;
+    perfectHits = 0;
+    earlyLateHits = 0;
+    songPausedTime = null;
+    BPM = 0; // Reset BPM
+    noteSpeed = 0; // Reset note speed
+    maxStreak = 0;
+    currentStreak = 0;
+
+    // Clear the existing interval
+    if (timer) {
+        clearInterval(timer);
+    }
+
+    // Decrement currentSongIndex and wrap around to the last song if it goes negative
+    currentSongIndex = (currentSongIndex - 1 + songList.length) % songList.length;
+
+    // Start the game with the previous song in the songList array
+    currentSongPath = songList[currentSongIndex];
+    console.log("Previous song from index: " + currentSongIndex);
+    startGame(currentSongIndex);
+}
+
+function pickRandomSong() {
+    return songList[Math.floor(Math.random() * songList.length)];
+}
+
+function pickRandomSongIndex() {
+    return Math.floor(Math.random() * songList.length);
+}
+
+function randomizeSong() {
+    if (currentSong) {
+        currentSong.pause();
+        currentSong.currentTime = 0; // Reset the song to the beginning
+    }
+
+    // Reset variables
+    songStarted = false;
+    notes = []; // Clear the notes array
+    points = 0;
+    totalMisses = 0;
+    perfectHits = 0;
+    earlyLateHits = 0;
+    songPausedTime = null;
+    BPM = 0; // Reset BPM
+    noteSpeed = 0; // Reset note speed
+    maxStreak = 0;
+    currentStreak = 0;
+
+    // Clear the existing interval
+    if (timer) {
+        clearInterval(timer);
+    }
+
+    // Randomize song
+    currentSongIndex = pickRandomSongIndex();
+    console.log("Randomizing song to: " + currentSongIndex);
+
+    // Start the game with the new random song
+    startGame(currentSongIndex);
+}
+
+function displaySongInfo() {
+    ctx.fillStyle = "white";
+    ctx.font = "22px Arial";
+    ctx.textAlign = "right";
+    ctx.fillText("Song " + (currentSongIndex + 1) + ": " + getSongTitle(currentSong.src), WIDTH - 10, 28);
+    ctx.fillText(getArtist(currentSong.src), WIDTH - 10, 56);
+    ctx.font = "22px Arial";
+    ctx.fillText("BPM: " + BPM + " / Speed: " + noteSpeed, WIDTH - 10, 84);
+}
+
+function getSongTitle(songPath) {
+    // Extract the file name without the directory path
+    let fileName = songPath.split('/').pop();
+    // Remove the file extension
+    fileName = fileName.replace('.mp3', '').replace('.jpg', '').replace("_", "'");
+    // Decode the URI component
+    let decodedTitle = decodeURIComponent(fileName);
+    return decodedTitle;
+}
+
+function getArtist(songSrc) {
+    // Define the artist for each song
+    const artists = {
+    "Epilogue": "Creo",
+    "Exosphere": "Creo",
+    "Die For You": "VALORANT",
+    "Father Stretch My Hands": "Kanye West",
+    "Betty (Get Money)": "Yung Gravy",
+    "BURN IT DOWN": "Linkin Park",
+    "Aleph 0": "LeaF",
+    "Better Days": "LAKEY INSPIRED",
+    "KOCMOC": "SLEEPING HUMMINGBIRD",
+    "kompa pasion": "frozy",
+    "Legends Never Die": "League Of Legends",
+    "Star Walkin": "League Of Legends",
+    "What I've Done": "Linkin Park",
+    "Biggest NCS Songs": "NoCopyrightSounds",
+    "Goosebumps": "Travis Scott",
+    "Master Of Puppets (Live)": "Metallica",
+    "Numb": "Linkin Park",
+    "sdp interlude": "Travis Scott",
+    "Shiawase (VIP)": "Dion Timmer",
+    "VVV": "mikeysmind",
+    "Sleepwalker X Icewhxre": "akiaura X Lumi Athena",
+    "WTF 2": "Ugovhb",
+    "VISIONS": "VALORANT",
+    "Stressed Out": "twenty one pilots",
+    "Ticking Away": "VALORANT",
+    "MY EYES": "Travis Scott",
+    "Can't Slow Me Down": "VALORANT",
+	"Butterfly Effect": "Travis Scott",
+	"SWIM": "Chase Atlantic",
+    "You Need Jesus": "BABY GRAVY",
+    "Crazy": "Creo",
+    "FE!N": "Travis Scott",
+    "Nautilus": "Creo",
+    "Levitating (ft. DaBaby)": "Dua Lipa",
+    "Somewhere I Belong": "Linkin Park",
+    "From The Inside": "Linkin Park",
+    "Faint": "Linkin Park",
+    "Breaking The Habit": "Linkin Park",
+    "I Wonder": "Kanye West",
+    "Godzilla": "Eminem",
+    "Houdini": "Eminem",
+    "testingsong": "Testing Purposes",
+        // Add artist for other songs here
+    };
+    let songTitle = getSongTitle(songSrc);
+    return artists[songTitle] || "N/A";
+}
+
+// Function to get the album cover image based on the song path
+function getCover(songPath) {
+    const songTitle = getSongTitle(songPath);
+    const coverImage = loadedImages[songTitle];
+    if (coverImage) {
+        ctx.drawImage(coverImage, WIDTH - 190, 92, 180, 180);
+    } else {
+        ctx.drawImage(noCover, WIDTH - 190, 92, 180, 180);
+        ctx.fillStyle = "white";
+        ctx.font = "20px Arial";
+        ctx.textAlign = "right";
+        ctx.fillText("No cover found", WIDTH - 10, 294);
+        ctx.fillText("for " + getSongTitle(currentSong.src), WIDTH - 10, 318);
+    }
 }
 
 var autoHitEnabled = false;
@@ -250,7 +473,7 @@ var BPM = 200;
 var MILLISECONDS_PER_BEAT;
 
 var points = 0;
-var totalMisses = 0; // Initialize total misses
+var totalMisses = 0;
 var perfectHits = 0;
 var earlyLateHits = 0;
 
@@ -400,10 +623,10 @@ window.onload = function () {
     document.getElementById("nextButton").addEventListener("click", nextSong);
     document.getElementById("restartButton").addEventListener("click", restartSong);
     document.getElementById("previousButton").addEventListener("click", previousSong);
-    //document.getElementById("fullscreen").addEventListener("click", );
+    document.getElementById("randomizeButton").addEventListener("click", randomizeSong);
 
     document.getElementById('startButton').onclick = function() {
-        startGame(); // Replace 0 with the desired index
+        startGame();
     };
 
     // Disable the button if it's clicked once
@@ -501,148 +724,51 @@ function startGame(index) {
             console.log("Song selected: " + getSongTitle(currentSong.src), "by: " + getArtist(currentSong.src));
             console.log("Current song path:", currentSongPath);
             console.log("Beatz.io loaded and playing. Have Fun!");
+            
+            // Add event listener for the song end event
+            currentSong.addEventListener('ended', onSongEnd);
 
             // Show the necessary buttons when the game starts
             document.getElementById("nextButton").style.display = "inline";
             document.getElementById("restartButton").style.display = "inline";
             document.getElementById("previousButton").style.display = "inline";
+            document.getElementById("randomizeButton").style.display = "inline";
         };
 }
 
+// Endscreen
+function drawEndScreen() {
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    ctx.drawImage(BGbright, 0, 0, 1280, 720);
 
-let currentSongIndex = 0; // Keep track of the index of the current song
+    // Draw "Song completed!" text
+    ctx.fillStyle = "white";
+    ctx.font = "60px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("Song completed!", WIDTH / 2, HEIGHT / 2 - 150);
 
-function nextSong() {
-    if (currentSong) {
-        currentSong.pause();
-        currentSong.currentTime = 0; // Reset the song to the beginning
-    }
+    // Draw song information
+    ctx.font = "30px Arial";
+    ctx.textAlign = "right";
+    ctx.fillText("Song: " + getSongTitle(currentSongPath), WIDTH - 100, HEIGHT / 2);
+    ctx.fillText("Artist: " + getArtist(currentSongPath), WIDTH - 100, HEIGHT / 2 + 40);
+    ctx.fillText("BPM: " + BPM, WIDTH - 100, HEIGHT / 2 + 80);
+    ctx.fillText("Speed: " + noteSpeed, WIDTH - 100, HEIGHT / 2 + 120);
 
-    // Reset variables
-    songStarted = false;
-    notes = []; // Clear the notes array
-    points = 0;
-    totalMisses = 0;
-    perfectHits = 0;
-    earlyLateHits = 0;
-    songPausedTime = null;
-    BPM = 0; // Reset BPM
-    noteSpeed = 0; // Reset note speed
-    maxStreak = 0;
-    currentStreak = 0;
-
-    // Clear the existing interval
-    if (timer) {
-        clearInterval(timer);
-    }
-
-    // Increment currentSongIndex and loop back to 0 if it exceeds the array length
-    currentSongIndex = (currentSongIndex + 1) % songList.length;
-
-    // Start the game with the next song in the songList array
-    currentSongPath = songList[currentSongIndex];
-    console.log("Spinning again from index: " + currentSongIndex);
-    startGame(currentSongIndex);
+    // Draw statistical information
+    ctx.textAlign = "left";
+    ctx.fillText("Points: " + points, 100, HEIGHT / 2);
+    ctx.fillText("Perfect Hits: " + perfectHits, 100, HEIGHT / 2 + 40);
+    ctx.fillText("Early/Late Hits: " + earlyLateHits, 100, HEIGHT / 2 + 80);
+    ctx.fillText("Misses: " + totalMisses, 100, HEIGHT / 2 + 120);
 }
 
-function restartSong() {
-    if (currentSong) {
-        currentSong.pause();
-        currentSong.currentTime = 0; // Reset the song to the beginning
-    }
-
-    songStarted = false;
-    notes = []; // Clear the notes array
-    points = 0;
-    totalMisses = 0;
-    perfectHits = 0;
-    earlyLateHits = 0;
-    songPausedTime = null;
-    BPM = 0; // Reset BPM
-    noteSpeed = 0; // Reset note speed
-    maxStreak = 0;
-    currentStreak = 0;
-
-    if (timer) {
-        clearInterval(timer);
-    }
-    
-    console.log("Restarting song from index: " + currentSongIndex);
-    startGame(currentSongIndex);
+// Function to call when the song ends
+function onSongEnd() {
+    drawEndScreen();
 }
 
-function previousSong() {
-    if (currentSong) {
-        currentSong.pause();
-        currentSong.currentTime = 0; // Reset the song to the beginning
-    }
-
-    // Reset variables
-    songStarted = false;
-    notes = []; // Clear the notes array
-    points = 0;
-    totalMisses = 0;
-    perfectHits = 0;
-    earlyLateHits = 0;
-    songPausedTime = null;
-    BPM = 0; // Reset BPM
-    noteSpeed = 0; // Reset note speed
-    maxStreak = 0;
-    currentStreak = 0;
-
-    // Clear the existing interval
-    if (timer) {
-        clearInterval(timer);
-    }
-
-    // Decrement currentSongIndex and wrap around to the last song if it goes negative
-    currentSongIndex = (currentSongIndex - 1 + songList.length) % songList.length;
-
-    // Start the game with the previous song in the songList array
-    currentSongPath = songList[currentSongIndex];
-    console.log("Previous song from index: " + currentSongIndex);
-    startGame(currentSongIndex);
-}
-
-function pickRandomSong() {
-    return songList[Math.floor(Math.random() * songList.length)];
-}
-
-function pickRandomSongIndex() {
-    return Math.floor(Math.random() * songList.length);
-}
-
-function randomizeSong() {
-    if (currentSong) {
-        currentSong.pause();
-        currentSong.currentTime = 0; // Reset the song to the beginning
-    }
-
-    // Reset variables
-    songStarted = false;
-    notes = []; // Clear the notes array
-    points = 0;
-    totalMisses = 0;
-    perfectHits = 0;
-    earlyLateHits = 0;
-    songPausedTime = null;
-    BPM = 0; // Reset BPM
-    noteSpeed = 0; // Reset note speed
-    maxStreak = 0;
-    currentStreak = 0;
-
-    // Clear the existing interval
-    if (timer) {
-        clearInterval(timer);
-    }
-
-    // Randomize song
-    currentSongIndex = pickRandomSongIndex();
-    console.log("Randomizing song to: " + currentSongIndex);
-
-    // Start the game with the new random song
-    startGame(currentSongIndex);
-}
+// Song controllers
 
 console.log("Ready to start Beatz.")
 
@@ -650,6 +776,7 @@ console.log("Ready to start Beatz.")
 
 let gamePaused = false;
 let pausedTextDrawn = false;
+let endScreenDrawn = false;
 
 function updateCanvas() {
     if (gamePaused) {
@@ -662,22 +789,29 @@ function updateCanvas() {
             ctx.fillText("Game Paused", textX, HEIGHT / 2);
             pausedTextDrawn = true;
         }
-        return; // Exit the function early if the game is paused
+        return;
     }
+    if (currentSong.ended) {
+        if (!endScreenDrawn) {
+        // Draw end screen
+        drawEndScreen();
+        endScreenDrawn = true; // Set the flag to true to indicate that the end screen has been drawn
+        }
+        return;
+    }
+    
+    endScreenDrawn = false;
 
     pausedTextDrawn = false;
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-    // Draw background
     ctx.drawImage(BGbright, 0, 0, 1280, 720);
 
-    // Draw stationary notes
     ctx.drawImage(noteLeftIMG, noteXPositions.left - noteWidth / 2, 550, noteWidth, noteHeight);
     ctx.drawImage(noteUpIMG, noteXPositions.up - noteWidth / 2 + 15, 550, noteWidth, noteHeight);
     ctx.drawImage(noteDownIMG, noteXPositions.down - noteWidth / 2 - 15, 550, noteWidth, noteHeight);
     ctx.drawImage(noteRightIMG, noteXPositions.right - noteWidth / 2, 550, noteWidth, noteHeight);
 
-    // Display points and counts
     ctx.fillStyle = "white";
     ctx.font = "30px Arial";
     ctx.textAlign = "left";
@@ -686,13 +820,11 @@ function updateCanvas() {
     ctx.fillText("Perfects: " + perfectHits, 10, 115); 
     ctx.fillText("Early/Late: " + earlyLateHits, 10, 155);
 
-    // Display Version
     ctx.fillStyle = "white";
     ctx.font = "15px Arial";
     ctx.textAlign = "center";
     ctx.fillText("" + VERSION, WIDTH / 2, HEIGHT - 6);
 
-    // Display streaks
     ctx.font = "30px Arial";
     ctx.textAlign = "center";
     ctx.fillText("" + currentStreak, WIDTH / 2, (HEIGHT / 2) - 120);
@@ -786,93 +918,6 @@ function updateCanvas() {
         if (autoHitEnabled) {
             drawAutoHitText();
         }
-    }
-}
-
-
-function displaySongInfo() {
-    ctx.fillStyle = "white";
-    ctx.font = "22px Arial";
-    ctx.textAlign = "right";
-    ctx.fillText("Song " + (currentSongIndex + 1) + ": " + getSongTitle(currentSong.src), WIDTH - 10, 28);
-    ctx.fillText(getArtist(currentSong.src), WIDTH - 10, 56);
-    ctx.font = "22px Arial";
-    ctx.fillText("BPM: " + BPM + " / Speed: " + noteSpeed, WIDTH - 10, 84);
-}
-
-function getSongTitle(songPath) {
-    // Extract the file name without the directory path
-    let fileName = songPath.split('/').pop();
-    // Remove the file extension
-    fileName = fileName.replace('.mp3', '').replace('.jpg', '').replace("_", "'");
-    // Decode the URI component
-    let decodedTitle = decodeURIComponent(fileName);
-    return decodedTitle;
-}
-
-function getArtist(songSrc) {
-    // Define the artist for each song
-    const artists = {
-    "Epilogue": "Creo",
-    "Exosphere": "Creo",
-    "Die For You": "VALORANT",
-    "Father Stretch My Hands": "Kanye West",
-    "Betty (Get Money)": "Yung Gravy",
-    "BURN IT DOWN": "Linkin Park",
-    "Aleph 0": "LeaF",
-    "Better Days": "LAKEY INSPIRED",
-    "KOCMOC": "SLEEPING HUMMINGBIRD",
-    "kompa pasion": "frozy",
-    "Legends Never Die": "League Of Legends",
-    "Star Walkin": "League Of Legends",
-    "What I've Done": "Linkin Park",
-    "Biggest NCS Songs": "NoCopyrightSounds",
-    "Goosebumps": "Travis Scott",
-    "Master Of Puppets (Live)": "Metallica",
-    "Numb": "Linkin Park",
-    "sdp interlude": "Travis Scott",
-    "Shiawase (VIP)": "Dion Timmer",
-    "VVV": "mikeysmind",
-    "Sleepwalker X Icewhxre": "akiaura X Lumi Athena",
-    "WTF 2": "Ugovhb",
-    "VISIONS": "VALORANT",
-    "Stressed Out": "twenty one pilots",
-    "Ticking Away": "VALORANT",
-    "MY EYES": "Travis Scott",
-    "Can't Slow Me Down": "VALORANT",
-	"Butterfly Effect": "Travis Scott",
-	"SWIM": "Chase Atlantic",
-    "You Need Jesus": "BABY GRAVY",
-    "Crazy": "Creo",
-    "FE!N": "Travis Scott",
-    "Nautilus": "Creo",
-    "Levitating (ft. DaBaby)": "Dua Lipa",
-    "Somewhere I Belong": "Linkin Park",
-    "From The Inside": "Linkin Park",
-    "Faint": "Linkin Park",
-    "Breaking The Habit": "Linkin Park",
-    "I Wonder": "Kanye West",
-    "Godzilla": "Eminem",
-    "Houdini": "Eminem",
-        // Add artist for other songs here
-    };
-    let songTitle = getSongTitle(songSrc);
-    return artists[songTitle] || "N/A";
-}
-
-// Function to get the album cover image based on the song path
-function getCover(songPath) {
-    const songTitle = getSongTitle(songPath);
-    const coverImage = loadedImages[songTitle];
-    if (coverImage) {
-        ctx.drawImage(coverImage, WIDTH - 190, 92, 180, 180);
-    } else {
-        ctx.drawImage(noCover, WIDTH - 190, 92, 180, 180);
-        ctx.fillStyle = "white";
-        ctx.font = "20px Arial";
-        ctx.textAlign = "right";
-        ctx.fillText("No cover found", WIDTH - 10, 294);
-        ctx.fillText("for " + getSongTitle(currentSong.src), WIDTH - 10, 318);
     }
 }
 
