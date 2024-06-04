@@ -82,7 +82,6 @@ var songList = [
     "Resources/Songs/I Wonder.mp3",
     "Resources/Songs/Godzilla.mp3",
     "Resources/Songs/Houdini.mp3",
-    "Resources/Songs/testingsong.mp3",
 ];
 
 console.log("Songs loaded: " + songList)
@@ -419,7 +418,6 @@ function getArtist(songSrc) {
     "I Wonder": "Kanye West",
     "Godzilla": "Eminem",
     "Houdini": "Eminem",
-    "testingsong": "Testing Purposes",
         // Add artist for other songs here
     };
     let songTitle = getSongTitle(songSrc);
