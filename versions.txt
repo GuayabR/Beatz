@@ -133,4 +133,9 @@ Small changes when saving.
 1.7.1 (4/06/2024)
 
 Added endscreens
+//
+
+1.7.5 (5/06/2024)
+
+Songs now load before the game starts, eliminating wait time between switching songs.
 

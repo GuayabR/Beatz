@@ -7,7 +7,8 @@
 
 // CONSTANTS
 
-const VERSION = "1.7.1 (GitHub Port)";
+const VERSION = "1.7.5 (GitHub Port)";
+console.log("Version: "+ VERSION)
 
 const WIDTH = 1280;
 const HEIGHT = 720;
@@ -40,51 +41,72 @@ var timer; // Declare timer in the global scope to keep track of the interval ID
 
 var gameStarted = false;
 
-var songList = [
-    "Resources/Songs/Epilogue.mp3",
-    "Resources/Songs/Exosphere.mp3",
-    "Resources/Songs/Die For You.mp3",
-    "Resources/Songs/Father Stretch My Hands.mp3",
-    "Resources/Songs/Betty (Get Money).mp3",
-    "Resources/Songs/BURN IT DOWN.mp3",
-    "Resources/Songs/Aleph 0.mp3",
-    "Resources/Songs/Better Days.mp3",
-    "Resources/Songs/kompa pasion.mp3",
-    "Resources/Songs/KOCMOC.mp3",
-    "Resources/Songs/Legends Never Die.mp3",
-    "Resources/Songs/Star Walkin.mp3",
-    "Resources/Songs/What I've Done.mp3",
-    "Resources/Songs/Biggest NCS Songs.mp3",
-    "Resources/Songs/Goosebumps.mp3",
-    "Resources/Songs/Sleepwalker X Icewhxre.mp3",
-    "Resources/Songs/Numb.mp3",
-    "Resources/Songs/sdp interlude.mp3",
-    "Resources/Songs/Shiawase (VIP).mp3",
-    "Resources/Songs/Master Of Puppets (Live).mp3",
-    "Resources/Songs/Stressed Out.mp3",
-    "Resources/Songs/Ticking Away.mp3",
-    "Resources/Songs/VISIONS.mp3",
-    "Resources/Songs/VVV.mp3",
-    "Resources/Songs/WTF 2.mp3",
-    "Resources/Songs/Somewhere I Belong.mp3",
-    "Resources/Songs/Can't Slow Me Down.mp3",
-	"Resources/Songs/Butterfly Effect.mp3",
-	"Resources/Songs/SWIM.mp3",
-    "Resources/Songs/FE!N.mp3",
-    "Resources/Songs/Crazy.mp3",
-    "Resources/Songs/You Need Jesus.mp3",
-    "Resources/Songs/Nautilus.mp3",
-    "Resources/Songs/Levitating (ft. DaBaby).mp3",
-    "Resources/Songs/MY EYES.mp3",
-    "Resources/Songs/Faint.mp3",
-    "Resources/Songs/Breaking The Habit.mp3",
-    "Resources/Songs/From The Inside.mp3",
-    "Resources/Songs/I Wonder.mp3",
-    "Resources/Songs/Godzilla.mp3",
-    "Resources/Songs/Houdini.mp3",
-];
+let songList = [];
 
-console.log("Songs loaded: " + songList)
+// Function to preload songs
+function preloadSongs() {
+    const songPaths = [
+        "Resources/Songs/Epilogue.mp3",
+        "Resources/Songs/Exosphere.mp3",
+        "Resources/Songs/Die For You.mp3",
+        "Resources/Songs/Father Stretch My Hands.mp3",
+        "Resources/Songs/Betty (Get Money).mp3",
+        "Resources/Songs/BURN IT DOWN.mp3",
+        "Resources/Songs/Aleph 0.mp3",
+        "Resources/Songs/Better Days.mp3",
+        "Resources/Songs/kompa pasion.mp3",
+        "Resources/Songs/KOCMOC.mp3",
+        "Resources/Songs/Legends Never Die.mp3",
+        "Resources/Songs/Star Walkin.mp3",
+        "Resources/Songs/What I've Done.mp3",
+        "Resources/Songs/Biggest NCS Songs.mp3",
+        "Resources/Songs/Goosebumps.mp3",
+        "Resources/Songs/Sleepwalker X Icewhxre.mp3",
+        "Resources/Songs/Numb.mp3",
+        "Resources/Songs/sdp interlude.mp3",
+        "Resources/Songs/Shiawase (VIP).mp3",
+        "Resources/Songs/Master Of Puppets (Live).mp3",
+        "Resources/Songs/Stressed Out.mp3",
+        "Resources/Songs/Ticking Away.mp3",
+        "Resources/Songs/VISIONS.mp3",
+        "Resources/Songs/VVV.mp3",
+        "Resources/Songs/WTF 2.mp3",
+        "Resources/Songs/Somewhere I Belong.mp3",
+        "Resources/Songs/Can't Slow Me Down.mp3",
+        "Resources/Songs/Butterfly Effect.mp3",
+        "Resources/Songs/SWIM.mp3",
+        "Resources/Songs/FE!N.mp3",
+        "Resources/Songs/Crazy.mp3",
+        "Resources/Songs/You Need Jesus.mp3",
+        "Resources/Songs/Nautilus.mp3",
+        "Resources/Songs/Levitating (ft. DaBaby).mp3",
+        "Resources/Songs/MY EYES.mp3",
+        "Resources/Songs/Faint.mp3",
+        "Resources/Songs/Breaking The Habit.mp3",
+        "Resources/Songs/From The Inside.mp3",
+        "Resources/Songs/I Wonder.mp3",
+        "Resources/Songs/Godzilla.mp3",
+        "Resources/Songs/Houdini.mp3",
+    ];
+
+    for (const songPath of songPaths) {
+        const songTitle = getSongTitle(songPath);
+        const audio = new Audio();
+        audio.src = songPath;
+        audio.oncanplaythrough = function() {
+            songList[songTitle] = audio;
+            songList.push(songPath);
+            console.log("Loaded song:", songTitle);
+        };
+        audio.onerror = function() {
+            console.log("Failed to load song:", songTitle);
+        };
+    }
+}
+
+// Preload songs
+preloadSongs();
+console.log("Loaded songs:", songList);
 
 const songConfigs = {
     "Resources/Songs/Epilogue.mp3": { BPM: 160, noteSpeed: 10 },
