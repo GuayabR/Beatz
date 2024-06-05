@@ -651,6 +651,7 @@ function simulateKeyPress(key) {
 
 window.onload = function () {
     ctx = document.getElementById("myCanvas").getContext("2d");
+    document.getElementById("toggleAutoHit").addEventListener("click", toggleAutoHit);
     document.getElementById("nextButton").addEventListener("click", nextSong);
     document.getElementById("restartButton").addEventListener("click", restartSong);
     document.getElementById("previousButton").addEventListener("click", previousSong);
