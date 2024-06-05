@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 1.7.1 GitHub
+ * Version: 1.7.5 GitHub
  **/
 
 // CONSTANTS
@@ -87,6 +87,8 @@ function preloadSongs() {
         "Resources/Songs/I Wonder.mp3",
         "Resources/Songs/Godzilla.mp3",
         "Resources/Songs/Houdini.mp3",
+        "Resources/Songs/Runaway.mp3",
+        "Resources/Songs/Rush E.mp3",
     ];
 
     for (const songPath of songPaths) {
@@ -150,6 +152,8 @@ const songConfigs = {
     "Resources/Songs/I Wonder.mp3": { BPM: 191, noteSpeed: 8 },
     "Resources/Songs/Godzilla.mp3": { BPM: 166, noteSpeed: 13 },
     "Resources/Songs/Houdini.mp3": { BPM: 141, noteSpeed: 12 },
+    "Resources/Songs/Runaway.mp3": { BPM: 85, noteSpeed: 10 },
+    "Resources/Songs/Rush E.mp3": { BPM: 164, noteSpeed: 15 },
     // Add configurations for other songs here
 };
 
@@ -205,6 +209,8 @@ function preloadImages() {
     "Resources/Covers/I Wonder.jpg",
     "Resources/Covers/Godzilla.jpg",
     "Resources/Covers/Houdini.jpg",
+    "Resources/Covers/Runaway.jpg",
+    "Resources/Covers/Rush E.jpg",
     // Add more cover paths as needed
 ];
 for (const coverPath of albumCovers) {
@@ -440,6 +446,8 @@ function getArtist(songSrc) {
     "I Wonder": "Kanye West",
     "Godzilla": "Eminem",
     "Houdini": "Eminem",
+    "Runaway": "Kanye West",
+    "Rush E": "M.J. Kelly",
         // Add artist for other songs here
     };
     let songTitle = getSongTitle(songSrc);
