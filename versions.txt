@@ -135,9 +135,11 @@ Small changes when saving.
 Added endscreens
 //
 
-1.7.5 / 1.8.0 (5/06/2024)
+1.7.5 / 1.8.0 / 1.9.0 (5/06/2024)
 
 Songs now load before the game starts, eliminating wait time between switching songs.
 /
 Reworked file loading, files now auto-load on startup, drastically reducing lag.
 Added fullscreen keybinds and a changeable default note style (arrows/circles)
+/
+Added device handling, since Beatz.io is only supported on PC, if you try to start up the game on a mobile device, it will run, but you aren't able to hit any notes, which makes the game pointless.
