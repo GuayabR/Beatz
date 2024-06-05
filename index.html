@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Beatz 1.8.0</title>
-    <link rel="icon" type="image/x-icon" href="Resources/favicon1.ico">
+    <title>Beatz 1.9.0</title>
+    <link rel="icon" type="image/x-icon" href="Resources/favicon.ico">
     <link rel="stylesheet" type="text/css" href="middleCanvas.css">
 </head>
 <body>
-    <canvas id="myCanvas" width="1280" height="720">
-    Your browser does not support the canvas element. Beatz.io can not start.
-    </canvas>
+    <canvas id="myCanvas" width="1280" height="720"></canvas>
+    <div id="unsupportedMessage" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); color:red; text-align:center;">
+        Your device does not support the canvas element. Beatz.io can not start.
+    </div>
     <h1>Beatz.io</h1>
 
     <button id="startButton">Start! (Enter)</button>
@@ -18,7 +19,6 @@
     <button id="previousButton" style="display: none;">Previous Song</button>
     <button id="restartButton" style="display: none;">Restart Song</button>
     <button id="nextButton" style="display: none;">Next Song</button>
-    <button id="toggleAutoHit" style="display: none;">Toggle Auto Hit</button>
     <button id ="randomizeButton" style="display: none">Randomize Song</button>
     <button id="fullscreen" onclick="toggleFullScreen()">Fullscreen</button>
     <button id="keybindsButton">Settings (Beta)</button>
@@ -74,10 +74,51 @@
     <script>
         var canvas = document.getElementById('myCanvas');
         document.addEventListener("DOMContentLoaded", function() {
+            detectAndHandleDevice();
             loadKeybinds();
             applyDefaultNoteStyle();
             updateKeybindsFields();
         });
+
+        function detectDeviceType() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            // Checks for iOS devices
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                return "iOS";
+            }
+
+            // Checks for Android devices
+            if (/android/i.test(userAgent)) {
+                return "Android";
+            }
+
+            // Checks for other mobile devices
+            if (/Mobile|iP(hone|od)|IEMobile|Windows Phone|kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(userAgent)) {
+                return "Mobile";
+            }
+
+            // Default to desktop
+            return "Desktop";
+        }
+
+        function detectAndHandleDevice() {
+            const deviceType = detectDeviceType();
+            if (deviceType === "Mobile" || deviceType === "iOS" || deviceType === "Android") {
+                // Deactivate buttons
+                document.querySelectorAll('button').forEach(button => button.disabled = true);
+
+                // Remove canvas background image
+                canvas.style.backgroundImage = '';
+
+                // Display unsupported message
+                document.getElementById('unsupportedMessage').style.display = 'block';
+
+                console.log("Mobile device detected. Game is not supported.");
+            } else {
+                console.log("Desktop device detected. Game is supported.");
+            }
+        }
 
         document.getElementById('undoKeybindsButton').addEventListener('click', undoKeybinds);
         document.getElementById('redoKeybindsButton').addEventListener('click', redoKeybinds);
@@ -189,13 +230,12 @@
             down: ["s"],
             right: ["d"],
             pause: ["escape"],
-            autoHit: ["1"],
             previous: ["q"],
             restart: ["r"],
             next: ["e"],
             randomize: ["t"],
             toggleNoteStyle: ["c"],
-            fullscreenInput: ["f"],
+            fullscreen: ["f"],
         };
 
         let keybinds = { ...defaultKeybinds };
