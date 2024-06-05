@@ -139,4 +139,5 @@ Added endscreens
 
 Songs now load before the game starts, eliminating wait time between switching songs.
 /
+Reworked file loading, files now auto-load on startup, drastically reducing lag.
 Added fullscreen keybinds and a changeable default note style (arrows/circles)
