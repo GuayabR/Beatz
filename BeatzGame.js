@@ -2,12 +2,12 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 1.7.5 GitHub
+ * Version: 1.8.0 GitHub
  **/
 
 // CONSTANTS
 
-const VERSION = "1.7.5 (GitHub Port)";
+const VERSION = "1.8.0 (GitHub Port)";
 console.log("Version: "+ VERSION)
 
 const WIDTH = 1280;
@@ -153,7 +153,7 @@ const songConfigs = {
     "Resources/Songs/Godzilla.mp3": { BPM: 166, noteSpeed: 13 },
     "Resources/Songs/Houdini.mp3": { BPM: 141, noteSpeed: 12 },
     "Resources/Songs/Runaway.mp3": { BPM: 85, noteSpeed: 10 },
-    "Resources/Songs/Rush E.mp3": { BPM: 164, noteSpeed: 15 },
+    "Resources/Songs/Rush E.mp3": { BPM: 164, noteSpeed: 99 },
     // Add configurations for other songs here
 };
 

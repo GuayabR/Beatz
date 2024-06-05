@@ -19,6 +19,7 @@ canvas {
 canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     cursor: none;
 }
+
 .modal {
     display: none;
     position: fixed;
@@ -30,18 +31,20 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     overflow: auto;
     background-color: rgb(255, 255, 255);
     background-color: rgba(0, 0, 0, 0);
-    padding-top: 15px;
+    padding-top: 1px;
 }
+
 .modal-content {
     background-color: #00000075;
     margin: 5% auto;
-    padding: 20px;
+    padding: 15px;
     border: 3px solid #ffffff;
     border-radius: 15px;
     position: relative;
     width: 80%;
     color: rgb(255, 255, 255);
 }
+
 .reset-keybinds-button {
     float: left;
     color: #ffffff;
@@ -52,6 +55,7 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     font-weight: bold;
     background: none;
 }
+
 .undo-keybinds-button,
 .redo-keybinds-button {
     float: left;
@@ -64,20 +68,20 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     background: none;
     margin-right: 5px;
 }
+
 .close {
     color: #ffffff;
     float: right;
     font-size: 28px;
     font-weight: bold;
 }
+
+.reset-keybinds-button:hover,
+.undo-keybinds-button:hover,
+.redo-keybinds-button:hover,
 .close:hover,
 .close:focus {
     color: rgb(255, 86, 86);
     text-decoration: none;
     cursor: pointer;
-}
-.reset-keybinds-button:hover,
-.undo-keybinds-button:hover,
-.redo-keybinds-button:hover {
-    color: rgb(255, 86, 86);
 }

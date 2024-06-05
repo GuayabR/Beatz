@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Beatz 1.7.5</title>
+    <title>Beatz 1.8.0</title>
     <link rel="icon" type="image/x-icon" href="Resources/favicon1.ico">
     <link rel="stylesheet" type="text/css" href="middleCanvas.css">
 </head>
@@ -43,6 +43,8 @@
                 <input type="text" id="right" name="right"><br><br>
                 <label for="pause">Pause Game:</label>
                 <input type="text" id="pause" name="pause"><br><br>
+                <label for="fullscreenInput">Fullscreen:</label>
+                <input type="text" id="fullscreenInput" name="fullscreen"><br><br>
                 <label for="previousInput">Previous Song:</label>
                 <input type="text" id="previousInput" name="previous"><br><br>
                 <label for="restartInput">Restart Song:</label>
@@ -53,6 +55,11 @@
                 <input type="text" id="randomize" name="randomize"><br><br>
                 <label for="toggleNoteStyleInput">Toggle Note Style:</label>
                 <input type="text" id="toggleNoteStyleInput" name="toggleNoteStyle"><br><br>
+                <label for="defaultNoteStyle">Default Note Style:</label>
+                <select id="defaultNoteStyle" name="defaultNoteStyle">
+                <option value="arrows">Arrows</option>
+                <option value="circles">Circles</option>
+                </select><br><br>
                 <span id="settingsSaved" style="color: white; display: none;">Settings saved!</span>
                 <span id="settingsSaved01" style="color: white; display: none;">(Reload browser)</span>
                 <button type="button" onclick="saveKeybinds()">Save</button>
@@ -60,7 +67,6 @@
         </div>
     </div>
 
-    <h3>Each perfect note you hit equals 1 point, each early or late equals a half point. Each missed note decreases your score by 1 point</h3>
     <h2>Background image from: <a href="https://github.com/Uproxide/Texture-Workshop/commit/457788213d900a980f559ae8f241febad3322bdd#diff-1dbd3c28454ab3b1596af576394661ba03597f51326dbbff288c6b8ccc353041">Uproxide's "Texture Workshop"</a></h2>
     <h2>Notes from: <a href="https://github.com/Simply-Love/Simply-Love-SM5?tab=readme-ov-file">Teejusb's "Simply Love" osu! mania skins</a></h2>
     <h2><a href="https://www.youtube.com/watch?v=tOZNh8veU_Y">Song list (40 songs)</a></h2>
@@ -69,6 +75,7 @@
         var canvas = document.getElementById('myCanvas');
         document.addEventListener("DOMContentLoaded", function() {
             loadKeybinds();
+            applyDefaultNoteStyle();
             updateKeybindsFields();
         });
 
@@ -87,16 +94,12 @@
                 canvas.requestFullscreen().catch(err => {
                     console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
                 });
+                console.log("Entered Fullscreen")
             } else {
                 document.exitFullscreen();
+                console.log("Exited Fullscreen")
             }
         }
-
-        document.addEventListener('keypress', function(event) {
-            if (event.key === 'F' || event.key === 'f') {
-                toggleFullScreen();
-            }
-        });
 
         document.addEventListener('fullscreenchange', function() {
             if (document.fullscreenElement) {
@@ -192,58 +195,91 @@
             next: ["e"],
             randomize: ["t"],
             toggleNoteStyle: ["c"],
+            fullscreen: ["f"],
         };
 
         let keybinds = { ...defaultKeybinds };
 
         function loadKeybinds() {
-            const savedKeybinds = JSON.parse(localStorage.getItem('keybinds'));
-            if (savedKeybinds) {
-                keybinds = savedKeybinds;
-            }
-            document.getElementById('up').value = keybinds.up.join(", ");
-            document.getElementById('left').value = keybinds.left.join(", ");
-            document.getElementById('down').value = keybinds.down.join(", ");
-            document.getElementById('right').value = keybinds.right.join(", ");
-            document.getElementById('pause').value = keybinds.pause.join(", ");
-            document.getElementById('previousInput').value = keybinds.previous.join(", ");
-            document.getElementById('restartInput').value = keybinds.restart.join(", ");
-            document.getElementById('nextInput').value = keybinds.next.join(", ");
-            document.getElementById('randomize').value = keybinds.randomize.join(", ");
-            document.getElementById('toggleNoteStyleInput').value = keybinds.toggleNoteStyle.join(", ");
-        }
+    const savedKeybinds = JSON.parse(localStorage.getItem('keybinds'));
+    const savedNoteStyle = localStorage.getItem('noteStyle');
+    if (savedKeybinds) {
+        keybinds = savedKeybinds;
+    }
+    document.getElementById('up').value = keybinds.up.join(", ");
+    document.getElementById('left').value = keybinds.left.join(", ");
+    document.getElementById('down').value = keybinds.down.join(", ");
+    document.getElementById('right').value = keybinds.right.join(", ");
+    document.getElementById('pause').value = keybinds.pause.join(", ");
+    document.getElementById('previousInput').value = keybinds.previous.join(", ");
+    document.getElementById('restartInput').value = keybinds.restart.join(", ");
+    document.getElementById('nextInput').value = keybinds.next.join(", ");
+    document.getElementById('randomize').value = keybinds.randomize.join(", ");
+    document.getElementById('toggleNoteStyleInput').value = keybinds.toggleNoteStyle.join(", ");
+    document.getElementById('fullscreenInput').value = keybinds.fullscreen.join(", ");
+    if (savedNoteStyle) {
+        document.getElementById('defaultNoteStyle').value = savedNoteStyle;
+    }
+    keybindsHistory.push(JSON.parse(JSON.stringify(keybinds)));
+            keybindsIndex++;
+    console.log("Loaded settings", keybinds);
+}
 
-        function saveKeybinds() {
-            const newKeybinds = {
-                up: document.getElementById('up').value.split(", "),
-                left: document.getElementById('left').value.split(", "),
-                down: document.getElementById('down').value.split(", "),
-                right: document.getElementById('right').value.split(", "),
-                pause: document.getElementById('pause').value.split(", "),
-                previous: document.getElementById('previousInput').value.split(", "),
-                restart: document.getElementById('restartInput').value.split(", "),
-                next: document.getElementById('nextInput').value.split(", "),
-                randomize: document.getElementById('randomize').value.split(", "),
-                toggleNoteStyle: document.getElementById('toggleNoteStyleInput').value.split(", "),
-            };
-            if (JSON.stringify(newKeybinds) === JSON.stringify(keybinds)) {
-                // No changes have been made
-                saveMessage.textContent = "No changes have been made.";
-                saveMessage.style.display = 'block';
-                saveMessage01.style.display = 'none';
-            } else {
-                // Changes have been made
-                keybinds = newKeybinds;
-                localStorage.setItem('keybinds', JSON.stringify(keybinds));
+function saveKeybinds() {
+    const newKeybinds = {
+        up: document.getElementById('up').value.split(", "),
+        left: document.getElementById('left').value.split(", "),
+        down: document.getElementById('down').value.split(", "),
+        right: document.getElementById('right').value.split(", "),
+        pause: document.getElementById('pause').value.split(", "),
+        previous: document.getElementById('previousInput').value.split(", "),
+        restart: document.getElementById('restartInput').value.split(", "),
+        next: document.getElementById('nextInput').value.split(", "),
+        randomize: document.getElementById('randomize').value.split(", "),
+        toggleNoteStyle: document.getElementById('toggleNoteStyleInput').value.split(", "),
+        fullscreen: document.getElementById('fullscreenInput').value.split(", "),
+    };
+    const newNoteStyle = document.getElementById('defaultNoteStyle').value;
 
-                keybindsHistory.push({ ...keybinds });
-                keybindsIndex = keybindsHistory.length - 1;
+    if (JSON.stringify(newKeybinds) === JSON.stringify(keybinds) && newNoteStyle === localStorage.getItem('noteStyle')) {
+        // No changes have been made
+        saveMessage.textContent = "No changes have been made.";
+        saveMessage.style.display = 'block';
+        saveMessage01.style.display = 'none';
+    } else {
+        // Changes have been made
+        keybinds = newKeybinds;
+        localStorage.setItem('keybinds', JSON.stringify(keybinds));
+        localStorage.setItem('noteStyle', newNoteStyle);  // Save the new note style
 
-                saveMessage.textContent = "Settings saved!";
-                saveMessage.style.display = 'block';
-                saveMessage01.style.display = 'block';
-            }
-        }
+        keybindsHistory = keybindsHistory.slice(0, keybindsIndex + 1);
+            keybindsHistory.push(JSON.parse(JSON.stringify(keybinds)));
+            keybindsIndex++;
+
+        saveMessage.textContent = "Settings saved!";
+        saveMessage.style.display = 'block';
+        saveMessage01.style.display = 'block';
+    }
+    console.log("Saved settings", keybinds);
+}
+
+function applyDefaultNoteStyle() {
+    const noteStyle = localStorage.getItem('noteStyle') || 'arrows';
+    if (noteStyle === 'circles') {
+        switchImage(noteLeftIMG, 'NoteLeftHQ.png', 'CircleLeftHQ.png');
+        switchImage(noteDownIMG, 'NoteDownHQ.png', 'CircleDownHQ.png');
+        switchImage(noteUpIMG, 'NoteUpHQ.png', 'CircleUpHQ.png');
+        switchImage(noteRightIMG, 'NoteRightHQ.png', 'CircleRightHQ.png');
+        switchImage(noteLeftPressIMG, 'NoteLeftPressHQ.png', 'CircleLeftPressHQ.png');
+        switchImage(noteDownPressIMG, 'NoteDownPressHQ.png', 'CircleDownPressHQ.png');
+        switchImage(noteUpPressIMG, 'NoteUpPressHQ.png', 'CircleUpPressHQ.png');
+        switchImage(noteRightPressIMG, 'NoteRightPressHQ.png', 'CircleRightPressHQ.png');
+        console.log("Changed textures to circles");
+        draw();
+    } else {
+        console.log("Using default arrow textures");
+    }
+}
 
         function resetKeybinds() {
             for (let key in defaultKeybinds) {
@@ -251,6 +287,10 @@
             if (inputField) {
                 inputField.value = defaultKeybinds[key].join(', ');
                 }
+            }
+            const defaultNoteStyleField = document.getElementById('defaultNoteStyle');
+            if (defaultNoteStyleField) {
+                defaultNoteStyleField.value = 'arrows';
             }
             saveKeybinds();
             loadKeybinds();
@@ -307,6 +347,9 @@
             }
             if (keybinds.pause.includes(keyDown)) {
                 togglePause();
+            }
+            if (keybinds.fullscreen.includes(keyDown)) {
+                toggleFullScreen();
             }
             if (keybinds.previous.includes(keyDown)) {
                 previousSong();
