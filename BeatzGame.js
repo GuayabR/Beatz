@@ -89,7 +89,7 @@ function preloadSongs() {
         "Resources/Songs/Houdini.mp3",
         "Resources/Songs/Runaway.mp3",
         "Resources/Songs/Rush E.mp3",
-	"Resources/Songs/Vamp Anthem.mp3",
+        "Resources/Songs/Vamp Anthem.mp3",
     ];
 
     for (const songPath of songPaths) {
@@ -139,8 +139,8 @@ const songConfigs = {
     "Resources/Songs/WTF 2.mp3": { BPM: 93, noteSpeed: 10 },
     "Resources/Songs/MY EYES.mp3": { BPM: 132, noteSpeed: 12 },
     "Resources/Songs/Can't Slow Me Down.mp3": { BPM: 122, noteSpeed: 11 },
-    "Resources/Songs/Butterfly Effect.mp3": { BPM: 141, noteSpeed: 10 },
-    "Resources/Songs/SWIM.mp3": { BPM: 120, noteSpeed: 10 },
+	"Resources/Songs/Butterfly Effect.mp3": { BPM: 141, noteSpeed: 10 },
+	"Resources/Songs/SWIM.mp3": { BPM: 120, noteSpeed: 10 },
     "Resources/Songs/You Need Jesus.mp3": { BPM: 110, noteSpeed: 11 },
     "Resources/Songs/Crazy.mp3": { BPM: 120, noteSpeed: 10 },
     "Resources/Songs/FE!N.mp3": { BPM: 148, noteSpeed: 12 },
