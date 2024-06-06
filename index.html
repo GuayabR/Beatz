@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Beatz 1.9.0</title>
-    <link rel="icon" type="image/x-icon" href="Resources/favicon1.ico">
+    <title>Beatz 1.9.1</title>
+    <link rel="icon" type="image/x-icon" href="Resources/favicon.ico">
     <link rel="stylesheet" type="text/css" href="middleCanvas.css">
 </head>
 <body>
@@ -70,7 +70,7 @@
 
     <h2>Background image from: <a href="https://github.com/Uproxide/Texture-Workshop/commit/457788213d900a980f559ae8f241febad3322bdd#diff-1dbd3c28454ab3b1596af576394661ba03597f51326dbbff288c6b8ccc353041">Uproxide's "Texture Workshop"</a></h2>
     <h2>Notes from: <a href="https://github.com/Simply-Love/Simply-Love-SM5?tab=readme-ov-file">Teejusb's "Simply Love" osu! mania skins</a></h2>
-    <h2><a href="https://www.youtube.com/watch?v=tOZNh8veU_Y">Song list (40 songs)</a></h2>
+    <h2><a href="https://www.youtube.com/watch?v=tOZNh8veU_Y">Song list (44 songs)</a></h2>
 
     <script>
         var canvas = document.getElementById('myCanvas');
@@ -80,6 +80,9 @@
             applyDefaultNoteStyle();
             updateKeybindsFields();
         });
+
+        document.addEventListener("keydown", keyDownFunction);
+        document.addEventListener("keyup", keyUpFunction);
 
         function detectDeviceType() {
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -178,9 +181,7 @@
         }
 
         span.onclick = function() {
-            modal.style.display = "none";
-            document.getElementById("settingsSaved").style.display = "none";
-            document.getElementById("settingsSaved01").style.display = "none";
+            closeModal();
         }
 
         window.onclick = function(event) {
@@ -218,11 +219,22 @@
         function deactivateKeybinds() {
             document.removeEventListener("keydown", keyDownFunction);
             document.removeEventListener("keyup", keyUpFunction);
+            document.addEventListener("keydown", filterEnterKey);
         }
 
         function activateKeybinds() {
+            document.removeEventListener("keydown", filterEnterKey);
             document.addEventListener("keydown", keyDownFunction);
             document.addEventListener("keyup", keyUpFunction);
+        }
+
+        function filterEnterKey(event) {
+            if (event.key === "Enter" || event.keyCode === 13) {
+                event.preventDefault();
+                event.stopPropagation();
+                saveKeybinds();
+                console.log("Enter key pressed. Settings saved.");
+            }
         }
 
         const defaultKeybinds = {
@@ -436,8 +448,6 @@ function applyDefaultNoteStyle() {
             }
         }
 
-        document.addEventListener("keydown", keyDownFunction);
-        document.addEventListener("keyup", keyUpFunction);
 
     </script>
     <script src="BeatzGame.js"></script>

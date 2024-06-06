@@ -2,12 +2,12 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 1.9.0 GitHub
+ * Version: 1.9.1 GitHub
  **/
 
 // CONSTANTS
 
-const VERSION = "1.9.0 (GitHub Port)";
+const VERSION = "1.9.1 (GitHub Port)";
 console.log("Version: "+ VERSION)
 
 const WIDTH = 1280;

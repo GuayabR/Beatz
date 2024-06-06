@@ -143,3 +143,8 @@ Reworked file loading, files now auto-load on startup, drastically reducing lag.
 Added fullscreen keybinds and a changeable default note style (arrows/circles)
 /
 Added device handling, since Beatz.io is only supported on PC, if you try to start up the game on a mobile device, it will run, but you aren't able to hit any notes, which makes the game pointless.
+//
+
+1.9.1 (6/06/2024)
+
+When settings are opened, every key deactivates except the enter key, so now pressing the enter key while in the settings, settings will be saved.
