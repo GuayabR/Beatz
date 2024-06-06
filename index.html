@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Beatz 1.9.1</title>
-    <link rel="icon" type="image/x-icon" href="Resources/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="Resources/favicon1.ico">
     <link rel="stylesheet" type="text/css" href="middleCanvas.css">
 </head>
 <body>
@@ -62,7 +62,6 @@
                 <option value="circles">Circles</option>
                 </select><br><br>
                 <span id="settingsSaved" style="color: white; display: none;">Settings saved!</span>
-                <span id="settingsSaved01" style="color: white; display: none;">(Reload browser)</span>
                 <button type="button" onclick="saveKeybinds()">Save</button>
             </form>
         </div>
@@ -159,7 +158,6 @@
         var span = document.getElementsByClassName("close")[0];
         var resetButton = document.getElementById("resetKeybindsButton");
         const saveMessage = document.getElementById("settingsSaved"); 
-        const saveMessage01 = document.getElementById("settingsSaved01");
 
         function convertToLowerCase(inputElement) {
             inputElement.value = inputElement.value.toLowerCase();
@@ -173,7 +171,6 @@
 
         function hideSaveMessage() {
             saveMessage.style.display = 'none';
-            saveMessage01.style.display = 'none';
         }
 
         btn.onclick = function() {
@@ -203,7 +200,6 @@
         function closeModal() {
             modal.style.display = "none";
             saveMessage.style.display = "none";
-            saveMessage01.style.display = "none";
             activateKeybinds();
         }
 
@@ -294,11 +290,37 @@ function saveKeybinds() {
     };
     const newNoteStyle = document.getElementById('defaultNoteStyle').value;
 
+        const currentNoteStyle = localStorage.getItem('noteStyle') || 'arrows';
+        if (newNoteStyle !== currentNoteStyle) {
+            // Change note style immediately
+            if (newNoteStyle === 'circles') {
+                switchImage(noteLeftIMG, 'NoteLeftHQ.png', 'CircleLeftHQ.png');
+                switchImage(noteDownIMG, 'NoteDownHQ.png', 'CircleDownHQ.png');
+                switchImage(noteUpIMG, 'NoteUpHQ.png', 'CircleUpHQ.png');
+                switchImage(noteRightIMG, 'NoteRightHQ.png', 'CircleRightHQ.png');
+                switchImage(noteLeftPressIMG, 'NoteLeftPressHQ.png', 'CircleLeftPressHQ.png');
+                switchImage(noteDownPressIMG, 'NoteDownPressHQ.png', 'CircleDownPressHQ.png');
+                switchImage(noteUpPressIMG, 'NoteUpPressHQ.png', 'CircleUpPressHQ.png');
+                switchImage(noteRightPressIMG, 'NoteRightPressHQ.png', 'CircleRightPressHQ.png');
+                console.log("Changed textures to circles");
+            } else {
+                switchImage(noteLeftIMG, 'CircleLeftHQ.png', 'NoteLeftHQ.png');
+                switchImage(noteDownIMG, 'CircleDownHQ.png', 'NoteDownHQ.png');
+                switchImage(noteUpIMG, 'CircleUpHQ.png', 'NoteUpHQ.png');
+                switchImage(noteRightIMG, 'CircleRightHQ.png', 'NoteRightHQ.png');
+                switchImage(noteLeftPressIMG, 'CircleLeftPressHQ.png', 'NoteLeftPressHQ.png');
+                switchImage(noteDownPressIMG, 'CircleDownPressHQ.png', 'NoteDownPressHQ.png');
+                switchImage(noteUpPressIMG, 'CircleUpPressHQ.png', 'NoteUpPressHQ.png');
+                switchImage(noteRightPressIMG, 'CircleRightPressHQ.png', 'NoteRightPressHQ.png');
+                console.log("Changed textures to arrows");
+            }
+            draw();
+        }
+
     if (JSON.stringify(newKeybinds) === JSON.stringify(keybinds) && newNoteStyle === localStorage.getItem('noteStyle')) {
         // No changes have been made
         saveMessage.textContent = "No changes have been made.";
         saveMessage.style.display = 'block';
-        saveMessage01.style.display = 'none';
     } else {
         // Changes have been made
         keybinds = newKeybinds;
@@ -311,28 +333,34 @@ function saveKeybinds() {
 
         saveMessage.textContent = "Settings saved!";
         saveMessage.style.display = 'block';
-        saveMessage01.style.display = 'block';
     }
     console.log("Saved settings", keybinds);
 }
 
 function applyDefaultNoteStyle() {
-    const noteStyle = localStorage.getItem('noteStyle') || 'arrows';
-    if (noteStyle === 'circles') {
-        switchImage(noteLeftIMG, 'NoteLeftHQ.png', 'CircleLeftHQ.png');
-        switchImage(noteDownIMG, 'NoteDownHQ.png', 'CircleDownHQ.png');
-        switchImage(noteUpIMG, 'NoteUpHQ.png', 'CircleUpHQ.png');
-        switchImage(noteRightIMG, 'NoteRightHQ.png', 'CircleRightHQ.png');
-        switchImage(noteLeftPressIMG, 'NoteLeftPressHQ.png', 'CircleLeftPressHQ.png');
-        switchImage(noteDownPressIMG, 'NoteDownPressHQ.png', 'CircleDownPressHQ.png');
-        switchImage(noteUpPressIMG, 'NoteUpPressHQ.png', 'CircleUpPressHQ.png');
-        switchImage(noteRightPressIMG, 'NoteRightPressHQ.png', 'CircleRightPressHQ.png');
-        console.log("Changed textures to circles");
-        draw();
-    } else {
-        console.log("Using default arrow textures");
+        const noteStyle = localStorage.getItem('noteStyle') || 'arrows';
+        if (noteStyle === 'circles') {
+            switchImage(noteLeftIMG, 'NoteLeftHQ.png', 'CircleLeftHQ.png');
+            switchImage(noteDownIMG, 'NoteDownHQ.png', 'CircleDownHQ.png');
+            switchImage(noteUpIMG, 'NoteUpHQ.png', 'CircleUpHQ.png');
+            switchImage(noteRightIMG, 'NoteRightHQ.png', 'CircleRightHQ.png');
+            switchImage(noteLeftPressIMG, 'NoteLeftPressHQ.png', 'CircleLeftPressHQ.png');
+            switchImage(noteDownPressIMG, 'NoteDownPressHQ.png', 'CircleDownPressHQ.png');
+            switchImage(noteUpPressIMG, 'NoteUpPressHQ.png', 'CircleUpPressHQ.png');
+            switchImage(noteRightPressIMG, 'NoteRightPressHQ.png', 'CircleRightPressHQ.png');
+            console.log("Applied circle textures");
+        } else {
+            switchImage(noteLeftIMG, 'CircleLeftHQ.png', 'NoteLeftHQ.png');
+            switchImage(noteDownIMG, 'CircleDownHQ.png', 'NoteDownHQ.png');
+            switchImage(noteUpIMG, 'CircleUpHQ.png', 'NoteUpHQ.png');
+            switchImage(noteRightIMG, 'CircleRightHQ.png', 'NoteRightHQ.png');
+            switchImage(noteLeftPressIMG, 'CircleLeftPressHQ.png', 'NoteLeftPressHQ.png');
+            switchImage(noteDownPressIMG, 'CircleDownPressHQ.png', 'NoteDownPressHQ.png');
+            switchImage(noteUpPressIMG, 'CircleUpPressHQ.png', 'NoteUpPressHQ.png');
+            switchImage(noteRightPressIMG, 'CircleRightPressHQ.png', 'NoteRightPressHQ.png');
+            console.log("Applied arrow textures");
+        }
     }
-}
 
         function resetKeybinds() {
             for (let key in defaultKeybinds) {
