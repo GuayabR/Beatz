@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Beatz 2.0!</title>
-    <link rel="icon" type="image/x-icon" href="Resources/favicon1.ico">
+    <title>Beatz Testing 2.0!</title>
+    <link rel="icon" type="image/x-icon" href="Resources/favicon.ico">
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
@@ -66,6 +66,17 @@
                 <span id="settingsSaved" style="color: white; display: none;">Settings saved!</span>
                 <button id="saveSettings" type="button" onclick="saveKeybinds()">Save</button>
             </form>
+        </div>
+    </div>
+
+    <div id="songVol" class="volume-control" style="display: none;">
+        <label for="songVolume">Song Volume</label>
+        <input type="range" id="songVolume" name="songVolume" min="0" max="100" value="50">
+    </div>
+
+    <div class="ambient-wrapper">
+        <div class="ambient-background"></div>
+        <div class="canvas-container">
         </div>
     </div>
 

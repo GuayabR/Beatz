@@ -20,7 +20,8 @@ html {
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    box-shadow: 0 3px #dfdfdf3a;
+    box-shadow: 0 0 5px rgba(0, 35, 190, 0.623);
+    transition: box-shadow 0.5s ease;
 }
 
 button {
@@ -32,12 +33,14 @@ button {
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    box-shadow: 0 3px #dfdfdf3a;
+    box-shadow: 0 0 5px rgba(0, 35, 190, 0.623);
+    transition: box-shadow 0.3s ease;
 }
 
 #startButton:hover,
 button:hover {
-    box-shadow: 0 4px #dfdfdf3a;
+    box-shadow: 0 0 10px rgba(0, 110, 255, 0.623);
+    transition: box-shadow 0.3s ease;
 }
 
 canvas {
@@ -46,10 +49,28 @@ canvas {
     background-image: url('Resources/BeatzBanner.jpg');
     background-size: cover;
     background-position: center;
+    border-radius: 10px;
+    box-shadow: 0 0 50px rgba(0, 26, 141, 0.548);
+    transition: box-shadow 0.3s ease;
+}
+
+canvas:hover {
+    box-shadow: 0 0 20px rgba(0, 110, 255, 0.623);
+    transition: box-shadow 0.3s ease;
 }
 
 canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     cursor: none;
+}
+
+.gradient-background {
+    position: relative;
+    width: 1280px;
+    height: 720px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.8));
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .unsupported-message {
@@ -96,6 +117,7 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     font-weight: bold;
     background: none;
     box-shadow: 0 0px #dfdfdf3a;
+    transition: color 0.3s ease;
 }
 
 .undo-keybinds,
@@ -110,11 +132,18 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     background: none;
     margin-right: 5px;
     box-shadow: 0 0px #dfdfdf3a;
+    transition: color 0.3s ease;
 }
 
 #saveSettings {
     background-color: #ffffff21;
-    box-shadow: 0 0px #dfdfdf3a;
+    box-shadow: 0 0 5px rgba(0, 35, 190, 0.623);
+    transition: box-shadow 0.3s ease;
+}
+
+#saveSettings:hover {
+    box-shadow: 0 0 5px rgb(0, 139, 219);
+    transition: box-shadow 0.3s ease;
 }
 
 .close {
@@ -122,6 +151,7 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     float: right;
     font-size: 28px;
     font-weight: bold;
+    transition: color 0.3s ease;
 }
 
 .reset-keybinds:hover,
@@ -132,7 +162,9 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     color: rgb(255, 86, 86);
     text-decoration: none;
     cursor: pointer;
+    transition: color 0.2s ease;
     box-shadow: 0 0px #dfdfdf3a;
+
 }
 
 #songSelector {
@@ -144,6 +176,14 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     margin: 1px 0;
     box-sizing: border-box;
     font-size: 16px;
+    box-shadow: 0 0 10px rgba(0, 35, 190, 0.623);
+    transition: box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+#songSelector:hover {
+    box-shadow: 0 0 20px rgba(0, 110, 255, 0.623);
+    transition: box-shadow 0.3s ease;
 }
 
 #songSelector:focus {
@@ -163,12 +203,11 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
 }
 
 #songSelector option:focus {
-    outline: none; /* Remove default focus outline */
-    background-color: rgba(255, 255, 255, 0.2); /* Brighter background when focused */
-    color: #fff; /* Keep text color white */
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
 }
 
-/* Apply styles to all input elements within the #settings div */
 #keybindsForm input[type="text"] {
     background-color: rgba(255, 255, 255, 0.1); /* Almost transparent white background */
     color: #fff; /* White text color */
@@ -177,18 +216,25 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     padding: 10px; /* Padding inside the input fields */
     box-sizing: border-box; /* Ensure padding and border are included in the width */
     font-size: 16px; /* Font size */
+    box-shadow: 0 0 10px rgba(114, 114, 114, 0.719);
+    transition: box-shadow 0.3s ease;
 }
 
-/* Change the placeholder color */
 #keybindsForm input[type="text"]::placeholder {
     color: rgba(255, 255, 255, 0.5); /* Semi-transparent white for placeholder text */
 }
 
-/* Add focus style */
 #keybindsForm input[type="text"]:focus {
     outline: none; /* Remove default outline */
-    border-color: rgba(255, 255, 255, 0.4); /* Slightly darker border color on focus */
-    background-color: rgba(255, 255, 255, 0.2); /* Slightly less transparent background on focus */
+    border-color: rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(248, 248, 248, 0.623);
+    transition: box-shadow 0.3s ease;
+}
+
+#keybindsForm input[type="text"]:hover {
+    box-shadow: 0 0 10px rgba(221, 221, 221, 0.623);
+    transition: box-shadow 0.3s ease;
 }
 
 #keybindsForm select {
@@ -200,6 +246,8 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     margin: 1px 0;
     box-sizing: border-box;
     font-size: 16px;
+    box-shadow: 0 0 10px rgba(114, 114, 114, 0.719);
+    transition: box-shadow 0.3s ease;
 }
 
 #keybindsForm select option {
@@ -214,4 +262,35 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
 #keybindsForm select:focus {
     border-color: rgba(255, 255, 255, 0.4);
     background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(185, 185, 185, 0.719);
+    transition: box-shadow 0.25s ease;
+}
+
+#keybindsForm select:hover {
+    box-shadow: 0 0 10px rgba(160, 160, 160, 0.719);
+    transition: box-shadow 0.3s ease;
+}
+
+.volume-control {
+    margin: 20px 0;
+}
+
+.volume-control label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 15px;
+    color: white;
+}
+
+.volume-control input[type="range"] {
+    width: 50%;
+    margin-bottom: 5px;
+    box-shadow: 0 0 0px rgba(160, 160, 160, 0);
+    transition: box-shadow 0.3s ease;
+}
+
+.volume-control input[type="range"]:hover {
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 46, 172, 0.719);
+    transition: box-shadow 0.3s ease;
 }

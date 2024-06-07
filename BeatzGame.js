@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 2.0 GitHub
+ * Version: 2.0!
  **/
 
 // CONSTANTS
@@ -98,7 +98,6 @@ function preloadSongs() {
         "Resources/Songs/Runaway.mp3",
         "Resources/Songs/Rush E.mp3",
         "Resources/Songs/Vamp Anthem.mp3",
-        "Resources/Songs/testingsong.mp3",
     ];
 
     songPaths.forEach(songPath => {
@@ -163,7 +162,7 @@ const songConfigs = {
     "Resources/Songs/Godzilla.mp3": { BPM: 166, noteSpeed: 13 },
     "Resources/Songs/Houdini.mp3": { BPM: 141, noteSpeed: 12 },
     "Resources/Songs/Runaway.mp3": { BPM: 85, noteSpeed: 10 },
-    "Resources/Songs/Rush E.mp3": { BPM: 164, noteSpeed: 20 },
+    "Resources/Songs/Rush E.mp3": { BPM: 164, noteSpeed: 99 },
     "Resources/Songs/Vamp Anthem.mp3": { BPM: 164, noteSpeed: 12 },
 };
 
@@ -293,6 +292,22 @@ function populateSongSelector() {
     });
 }
 
+let currentSongVolume = localStorage.getItem('songVolume') ? parseFloat(localStorage.getItem('songVolume')) : 0.5; // Load volume or default to 50%
+
+// Event listeners for volume sliders
+document.getElementById('songVolume').addEventListener('input', function() {
+    currentSongVolume = this.value / 100; // Convert to range 0-1
+    localStorage.setItem('songVolume', currentSongVolume); // Save to localStorage
+    adjustSongVolume(currentSongVolume);
+});
+
+// Function to adjust song volume
+function adjustSongVolume(volume) {
+    if (currentSong) {
+        currentSong.volume = volume;
+    }
+}
+
 // Initialize on DOM content loaded
 document.addEventListener('DOMContentLoaded', function() {
     const songSelector = document.getElementById('songSelector');
@@ -300,6 +315,10 @@ document.addEventListener('DOMContentLoaded', function() {
     loadingOption.value = "";
     loadingOption.text = "Loading songs...";
     songSelector.appendChild(loadingOption);
+
+    const songVolumeSlider = document.getElementById('songVolume');
+    songVolumeSlider.value = currentSongVolume * 100;
+    console.log("Loaded saved song volume")
 
     preloadSongs();
     preloadImages();
@@ -781,7 +800,7 @@ function startGame(index) {
 
         // Load and play the song, initialize game variables, etc.
         currentSong = new Audio(currentSongPath);
-        currentSong.volume = 0.3;
+        currentSong.volume = currentSongVolume;
 
         // Wait for the song to load
         currentSong.onloadedmetadata = function() {
@@ -829,6 +848,7 @@ function startGame(index) {
             document.getElementById("fullscreen").style.display = "inline";
             document.getElementById("keybindsButton").style.display = "inline";
             document.getElementById("myYoutube").style.display = "inline";
+            document.getElementById("songVol").style.display = "inline";
 
             document.getElementById("startButton").style.display = "none";
         };
