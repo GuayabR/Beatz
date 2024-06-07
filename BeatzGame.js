@@ -2,12 +2,12 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 1.9.1 GitHub
+ * Version: 2.0 GitHub
  **/
 
 // CONSTANTS
 
-const VERSION = "1.9.1 (GitHub Port)";
+const VERSION = "2.0! GitHub";
 console.log("Version: "+ VERSION)
 
 const WIDTH = 1280;
@@ -41,7 +41,15 @@ var timer; // Declare timer in the global scope to keep track of the interval ID
 
 var gameStarted = false;
 
+let currentSong;
+let songStarted = false;
+let songStartTime;
+let songPausedTime;
+
+let currentSongPath;
+
 let songList = [];
+let songLoadCounter = 0;
 
 // Function to preload songs
 function preloadSongs() {
@@ -79,7 +87,7 @@ function preloadSongs() {
         "Resources/Songs/Crazy.mp3",
         "Resources/Songs/You Need Jesus.mp3",
         "Resources/Songs/Nautilus.mp3",
-        "Resources/Songs/Levitating (ft. DaBaby).mp3",
+        "Resources/Songs/Levitating.mp3",
         "Resources/Songs/MY EYES.mp3",
         "Resources/Songs/Faint.mp3",
         "Resources/Songs/Breaking The Habit.mp3",
@@ -90,27 +98,28 @@ function preloadSongs() {
         "Resources/Songs/Runaway.mp3",
         "Resources/Songs/Rush E.mp3",
         "Resources/Songs/Vamp Anthem.mp3",
+        "Resources/Songs/testingsong.mp3",
     ];
 
-    for (const songPath of songPaths) {
+    songPaths.forEach(songPath => {
         const songTitle = getSongTitle(songPath);
         const audio = new Audio();
         audio.src = songPath;
         audio.oncanplaythrough = function() {
-            songList[songTitle] = audio;
             songList.push(songPath);
             console.log("Loaded song:", songTitle);
+            songLoadCounter++;
+            checkAllSongsLoaded(songPaths.length);
         };
         audio.onerror = function() {
             console.log("Failed to load song:", songTitle);
+            songLoadCounter++;
+            checkAllSongsLoaded(songPaths.length);
         };
-    }
+    });
 }
 
-// Preload songs
-preloadSongs();
-console.log("Loaded songs:", songList);
-
+// Song configurations
 const songConfigs = {
     "Resources/Songs/Epilogue.mp3": { BPM: 160, noteSpeed: 10 },
     "Resources/Songs/Exosphere.mp3": { BPM: 118, noteSpeed: 10 },
@@ -139,107 +148,162 @@ const songConfigs = {
     "Resources/Songs/WTF 2.mp3": { BPM: 93, noteSpeed: 10 },
     "Resources/Songs/MY EYES.mp3": { BPM: 132, noteSpeed: 12 },
     "Resources/Songs/Can't Slow Me Down.mp3": { BPM: 122, noteSpeed: 11 },
-	"Resources/Songs/Butterfly Effect.mp3": { BPM: 141, noteSpeed: 10 },
-	"Resources/Songs/SWIM.mp3": { BPM: 120, noteSpeed: 10 },
+    "Resources/Songs/Butterfly Effect.mp3": { BPM: 141, noteSpeed: 10 },
+    "Resources/Songs/SWIM.mp3": { BPM: 120, noteSpeed: 10 },
     "Resources/Songs/You Need Jesus.mp3": { BPM: 110, noteSpeed: 11 },
     "Resources/Songs/Crazy.mp3": { BPM: 120, noteSpeed: 10 },
     "Resources/Songs/FE!N.mp3": { BPM: 148, noteSpeed: 12 },
     "Resources/Songs/Nautilus.mp3": { BPM: 124, noteSpeed: 9 },
-    "Resources/Songs/Levitating (ft. DaBaby).mp3": { BPM: 103, noteSpeed: 10 },
+    "Resources/Songs/Levitating.mp3": { BPM: 103, noteSpeed: 10 },
     "Resources/Songs/Somewhere I Belong.mp3": { BPM: 162, noteSpeed: 10 },
-    "Resources/Songs/From The Inside.mp3": { BPM: 95, noteSpeed: 10 },
+    "Resources/Songs/From The Inside.mp3": { BPM: 95, noteSpeed: 10.5 },
     "Resources/Songs/Faint.mp3": { BPM: 135, noteSpeed: 11 },
     "Resources/Songs/Breaking The Habit.mp3": { BPM: 100, noteSpeed: 10 },
     "Resources/Songs/I Wonder.mp3": { BPM: 191, noteSpeed: 8 },
     "Resources/Songs/Godzilla.mp3": { BPM: 166, noteSpeed: 13 },
     "Resources/Songs/Houdini.mp3": { BPM: 141, noteSpeed: 12 },
     "Resources/Songs/Runaway.mp3": { BPM: 85, noteSpeed: 10 },
-    "Resources/Songs/Rush E.mp3": { BPM: 164, noteSpeed: 99 },
+    "Resources/Songs/Rush E.mp3": { BPM: 164, noteSpeed: 20 },
     "Resources/Songs/Vamp Anthem.mp3": { BPM: 164, noteSpeed: 12 },
-    // Add configurations for other songs here
 };
 
-console.log("Song Configurations loaded.")
+console.log("Song Configurations loaded.");
 
-// Define an array to store cover images
-var covers = [];
-
-// Define the paths to your cover images
-
+// Loaded images dictionary
 const loadedImages = {};
+
 // Function to preload images
 function preloadImages() {
     const albumCovers = [
-    "Resources/Covers/Epilogue.jpg",
-    "Resources/Covers/Exosphere.jpg",
-    "Resources/Covers/Die For You.jpg",
-    "Resources/Covers/Father Stretch My Hands.jpg",
-    "Resources/Covers/Betty (Get Money).jpg",
-    "Resources/Covers/BURN IT DOWN.jpg",
-    "Resources/Covers/Aleph 0.jpg",
-    "Resources/Covers/Better Days.jpg",
-    "Resources/Covers/KOCMOC.jpg",
-    "Resources/Covers/kompa pasion.jpg",
-    "Resources/Covers/Legends Never Die.jpg",
-    "Resources/Covers/Star Walkin.jpg",
-    "Resources/Covers/What I've Done.jpg",
-    "Resources/Covers/Biggest NCS Songs.jpg",
-    "Resources/Covers/Goosebumps.jpg",
-    "Resources/Covers/Master Of Puppets (Live).jpg",
-    "Resources/Covers/Numb.jpg",
-    "Resources/Covers/sdp interlude.jpg",
-    "Resources/Covers/Shiawase (VIP).jpg",
-    "Resources/Covers/Sleepwalker X Icewhxre.jpg",
-    "Resources/Covers/Stressed Out.jpg",
-    "Resources/Covers/Ticking Away.jpg",
-    "Resources/Covers/VISIONS.jpg",
-    "Resources/Covers/VVV.jpg",
-    "Resources/Covers/WTF 2.jpg",
-    "Resources/Covers/MY EYES.jpg",
-    "Resources/Covers/Can't Slow Me Down.jpg",
-	"Resources/Covers/Butterfly Effect.jpg",
-	"Resources/Covers/SWIM.jpg",
-    "Resources/Covers/You Need Jesus.jpg",
-    "Resources/Covers/Crazy.jpg",
-    "Resources/Covers/FE!N.jpg",
-    "Resources/Covers/Nautilus.jpg",
-    "Resources/Covers/Levitating (ft. DaBaby).jpg",
-    "Resources/Covers/Somewhere I Belong.jpg",
-    "Resources/Covers/From The Inside.jpg",
-    "Resources/Covers/Faint.jpg",
-    "Resources/Covers/Breaking The Habit.jpg",
-    "Resources/Covers/I Wonder.jpg",
-    "Resources/Covers/Godzilla.jpg",
-    "Resources/Covers/Houdini.jpg",
-    "Resources/Covers/Runaway.jpg",
-    "Resources/Covers/Rush E.jpg",
-    "Resources/Covers/Vamp Anthem.jpg",
-    // Add more cover paths as needed
-];
-for (const coverPath of albumCovers) {
-    const songTitle = getSongTitle(coverPath);
-    const coverImage = new Image();
-    coverImage.src = coverPath;
-    coverImage.onload = function() {
-        loadedImages[songTitle] = coverImage;
-        console.log("Loaded cover image for song:", songTitle);
-    };
-    coverImage.onerror = function() {
-        console.log("Failed to load cover image for song:", songTitle);
-    };
+        "Resources/Covers/Epilogue.jpg",
+        "Resources/Covers/Exosphere.jpg",
+        "Resources/Covers/Die For You.jpg",
+        "Resources/Covers/Father Stretch My Hands.jpg",
+        "Resources/Covers/Betty (Get Money).jpg",
+        "Resources/Covers/BURN IT DOWN.jpg",
+        "Resources/Covers/Aleph 0.jpg",
+        "Resources/Covers/Better Days.jpg",
+        "Resources/Covers/KOCMOC.jpg",
+        "Resources/Covers/kompa pasion.jpg",
+        "Resources/Covers/Legends Never Die.jpg",
+        "Resources/Covers/Star Walkin.jpg",
+        "Resources/Covers/What I've Done.jpg",
+        "Resources/Covers/Biggest NCS Songs.jpg",
+        "Resources/Covers/Goosebumps.jpg",
+        "Resources/Covers/Master Of Puppets (Live).jpg",
+        "Resources/Covers/Numb.jpg",
+        "Resources/Covers/sdp interlude.jpg",
+        "Resources/Covers/Shiawase (VIP).jpg",
+        "Resources/Covers/Sleepwalker X Icewhxre.jpg",
+        "Resources/Covers/Stressed Out.jpg",
+        "Resources/Covers/Ticking Away.jpg",
+        "Resources/Covers/VISIONS.jpg",
+        "Resources/Covers/VVV.jpg",
+        "Resources/Covers/WTF 2.jpg",
+        "Resources/Covers/MY EYES.jpg",
+        "Resources/Covers/Can't Slow Me Down.jpg",
+        "Resources/Covers/Butterfly Effect.jpg",
+        "Resources/Covers/SWIM.jpg",
+        "Resources/Covers/You Need Jesus.jpg",
+        "Resources/Covers/Crazy.jpg",
+        "Resources/Covers/FE!N.jpg",
+        "Resources/Covers/Nautilus.jpg",
+        "Resources/Covers/Levitating.jpg",
+        "Resources/Covers/Somewhere I Belong.jpg",
+        "Resources/Covers/From The Inside.jpg",
+        "Resources/Covers/Faint.jpg",
+        "Resources/Covers/Breaking The Habit.jpg",
+        "Resources/Covers/I Wonder.jpg",
+        "Resources/Covers/Godzilla.jpg",
+        "Resources/Covers/Houdini.jpg",
+        "Resources/Covers/Runaway.jpg",
+        "Resources/Covers/Rush E.jpg",
+        "Resources/Covers/Vamp Anthem.jpg"
+    ];
+
+    for (const coverPath of albumCovers) {
+        const songTitle = getSongTitle(coverPath);
+        const coverImage = new Image();
+        coverImage.src = coverPath;
+        coverImage.onload = function() {
+            loadedImages[songTitle] = coverImage;
+            console.log("Loaded cover image for song:", songTitle);
+        };
+        coverImage.onerror = function() {
+            console.log("Failed to load cover image for song:", songTitle);
+        };
+    }
 }
+
+// Function to check if all songs are loaded
+function checkAllSongsLoaded(totalSongs) {
+    if (songLoadCounter === totalSongs) {
+        populateSongSelector();
+    }
 }
 
-// Preload cover images
-preloadImages();
-console.log("Loaded images:", loadedImages);
+// Populate song selector
+function populateSongSelector() {
+    const songSelector = document.getElementById('songSelector');
+    songSelector.innerHTML = ''; // Clear loading message
 
-var currentSong;
-var songStarted = false;
-var songStartTime;
-var songPausedTime;
+    // Add default "Select song" option
+    const defaultOption = document.createElement('option');
+    defaultOption.value = "";
+    defaultOption.text = "Select song.";
+    songSelector.appendChild(defaultOption);
 
-var currentSongPath;
+    songList.forEach((songPath, index) => {
+        const option = document.createElement('option');
+        option.value = index; // Assign the index as the option value
+        option.text = getSongTitle(songPath);
+        songSelector.appendChild(option);
+    });
+
+    songSelector.addEventListener('change', function() {
+        const selectedIndex = parseInt(this.value, 10); // Convert the value to an integer
+        if (isNaN(selectedIndex)) return; // If the selected value is not a number, do nothing
+
+        const selectedSongPath = songList[selectedIndex];
+
+        if (currentSong) {
+            currentSong.pause();
+            currentSong.currentTime = 0;
+        }
+
+        currentSong = new Audio(selectedSongPath);
+
+        songStarted = false;
+        notes = [];
+        points = 0;
+        totalMisses = 0;
+        perfectHits = 0;
+        earlyLateHits = 0;
+        songPausedTime = null;
+        BPM = 0;
+        noteSpeed = 0;
+        maxStreak = 0;
+        currentStreak = 0;
+
+        startGame(selectedIndex);
+
+        songSelector.selectedIndex = 0;
+
+        songSelector.blur();
+    });
+}
+
+// Initialize on DOM content loaded
+document.addEventListener('DOMContentLoaded', function() {
+    const songSelector = document.getElementById('songSelector');
+    const loadingOption = document.createElement('option');
+    loadingOption.value = "";
+    loadingOption.text = "Loading songs...";
+    songSelector.appendChild(loadingOption);
+
+    preloadSongs();
+    preloadImages();
+});
 
 var hitSounds = [];
 
@@ -441,7 +505,7 @@ function getArtist(songSrc) {
     "Crazy": "Creo",
     "FE!N": "Travis Scott",
     "Nautilus": "Creo",
-    "Levitating (ft. DaBaby)": "Dua Lipa",
+    "Levitating": "Dua Lipa",
     "Somewhere I Belong": "Linkin Park",
     "From The Inside": "Linkin Park",
     "Faint": "Linkin Park",
@@ -664,18 +728,8 @@ window.onload = function () {
     // Disable the button if it's clicked once
     var startButton = document.getElementById("startButton");
     startButton.addEventListener("click", function() {
-        document.getElementById("startButton").style.display = "none"; // Disable the button
+        document.getElementById("startButton").style.display = "none";
     });
-
-    // Check the file name and hide the button if it's "BeatzGame.js"
-    var scriptTags = document.getElementsByTagName('script');
-    for (var i = 0; i < scriptTags.length; i++) {
-        var src = scriptTags[i].src;
-        if (src.includes("BeatzGame.js")) {
-            document.getElementById("toggleAutoHit").style.display = "none";
-            break;
-        }
-    }
 };
 
 console.log("Window.onload loaded.")
@@ -706,6 +760,11 @@ function gameLoop() {
 
 function startGame(index) {
     console.log("Starting game with index:", index);
+
+    if (currentSong) {
+        currentSong.pause();
+        currentSong.currentTime = 0; // Reset the song to the beginning
+    }
 
     if (typeof index === 'undefined') {
         var randomSong = pickRandomSong();
@@ -746,6 +805,7 @@ function startGame(index) {
             songStartTime = Date.now();
             songStarted = true;
             gamePaused = false;
+            gameStarted = true;
 
             // Clear any existing interval before setting a new one
             if (timer) {
@@ -765,6 +825,12 @@ function startGame(index) {
             document.getElementById("restartButton").style.display = "inline";
             document.getElementById("previousButton").style.display = "inline";
             document.getElementById("randomizeButton").style.display = "inline";
+            document.getElementById("toggleNoteStyleButton").style.display = "inline";
+            document.getElementById("fullscreen").style.display = "inline";
+            document.getElementById("keybindsButton").style.display = "inline";
+            document.getElementById("myYoutube").style.display = "inline";
+
+            document.getElementById("startButton").style.display = "none";
         };
 }
 

@@ -148,3 +148,16 @@ Added device handling, since Beatz.io is only supported on PC, if you try to sta
 1.9.1 (6/06/2024)
 
 When settings are opened, every key deactivates except the enter key, so now pressing the enter key while in the settings, settings will be saved.
+//
+
+2.0! (7/06/2024)
+
+BEATZ 2.0 IS OUT!
+
+REWORKED THE HTML!
+
+STYLED EVERYTHING!
+
+NEW SONG SELECTOR DROPDOWN!
+
+BIGGEST UPDATE YET!

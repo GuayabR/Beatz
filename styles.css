@@ -1,0 +1,217 @@
+body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+html {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #00101f, #00255e); /* Gradient colors */
+    display: flex;
+    color: white;
+    justify-content: center;
+    align-items: center;
+}
+
+#startButton {
+    padding: 10px 40px;
+    font-size: 20px;
+    background-color: #002352;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 3px #dfdfdf3a;
+}
+
+button {
+    padding: 8px 15px;
+    display: inline-block;
+    margin: 5px;
+    background-color: #002352;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 3px #dfdfdf3a;
+}
+
+#startButton:hover,
+button:hover {
+    box-shadow: 0 4px #dfdfdf3a;
+}
+
+canvas {
+    display: block;
+    margin: 0 auto;
+    background-image: url('Resources/BeatzBanner.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
+    cursor: none;
+}
+
+.unsupported-message {
+    display:none; 
+    position:absolute; 
+    top:50%; 
+    left:50%; 
+    transform:translate(-50%, -50%); 
+    color:red; 
+    text-align:center;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(255, 255, 255);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.modal-content {
+    background-color: #00000075;
+    margin: 8px auto;
+    padding: 15px;
+    border: 3px solid #ffffff;
+    border-radius: 15px;
+    position: relative;
+    width: 80%;
+    color: rgb(255, 255, 255);
+}
+
+.reset-keybinds {
+    float: left;
+    color: #ffffff;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 28px;
+    font-weight: bold;
+    background: none;
+    box-shadow: 0 0px #dfdfdf3a;
+}
+
+.undo-keybinds,
+.redo-keybinds {
+    float: left;
+    color: #ffffff;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 28px;
+    font-weight: bold;
+    background: none;
+    margin-right: 5px;
+    box-shadow: 0 0px #dfdfdf3a;
+}
+
+#saveSettings {
+    background-color: #ffffff21;
+    box-shadow: 0 0px #dfdfdf3a;
+}
+
+.close {
+    color: #ffffff;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.reset-keybinds:hover,
+.undo-keybinds:hover,
+.redo-keybinds:hover,
+.close:hover,
+.close:focus {
+    color: rgb(255, 86, 86);
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 0px #dfdfdf3a;
+}
+
+#songSelector {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    padding: 10px;
+    margin: 1px 0;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+#songSelector:focus {
+    border-color: #0051ff;
+    outline: none;
+    box-shadow: 0 0 10px rgba(0, 68, 255, 0.781);
+}
+
+#songSelector option {
+    background-color: rgba(0, 0, 0, 0.9);
+    color: #fff;
+}
+
+#songSelector option:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+#songSelector option:focus {
+    outline: none; /* Remove default focus outline */
+    background-color: rgba(255, 255, 255, 0.2); /* Brighter background when focused */
+    color: #fff; /* Keep text color white */
+}
+
+/* Apply styles to all input elements within the #settings div */
+#keybindsForm input[type="text"] {
+    background-color: rgba(255, 255, 255, 0.1); /* Almost transparent white background */
+    color: #fff; /* White text color */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Light border color */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px; /* Padding inside the input fields */
+    box-sizing: border-box; /* Ensure padding and border are included in the width */
+    font-size: 16px; /* Font size */
+}
+
+/* Change the placeholder color */
+#keybindsForm input[type="text"]::placeholder {
+    color: rgba(255, 255, 255, 0.5); /* Semi-transparent white for placeholder text */
+}
+
+/* Add focus style */
+#keybindsForm input[type="text"]:focus {
+    outline: none; /* Remove default outline */
+    border-color: rgba(255, 255, 255, 0.4); /* Slightly darker border color on focus */
+    background-color: rgba(255, 255, 255, 0.2); /* Slightly less transparent background on focus */
+}
+
+#keybindsForm select {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    padding: 10px;
+    margin: 1px 0;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+#keybindsForm select option {
+    background-color: rgba(0, 0, 0, 0.9);
+    color: #fff;
+}
+
+#keybindsForm select option:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+#keybindsForm select:focus {
+    border-color: rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, 0.2);
+}

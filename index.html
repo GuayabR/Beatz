@@ -2,36 +2,38 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Beatz 1.9.1</title>
-    <link rel="icon" type="image/x-icon" href="Resources/favicon1.ico">
-    <link rel="stylesheet" type="text/css" href="middleCanvas.css">
+    <title>Beatz Testing 2.0!</title>
+    <link rel="icon" type="image/x-icon" href="Resources/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
     <canvas id="myCanvas" width="1280" height="720"></canvas>
-    <div id="unsupportedMessage" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); color:red; text-align:center;">
-        Your device does not support the canvas element. Beatz.io can not start.
-    </div>
+    <div id="unsupportedMessage"Aye! Thanks for checking out Beatz.io, unfortunately, your device does not support the canvas element, therefore, Beatz.io can not start. (ERR: UNSUPPORTED_DEVICE)></div>
     <h1>Beatz.io</h1>
 
     <button id="startButton">Start! (Enter)</button>
-    <button onclick="NewTab()">My YouTube!</button>
-    <button id="toggleNoteStyleButton">Toggle Note Style</button>
+    <button id="myYoutube" style="display: none;" onclick="NewTab()">My YouTube!</button>
+    <button id="toggleNoteStyleButton" style="display: none;">Toggle Note Style</button>
     <button id="previousButton" style="display: none;">Previous Song</button>
     <button id="restartButton" style="display: none;">Restart Song</button>
     <button id="nextButton" style="display: none;">Next Song</button>
     <button id="toggleAutoHit" style="display: none;">Toggle Auto Hit</button>
     <button id ="randomizeButton" style="display: none">Randomize Song</button>
-    <button id="fullscreen" onclick="toggleFullScreen()">Fullscreen</button>
-    <button id="keybindsButton">Settings (Beta)</button>
+    <button id="fullscreen" style="display: none;" onclick="toggleFullScreen()">Fullscreen</button>
+    <button id="keybindsButton" style="display: none;">Settings (Beta)</button>
+    
+    <h2><select id="songSelector">
+        <option>Loading songs...</option>
+    </select></h2>
     
 
     <!-- The Modal -->
     <div id="keybindsModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <button id="resetKeybindsButton" class="reset-keybinds-button">&#x21bb;</button>
-                <button id="redoKeybindsButton" class="redo-keybinds-button">&#x21aa;</button>
-                <button id="undoKeybindsButton" class="undo-keybinds-button">&#x21a9;</button>
+            <button id="resetKeybindsButton" class="reset-keybinds">&#x21bb;</button>
+                <button id="redoKeybindsButton" class="redo-keybinds">&#x21aa;</button>
+                <button id="undoKeybindsButton" class="undo-keybinds">&#x21a9;</button>
             <h2>Customize Settings!</h2>
             <form id="keybindsForm">
                 <label for="up">Note Left:</label>
@@ -62,7 +64,7 @@
                 <option value="circles">Circles</option>
                 </select><br><br>
                 <span id="settingsSaved" style="color: white; display: none;">Settings saved!</span>
-                <button type="button" onclick="saveKeybinds()">Save</button>
+                <button id="saveSettings" type="button" onclick="saveKeybinds()">Save</button>
             </form>
         </div>
     </div>
@@ -110,9 +112,10 @@
             if (deviceType === "Mobile" || deviceType === "iOS" || deviceType === "Android") {
                 // Deactivate buttons
                 document.querySelectorAll('button').forEach(button => button.disabled = true);
+                document.querySelectorAll('select').forEach(select => select.disabled = true);
 
                 // Remove canvas background image
-                canvas.style.backgroundImage = '';
+                canvas.style.backgroundimage = '';
 
                 // Display unsupported message
                 document.getElementById('unsupportedMessage').style.display = 'block';
@@ -239,17 +242,17 @@
             down: ["s"],
             right: ["d"],
             pause: ["escape"],
-            previous: ["q"],
-            restart: ["r"],
-            next: ["e"],
+            previousInput: ["q"],
+            restartInput: ["r"],
+            nextInput: ["e"],
             randomize: ["t"],
-            toggleNoteStyle: ["c"],
+            toggleNoteStyleInput: ["c"],
             fullscreen: ["f"],
         };
 
         let keybinds = { ...defaultKeybinds };
 
-        function loadKeybinds() {
+function loadKeybinds() {
     const savedKeybinds = JSON.parse(localStorage.getItem('keybinds'));
     const savedNoteStyle = localStorage.getItem('noteStyle');
     if (savedKeybinds) {
