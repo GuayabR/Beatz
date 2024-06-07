@@ -292,5 +292,5 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
 .volume-control input[type="range"]:hover {
     cursor: pointer;
     box-shadow: 0 0 10px rgba(0, 46, 172, 0.719);
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease
 }
