@@ -128,12 +128,15 @@ function preloadSongs() {
                 checkAllSongsLoaded(totalSongs); // Check if all songs are loaded
 
                 // Hide the counter text after 2.5 seconds
-                setTimeout(() => {
+                // Hide the counter text after 2.5 seconds
+                if (songLoadCounter === totalSongs) {
+                    setTimeout(() => {
                     if (headerElement.contains(counterText)) {
                         headerElement.removeChild(counterText);
                     }
                 }, 2500);
             };
+        }
             audio.onerror = function() {
                 console.log("Failed to load song:", songTitle);
                 currentIndex++;
