@@ -172,3 +172,5 @@ Styled all buttons with transformations and transitions
 Added 2 new songs (CARNIVAL, HUMBLE.)
 /
 Added Auto Hit to the public version since it is fixed
+
+Fixed default settings not loading properly

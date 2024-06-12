@@ -262,7 +262,7 @@
             nextInput: ["e"],
             randomize: ["t"],
             toggleNoteStyleInput: ["c"],
-            fullscreen: ["f"],
+            fullscreenInput: ["f"],
         };
 
         let keybinds = { ...defaultKeybinds };
@@ -279,12 +279,12 @@ function loadKeybinds() {
     document.getElementById('right').value = keybinds.right.join(", ");
     document.getElementById('pause').value = keybinds.pause.join(", ");
     document.getElementById('autoHit').value = keybinds.autoHit.join(", ");
-    document.getElementById('previousInput').value = keybinds.previous.join(", ");
-    document.getElementById('restartInput').value = keybinds.restart.join(", ");
-    document.getElementById('nextInput').value = keybinds.next.join(", ");
+    document.getElementById('previousInput').value = keybinds.previousInput.join(", ");
+    document.getElementById('restartInput').value = keybinds.restartInput.join(", ");
+    document.getElementById('nextInput').value = keybinds.nextInput.join(", ");
     document.getElementById('randomize').value = keybinds.randomize.join(", ");
-    document.getElementById('toggleNoteStyleInput').value = keybinds.toggleNoteStyle.join(", ");
-    document.getElementById('fullscreenInput').value = keybinds.fullscreen.join(", ");
+    document.getElementById('toggleNoteStyleInput').value = keybinds.toggleNoteStyleInput.join(", ");
+    document.getElementById('fullscreenInput').value = keybinds.fullscreenInput.join(", ");
     if (savedNoteStyle) {
         document.getElementById('defaultNoteStyle').value = savedNoteStyle;
     }
@@ -451,22 +451,22 @@ function applyDefaultNoteStyle() {
             if (keybinds.autoHit.includes(keyDown)) {
                 toggleAutoHit();
             }
-            if (keybinds.fullscreen.includes(keyDown)) {
+            if (keybinds.fullscreenInput.includes(keyDown)) {
                 toggleFullScreen();
             }
-            if (keybinds.previous.includes(keyDown)) {
+            if (keybinds.previousInput.includes(keyDown)) {
                 previousSong();
             }
-            if (keybinds.restart.includes(keyDown)) {
+            if (keybinds.restartInput.includes(keyDown)) {
                 restartSong();
             }
-            if (keybinds.next.includes(keyDown)) {
+            if (keybinds.nextInput.includes(keyDown)) {
                 nextSong();
             }
             if (keybinds.randomize.includes(keyDown)) {
                 randomizeSong();
             }
-            if (keybinds.toggleNoteStyle.includes(keyDown)) {
+            if (keybinds.toggleNoteStyleInput.includes(keyDown)) {
                 switchImage(noteLeftIMG, 'NoteLeftHQ.png', 'CircleLeftHQ.png');
                 switchImage(noteDownIMG, 'NoteDownHQ.png', 'CircleDownHQ.png');
                 switchImage(noteUpIMG, 'NoteUpHQ.png', 'CircleUpHQ.png');
