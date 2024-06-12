@@ -140,16 +140,18 @@ function preloadSongs() {
     }
 
     // Function to check if all songs are loaded
-function checkAllSongsLoaded(totalSongs) {
-    if (songLoadCounter === totalSongs) {
-        populateSongSelector();
-        setTimeout(() => {
-            if (headerElement.contains(counterText)) {
-                headerElement.removeChild(counterText);
-            }
-        }, 2500);
+    function checkAllSongsLoaded(totalSongs) {
+        if (songLoadCounter === totalSongs) {
+            populateSongSelector();
+            const startButton = document.getElementById('startButton');
+            startButton.style.display = 'inline';
+            setTimeout(() => {
+                if (headerElement.contains(counterText)) {
+                    headerElement.removeChild(counterText);
+                }
+            }, 2500);
+        }
     }
-}
 
     // Start loading the first song
     loadNextSong();
