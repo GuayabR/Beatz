@@ -160,6 +160,13 @@ STYLED EVERYTHING!
 
 NEW SONG SELECTOR DROPDOWN!
 
-ADDED VOLUME SLIDER!
-
 BIGGEST UPDATE YET!
+//
+
+2.1! (12/06/2024)
+
+Changed the buttons from text to icons
+
+Styled all buttons with transformations and transitions
+
+Added 2 new songs (CARNIVAL, HUMBLE.)

@@ -2,12 +2,12 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 2.1
+ * Version: 2.1 GitHub
  **/
 
 // CONSTANTS
 
-const VERSION = "2.1";
+const VERSION = "2.1 (GitHub Port)";
 console.log("Version: "+ VERSION)
 
 const WIDTH = 1280;
@@ -99,6 +99,7 @@ function preloadSongs() {
         "Resources/Songs/Rush E.mp3",
         "Resources/Songs/Vamp Anthem.mp3",
         "Resources/Songs/CARNIVAL.mp3",
+        "Resources/Songs/HUMBLE..mp3",
         "Resources/Songs/testingsong.mp3",
     ];
 
@@ -166,7 +167,8 @@ const songConfigs = {
     "Resources/Songs/Runaway.mp3": { BPM: 85, noteSpeed: 10 },
     "Resources/Songs/Rush E.mp3": { BPM: 164, noteSpeed: 99 },
     "Resources/Songs/Vamp Anthem.mp3": { BPM: 164, noteSpeed: 12 },
-    "Resources/Songs/CARNIVAL.mp3": { BPM: 148, noteSpeed: 14 },
+    "Resources/Songs/CARNIVAL.mp3": { BPM: 148, noteSpeed: 12 },
+    "Resources/Songs/HUMBLE..mp3": { BPM: 150, noteSpeed: 13 },
 };
 
 console.log("Song Configurations loaded.");
@@ -222,6 +224,7 @@ function preloadImages() {
         "Resources/Covers/Rush E.jpg",
         "Resources/Covers/Vamp Anthem.jpg",
         "Resources/Covers/CARNIVAL.jpg",
+        "Resources/Covers/HUMBLE..jpg",
     ];
 
     for (const coverPath of albumCovers) {
@@ -540,6 +543,7 @@ function getArtist(songSrc) {
     "Rush E": "M.J. Kelly",
     "Vamp Anthem": "Playboi Carti",
     "CARNIVAL": "Kanye West",
+    "HUMBLE.": "Kendrick Lamar",
         // Add artist for other songs here
     };
     let songTitle = getSongTitle(songSrc);

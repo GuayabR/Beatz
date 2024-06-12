@@ -48,7 +48,7 @@ button:hover {
 }
 
 #keybindsButton:hover i {
-    transform: rotate(90deg);
+    transform: rotate(90deg) scale(1.25);
 }
 
 button i {
@@ -123,7 +123,7 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     color: rgb(255, 255, 255);
 }
 
-.reset-keybinds {
+.keybind-button {
     float: left;
     color: #ffffff;
     border: none;
@@ -133,22 +133,31 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     font-weight: bold;
     background: none;
     box-shadow: 0 0px #dfdfdf3a;
-    transition: color 0.3s ease;
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .undo-keybinds,
 .redo-keybinds {
-    float: left;
-    color: #ffffff;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    font-size: 20px;
-    font-weight: bold;
-    background: none;
     margin-right: 5px;
-    box-shadow: 0 0px #dfdfdf3a;
-    transition: color 0.3s ease;
+}
+
+.keybind-button:hover {
+    color: rgb(255, 86, 86);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.reset-keybinds:hover {
+    transform: rotate(360deg);
+}
+
+.undo-keybinds:hover {
+    transform: rotate(-360deg);
+}
+
+.redo-keybinds:hover {
+    transform: rotate(360deg);
 }
 
 #saveSettings {
@@ -167,20 +176,15 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     float: right;
     font-size: 24px;
     font-weight: bold;
-    transition: color 0.3s ease;
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
-.reset-keybinds:hover,
-.undo-keybinds:hover,
-.redo-keybinds:hover,
-.close:hover,
-.close:focus {
+.close:hover {
     color: rgb(255, 86, 86);
     text-decoration: none;
     cursor: pointer;
-    transition: color 0.2s ease;
-    box-shadow: 0 0px #dfdfdf3a;
-
+    transform: scale(1.25);
+    transition: color 0.2s ease, transform 0.3s ease;
 }
 
 #songSelector {
