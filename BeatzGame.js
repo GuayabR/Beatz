@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 2.2 Github
+ * Version: 2.2
  **/
 
 // CONSTANTS
@@ -138,6 +138,18 @@ function preloadSongs() {
         }
     }
 
+    // Function to check if all songs are loaded
+function checkAllSongsLoaded(totalSongs) {
+    if (songLoadCounter === totalSongs) {
+        populateSongSelector();
+        setTimeout(() => {
+            if (headerElement.contains(counterText)) {
+                headerElement.removeChild(counterText);
+            }
+        }, 2500);
+    }
+}
+
     // Start loading the first song
     loadNextSong();
 }
@@ -259,18 +271,6 @@ function preloadImages() {
         coverImage.onerror = function() {
             console.log("Failed to load cover image for song:", songTitle);
         };
-    }
-}
-
-// Function to check if all songs are loaded
-function checkAllSongsLoaded(totalSongs) {
-    if (songLoadCounter === totalSongs) {
-        populateSongSelector();
-        setTimeout(() => {
-            if (headerElement.contains(counterText)) {
-                headerElement.removeChild(counterText);
-            }
-        }, 2500);
     }
 }
 
