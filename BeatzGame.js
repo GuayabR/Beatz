@@ -126,17 +126,7 @@ function preloadSongs() {
                 counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`; // Update the counter text
                 loadNextSong(); // Load the next song recursively
                 checkAllSongsLoaded(totalSongs); // Check if all songs are loaded
-
-                // Hide the counter text after 2.5 seconds
-                // Hide the counter text after 2.5 seconds
-                if (songLoadCounter === totalSongs) {
-                    setTimeout(() => {
-                    if (headerElement.contains(counterText)) {
-                        headerElement.removeChild(counterText);
-                    }
-                }, 2500);
             };
-        }
             audio.onerror = function() {
                 console.log("Failed to load song:", songTitle);
                 currentIndex++;
@@ -276,6 +266,11 @@ function preloadImages() {
 function checkAllSongsLoaded(totalSongs) {
     if (songLoadCounter === totalSongs) {
         populateSongSelector();
+        setTimeout(() => {
+            if (headerElement.contains(counterText)) {
+                headerElement.removeChild(counterText);
+            }
+        }, 2500);
     }
 }
 
