@@ -2,25 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Beatz 2.0!</title>
+    <title>Beatz Testing 2.1!</title>
     <link rel="icon" type="image/x-icon" href="Resources/favicon1.ico">
     <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <canvas id="myCanvas" width="1280" height="720"></canvas>
     <div id="unsupportedMessage"Aye! Thanks for checking out Beatz.io, unfortunately, your device does not support the canvas element, therefore, Beatz.io can not start. (ERR: UNSUPPORTED_DEVICE)></div>
     <h1>Beatz.io</h1>
 
-    <button id="startButton">Start! (Enter)</button>
-    <button id="myYoutube" style="display: none;" onclick="NewTab()">My YouTube!</button>
-    <button id="toggleNoteStyleButton" style="display: none;">Toggle Note Style</button>
-    <button id="previousButton" style="display: none;">Previous Song</button>
-    <button id="restartButton" style="display: none;">Restart Song</button>
-    <button id="nextButton" style="display: none;">Next Song</button>
+    <button id="startButton">Start! <i class="fa-solid fa-play"></i></button>
+    <button id="myYoutube" style="display: none;" onclick="NewTab()"> <i class="fa-brands fa-youtube"></i> </button>
+    <button id="toggleNoteStyleButton" style="display: none;"> <i class="fa-solid fa-arrow-up"></i> <i class="fa-solid fa-circle"></i> </button>
+    <button id="previousButton" style="display: none;"> <i class="fa-solid fa-backward-fast"></i> </button>
+    <button id="restartButton" style="display: none;"> <i class="fa-solid fa-repeat"></i> </button>
+    <button id ="randomizeButton" style="display: none"> <i class="fa-solid fa-shuffle"></i> </button>
+    <button id="nextButton" style="display: none;"> <i class="fa-solid fa-forward-fast"></i> </button>
     <button id="toggleAutoHit" style="display: none;">Toggle Auto Hit</button>
-    <button id ="randomizeButton" style="display: none">Randomize Song</button>
-    <button id="fullscreen" style="display: none;" onclick="toggleFullScreen()">Fullscreen</button>
-    <button id="keybindsButton" style="display: none;">Settings (Beta)</button>
+    <button id="fullscreen" style="display: none;" onclick="toggleFullScreen()"> <i class="fa-solid fa-expand"></i> </button>
+    <button id="keybindsButton" style="display: none;"><i class="fa-solid fa-gear"></i></button>
     
     <h2><select id="songSelector">
         <option>Loading songs...</option>
@@ -30,10 +31,10 @@
     <!-- The Modal -->
     <div id="keybindsModal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <button id="resetKeybindsButton" class="reset-keybinds">&#x21bb;</button>
-                <button id="redoKeybindsButton" class="redo-keybinds">&#x21aa;</button>
-                <button id="undoKeybindsButton" class="undo-keybinds">&#x21a9;</button>
+            <span class="close"><i class="fa-solid fa-xmark"></i></span>
+            <button id="resetKeybindsButton" class="reset-keybinds"><i class="fa-solid fa-rotate"></i></button>
+                <button id="redoKeybindsButton" class="redo-keybinds"><i class="fa-solid fa-rotate-right"></i></button>
+                <button id="undoKeybindsButton" class="undo-keybinds"><i class="fa-solid fa-rotate-left"></i></button>
             <h2>Customize Settings!</h2>
             <form id="keybindsForm">
                 <label for="up">Note Left:</label>
@@ -63,7 +64,7 @@
                 <option value="arrows">Arrows</option>
                 <option value="circles">Circles</option>
                 </select><br><br>
-                <span id="settingsSaved" style="color: white; display: none;">Settings saved!</span>
+                <span id="settingsSaved" style="color: white; display: none;">Settings saved! <i class="fa-solid fa-check"></i></span>
                 <button id="saveSettings" type="button" onclick="saveKeybinds()">Save</button>
             </form>
         </div>
@@ -150,7 +151,7 @@
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
                 canvas.requestFullscreen().catch(err => {
-                    console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                    console.log("Error attempting to enable full-screen mode: ${err.message} (${err.name})");
                 });
                 console.log("Entered Fullscreen")
             } else {
@@ -345,7 +346,6 @@ function saveKeybinds() {
             keybindsHistory.push(JSON.parse(JSON.stringify(keybinds)));
             keybindsIndex++;
 
-        saveMessage.textContent = "Settings saved!";
         saveMessage.style.display = 'block';
     }
     console.log("Saved settings", keybinds);

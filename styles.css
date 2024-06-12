@@ -43,6 +43,22 @@ button:hover {
     transition: box-shadow 0.3s ease;
 }
 
+#keybindsButton i {
+    transition: transform 0.3s ease;
+}
+
+#keybindsButton:hover i {
+    transform: rotate(90deg);
+}
+
+button i {
+    transition: transform 0.3s ease;
+}
+
+button:hover i {
+    transform: scale(1.25);
+}
+
 canvas {
     display: block;
     margin: 0 auto;
@@ -113,7 +129,7 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     border: none;
     padding: 0;
     cursor: pointer;
-    font-size: 28px;
+    font-size: 20px;
     font-weight: bold;
     background: none;
     box-shadow: 0 0px #dfdfdf3a;
@@ -127,7 +143,7 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     border: none;
     padding: 0;
     cursor: pointer;
-    font-size: 28px;
+    font-size: 20px;
     font-weight: bold;
     background: none;
     margin-right: 5px;
@@ -149,7 +165,7 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
 .close {
     color: #ffffff;
     float: right;
-    font-size: 28px;
+    font-size: 24px;
     font-weight: bold;
     transition: color 0.3s ease;
 }
