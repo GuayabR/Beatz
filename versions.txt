@@ -174,3 +174,7 @@ Added 2 new songs (CARNIVAL, HUMBLE.)
 Added Auto Hit to the public version since it is fixed
 
 Fixed default settings not loading properly
+
+Songs now load in order and are not organized randomly
+
+Toggle note style button now changes icon depending on what note style is selected

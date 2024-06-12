@@ -14,7 +14,10 @@
 
     <button id="startButton">Start! <i class="fa-solid fa-play"></i></button>
     <button id="myYoutube" style="display: none;" onclick="NewTab()"> <i class="fa-brands fa-youtube"></i> </button>
-    <button id="toggleNoteStyleButton" style="display: none;"> <i class="fa-solid fa-arrow-up"></i> <i class="fa-solid fa-circle"></i> </button>
+    <button id="toggleNoteStyleButton" style="display: none;">
+        <i class="fa-solid fa-arrow-up" style="display: none;"></i>
+        <i class="fa-solid fa-circle" style="display: none;"></i>
+    </button>
     <button id="previousButton" style="display: none;"> <i class="fa-solid fa-backward-fast"></i> </button>
     <button id="restartButton" style="display: none;"> <i class="fa-solid fa-repeat"></i> </button>
     <button id ="randomizeButton" style="display: none"> <i class="fa-solid fa-shuffle"></i> </button>
@@ -47,7 +50,7 @@
                 <input type="text" id="right" name="right"><br><br>
                 <label for="pause">Pause Game:</label>
                 <input type="text" id="pause" name="pause"><br><br>
-                <label for="autoHit">Toggle Auto Hit</label>
+                <label for="autoHit">Toggle Auto Hit:</label>
                 <input type="text" id="autoHit" name="autoHit"><br><br>
                 <label for="fullscreenInput">Fullscreen:</label>
                 <input type="text" id="fullscreenInput" name="fullscreen"><br><br>
@@ -89,12 +92,24 @@
 
     <script>
         var canvas = document.getElementById('myCanvas');
-        document.addEventListener("DOMContentLoaded", function() {
-            detectAndHandleDevice();
-            loadKeybinds();
-            applyDefaultNoteStyle();
-            updateKeybindsFields();
-        });
+document.addEventListener("DOMContentLoaded", function() {
+    detectAndHandleDevice();
+    loadKeybinds();
+    applyDefaultNoteStyle();
+    updateKeybindsFields();
+    toggleNoteStyleButtonDisplay(); // Add this line to display the toggle button based on the loaded note style
+});
+
+function toggleNoteStyleButtonDisplay() {
+    const toggleNoteStyleButton = document.getElementById('toggleNoteStyleButton');
+    const currentNoteStyle = localStorage.getItem('noteStyle') || 'arrows';
+
+    if (currentNoteStyle === 'arrows') {
+        toggleNoteStyleButton.innerHTML = '<i class="fa-solid fa-arrow-up" style="display: none;"></i> <i class="fa-solid fa-circle"></i>';
+    } else {
+        toggleNoteStyleButton.innerHTML = '<i class="fa-solid fa-arrow-up"></i> <i class="fa-solid fa-circle" style="display: none;"></i>';
+    }
+}
 
         document.addEventListener("keydown", keyDownFunction);
         document.addEventListener("keyup", keyUpFunction);
@@ -250,26 +265,33 @@
             }
         }
 
-        const defaultKeybinds = {
-            up: ["w"],
-            left: ["a"],
-            down: ["s"],
-            right: ["d"],
-            pause: ["escape"],
-            autoHit: ["1"],
-            previousInput: ["q"],
-            restartInput: ["r"],
-            nextInput: ["e"],
-            randomize: ["t"],
-            toggleNoteStyleInput: ["c"],
-            fullscreenInput: ["f"],
-        };
+const defaultKeybinds = {
+    up: ["w"],
+    left: ["a"],
+    down: ["s"],
+    right: ["d"],
+    pause: ["escape"],
+    autoHit: ["1"],
+    previous: ["q"],
+    restart: ["r"],
+    next: ["e"],
+    randomize: ["t"],
+    toggleNoteStyle: ["c"],
+    fullscreen: ["f"],
+    defaultNoteStyle: ["arrows"],
+};
 
-        let keybinds = { ...defaultKeybinds };
+let keybinds = { ...defaultKeybinds };
 
 function loadKeybinds() {
     const savedKeybinds = JSON.parse(localStorage.getItem('keybinds'));
-    const savedNoteStyle = localStorage.getItem('noteStyle');
+    const savedNoteStyle = localStorage.getItem('noteStyle') || "arrows";
+
+    const defaultNoteStyleDropdown = document.getElementById('defaultNoteStyle');
+    if (savedNoteStyle) {
+        defaultNoteStyleDropdown.value = savedNoteStyle;
+    }
+
     if (savedKeybinds) {
         keybinds = savedKeybinds;
     }
@@ -279,17 +301,17 @@ function loadKeybinds() {
     document.getElementById('right').value = keybinds.right.join(", ");
     document.getElementById('pause').value = keybinds.pause.join(", ");
     document.getElementById('autoHit').value = keybinds.autoHit.join(", ");
-    document.getElementById('previousInput').value = keybinds.previousInput.join(", ");
-    document.getElementById('restartInput').value = keybinds.restartInput.join(", ");
-    document.getElementById('nextInput').value = keybinds.nextInput.join(", ");
+    document.getElementById('previousInput').value = keybinds.previous.join(", ");
+    document.getElementById('restartInput').value = keybinds.restart.join(", ");
+    document.getElementById('nextInput').value = keybinds.next.join(", ");
     document.getElementById('randomize').value = keybinds.randomize.join(", ");
-    document.getElementById('toggleNoteStyleInput').value = keybinds.toggleNoteStyleInput.join(", ");
-    document.getElementById('fullscreenInput').value = keybinds.fullscreenInput.join(", ");
+    document.getElementById('toggleNoteStyleInput').value = keybinds.toggleNoteStyle.join(", ");
+    document.getElementById('fullscreenInput').value = keybinds.fullscreen.join(", ");
     if (savedNoteStyle) {
         document.getElementById('defaultNoteStyle').value = savedNoteStyle;
     }
     keybindsHistory.push(JSON.parse(JSON.stringify(keybinds)));
-            keybindsIndex++;
+    keybindsIndex++;
     console.log("Loaded settings", keybinds);
 }
 
@@ -307,37 +329,18 @@ function saveKeybinds() {
         randomize: document.getElementById('randomize').value.split(", "),
         toggleNoteStyle: document.getElementById('toggleNoteStyleInput').value.split(", "),
         fullscreen: document.getElementById('fullscreenInput').value.split(", "),
+        noteStyle: document.getElementById('defaultNoteStyle').value
     };
-    const newNoteStyle = document.getElementById('defaultNoteStyle').value;
+    
+    const savedNoteStyle = localStorage.getItem('noteStyle');
 
-        const currentNoteStyle = localStorage.getItem('noteStyle') || 'arrows';
-        if (newNoteStyle !== currentNoteStyle) {
-            // Change note style immediately
-            if (newNoteStyle === 'circles') {
-                switchImage(noteLeftIMG, 'NoteLeftHQ.png', 'CircleLeftHQ.png');
-                switchImage(noteDownIMG, 'NoteDownHQ.png', 'CircleDownHQ.png');
-                switchImage(noteUpIMG, 'NoteUpHQ.png', 'CircleUpHQ.png');
-                switchImage(noteRightIMG, 'NoteRightHQ.png', 'CircleRightHQ.png');
-                switchImage(noteLeftPressIMG, 'NoteLeftPressHQ.png', 'CircleLeftPressHQ.png');
-                switchImage(noteDownPressIMG, 'NoteDownPressHQ.png', 'CircleDownPressHQ.png');
-                switchImage(noteUpPressIMG, 'NoteUpPressHQ.png', 'CircleUpPressHQ.png');
-                switchImage(noteRightPressIMG, 'NoteRightPressHQ.png', 'CircleRightPressHQ.png');
-                console.log("Changed textures to circles");
-            } else {
-                switchImage(noteLeftIMG, 'CircleLeftHQ.png', 'NoteLeftHQ.png');
-                switchImage(noteDownIMG, 'CircleDownHQ.png', 'NoteDownHQ.png');
-                switchImage(noteUpIMG, 'CircleUpHQ.png', 'NoteUpHQ.png');
-                switchImage(noteRightIMG, 'CircleRightHQ.png', 'NoteRightHQ.png');
-                switchImage(noteLeftPressIMG, 'CircleLeftPressHQ.png', 'NoteLeftPressHQ.png');
-                switchImage(noteDownPressIMG, 'CircleDownPressHQ.png', 'NoteDownPressHQ.png');
-                switchImage(noteUpPressIMG, 'CircleUpPressHQ.png', 'NoteUpPressHQ.png');
-                switchImage(noteRightPressIMG, 'CircleRightPressHQ.png', 'NoteRightPressHQ.png');
-                console.log("Changed textures to arrows");
-            }
-            draw();
-        }
+    // Compare new note style with saved note style
+    if (newKeybinds.noteStyle !== savedNoteStyle) {
+        // Change note style immediately
+        applyDefaultNoteStyle(); // Call the function to apply the note style
+    }
 
-    if (JSON.stringify(newKeybinds) === JSON.stringify(keybinds) && newNoteStyle === localStorage.getItem('noteStyle')) {
+    if (JSON.stringify(newKeybinds) === JSON.stringify(keybinds) && savedNoteStyle === newKeybinds.noteStyle) {
         // No changes have been made
         saveMessage.textContent = "No changes have been made.";
         saveMessage.style.display = 'block';
@@ -345,11 +348,11 @@ function saveKeybinds() {
         // Changes have been made
         keybinds = newKeybinds;
         localStorage.setItem('keybinds', JSON.stringify(keybinds));
-        localStorage.setItem('noteStyle', newNoteStyle);  // Save the new note style
+        localStorage.setItem('noteStyle', newKeybinds.noteStyle); // Save the new note style
 
         keybindsHistory = keybindsHistory.slice(0, keybindsIndex + 1);
-            keybindsHistory.push(JSON.parse(JSON.stringify(keybinds)));
-            keybindsIndex++;
+        keybindsHistory.push(JSON.parse(JSON.stringify(keybinds)));
+        keybindsIndex++;
 
         saveMessage.style.display = 'block';
     }
@@ -357,65 +360,102 @@ function saveKeybinds() {
 }
 
 function applyDefaultNoteStyle() {
-        const noteStyle = localStorage.getItem('noteStyle') || 'arrows';
-        if (noteStyle === 'circles') {
-            switchImage(noteLeftIMG, 'NoteLeftHQ.png', 'CircleLeftHQ.png');
-            switchImage(noteDownIMG, 'NoteDownHQ.png', 'CircleDownHQ.png');
-            switchImage(noteUpIMG, 'NoteUpHQ.png', 'CircleUpHQ.png');
-            switchImage(noteRightIMG, 'NoteRightHQ.png', 'CircleRightHQ.png');
-            switchImage(noteLeftPressIMG, 'NoteLeftPressHQ.png', 'CircleLeftPressHQ.png');
-            switchImage(noteDownPressIMG, 'NoteDownPressHQ.png', 'CircleDownPressHQ.png');
-            switchImage(noteUpPressIMG, 'NoteUpPressHQ.png', 'CircleUpPressHQ.png');
-            switchImage(noteRightPressIMG, 'NoteRightPressHQ.png', 'CircleRightPressHQ.png');
-            console.log("Applied circle textures");
-        } else {
-            switchImage(noteLeftIMG, 'CircleLeftHQ.png', 'NoteLeftHQ.png');
-            switchImage(noteDownIMG, 'CircleDownHQ.png', 'NoteDownHQ.png');
-            switchImage(noteUpIMG, 'CircleUpHQ.png', 'NoteUpHQ.png');
-            switchImage(noteRightIMG, 'CircleRightHQ.png', 'NoteRightHQ.png');
-            switchImage(noteLeftPressIMG, 'CircleLeftPressHQ.png', 'NoteLeftPressHQ.png');
-            switchImage(noteDownPressIMG, 'CircleDownPressHQ.png', 'NoteDownPressHQ.png');
-            switchImage(noteUpPressIMG, 'CircleUpPressHQ.png', 'NoteUpPressHQ.png');
-            switchImage(noteRightPressIMG, 'CircleRightPressHQ.png', 'NoteRightPressHQ.png');
-            console.log("Applied arrow textures");
-        }
+    const noteStyle = localStorage.getItem('noteStyle') || 'arrows';
+    if (noteStyle === 'circles') {
+        switchToCircles();
+        console.log("Applied circle textures");
+    } else {
+        switchToArrows();
+        console.log("Applied arrow textures");
     }
+}
 
-        function resetKeybinds() {
-            for (let key in defaultKeybinds) {
-                const inputField = document.getElementById(key);
-            if (inputField) {
-                inputField.value = defaultKeybinds[key].join(', ');
-                }
-            }
-            const defaultNoteStyleField = document.getElementById('defaultNoteStyle');
-            if (defaultNoteStyleField) {
-                defaultNoteStyleField.value = 'arrows';
-            }
-            saveKeybinds();
-            loadKeybinds();
-        }
+function toggleNoteStyle() {
+    const noteStyleButton = document.getElementById('toggleNoteStyleButton');
+    const currentNoteStyle = localStorage.getItem('noteStyle') || 'arrows';
 
-        function undoKeybinds() {
-            if (keybindsIndex > 0) {
-                keybindsIndex--;
-                keybinds = { ...keybindsHistory[keybindsIndex] };
-                updateKeybindsFields();
-            }
-        }
+    console.log("Current note style:", currentNoteStyle);
 
-        function redoKeybinds() {
-            if (keybindsIndex < keybindsHistory.length - 1) {
-                keybindsIndex++;
-                keybinds = { ...keybindsHistory[keybindsIndex] };
-                updateKeybindsFields();
-            }
-        }
+    if (currentNoteStyle === 'arrows') {
+        // Switch to circles
+        console.log("Switching to circles...");
+        switchToCircles();
+        localStorage.setItem('noteStyle', 'circles');
+        noteStyleButton.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+        console.log("Note style switched to circles.");
+    } else {
+        // Switch to arrows
+        console.log("Switching to arrows...");
+        switchToArrows();
+        localStorage.setItem('noteStyle', 'arrows');
+        noteStyleButton.innerHTML = '<i class="fa-solid fa-circle"></i>';
+        console.log("Note style switched to arrows.");
+    }
+}
 
-        function updateKeybindsFields() {
-            document.getElementById('up').value = keybinds.up.join(", ");
-            document.getElementById('left').value = keybinds.left.join(", ");
-        }
+// Function to switch all note images to circles
+function switchToCircles() {
+    noteLeftIMG.src = "Resources/CircleLeftHQ.png";
+    noteDownIMG.src = "Resources/CircleDownHQ.png";
+    noteUpIMG.src = "Resources/CircleUpHQ.png";
+    noteRightIMG.src = "Resources/CircleRightHQ.png";
+    noteLeftPressIMG.src = "Resources/CircleLeftPressHQ.png";
+    noteDownPressIMG.src = "Resources/CircleDownPressHQ.png";
+    noteUpPressIMG.src = "Resources/CircleUpPressHQ.png";
+    noteRightPressIMG.src = "Resources/CircleRightPressHQ.png";
+    console.log("Changed textures to circles");
+}
+
+// Function to switch all note images to arrows
+function switchToArrows() {
+    noteLeftIMG.src = "Resources/NoteLeftHQ.png";
+    noteDownIMG.src = "Resources/NoteDownHQ.png";
+    noteUpIMG.src = "Resources/NoteUpHQ.png";
+    noteRightIMG.src = "Resources/NoteRightHQ.png";
+    noteLeftPressIMG.src = "Resources/NoteLeftPressHQ.png";
+    noteDownPressIMG.src = "Resources/NoteDownPressHQ.png";
+    noteUpPressIMG.src = "Resources/NoteUpPressHQ.png";
+    noteRightPressIMG.src = "Resources/NoteRightPressHQ.png";
+    console.log("Changed textures to arrows");
+}
+
+function resetKeybinds() {
+    keybinds = { ...defaultKeybinds, noteStyle: 'arrows' };
+    updateKeybindsFields();
+    saveKeybinds();
+}
+
+function undoKeybinds() {
+    if (keybindsIndex > 0) {
+        keybindsIndex--;
+        keybinds = { ...keybindsHistory[keybindsIndex] };
+        updateKeybindsFields();
+    }
+}
+
+function redoKeybinds() {
+    if (keybindsIndex < keybindsHistory.length - 1) {
+        keybindsIndex++;
+        keybinds = { ...keybindsHistory[keybindsIndex] };
+        updateKeybindsFields();
+    }
+}
+
+function updateKeybindsFields() {
+    document.getElementById('up').value = keybinds.up.join(", ");
+    document.getElementById('left').value = keybinds.left.join(", ");
+    document.getElementById('down').value = keybinds.down.join(", ");
+    document.getElementById('right').value = keybinds.right.join(", ");
+    document.getElementById('pause').value = keybinds.pause.join(", ");
+    document.getElementById('autoHit').value = keybinds.autoHit.join(", ");
+    document.getElementById('previousInput').value = keybinds.previous.join(", ");
+    document.getElementById('restartInput').value = keybinds.restart.join(", ");
+    document.getElementById('nextInput').value = keybinds.next.join(", ");
+    document.getElementById('randomize').value = keybinds.randomize.join(", ");
+    document.getElementById('toggleNoteStyleInput').value = keybinds.toggleNoteStyle.join(", ");
+    document.getElementById('fullscreenInput').value = keybinds.fullscreen.join(", ");
+    document.getElementById('defaultNoteStyle').value = keybinds.noteStyle;
+}
 
         function keyDownFunction(keyboardEvent) {
             var keyDown = keyboardEvent.key.toLowerCase();
@@ -451,33 +491,25 @@ function applyDefaultNoteStyle() {
             if (keybinds.autoHit.includes(keyDown)) {
                 toggleAutoHit();
             }
-            if (keybinds.fullscreenInput.includes(keyDown)) {
+            if (keybinds.fullscreen.includes(keyDown)) {
                 toggleFullScreen();
             }
-            if (keybinds.previousInput.includes(keyDown)) {
+            if (keybinds.previous.includes(keyDown)) {
                 previousSong();
             }
-            if (keybinds.restartInput.includes(keyDown)) {
+            if (keybinds.restart.includes(keyDown)) {
                 restartSong();
             }
-            if (keybinds.nextInput.includes(keyDown)) {
+            if (keybinds.next.includes(keyDown)) {
                 nextSong();
             }
             if (keybinds.randomize.includes(keyDown)) {
                 randomizeSong();
             }
-            if (keybinds.toggleNoteStyleInput.includes(keyDown)) {
-                switchImage(noteLeftIMG, 'NoteLeftHQ.png', 'CircleLeftHQ.png');
-                switchImage(noteDownIMG, 'NoteDownHQ.png', 'CircleDownHQ.png');
-                switchImage(noteUpIMG, 'NoteUpHQ.png', 'CircleUpHQ.png');
-                switchImage(noteRightIMG, 'NoteRightHQ.png', 'CircleRightHQ.png');
-                switchImage(noteLeftPressIMG, 'NoteLeftPressHQ.png', 'CircleLeftPressHQ.png');
-                switchImage(noteDownPressIMG, 'NoteDownPressHQ.png', 'CircleDownPressHQ.png');
-                switchImage(noteUpPressIMG, 'NoteUpPressHQ.png', 'CircleUpPressHQ.png');
-                switchImage(noteRightPressIMG, 'NoteRightPressHQ.png', 'CircleRightPressHQ.png');
-                console.log("Changed textures");
-                draw();
+            if (keybinds.toggleNoteStyle.includes(keyDown)) {
+                toggleNoteStyle();
             }
+
         }
 
         function keyUpFunction(keyboardEvent) {

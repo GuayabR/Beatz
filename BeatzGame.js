@@ -2,12 +2,12 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 2.2 GitHub
+ * Version: 2.2 Github
  **/
 
 // CONSTANTS
 
-const VERSION = "2.2 (GitHub Port)";
+const VERSION = "2.2! (GitHub)";
 console.log("Version: "+ VERSION)
 
 const WIDTH = 1280;
@@ -103,22 +103,34 @@ function preloadSongs() {
         "Resources/Songs/testingsong.mp3",
     ];
 
-    songPaths.forEach(songPath => {
-        const songTitle = getSongTitle(songPath);
-        const audio = new Audio();
-        audio.src = songPath;
-        audio.oncanplaythrough = function() {
-            songList.push(songPath);
-            console.log("Loaded song:", songTitle);
-            songLoadCounter++;
-            checkAllSongsLoaded(songPaths.length);
-        };
-        audio.onerror = function() {
-            console.log("Failed to load song:", songTitle);
-            songLoadCounter++;
-            checkAllSongsLoaded(songPaths.length);
-        };
-    });
+    let currentIndex = 0;
+
+    function loadNextSong() {
+        if (currentIndex < songPaths.length) {
+            const songPath = songPaths[currentIndex];
+            const songTitle = getSongTitle(songPath);
+            const audio = new Audio();
+            audio.src = songPath;
+            audio.oncanplaythrough = function() {
+                songList.push(songPath);
+                console.log("Loaded song:", songTitle);
+                songLoadCounter++; // Increment songLoadCounter when a song is successfully loaded
+                currentIndex++;
+                loadNextSong(); // Load the next song recursively
+                checkAllSongsLoaded(songPaths.length); // Check if all songs are loaded
+            };
+            audio.onerror = function() {
+                console.log("Failed to load song:", songTitle);
+                currentIndex++;
+                songLoadCounter++;
+                loadNextSong(); // Load the next song recursively
+                checkAllSongsLoaded(songPaths.length); // Check if all songs are loaded
+            };
+        }
+    }
+
+    // Start loading the first song
+    loadNextSong();
 }
 
 // Song configurations
@@ -165,7 +177,7 @@ const songConfigs = {
     "Resources/Songs/Godzilla.mp3": { BPM: 166, noteSpeed: 13 },
     "Resources/Songs/Houdini.mp3": { BPM: 141, noteSpeed: 12 },
     "Resources/Songs/Runaway.mp3": { BPM: 85, noteSpeed: 10 },
-    "Resources/Songs/Rush E.mp3": { BPM: 164, noteSpeed: 99 },
+    "Resources/Songs/Rush E.mp3": { BPM: 500, noteSpeed: 20 },
     "Resources/Songs/Vamp Anthem.mp3": { BPM: 164, noteSpeed: 12 },
     "Resources/Songs/CARNIVAL.mp3": { BPM: 148, noteSpeed: 12 },
     "Resources/Songs/HUMBLE..mp3": { BPM: 150, noteSpeed: 13 },
@@ -660,34 +672,9 @@ function switchImage(img, src1, src2) {
     }
 }
 
-// Add event listener to the button to switch images and redraw canvas
 document.getElementById('toggleNoteStyleButton').addEventListener('click', function() {
-    switchImage(noteLeftIMG, 'NoteLeftHQ.png', 'CircleLeftHQ.png');
-    switchImage(noteDownIMG, 'NoteDownHQ.png', 'CircleDownHQ.png');
-    switchImage(noteUpIMG, 'NoteUpHQ.png', 'CircleUpHQ.png');
-    switchImage(noteRightIMG, 'NoteRightHQ.png', 'CircleRightHQ.png');
-    switchImage(noteLeftPressIMG, 'NoteLeftPressHQ.png', 'CircleLeftPressHQ.png');
-    switchImage(noteDownPressIMG, 'NoteDownPressHQ.png', 'CircleDownPressHQ.png');
-    switchImage(noteUpPressIMG, 'NoteUpPressHQ.png', 'CircleUpPressHQ.png');
-    switchImage(noteRightPressIMG, 'NoteRightPressHQ.png', 'CircleRightPressHQ.png');
-    draw(); // Redraw the canvas with the new images
-    console.log("Changed textures")
+    toggleNoteStyle();
 });
-
-// Drawing function to redraw the canvas
-function draw() {
-    var canvas = document.getElementById('myCanvas');
-    var ctx = canvas.getContext('2d');
-
-    // Clear the canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Example drawing logic (you need to replace this with your actual drawing logic)
-    ctx.drawImage(noteLeftIMG, 50, 50);
-    ctx.drawImage(noteDownIMG, 150, 50);
-    ctx.drawImage(noteUpIMG, 250, 50);
-    ctx.drawImage(noteRightIMG, 350, 50);
-}
 
 // Ensure images are loaded before drawing
 window.onload = function() {
