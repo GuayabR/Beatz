@@ -47,8 +47,6 @@
                 <input type="text" id="right" name="right"><br><br>
                 <label for="pause">Pause Game:</label>
                 <input type="text" id="pause" name="pause"><br><br>
-                <label for="autoHit">Toggle Auto Hit</label>
-                <input type="text" id="autoHit" name="autoHit"><br><br>
                 <label for="fullscreenInput">Fullscreen:</label>
                 <input type="text" id="fullscreenInput" name="fullscreen"><br><br>
                 <label for="previousInput">Previous Song:</label>
@@ -256,7 +254,6 @@
             down: ["s"],
             right: ["d"],
             pause: ["escape"],
-            autoHit: ["1"],
             previousInput: ["q"],
             restartInput: ["r"],
             nextInput: ["e"],
@@ -278,7 +275,6 @@ function loadKeybinds() {
     document.getElementById('down').value = keybinds.down.join(", ");
     document.getElementById('right').value = keybinds.right.join(", ");
     document.getElementById('pause').value = keybinds.pause.join(", ");
-    document.getElementById('autoHit').value = keybinds.autoHit.join(", ");
     document.getElementById('previousInput').value = keybinds.previous.join(", ");
     document.getElementById('restartInput').value = keybinds.restart.join(", ");
     document.getElementById('nextInput').value = keybinds.next.join(", ");
@@ -300,7 +296,6 @@ function saveKeybinds() {
         down: document.getElementById('down').value.split(", "),
         right: document.getElementById('right').value.split(", "),
         pause: document.getElementById('pause').value.split(", "),
-        autoHit: document.getElementById('autoHit').value.split(", "),
         previous: document.getElementById('previousInput').value.split(", "),
         restart: document.getElementById('restartInput').value.split(", "),
         next: document.getElementById('nextInput').value.split(", "),
@@ -447,9 +442,6 @@ function applyDefaultNoteStyle() {
             }
             if (keybinds.pause.includes(keyDown)) {
                 togglePause();
-            }
-            if (keybinds.autoHit.includes(keyDown)) {
-                toggleAutoHit();
             }
             if (keybinds.fullscreen.includes(keyDown)) {
                 toggleFullScreen();
