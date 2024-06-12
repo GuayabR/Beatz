@@ -2,12 +2,12 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 2.1 GitHub
+ * Version: 2.2 GitHub
  **/
 
 // CONSTANTS
 
-const VERSION = "2.1 (GitHub Port)";
+const VERSION = "2.2 (GitHub Port)";
 console.log("Version: "+ VERSION)
 
 const WIDTH = 1280;
@@ -1053,10 +1053,26 @@ function autoHitPerfectNotes() {
         for (let i = 0; i < noteYPositions[type].length; i++) {
             let yPos = noteYPositions[type][i];
             if (yPos >= 540) {
-                checkHit(type);
+                triggerHit(type);
                 break;
             }
         }
+    }
+}
+
+function triggerHit(type) {
+    if (type === "up") {
+        upPressed = true;
+        setTimeout(() => { upPressed = false; }, 100);
+    } else if (type === "down") {
+        downPressed = true;
+        setTimeout(() => { downPressed = false; }, 100);
+    } else if (type === "left") {
+        leftPressed = true;
+        setTimeout(() => { leftPressed = false; }, 100);
+    } else if (type === "right") {
+        rightPressed = true;
+        setTimeout(() => { rightPressed = false; }, 100);
     }
 }
 

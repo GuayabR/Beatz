@@ -163,10 +163,12 @@ NEW SONG SELECTOR DROPDOWN!
 BIGGEST UPDATE YET!
 //
 
-2.1! (12/06/2024)
+2.1! / 2.2! (12/06/2024)
 
 Changed the buttons from text to icons
 
 Styled all buttons with transformations and transitions
 
 Added 2 new songs (CARNIVAL, HUMBLE.)
+/
+Added Auto Hit to the public version since it is fixed
