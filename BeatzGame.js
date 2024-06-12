@@ -7,7 +7,7 @@
 
 // CONSTANTS
 
-const VERSION = "2.2! (GitHub)";
+const VERSION = "2.2 (GitHub Port)";
 console.log("Version: "+ VERSION)
 
 const WIDTH = 1280;
@@ -104,9 +104,16 @@ function preloadSongs() {
     ];
 
     let currentIndex = 0;
+    const totalSongs = songPaths.length;
+
+    // Add counter text beside the header
+    const counterText = document.createElement('span');
+    counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
+    const headerElement = document.querySelector('h1');
+    headerElement.appendChild(counterText);
 
     function loadNextSong() {
-        if (currentIndex < songPaths.length) {
+        if (currentIndex < totalSongs) {
             const songPath = songPaths[currentIndex];
             const songTitle = getSongTitle(songPath);
             const audio = new Audio();
@@ -116,15 +123,24 @@ function preloadSongs() {
                 console.log("Loaded song:", songTitle);
                 songLoadCounter++; // Increment songLoadCounter when a song is successfully loaded
                 currentIndex++;
+                counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`; // Update the counter text
                 loadNextSong(); // Load the next song recursively
-                checkAllSongsLoaded(songPaths.length); // Check if all songs are loaded
+                checkAllSongsLoaded(totalSongs); // Check if all songs are loaded
+
+                // Hide the counter text after 2.5 seconds
+                setTimeout(() => {
+                    if (headerElement.contains(counterText)) {
+                        headerElement.removeChild(counterText);
+                    }
+                }, 2500);
             };
             audio.onerror = function() {
                 console.log("Failed to load song:", songTitle);
                 currentIndex++;
                 songLoadCounter++;
+                counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`; // Update the counter text
                 loadNextSong(); // Load the next song recursively
-                checkAllSongsLoaded(songPaths.length); // Check if all songs are loaded
+                checkAllSongsLoaded(totalSongs); // Check if all songs are loaded
             };
         }
     }
@@ -260,7 +276,7 @@ function checkAllSongsLoaded(totalSongs) {
     }
 }
 
-// Populate song selector
+// Function to populate song selector
 function populateSongSelector() {
     const songSelector = document.getElementById('songSelector');
     songSelector.innerHTML = ''; // Clear loading message
@@ -271,11 +287,14 @@ function populateSongSelector() {
     defaultOption.text = "Select song.";
     songSelector.appendChild(defaultOption);
 
+    let songsLoadedCounter = 0; // Counter for loaded songs
+
     songList.forEach((songPath, index) => {
         const option = document.createElement('option');
         option.value = index; // Assign the index as the option value
         option.text = getSongTitle(songPath);
         songSelector.appendChild(option);
+        songsLoadedCounter++; // Increment the counter for each loaded song
     });
 
     songSelector.addEventListener('change', function() {
@@ -310,6 +329,7 @@ function populateSongSelector() {
         songSelector.blur();
     });
 }
+
 
 let currentSongVolume = localStorage.getItem('songVolume') ? parseFloat(localStorage.getItem('songVolume')) : 0.5; // Load volume or default to 50%
 
