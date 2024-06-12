@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 2.2
+ * Version: 2.2 GitHub
  **/
 
 // CONSTANTS
@@ -100,6 +100,7 @@ function preloadSongs() {
         "Resources/Songs/Vamp Anthem.mp3",
         "Resources/Songs/CARNIVAL.mp3",
         "Resources/Songs/HUMBLE..mp3",
+        "Resources/Songs/Stop Breathing.mp3",
         "Resources/Songs/testingsong.mp3",
     ];
 
@@ -202,6 +203,7 @@ const songConfigs = {
     "Resources/Songs/Vamp Anthem.mp3": { BPM: 164, noteSpeed: 12 },
     "Resources/Songs/CARNIVAL.mp3": { BPM: 148, noteSpeed: 12 },
     "Resources/Songs/HUMBLE..mp3": { BPM: 150, noteSpeed: 13 },
+    "Resources/Songs/Stop Breathing.mp3": { BPM: 155, noteSpeed: 12 },
 };
 
 console.log("Song Configurations loaded.");
@@ -258,6 +260,7 @@ function preloadImages() {
         "Resources/Covers/Vamp Anthem.jpg",
         "Resources/Covers/CARNIVAL.jpg",
         "Resources/Covers/HUMBLE..jpg",
+        "Resources/Covers/Stop Breathing.jpg",
     ];
 
     for (const coverPath of albumCovers) {
@@ -574,6 +577,7 @@ function getArtist(songSrc) {
     "Vamp Anthem": "Playboi Carti",
     "CARNIVAL": "Kanye West",
     "HUMBLE.": "Kendrick Lamar",
+    "Stop Breathing": "Playboi Carti",
         // Add artist for other songs here
     };
     let songTitle = getSongTitle(songSrc);

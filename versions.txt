@@ -169,7 +169,7 @@ Changed the buttons from text to icons
 
 Styled all buttons with transformations and transitions
 
-Added 2 new songs (CARNIVAL, HUMBLE.)
+Added 2 new songs (CARNIVAL, HUMBLE, Stop Breathing)
 /
 Added Auto Hit to the public version since it is fixed
 
