@@ -180,3 +180,5 @@ Songs now load in order and are not organized randomly
 Toggle note style button now changes icon depending on what note style is selected
 
 Added a song loaded counter
+
+Now only half of all of the songs need to be loaded before you can play the game.
