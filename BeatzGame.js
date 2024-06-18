@@ -143,10 +143,11 @@ function preloadSongs() {
 
     // Function to check if all songs are loaded
     function checkAllSongsLoaded(totalSongs) {
-        if (songLoadCounter === totalSongs) {
-            populateSongSelector();
+        if (songLoadCounter === Math.floor(totalSongs / 2)) {
             const startButton = document.getElementById('startButton');
             startButton.style.display = 'inline';
+        } else if (songLoadCounter === totalSongs) {
+            populateSongSelector();
             setTimeout(() => {
                 if (headerElement.contains(counterText)) {
                     headerElement.removeChild(counterText);
