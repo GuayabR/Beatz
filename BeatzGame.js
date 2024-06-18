@@ -2,12 +2,12 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 2.2 GitHub
+ * Version: 2.3
  **/
 
 // CONSTANTS
 
-const VERSION = "2.2 (GitHub Port)";
+const VERSION = "2.3 (GitHub Port)";
 console.log("Version: "+ VERSION)
 
 const WIDTH = 1280;
@@ -101,6 +101,8 @@ function preloadSongs() {
         "Resources/Songs/CARNIVAL.mp3",
         "Resources/Songs/HUMBLE..mp3",
         "Resources/Songs/Stop Breathing.mp3",
+        "Resources/Songs/CHEGOU 3.mp3",
+        "Resources/Songs/KRUSH ALERT.mp3",
         "Resources/Songs/testingsong.mp3",
     ];
 
@@ -141,12 +143,10 @@ function preloadSongs() {
 
     // Function to check if all songs are loaded
     function checkAllSongsLoaded(totalSongs) {
-        if (songLoadCounter === Math.floor(totalSongs / 2)) {
+        if (songLoadCounter === totalSongs) {
+            populateSongSelector();
             const startButton = document.getElementById('startButton');
             startButton.style.display = 'inline';
-        }
-        if (songLoadCounter == totalSongs) {
-            populateSongSelector();
             setTimeout(() => {
                 if (headerElement.contains(counterText)) {
                     headerElement.removeChild(counterText);
@@ -208,6 +208,8 @@ const songConfigs = {
     "Resources/Songs/CARNIVAL.mp3": { BPM: 148, noteSpeed: 12 },
     "Resources/Songs/HUMBLE..mp3": { BPM: 150, noteSpeed: 13 },
     "Resources/Songs/Stop Breathing.mp3": { BPM: 155, noteSpeed: 12 },
+    "Resources/Songs/CHEGOU 3.mp3": { BPM: 130, noteSpeed: 13.2 },
+    "Resources/Songs/KRUSH ALERT.mp3": { BPM: 117, noteSpeed: 12.5 },
 };
 
 console.log("Song Configurations loaded.");
@@ -265,6 +267,8 @@ function preloadImages() {
         "Resources/Covers/CARNIVAL.jpg",
         "Resources/Covers/HUMBLE..jpg",
         "Resources/Covers/Stop Breathing.jpg",
+        "Resources/Covers/CHEGOU 3.jpg",
+        "Resources/Covers/KRUSH ALERT.jpg",
     ];
 
     for (const coverPath of albumCovers) {
@@ -523,6 +527,12 @@ function displaySongInfo() {
 }
 
 function getSongTitle(songPath) {
+    // Ensure songPath is a string
+    if (typeof songPath !== "string") {
+        console.error("songPath is not a string:", songPath);
+        return "Unknown Title";
+    }
+
     // Extract the file name without the directory path
     let fileName = songPath.split('/').pop();
     // Remove the file extension
@@ -582,6 +592,8 @@ function getArtist(songSrc) {
     "CARNIVAL": "Kanye West",
     "HUMBLE.": "Kendrick Lamar",
     "Stop Breathing": "Playboi Carti",
+    "CHEGOU 3": "shonci",
+    "KRUSH ALERT": "shonci",
         // Add artist for other songs here
     };
     let songTitle = getSongTitle(songSrc);
@@ -802,8 +814,9 @@ function gameLoop() {
 function startGame(index) {
     console.log("Starting game with index:", index);
 
-    const startButton = document.getElementById('startButton');
-    startButton.style.display = 'none';
+    // Reset autoHitDisableSaving and autoHit when starting a new game
+    autoHitDisableSaving = false;
+    autoHitEnabled = false;
 
     if (currentSong) {
         currentSong.pause();
@@ -823,60 +836,159 @@ function startGame(index) {
         currentSongPath = songList[currentSongIndex];
     }
 
-        // Load and play the song, initialize game variables, etc.
-        currentSong = new Audio(currentSongPath);
-        currentSong.volume = currentSongVolume;
+    // Load and play the song, initialize game variables, etc.
+    currentSong = new Audio(currentSongPath);
+    currentSong.volume = currentSongVolume;
 
-        // Wait for the song to load
-        currentSong.onloadedmetadata = function() {
-            console.log("Loaded selected songs metadata")
-            // Set BPM, MILLISECONDS_PER_BEAT, and noteSpeed based on the song
-            var config = songConfigs[currentSongPath] || { BPM: 120, noteSpeed: 8 }; // Default values if song is not in the config
-            BPM = config.BPM;
-            MILLISECONDS_PER_BEAT = 60000 / BPM; // Calculate MILLISECONDS_PER_BEAT based on the BPM
-            noteSpeed = config.noteSpeed;
+    // Wait for the song to load
+    currentSong.onloadedmetadata = function() {
+        console.log("Loaded selected songs metadata")
+        // Set BPM, MILLISECONDS_PER_BEAT, and noteSpeed based on the song
+        var config = songConfigs[currentSongPath] || { BPM: 120, noteSpeed: 8 }; // Default values if song is not in the config
+        BPM = config.BPM;
+        MILLISECONDS_PER_BEAT = 60000 / BPM; // Calculate MILLISECONDS_PER_BEAT based on the BPM
+        noteSpeed = config.noteSpeed;
 
-            // Generate random notes based on the new BPM
-            notes = generateRandomNotes(currentSong.duration * 1000);
-            noteYPositions = {
-                left: [],
-                down: [],
-                up: [],
-                right: []
-            };
-
-            currentSong.play();
-            songStartTime = Date.now();
-            songStarted = true;
-            gamePaused = false;
-            gameStarted = true;
-
-            // Clear any existing interval before setting a new one
-            if (timer) {
-                clearInterval(timer);
-            }
-            timer = setInterval(updateCanvas, 16);
-
-            console.log("Song selected: " + getSongTitle(currentSong.src), "by: " + getArtist(currentSong.src));
-            console.log("Current song path:", currentSongPath);
-            console.log("Beatz.io loaded and playing. Have Fun!");
-            
-            // Add event listener for the song end event
-            currentSong.addEventListener('ended', onSongEnd);
-
-            // Show the necessary buttons when the game starts
-            document.getElementById("nextButton").style.display = "inline";
-            document.getElementById("restartButton").style.display = "inline";
-            document.getElementById("previousButton").style.display = "inline";
-            document.getElementById("randomizeButton").style.display = "inline";
-            document.getElementById("toggleNoteStyleButton").style.display = "inline";
-            document.getElementById("fullscreen").style.display = "inline";
-            document.getElementById("keybindsButton").style.display = "inline";
-            document.getElementById("myYoutube").style.display = "inline";
-            document.getElementById("songVol").style.display = "inline";
-
-            document.getElementById("startButton").style.display = "none";
+        // Generate random notes based on the new BPM
+        notes = generateRandomNotes(currentSong.duration * 1000);
+        noteYPositions = {
+            left: [],
+            down: [],
+            up: [],
+            right: []
         };
+
+        currentSong.play();
+        songStartTime = Date.now();
+        songStarted = true;
+        gamePaused = false;
+        gameStarted = true;
+
+        // Clear any existing interval before setting a new one
+        if (timer) {
+            clearInterval(timer);
+        }
+        timer = setInterval(updateCanvas, 16);
+
+        console.log("Song selected: " + getSongTitle(currentSong.src), "by: " + getArtist(currentSong.src));
+        console.log("Current song path:", currentSongPath);
+        console.log("Beatz.io loaded and playing. Have Fun!");
+
+        // Add event listener for the song end event
+        currentSong.addEventListener('ended', onSongEnd);
+
+        // Show the necessary buttons when the game starts
+        document.getElementById("nextButton").style.display = "inline";
+        document.getElementById("restartButton").style.display = "inline";
+        document.getElementById("previousButton").style.display = "inline";
+        document.getElementById("randomizeButton").style.display = "inline";
+        document.getElementById("toggleNoteStyleButton").style.display = "inline";
+        document.getElementById("fullscreen").style.display = "inline";
+        document.getElementById("keybindsButton").style.display = "inline";
+        document.getElementById("myYoutube").style.display = "inline";
+        document.getElementById("songVol").style.display = "inline";
+
+        document.getElementById("startButton").style.display = "none";
+    };
+}
+
+// Score logic
+
+let autoHitDisableSaving = false; // Flag to disable score saving if autoHit has been enabled
+
+// Function to save the score to localStorage
+function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
+    console.log("saveScore called with:", { song, points, perfects, misses, earlylates, maxstreak });
+
+    if (autoHitDisableSaving) {
+        console.log(`Score for ${song} not saved because Auto Hit was enabled during gameplay.`);
+        return; // Exit early, do not save score
+    }
+
+    const score = {
+        points: points,
+        perfects: perfects,
+        misses: misses,
+        earlylates: earlylates,
+        maxstreak: maxstreak
+    };
+
+    try {
+        // Retrieve existing score from localStorage
+        const existingScoreStr = localStorage.getItem(song);
+        if (existingScoreStr) {
+            const existingScore = JSON.parse(existingScoreStr);
+            // Check if new score's points are higher than existing score's points
+            if (points > existingScore.points) {
+                // Update localStorage with new score
+                localStorage.setItem(song, JSON.stringify(score));
+                console.log(`New best score for ${song} saved to localStorage.`);
+            } else {
+                console.log(`Score for ${song} is not higher than existing best score, score has not been saved.`);
+            }
+        } else {
+            // If no existing score, save the new score
+            localStorage.setItem(song, JSON.stringify(score));
+            console.log(`Score for ${song} saved to localStorage as the first best score.`);
+        }
+    } catch (e) {
+        console.error(`Error saving score for ${song} to localStorage:`, e);
+    }
+}
+
+// Function to get the best score from localStorage
+function getBestScore(song) {
+    const score = localStorage.getItem(song);
+    if (score) {
+        console.log(`Best score for ${song} retrieved from localStorage.`);
+        return JSON.parse(score);
+    }
+    return null;
+}
+
+// Function to display the best score
+function displayBestScore(song) {
+    const bestScore = getBestScore(song);
+    if (bestScore) {
+        ctx.fillStyle = "white";
+        ctx.font = "25px Arial";
+        ctx.textAlign = "right";
+        ctx.fillText(`Best Score: ${bestScore.points}`, WIDTH - 10, HEIGHT - 10);
+        ctx.font = "15px Arial";
+        ctx.fillText(`Most Perfects: ${bestScore.perfects}`, WIDTH - 10, HEIGHT - 35);
+        ctx.fillText(`Most Early/Late Hits: ${bestScore.earlylates}`, WIDTH - 10, HEIGHT - 55);
+        ctx.fillText(`Most Misses: ${bestScore.misses}`, WIDTH - 10, HEIGHT - 75);
+        ctx.fillText(`Max Streak: ${bestScore.maxstreak}`, WIDTH - 10, HEIGHT - 95);
+    } else {
+        console.log(`No best score for ${song} found in localStorage.`);
+    }
+}
+
+// Logic to activate when the song ends
+function onSongEnd() {
+    let songName = getSongTitle(currentSong.src);
+
+    try {
+        saveScore(songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
+    } catch (error) {
+        console.error("Error in onSongEnd:", error);
+    }
+
+    console.log("Song ended. Calling saveScore...");
+    console.log("Parameters:", songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
+
+
+    drawEndScreen();
+}
+
+// Function to check and display the best score if the selected song has one
+function checkAndDisplayBestScore() {
+    if (currentSong && currentSong.src) {
+        const songName = getSongTitle(currentSong.src);
+        displayBestScore(songName);
+    } else {
+        console.log("currentSong or currentSong.src is not defined.");
+    }
 }
 
 // Endscreen
@@ -906,12 +1018,7 @@ function drawEndScreen() {
     ctx.fillText("Misses: " + totalMisses, 100, HEIGHT / 2 + 120);
 }
 
-// Function to call when the song ends
-function onSongEnd() {
-    drawEndScreen();
-}
-
-// Song controllers
+console.log("Functions saveScore, getBestScore, displayBestScore, and onSongEnd loaded.");
 
 console.log("Ready to start Beatz.")
 
@@ -1057,6 +1164,9 @@ function updateCanvas() {
         // Check for missed notes
         checkMisses();
 
+        // Call the function to check and display the best score for the current song
+        checkAndDisplayBestScore();
+
         // Display "Auto Hit: On" text if auto-hit is enabled
         if (autoHitEnabled) {
             drawAutoHitText();
@@ -1070,6 +1180,10 @@ function autoHitPerfectNotes() {
             let yPos = noteYPositions[type][i];
             if (yPos >= 540) {
                 triggerHit(type);
+                points = -1;
+                perfectHits = -1;
+                totalMisses = 0;
+                earlyLateHits = 0;
                 break;
             }
         }
@@ -1191,14 +1305,20 @@ function checkMisses() {
 function toggleAutoHit() {
     autoHitEnabled = !autoHitEnabled;
     console.log("Auto Hit", autoHitEnabled ? "Enabled" : "Disabled");
+    
+    // Set autoHitDisableSaving to true when autoHit is enabled
+    if (autoHitEnabled) {
+        autoHitDisableSaving = true;
+        console.log("SCORE SAVING DISABLED.");
+    }
 }
 
 function drawAutoHitText() {
     ctx.fillStyle = "white";
-    ctx.font = "20px Arial";
+    ctx.font = "18px Arial";
     ctx.textAlign = "left";
-    ctx.fillText("Auto Hit: On", 10, HEIGHT - 10);
-    // ctx.fillText("Points are disabled", 10, HEIGHT - 10);
+    ctx.fillText("Auto Hit: On", 10, HEIGHT - 34);
+    ctx.fillText("Points are disabled for this playthrough.", 10, HEIGHT - 10);
 }
 
 function generateRandomNotes(duration) {

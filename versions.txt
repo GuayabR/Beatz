@@ -182,3 +182,13 @@ Toggle note style button now changes icon depending on what note style is select
 Added a song loaded counter
 
 Now only half of all of the songs need to be loaded before you can play the game.
+//
+
+2.3! (18/06/2024)
+
+Added points saving!
+
+For each song you complete, the score is gonna save to your localStorage, and display on the bottom right corner! 
+(score only save if the total points count is higher than the score saved before.)
+
+Added 2 new songs! CHEGOU 3 by shonci and KRUSH ALERT also by shonci!
