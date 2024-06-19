@@ -192,3 +192,8 @@ For each song you complete, the score is gonna save to your localStorage, and di
 (score only save if the total points count is higher than the score saved before.)
 
 Added 2 new songs! CHEGOU 3 by shonci and KRUSH ALERT also by shonci!
+//
+
+2.3.1! (19/06/2024)
+
+Best score now doesnt spam your console.

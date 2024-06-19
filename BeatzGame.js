@@ -2,12 +2,12 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 2.3
+ * Version: 2.3.1 git
  **/
 
 // CONSTANTS
 
-const VERSION = "2.3 (GitHub Port)";
+const VERSION = "2.3.1 (GitHub Port)";
 console.log("Version: "+ VERSION)
 
 const WIDTH = 1280;
@@ -819,6 +819,9 @@ function startGame(index) {
     autoHitDisableSaving = false;
     autoHitEnabled = false;
 
+    // Reset the logging flag for best scores
+    bestScoreLogged = {};
+
     if (currentSong) {
         currentSong.pause();
         currentSong.currentTime = 0; // Reset the song to the beginning
@@ -938,11 +941,22 @@ function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
 }
 
 // Function to get the best score from localStorage
+
+let bestScoreLogged = {};
+
 function getBestScore(song) {
     const score = localStorage.getItem(song);
     if (score) {
-        console.log(`Best score for ${song} retrieved from localStorage.`);
+        if (!bestScoreLogged[song]) {
+            console.log(`Best score for ${song} retrieved from localStorage.`);
+            bestScoreLogged[song] = true; // Set the flag to true for this song
+        }
         return JSON.parse(score);
+    } else {
+        if (!bestScoreLogged[song]) {
+            console.log(`No best score for ${song} found in localStorage.`);
+            bestScoreLogged[song] = true; // Set the flag to true for this song
+        }
     }
     return null;
 }
@@ -960,8 +974,6 @@ function displayBestScore(song) {
         ctx.fillText(`Most Early/Late Hits: ${bestScore.earlylates}`, WIDTH - 10, HEIGHT - 55);
         ctx.fillText(`Most Misses: ${bestScore.misses}`, WIDTH - 10, HEIGHT - 75);
         ctx.fillText(`Max Streak: ${bestScore.maxstreak}`, WIDTH - 10, HEIGHT - 95);
-    } else {
-        console.log(`No best score for ${song} found in localStorage.`);
     }
 }
 
@@ -975,7 +987,7 @@ function onSongEnd() {
         console.error("Error in onSongEnd:", error);
     }
 
-    console.log("Song ended. Calling saveScore...");
+    console.log("Song ended. Saving score...");
     console.log("Parameters:", songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
 
 
