@@ -2,12 +2,12 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 2.3.1 git
+ * Version: 2.3 git
  **/
 
 // CONSTANTS
 
-const VERSION = "2.3.1 (GitHub Port)";
+const VERSION = "2.3 (GitHub Port)";
 console.log("Version: "+ VERSION)
 
 const WIDTH = 1280;
@@ -103,6 +103,13 @@ function preloadSongs() {
         "Resources/Songs/Stop Breathing.mp3",
         "Resources/Songs/CHEGOU 3.mp3",
         "Resources/Songs/KRUSH ALERT.mp3",
+        "Resources/Songs/CUTE DEPRESSED.mp3",
+        "Resources/Songs/MOVE YO BODY.mp3",
+        "Resources/Songs/SLAY!.mp3",
+        "Resources/Songs/ROCK THAT SHIT!.mp3",
+        "Resources/Songs/BAIXO.mp3",
+        "Resources/Songs/LOOK DON'T TOUCH.mp3",
+        "Resources/Songs/YOU'RE TOO SLOW.mp3",
         "Resources/Songs/testingsong.mp3",
     ];
 
@@ -211,6 +218,14 @@ const songConfigs = {
     "Resources/Songs/Stop Breathing.mp3": { BPM: 155, noteSpeed: 12 },
     "Resources/Songs/CHEGOU 3.mp3": { BPM: 130, noteSpeed: 13.2 },
     "Resources/Songs/KRUSH ALERT.mp3": { BPM: 117, noteSpeed: 12.5 },
+    "Resources/Songs/CUTE DEPRESSED.mp3": { BPM: 228, noteSpeed: 16 }, // original bpm is 152 but increased it to match the beat
+    "Resources/Songs/MOVE YO BODY.mp3": { BPM: 133, noteSpeed: 12 },
+    "Resources/Songs/SLAY!.mp3": { BPM: 130, noteSpeed: 13 },
+    "Resources/Songs/ROCK THAT SHIT!.mp3": { BPM: 125, noteSpeed: 12 },
+    "Resources/Songs/BAIXO.mp3": { BPM: 133, noteSpeed: 12 },
+    "Resources/Songs/LOOK DON'T TOUCH.mp3": { BPM: 125, noteSpeed: 13 },
+    "Resources/Songs/MOVE YO BODY.mp3": { BPM: 133, noteSpeed: 12 },
+    "Resources/Songs/YOU'RE TOO SLOW.mp3": { BPM: 162, noteSpeed: 13 },
 };
 
 console.log("Song Configurations loaded.");
@@ -270,6 +285,13 @@ function preloadImages() {
         "Resources/Covers/Stop Breathing.jpg",
         "Resources/Covers/CHEGOU 3.jpg",
         "Resources/Covers/KRUSH ALERT.jpg",
+        "Resources/Covers/CUTE DEPRESSED.jpg",
+        "Resources/Covers/MOVE YO BODY.jpg",
+        "Resources/Covers/SLAY!.jpg",
+        "Resources/Covers/ROCK THAT SHIT!.jpg",
+        "Resources/Covers/BAIXO.jpg",
+        "Resources/Covers/LOOK DON'T TOUCH.jpg",
+        "Resources/Covers/YOU'RE TOO SLOW.jpg",
     ];
 
     for (const coverPath of albumCovers) {
@@ -595,6 +617,13 @@ function getArtist(songSrc) {
     "Stop Breathing": "Playboi Carti",
     "CHEGOU 3": "shonci",
     "KRUSH ALERT": "shonci",
+    "BAIXO": "xxanteria",
+    "MOVE YO BODY": "Bryansanon",
+    "SLAY!": "Eternxlkz",
+    "ROCK THAT SHIT!": "asteria",
+    "CUTE DEPRESSED": "Dyan Dxddy",
+    "LOOK DON'T TOUCH": "Odetari",
+    "YOU'RE TOO SLOW": "Odetari",
         // Add artist for other songs here
     };
     let songTitle = getSongTitle(songSrc);
