@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Beatz 2.3!</title>
+    <title>Beatz 3.0!</title>
     <link rel="icon" type="image/x-icon" href="Resources/favicon.png">
     <link rel="stylesheet" type="text/css" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,6 +24,7 @@
     <button id="nextButton" style="display: none;"> <i class="fa-solid fa-forward-fast"></i> </button>
     <button id="toggleAutoHit" style="display: none;">Toggle Auto Hit</button>
     <button id="fullscreen" style="display: none;" onclick="toggleFullScreen()"> <i class="fa-solid fa-expand"></i> </button>
+    <button id="debugButton" style="display: none;"><i class="fa-solid fa-robot"></i></button>
     <button id="keybindsButton" style="display: none;"><i class="fa-solid fa-gear"></i></button>
     
     <h2><select id="songSelector">
@@ -64,6 +65,8 @@
                 <input type="text" id="randomize" name="randomize"><br><br>
                 <label for="toggleNoteStyleInput">Toggle Note Style:</label>
                 <input type="text" id="toggleNoteStyleInput" name="toggleNoteStyle"><br><br>
+                <label for="debugInput">Debug:</label>
+                <input type="text" id="debugInput" name="debug"><br><br>
                 <label for="defaultNoteStyle">Default Note Style:</label>
                 <select id="defaultNoteStyle" name="defaultNoteStyle">
                 <option value="arrows">Arrows</option>
@@ -79,6 +82,20 @@
         <label for="songVolume">Song Volume</label>
         <input type="range" id="songVolume" name="songVolume" min="0" max="100" value="50">
     </div>
+
+
+    <!-- The Leaderboard 
+    <div id="leaderboard">
+        <h3>Leaderboard</h3>
+
+    </div>
+    -->
+
+    <div id="loginRedirects">
+        <button onclick="window.open('AccountForms/loginform.html', '_blank')">Login!</button>
+    </div>
+
+    <script src="ScoreLogic.js"></script>
 
 
     <h2>Background image from: <a href="https://github.com/Uproxide/Texture-Workshop/commit/457788213d900a980f559ae8f241febad3322bdd#diff-1dbd3c28454ab3b1596af576394661ba03597f51326dbbff288c6b8ccc353041">Uproxide's "Texture Workshop"</a></h2>
@@ -273,6 +290,7 @@ const defaultKeybinds = {
     randomize: ["t"],
     toggleNoteStyle: ["c"],
     fullscreen: ["f"],
+    debug: ["control"],
     defaultNoteStyle: ["arrows"],
 };
 
@@ -302,6 +320,7 @@ function loadKeybinds() {
     document.getElementById('randomize').value = keybinds.randomize.join(", ");
     document.getElementById('toggleNoteStyleInput').value = keybinds.toggleNoteStyle.join(", ");
     document.getElementById('fullscreenInput').value = keybinds.fullscreen.join(", ");
+    document.getElementById('debugInput').value = keybinds.debug.join(", ");
     if (savedNoteStyle) {
         document.getElementById('defaultNoteStyle').value = savedNoteStyle;
     }
@@ -324,6 +343,7 @@ function saveKeybinds() {
         randomize: document.getElementById('randomize').value.split(", "),
         toggleNoteStyle: document.getElementById('toggleNoteStyleInput').value.split(", "),
         fullscreen: document.getElementById('fullscreenInput').value.split(", "),
+        debug: document.getElementById('debugInput').value.split(", "),
         noteStyle: document.getElementById('defaultNoteStyle').value
     };
     
@@ -449,6 +469,7 @@ function updateKeybindsFields() {
     document.getElementById('randomize').value = keybinds.randomize.join(", ");
     document.getElementById('toggleNoteStyleInput').value = keybinds.toggleNoteStyle.join(", ");
     document.getElementById('fullscreenInput').value = keybinds.fullscreen.join(", ");
+    document.getElementById('debugInput').value = keybinds.debug.join(", ");
     document.getElementById('defaultNoteStyle').value = keybinds.noteStyle;
 }
 
@@ -504,6 +525,9 @@ function updateKeybindsFields() {
             if (keybinds.toggleNoteStyle.includes(keyDown)) {
                 toggleNoteStyle();
             }
+            if (keybinds.debug.includes(keyDown)) {
+                toggleDebugInfo();
+            }
 
         }
 
@@ -524,6 +548,8 @@ function updateKeybindsFields() {
                 rightPressed = false;
             }
         }
+
+
     </script>
     <script src="BeatzGame.js"></script>
 </body>

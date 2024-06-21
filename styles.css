@@ -12,6 +12,10 @@ html {
     align-items: center;
 }
 
+#registerForm, #loginForm {
+    margin: 20px 0;
+}
+
 #startButton {
     padding: 10px 40px;
     font-size: 20px;

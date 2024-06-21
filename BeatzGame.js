@@ -2,12 +2,12 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 2.3 git
+ * Version: 3.0 git
  **/
 
 // CONSTANTS
 
-const VERSION = "2.3 (GitHub Port)";
+const VERSION = "3.0! (GitHub Port)";
 console.log("Version: "+ VERSION)
 
 const WIDTH = 1280;
@@ -81,6 +81,7 @@ function preloadSongs() {
         "Resources/Songs/WTF 2.mp3",
         "Resources/Songs/Somewhere I Belong.mp3",
         "Resources/Songs/Can't Slow Me Down.mp3",
+        "Resources/Songs/LUNCH.mp3",
         "Resources/Songs/Butterfly Effect.mp3",
         "Resources/Songs/SWIM.mp3",
         "Resources/Songs/FE!N.mp3",
@@ -196,6 +197,7 @@ const songConfigs = {
     "Resources/Songs/WTF 2.mp3": { BPM: 93, noteSpeed: 10 },
     "Resources/Songs/MY EYES.mp3": { BPM: 132, noteSpeed: 12 },
     "Resources/Songs/Can't Slow Me Down.mp3": { BPM: 122, noteSpeed: 11 },
+    "Resources/Songs/LUNCH.mp3": { BPM: 125, noteSpeed: 14.6 }, // 
     "Resources/Songs/Butterfly Effect.mp3": { BPM: 141, noteSpeed: 10 },
     "Resources/Songs/SWIM.mp3": { BPM: 120, noteSpeed: 10 },
     "Resources/Songs/You Need Jesus.mp3": { BPM: 110, noteSpeed: 11 },
@@ -263,6 +265,7 @@ function preloadImages() {
         "Resources/Covers/WTF 2.jpg",
         "Resources/Covers/MY EYES.jpg",
         "Resources/Covers/Can't Slow Me Down.jpg",
+        "Resources/Covers/LUNCH.jpg",
         "Resources/Covers/Butterfly Effect.jpg",
         "Resources/Covers/SWIM.jpg",
         "Resources/Covers/You Need Jesus.jpg",
@@ -426,11 +429,6 @@ function nextSong() {
     maxStreak = 0;
     currentStreak = 0;
 
-    // Clear the existing interval
-    if (timer) {
-        clearInterval(timer);
-    }
-
     // Increment currentSongIndex and loop back to 0 if it exceeds the array length
     currentSongIndex = (currentSongIndex + 1) % songList.length;
 
@@ -457,10 +455,6 @@ function restartSong() {
     noteSpeed = 0; // Reset note speed
     maxStreak = 0;
     currentStreak = 0;
-
-    if (timer) {
-        clearInterval(timer);
-    }
     
     console.log("Restarting song from index: " + currentSongIndex);
     startGame(currentSongIndex);
@@ -484,11 +478,6 @@ function previousSong() {
     noteSpeed = 0; // Reset note speed
     maxStreak = 0;
     currentStreak = 0;
-
-    // Clear the existing interval
-    if (timer) {
-        clearInterval(timer);
-    }
 
     // Decrement currentSongIndex and wrap around to the last song if it goes negative
     currentSongIndex = (currentSongIndex - 1 + songList.length) % songList.length;
@@ -595,6 +584,7 @@ function getArtist(songSrc) {
     "Ticking Away": "VALORANT",
     "MY EYES": "Travis Scott",
     "Can't Slow Me Down": "VALORANT",
+    "LUNCH": "Billie Eilish",
 	"Butterfly Effect": "Travis Scott",
 	"SWIM": "Chase Atlantic",
     "You Need Jesus": "BABY GRAVY",
@@ -803,6 +793,7 @@ window.onload = function () {
     document.getElementById("restartButton").addEventListener("click", restartSong);
     document.getElementById("previousButton").addEventListener("click", previousSong);
     document.getElementById("randomizeButton").addEventListener("click", randomizeSong);
+    document.getElementById('debugButton').addEventListener('click', toggleDebugInfo);
 
     document.getElementById('startButton').onclick = function() {
         startGame();
@@ -817,29 +808,25 @@ window.onload = function () {
 
 console.log("Window.onload loaded.")
 
+let canvasUpdating = false;
+
 function togglePause() {
     gamePaused = !gamePaused;
     if (gamePaused) {
         songPausedTime = Date.now();
         currentSong.pause();
+        canvasUpdating = false;
         console.log("Game Paused");
     } else {
         let pauseDuration = Date.now() - songPausedTime;
         songStartTime += pauseDuration;
         currentSong.play();
+        lastTime += pauseDuration; // Adjust lastTime to prevent jump in timeDelta
+        canvasUpdating = true;
+        requestAnimationFrame(updateCanvas);
         console.log("Game Unpaused");
     }
 }
-
-function gameLoop() {
-    updateCanvas();
-    if (!gamePaused) {
-        requestAnimationFrame(gameLoop);
-    }
-}
-
-// Start the game loop
-//gameLoop();
 
 function startGame(index) {
     console.log("Starting game with index:", index);
@@ -897,11 +884,20 @@ function startGame(index) {
         gamePaused = false;
         gameStarted = true;
 
-        // Clear any existing interval before setting a new one
-        if (timer) {
-            clearInterval(timer);
+        // Reset time tracking variables
+        lastTime = 0;
+        timeDelta = 0;
+
+        if (!canvasUpdating) {
+            canvasUpdating = true; // Set the flag to indicate the canvas is being updated
+            requestAnimationFrame(updateCanvas);
         }
-        timer = setInterval(updateCanvas, 16);
+
+        // 60 fps configuration.
+        //if (timer) {
+        //    clearInterval(timer);
+        //}
+        //timer = setInterval(updateCanvas, 16);
 
         console.log("Song selected: " + getSongTitle(currentSong.src), "by: " + getArtist(currentSong.src));
         console.log("Current song path:", currentSongPath);
@@ -920,6 +916,7 @@ function startGame(index) {
         document.getElementById("keybindsButton").style.display = "inline";
         document.getElementById("myYoutube").style.display = "inline";
         document.getElementById("songVol").style.display = "inline";
+        document.getElementById("debugButton").style.display = "inline";
 
         document.getElementById("startButton").style.display = "none";
     };
@@ -973,6 +970,7 @@ function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
 
 let bestScoreLogged = {};
 
+
 function getBestScore(song) {
     const score = localStorage.getItem(song);
     if (score) {
@@ -1019,6 +1017,7 @@ function onSongEnd() {
     console.log("Song ended. Saving score...");
     console.log("Parameters:", songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
 
+    canvasUpdating = false;
 
     drawEndScreen();
 }
@@ -1064,14 +1063,52 @@ console.log("Functions saveScore, getBestScore, displayBestScore, and onSongEnd 
 
 console.log("Ready to start Beatz.")
 
-// startGame();
-
 let gamePaused = false;
 let pausedTextDrawn = false;
 let endScreenDrawn = false;
 
-function updateCanvas() {
+// Initialize variables for time tracking
+let lastTime = 0;
+let timeDelta = 0;
+let lastFrameTime = 0;
+let fps = 0;
+
+let debugInfoVisible = false;
+
+// Function to toggle debug info visibility
+function toggleDebugInfo() {
+    debugInfoVisible = !debugInfoVisible;
+}
+
+function updateDebugInfo(deltaTime, timestamp) {
+    if (debugInfoVisible) {
+        // Calculate FPS
+        let currentFPS = 1000 / deltaTime;
+        fps = currentFPS.toFixed(0);
+
+        ctx.font = '14px Arial';
+        ctx.fillStyle = 'white';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Delta Time: ${deltaTime.toFixed(3)} seconds`, 10, (HEIGHT / 2) + 20);
+        ctx.fillText(`Timestamp: ${timestamp} milliseconds`, 10, HEIGHT / 2);
+        ctx.fillText(`Current FPS: ${fps}`, 10, (HEIGHT / 2) - 20);
+    }
+}
+
+function updateCanvas(timestamp) {
+    if (!lastTime) {
+        lastTime = timestamp;
+    }
+    
+    // Calculate the time difference between frames
+    timeDelta = (timestamp - lastTime) / 1000; // timeDelta in seconds
+    lastTime = timestamp;
+    
     if (gamePaused) {
+        // Calculate the time difference between frames
+        let timeDelta = (timestamp - lastTime) / 1000; // timeDelta in seconds
+        lastTime = timestamp;
+
         if (!pausedTextDrawn) {
             // Draw "Game Paused" text
             ctx.fillStyle = "red";
@@ -1085,7 +1122,6 @@ function updateCanvas() {
     }
     if (currentSong.ended) {
         if (!endScreenDrawn) {
-        // Draw end screen
         drawEndScreen();
         endScreenDrawn = true; // Set the flag to true to indicate that the end screen has been drawn
         }
@@ -1173,7 +1209,7 @@ function updateCanvas() {
         }
 
         // Move and draw moving notes
-        moveNotes();
+        moveNotes(timeDelta);
 
         for (let type in noteYPositions) {
             for (let yPos of noteYPositions[type]) {
@@ -1209,11 +1245,35 @@ function updateCanvas() {
         // Call the function to check and display the best score for the current song
         checkAndDisplayBestScore();
 
+        // Update debug info on the canvas
+        updateDebugInfo(timeDelta, timestamp);
+
         // Display "Auto Hit: On" text if auto-hit is enabled
         if (autoHitEnabled) {
             drawAutoHitText();
         }
     }
+    requestAnimationFrame(updateCanvas)
+}
+
+function updateNotes(timeDelta) {
+    for (let i = 0; i < notes.length; i++) {
+        notes[i].y += noteSpeed * timeDelta * 60; // Multiply by 60 to scale with the base frame rate
+        if (notes[i].y > HEIGHT) {
+            notes.splice(i, 1);
+            i--;
+        }
+    }
+}
+
+function moveNotes(timeDelta) {
+    for (let type in noteYPositions) {
+        for (let i = 0; i < noteYPositions[type].length; i++) {
+            noteYPositions[type][i] += noteSpeed * timeDelta * 60; // Multiply by 60 to scale with the base frame rate
+        }
+        noteYPositions[type] = noteYPositions[type].filter(yPos => yPos <= HEIGHT);
+    }
+    updateNotes(timeDelta);
 }
 
 function autoHitPerfectNotes() {
@@ -1245,15 +1305,6 @@ function triggerHit(type) {
     } else if (type === "right") {
         rightPressed = true;
         setTimeout(() => { rightPressed = false; }, 100);
-    }
-}
-
-function moveNotes() {
-    for (let type in noteYPositions) {
-        for (let i = 0; i < noteYPositions[type].length; i++) {
-            noteYPositions[type][i] += noteSpeed;
-        }
-        noteYPositions[type] = noteYPositions[type].filter(yPos => yPos <= HEIGHT);
     }
 }
 

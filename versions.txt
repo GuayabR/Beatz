@@ -199,3 +199,14 @@ Added 2 new songs! CHEGOU 3 by shonci and KRUSH ALERT also by shonci!
 Best score now doesnt spam your console.
 
 Added 7 more songs (CUTE DEPRESSED, YOU'RE TOO SLOW, LOOK DON'T TOUCH, SLAY!, ROCK THAT SHIT!, BAIXO and MOVE YO BODY)
+//
+
+3.0! (21/06/2024)
+
+BEATZ NOW OFFICIALLY USES DELTA TIME!
+
+Delta time is a method developers use to make their game consistent no matter the framerate.
+
+You can now play beatz on 30, 60, 240, 144, even 1000 FPS and the game will stay consistent AND smooth.
+
+Thanks for playing Beatz!
