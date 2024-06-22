@@ -210,3 +210,14 @@ Delta time is a method developers use to make their game consistent no matter th
 You can now play beatz on 30, 60, 240, 144, even 1000 FPS and the game will stay consistent AND smooth.
 
 Thanks for playing Beatz!
+//
+
+3.0.3.0 (HFPS 3.0! 22/06/2024)
+
+New version template (Release.Version.Subversion.Bugfix | Codename, Public version, Date)
+
+Added 2 new songs (BAND4BAND, Slide da Treme Melódica v2)
+
+Added 9 more debug statements (Version, Current song path and source, Hit sound index, Song start and paused time, Every last hit note type)
+
+Added my email in case any artist wants their song removed from the game.

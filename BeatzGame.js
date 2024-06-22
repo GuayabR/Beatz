@@ -2,12 +2,13 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 3.0 git
+ * Version: 3.0.3.0 git (release.version.subversion.bugfix)
  **/
 
 // CONSTANTS
 
-const VERSION = "3.0! (GitHub Port)";
+const VERSION = "3.0.3.0 (Release.Version.Subversion.Bugfix)";
+const PUBLICVERSION = "3.0! (GitHub Port)";
 console.log("Version: "+ VERSION)
 
 const WIDTH = 1280;
@@ -112,6 +113,7 @@ function preloadSongs() {
         "Resources/Songs/LOOK DON'T TOUCH.mp3",
         "Resources/Songs/YOU'RE TOO SLOW.mp3",
         "Resources/Songs/BAND4BAND.mp3",
+        "Resources/Songs/Slide da Treme Melódica v2.mp3",
         "Resources/Songs/testingsong.mp3",
     ];
 
@@ -230,6 +232,7 @@ const songConfigs = {
     "Resources/Songs/MOVE YO BODY.mp3": { BPM: 133, noteSpeed: 12 },
     "Resources/Songs/YOU'RE TOO SLOW.mp3": { BPM: 162, noteSpeed: 14.5 },
     "Resources/Songs/BAND4BAND.mp3": { BPM: 140, noteSpeed: 14 },
+    "Resources/Songs/Slide da Treme Melódica v2.mp3": { BPM: 235, noteSpeed: 18 }, // original bpm is 157 but increased it to match the beat
 };
 
 console.log("Song Configurations loaded.");
@@ -298,6 +301,7 @@ function preloadImages() {
         "Resources/Covers/LOOK DON'T TOUCH.jpg",
         "Resources/Covers/YOU'RE TOO SLOW.jpg",
         "Resources/Covers/BAND4BAND.jpg",
+        "Resources/Covers/Slide da Treme Melódica v2.jpg",
     ];
 
     for (const coverPath of albumCovers) {
@@ -367,49 +371,6 @@ function populateSongSelector() {
         songSelector.blur();
     });
 }
-
-
-let currentSongVolume = localStorage.getItem('songVolume') ? parseFloat(localStorage.getItem('songVolume')) : 0.5; // Load volume or default to 50%
-
-// Event listeners for volume sliders
-document.getElementById('songVolume').addEventListener('input', function() {
-    currentSongVolume = this.value / 100; // Convert to range 0-1
-    localStorage.setItem('songVolume', currentSongVolume); // Save to localStorage
-    adjustSongVolume(currentSongVolume);
-});
-
-// Function to adjust song volume
-function adjustSongVolume(volume) {
-    if (currentSong) {
-        currentSong.volume = volume;
-    }
-}
-
-// Initialize on DOM content loaded
-document.addEventListener('DOMContentLoaded', function() {
-    const songSelector = document.getElementById('songSelector');
-    const loadingOption = document.createElement('option');
-    loadingOption.value = "";
-    loadingOption.text = "Loading songs...";
-    songSelector.appendChild(loadingOption);
-
-    const songVolumeSlider = document.getElementById('songVolume');
-    songVolumeSlider.value = currentSongVolume * 100;
-    console.log("Loaded saved song volume")
-
-    preloadSongs();
-    preloadImages();
-});
-
-var hitSounds = [];
-
-for (let i = 0; i < MAX_HIT_SOUNDS; i++) {
-    let hitSound = new Audio("Resources/SFX/hitSound.mp3");
-    hitSound.volume = 0.05;
-    hitSounds.push(hitSound);
-}
-
-// Song controllers
 
 let currentSongIndex = 0; // Keep track of the index of the current song
 
@@ -618,7 +579,7 @@ function getArtist(songSrc) {
     "LOOK DON'T TOUCH": "Odetari",
     "YOU'RE TOO SLOW": "Odetari",
     "BAND4BAND": "Central Cee",
-        // Add artist for other songs here
+    "Slide da Treme Melódica v2": "DJ FNK",
     };
     let songTitle = getSongTitle(songSrc);
     return artists[songTitle] || "N/A";
@@ -638,6 +599,46 @@ function getCover(songPath) {
         ctx.fillText("No cover found", WIDTH - 10, 294);
         ctx.fillText("for " + getSongTitle(currentSong.src), WIDTH - 10, 318);
     }
+}
+
+let currentSongVolume = localStorage.getItem('songVolume') ? parseFloat(localStorage.getItem('songVolume')) : 0.5; // Load volume or default to 50%
+
+// Event listeners for volume sliders
+document.getElementById('songVolume').addEventListener('input', function() {
+    currentSongVolume = this.value / 100; // Convert to range 0-1
+    localStorage.setItem('songVolume', currentSongVolume); // Save to localStorage
+    adjustSongVolume(currentSongVolume);
+});
+
+// Function to adjust song volume
+function adjustSongVolume(volume) {
+    if (currentSong) {
+        currentSong.volume = volume;
+    }
+}
+
+// Initialize on DOM content loaded
+document.addEventListener('DOMContentLoaded', function() {
+    const songSelector = document.getElementById('songSelector');
+    const loadingOption = document.createElement('option');
+    loadingOption.value = "";
+    loadingOption.text = "Loading songs...";
+    songSelector.appendChild(loadingOption);
+
+    const songVolumeSlider = document.getElementById('songVolume');
+    songVolumeSlider.value = currentSongVolume * 100;
+    console.log("Loaded saved song volume")
+
+    preloadSongs();
+    preloadImages();
+});
+
+var hitSounds = [];
+
+for (let i = 0; i < MAX_HIT_SOUNDS; i++) {
+    let hitSound = new Audio("Resources/SFX/hitSound.mp3");
+    hitSound.volume = 0.05;
+    hitSounds.push(hitSound);
 }
 
 var autoHitEnabled = false;
@@ -694,6 +695,8 @@ var missText = {
 };
 
 var lastPerfectHitNoteType = null;
+var lastEarlyLateNoteType = null;
+var lastNoteType = null;
 
 console.log("Variables loaded.")
 
@@ -1075,16 +1078,29 @@ function toggleDebugInfo() {
 
 function updateDebugInfo(deltaTime, timestamp) {
     if (debugInfoVisible) {
+        const lineHeight = 20; // Adjust this based on your font size and line spacing
+        const startY = HEIGHT / 2 - 150; // Starting y-coordinate for the first text
+
         // Calculate FPS
         let currentFPS = 1000 / deltaTime;
         fps = currentFPS.toFixed(0);
 
-        ctx.font = '14px Arial';
+        ctx.font = '12px Arial';
         ctx.fillStyle = 'white';
         ctx.textAlign = 'left';
-        ctx.fillText(`Delta Time: ${deltaTime.toFixed(3)} seconds`, 10, (HEIGHT / 2) + 20);
-        ctx.fillText(`Timestamp: ${timestamp} milliseconds`, 10, HEIGHT / 2);
-        ctx.fillText(`Current FPS: ${fps}`, 10, (HEIGHT / 2) - 20);
+        ctx.fillText(`Version: ${VERSION}`, 10, startY);
+        ctx.fillText(`Delta Time: ${deltaTime.toFixed(3)} seconds`, 10, startY + lineHeight);
+        ctx.fillText(`Timestamp: ${timestamp} milliseconds`, 10, startY + 2 * lineHeight);
+        ctx.fillText(`Current FPS: ${fps}`, 10, startY + 3 * lineHeight);
+        ctx.fillText(`Current song path: ${currentSongPath}`, 10, startY + 4 * lineHeight);
+        ctx.fillText(`Current song source:`, 10, startY + 5 * lineHeight);
+        ctx.fillText(`${currentSong.src}`, 10, startY + 6 * lineHeight);
+        ctx.fillText(`Hit sound index: ${currentHitSoundIndex}`, 10, startY + 7 * lineHeight);
+        ctx.fillText(`Song start time: ${songStartTime}`, 10, startY + 8 * lineHeight);
+        ctx.fillText(`Song paused time: ${songPausedTime}`, 10, startY + 9 * lineHeight);
+        ctx.fillText(`Last perfect note type: ${lastPerfectHitNoteType}`, 10, startY + 10 * lineHeight);
+        ctx.fillText(`Last early/late note type: ${lastEarlyLateNoteType}`, 10, startY + 11 * lineHeight);
+        ctx.fillText(`Last note type: ${lastNoteType}`, 10, startY + 12 * lineHeight);
     }
 }
 
@@ -1142,9 +1158,9 @@ function updateCanvas(timestamp) {
     ctx.fillText("Early/Late: " + earlyLateHits, 10, 155);
 
     ctx.fillStyle = "white";
-    ctx.font = "15px Arial";
+    ctx.font = "13px Arial";
     ctx.textAlign = "center";
-    ctx.fillText("" + VERSION, WIDTH / 2, HEIGHT - 6);
+    ctx.fillText(PUBLICVERSION, WIDTH / 2, HEIGHT - 6);
 
     ctx.font = "30px Arial";
     ctx.textAlign = "center";
@@ -1350,6 +1366,7 @@ function checkHit(noteType) {
                 earlyLateHits++;
                 earlyLateText.active = true; // Enable early/late text
                 earlyLateText.timer = 500; // Set timer for early/late text (0.5 seconds)
+                lastEarlyLateNoteType = noteType;
             }
 
             // Update streaks
@@ -1357,6 +1374,8 @@ function checkHit(noteType) {
             if (currentStreak > maxStreak) {
                 maxStreak = currentStreak;
             }
+            
+            lastNoteType = noteType;
 
             noteYPositions[noteType].splice(i, 1);
             let hitSound = hitSounds[currentHitSoundIndex];
