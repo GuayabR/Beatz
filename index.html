@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Beatz 3.0!</title>
+    <title>Beatz Testing 3.0!</title>
     <link rel="icon" type="image/x-icon" href="Resources/favicon.png">
     <link rel="stylesheet" type="text/css" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -83,9 +83,11 @@
         <input type="range" id="songVolume" name="songVolume" min="0" max="100" value="50">
     </div>
 
+    <button id="contactbtn" onclick="email()"><i class="fa-solid fa-envelope"></i> Contact</button>
+
     <h2>Background image from: <a href="https://github.com/Uproxide/Texture-Workshop/commit/457788213d900a980f559ae8f241febad3322bdd#diff-1dbd3c28454ab3b1596af576394661ba03597f51326dbbff288c6b8ccc353041">Uproxide's "Texture Workshop"</a></h2>
     <h2>Notes from: <a href="https://github.com/Simply-Love/Simply-Love-SM5?tab=readme-ov-file">Teejusb's "Simply Love" osu! mania skins</a></h2>
-    <h2><a href="https://www.youtube.com/watch?v=tOZNh8veU_Y">Song list (44 songs)</a></h2>
+    <h3>If you are the artist of any of these songs, contact me through my email if you want them removed.</h3>
 
     <script>
         var canvas = document.getElementById('myCanvas');
@@ -160,6 +162,10 @@ function toggleNoteStyleButtonDisplay() {
 
         function NewTab() {
             window.open("https://www.youtube.com/@GuayabR", "_blank");
+        }
+
+        function email() {
+            window.open("mailto:antonviloriavictorgabriel@gmail.com");
         }
 
         function toggleFullScreen() {

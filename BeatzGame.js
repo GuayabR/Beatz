@@ -111,6 +111,7 @@ function preloadSongs() {
         "Resources/Songs/BAIXO.mp3",
         "Resources/Songs/LOOK DON'T TOUCH.mp3",
         "Resources/Songs/YOU'RE TOO SLOW.mp3",
+        "Resources/Songs/BAND4BAND.mp3",
         "Resources/Songs/testingsong.mp3",
     ];
 
@@ -227,7 +228,8 @@ const songConfigs = {
     "Resources/Songs/BAIXO.mp3": { BPM: 133, noteSpeed: 12 },
     "Resources/Songs/LOOK DON'T TOUCH.mp3": { BPM: 125, noteSpeed: 13 },
     "Resources/Songs/MOVE YO BODY.mp3": { BPM: 133, noteSpeed: 12 },
-    "Resources/Songs/YOU'RE TOO SLOW.mp3": { BPM: 162, noteSpeed: 13 },
+    "Resources/Songs/YOU'RE TOO SLOW.mp3": { BPM: 162, noteSpeed: 14.5 },
+    "Resources/Songs/BAND4BAND.mp3": { BPM: 140, noteSpeed: 14 },
 };
 
 console.log("Song Configurations loaded.");
@@ -295,6 +297,7 @@ function preloadImages() {
         "Resources/Covers/BAIXO.jpg",
         "Resources/Covers/LOOK DON'T TOUCH.jpg",
         "Resources/Covers/YOU'RE TOO SLOW.jpg",
+        "Resources/Covers/BAND4BAND.jpg",
     ];
 
     for (const coverPath of albumCovers) {
@@ -614,6 +617,7 @@ function getArtist(songSrc) {
     "CUTE DEPRESSED": "Dyan Dxddy",
     "LOOK DON'T TOUCH": "Odetari",
     "YOU'RE TOO SLOW": "Odetari",
+    "BAND4BAND": "Central Cee",
         // Add artist for other songs here
     };
     let songTitle = getSongTitle(songSrc);
@@ -774,17 +778,6 @@ function simulateKeyPress(key) {
     // Dispatch the event to simulate the key press
     document.dispatchEvent(event);
 }
-
-// Add event listener for click event on the target element
-//window.addEventListener('click', MouseClick);
-
-// Event handler for click event
-//function MouseClick(event) {
-//}
-
-// Usage:
-//const canvas = document.getElementById('myCanvas');
-//makeCanvasFullscreen(canvas);
 
 window.onload = function () {
     ctx = document.getElementById("myCanvas").getContext("2d");
