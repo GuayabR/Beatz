@@ -117,7 +117,7 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
 }
 
 .modal-content {
-    background-color: #00000075;
+    background-color: #000000a1;
     margin: 8px auto;
     padding: 15px;
     border: 3px solid #ffffff;
@@ -125,6 +125,7 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     position: relative;
     width: 80%;
     color: rgb(255, 255, 255);
+    font-size: 14px;
 }
 
 .keybind-button {
@@ -239,13 +240,13 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     border-radius: 5px; /* Rounded corners */
     padding: 10px; /* Padding inside the input fields */
     box-sizing: border-box; /* Ensure padding and border are included in the width */
-    font-size: 16px; /* Font size */
+    font-size: 14px; /* Font size */
     box-shadow: 0 0 10px rgba(114, 114, 114, 0.719);
     transition: box-shadow 0.3s ease;
 }
 
 #keybindsForm input[type="text"]::placeholder {
-    color: rgba(255, 255, 255, 0.5); /* Semi-transparent white for placeholder text */
+    color: rgb(163, 163, 163); /* Semi-transparent white for placeholder text */
 }
 
 #keybindsForm input[type="text"]:focus {
@@ -269,7 +270,7 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     padding: 10px;
     margin: 1px 0;
     box-sizing: border-box;
-    font-size: 16px;
+    font-size: 14px;
     box-shadow: 0 0 10px rgba(114, 114, 114, 0.719);
     transition: box-shadow 0.3s ease;
 }

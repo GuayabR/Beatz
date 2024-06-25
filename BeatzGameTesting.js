@@ -2,25 +2,28 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 3.0.3.0 test (release.version.subversion.bugfix)
+ * Version: 3.0.5.0 test (release.version.subversion.bugfix)
  **/
 
 // CONSTANTS
 
-const VERSION = "3.0.3.0 (Release.Version.Subversion.Bugfix)";
+const VERSION = "3.0.5.0 (Release.Version.Subversion.Bugfix)";
+
 const PUBLICVERSION = "3.0! (GitHub Port)";
-console.log("Version: "+ VERSION)
 
 const WIDTH = 1280;
+
 const HEIGHT = 720;
 
 const noteWidth = 50;
+
 const noteHeight = 50;
 
 const HIT_Y_RANGE_MIN = 500;
+
 const HIT_Y_RANGE_MAX = 600;
 
-const MIN_NOTE_GAP = 775; // Minimum gap between notes in milliseconds
+const MIN_NOTE_GAP = 775;
 
 const MAX_HIT_SOUNDS = 5;
 
@@ -33,24 +36,204 @@ const noteXPositions = {
     right: WIDTH / 2 + 110,
 };
 
+const loadedImages = {};
+
+const hitSounds = [];
+
+const noteImages = {
+    'Left': noteLeftIMG,
+    'Down': noteDownIMG,
+    'Up': noteUpIMG,
+    'Right': noteRightIMG
+};
+
+const notePressImages = {
+    'Left': noteLeftPressIMG,
+    'Down': noteDownPressIMG,
+    'Up': noteUpPressIMG,
+    'Right': noteRightPressIMG
+};
+
 console.log("Constants loaded.")
 
 // VARIABLES
+
 var ctx;
 
-var timer; // Declare timer in the global scope to keep track of the interval ID
+var timer;
 
 var gameStarted = false;
 
 let currentSong;
+
 let songStarted = false;
+
 let songStartTime;
+
 let songPausedTime;
 
 let currentSongPath;
 
 let songList = [];
+
 let songLoadCounter = 0;
+
+let currentSongIndex = 0;
+
+var autoHitEnabled = false;
+
+var notes = [];
+
+var upPressed = false;
+
+var downPressed = false;
+
+var leftPressed = false;
+
+var rightPressed = false;
+
+var noteSpeed = 10;
+
+var BPM = 0;
+
+var MILLISECONDS_PER_BEAT;
+
+var points = 0;
+
+var totalMisses = 0;
+
+var perfectHits = 0;
+
+var earlyLateHits = 0;
+
+let currentStreak = 0;
+
+let maxStreak = 0;
+
+var noteYPositions = {
+    left: [],
+    down: [],
+    up: [],
+    right: []
+};
+
+var perfectText = {
+    active: false,
+    timer: 0
+};
+
+var earlyLateText = {
+    active: false,
+    timer: 0
+};
+
+var missText = {
+    active: false,
+    timer: 0
+};
+
+var lastPerfectHitNoteType = null;
+var lastEarlyLateNoteType = null;
+var lastNoteType = null;
+
+let canvasUpdating = false;
+
+let autoHitDisableSaving = false; // Flag to disable score saving if autoHit has been enabled
+
+let bestScoreLogged = {};
+
+// Generate random notes for 4 minutes
+var notes = generateRandomNotes(696969);
+
+// Function to switch image source
+function switchImage(img, src1, src2) {
+    if (img.src.endsWith(src1)) {
+        img.src = 'Resources/' + src2;
+    } else {
+        img.src = 'Resources/' + src1;
+    }
+}
+
+document.getElementById('toggleNoteStyleButton').addEventListener('click', function() {
+    toggleNoteStyle();
+});
+
+// Ensure images are loaded before drawing
+window.onload = function() {
+    var images = [
+        noteLeftIMG, noteDownIMG, noteUpIMG, noteRightIMG,
+        noteLeftPressIMG, noteDownPressIMG, noteUpPressIMG, noteRightPressIMG
+    ];
+    
+    var loadedImages = 0;
+    images.forEach(function(image) {
+        image.onload = function() {
+            loadedImages++;
+            if (loadedImages === images.length) {
+                draw();
+            }
+        };
+    });
+};
+
+let currentSongVolume = localStorage.getItem('songVolume') ? parseFloat(localStorage.getItem('songVolume')) : 0.5; // Load volume or default to 50%
+
+// Event listeners for volume sliders
+document.getElementById('songVolume').addEventListener('input', function() {
+    currentSongVolume = this.value / 100; // Convert to range 0-1
+    localStorage.setItem('songVolume', currentSongVolume); // Save to localStorage
+    adjustSongVolume(currentSongVolume);
+});
+
+// Function to adjust song volume
+function adjustSongVolume(volume) {
+    if (currentSong) {
+        currentSong.volume = volume;
+    }
+}
+
+console.log("Variables loaded.")
+
+// TEXTURES
+
+// IMAGES
+var noteLeftIMG = new Image();
+noteLeftIMG.src = "Resources/NoteLeftHQ.png";
+
+var noteDownIMG = new Image();
+noteDownIMG.src = "Resources/NoteDownHQ.png";
+
+var noteUpIMG = new Image();
+noteUpIMG.src = "Resources/NoteUpHQ.png";
+
+var noteRightIMG = new Image();
+noteRightIMG.src = "Resources/NoteRightHQ.png";
+
+var noteLeftPressIMG = new Image();
+noteLeftPressIMG.src = "Resources/NoteLeftPressHQ.png";
+
+var noteDownPressIMG = new Image();
+noteDownPressIMG.src = "Resources/NoteDownPressHQ.png";
+
+var noteUpPressIMG = new Image();
+noteUpPressIMG.src = "Resources/NoteUpPressHQ.png";
+
+var noteRightPressIMG = new Image();
+noteRightPressIMG.src = "Resources/NoteRightPressHQ.png";
+
+var noCover = new Image();
+noCover.src = "Resources/Covers/noCover.png";
+
+var BGbright = new Image();
+BGbright.src = "Resources/Background2.png";
+
+for (let i = 0; i < MAX_HIT_SOUNDS; i++) {
+    let hitSound = new Audio("Resources/SFX/hitSound.mp3");
+    hitSound.volume = 0.05;
+    hitSounds.push(hitSound);
+}
+
+console.log("Textures loaded.")
 
 // Function to preload songs
 function preloadSongs() {
@@ -113,7 +296,11 @@ function preloadSongs() {
         "Resources/Songs/LOOK DON'T TOUCH.mp3",
         "Resources/Songs/YOU'RE TOO SLOW.mp3",
         "Resources/Songs/BAND4BAND.mp3",
+        "Resources/Songs/HIGHEST IN THE ROOM.mp3",
         "Resources/Songs/Slide da Treme Melódica v2.mp3",
+        "Resources/Songs/fantasmas.mp3",
+        "Resources/Songs/BIKE.mp3",
+        "Resources/Songs/ARCANGEL.mp3",
         "Resources/Songs/testingsong.mp3",
     ];
 
@@ -232,13 +419,24 @@ const songConfigs = {
     "Resources/Songs/MOVE YO BODY.mp3": { BPM: 133, noteSpeed: 12 },
     "Resources/Songs/YOU'RE TOO SLOW.mp3": { BPM: 162, noteSpeed: 14.5 },
     "Resources/Songs/BAND4BAND.mp3": { BPM: 140, noteSpeed: 14 },
+    "Resources/Songs/HIGHEST IN THE ROOM.mp3": { BPM: 156, noteSpeed: 0 },
     "Resources/Songs/Slide da Treme Melódica v2.mp3": { BPM: 235, noteSpeed: 18 }, // original bpm is 157 but increased it to match the beat
+    "Resources/Songs/fantasmas.mp3": { BPM: 164, noteSpeed: 10 },
+    "Resources/Songs/BIKE.mp3": { BPM: 105, noteSpeed: 14 },
+    "Resources/Songs/ARCANGEL.mp3": { BPM: 124, noteSpeed: 14 },
+};
+
+const dynamicSpeed = {
+    "Resources/Songs/HIGHEST IN THE ROOM.mp3": [
+        { timestamp: 12.9, noteSpeed: 22.8 },  // 0:12 (starting point)
+        { timestamp: 13.35, noteSpeed: 12 }, // 0:13.35 (starting point 2)
+        { timestamp: 25.9, noteSpeed: 14 },  // 0:26
+        { timestamp: 112.8, noteSpeed: 9 },  // 1:54.8
+    ],
+    // Add more songs and their respective timestamp-speed mappings here
 };
 
 console.log("Song Configurations loaded.");
-
-// Loaded images dictionary
-const loadedImages = {};
 
 // Function to preload images
 function preloadImages() {
@@ -301,7 +499,11 @@ function preloadImages() {
         "Resources/Covers/LOOK DON'T TOUCH.jpg",
         "Resources/Covers/YOU'RE TOO SLOW.jpg",
         "Resources/Covers/BAND4BAND.jpg",
+        "Resources/Covers/HIGHEST IN THE ROOM.jpg",
         "Resources/Covers/Slide da Treme Melódica v2.jpg",
+        "Resources/Covers/fantasmas.jpg",
+        "Resources/Covers/BIKE.jpg",
+        "Resources/Covers/ARCANGEL.jpg",
     ];
 
     for (const coverPath of albumCovers) {
@@ -371,8 +573,6 @@ function populateSongSelector() {
         songSelector.blur();
     });
 }
-
-let currentSongIndex = 0; // Keep track of the index of the current song
 
 function nextSong() {
     if (currentSong) {
@@ -579,7 +779,11 @@ function getArtist(songSrc) {
     "LOOK DON'T TOUCH": "Odetari",
     "YOU'RE TOO SLOW": "Odetari",
     "BAND4BAND": "Central Cee",
+    "HIGHEST IN THE ROOM": "Travis Scott",
     "Slide da Treme Melódica v2": "DJ FNK",
+    "fantasmas": "Humbe",
+    "BIKE": "tanger",
+    "ARCANGEL": "Bizarrap",
     };
     let songTitle = getSongTitle(songSrc);
     return artists[songTitle] || "N/A";
@@ -601,22 +805,6 @@ function getCover(songPath) {
     }
 }
 
-let currentSongVolume = localStorage.getItem('songVolume') ? parseFloat(localStorage.getItem('songVolume')) : 0.5; // Load volume or default to 50%
-
-// Event listeners for volume sliders
-document.getElementById('songVolume').addEventListener('input', function() {
-    currentSongVolume = this.value / 100; // Convert to range 0-1
-    localStorage.setItem('songVolume', currentSongVolume); // Save to localStorage
-    adjustSongVolume(currentSongVolume);
-});
-
-// Function to adjust song volume
-function adjustSongVolume(volume) {
-    if (currentSong) {
-        currentSong.volume = volume;
-    }
-}
-
 // Initialize on DOM content loaded
 document.addEventListener('DOMContentLoaded', function() {
     const songSelector = document.getElementById('songSelector');
@@ -632,146 +820,6 @@ document.addEventListener('DOMContentLoaded', function() {
     preloadSongs();
     preloadImages();
 });
-
-var hitSounds = [];
-
-for (let i = 0; i < MAX_HIT_SOUNDS; i++) {
-    let hitSound = new Audio("Resources/SFX/hitSound.mp3");
-    hitSound.volume = 0.05;
-    hitSounds.push(hitSound);
-}
-
-var autoHitEnabled = false;
-
-// Generate random notes for 4 minutes
-var notes = generateRandomNotes(696969);
-
-var upPressed = false;
-var downPressed = false;
-var leftPressed = false;
-var rightPressed = false;
-
-// Define image objects for each note type
-var noteImages = {
-    'Left': noteLeftIMG,
-    'Down': noteDownIMG,
-    'Up': noteUpIMG,
-    'Right': noteRightIMG
-};
-
-// Define pressed image objects for each note type
-var notePressImages = {
-    'Left': noteLeftPressIMG,
-    'Down': noteDownPressIMG,
-    'Up': noteUpPressIMG,
-    'Right': noteRightPressIMG
-};
-
-var noteSpeed = 10;
-var BPM = 200;
-var MILLISECONDS_PER_BEAT;
-
-var points = 0;
-var totalMisses = 0;
-var perfectHits = 0;
-var earlyLateHits = 0;
-
-let currentStreak = 0;
-let maxStreak = 0;
-
-var perfectText = {
-    active: false,
-    timer: 0
-};
-
-var earlyLateText = {
-    active: false,
-    timer: 0
-};
-
-var missText = {
-    active: false,
-    timer: 0
-};
-
-var lastPerfectHitNoteType = null;
-var lastEarlyLateNoteType = null;
-var lastNoteType = null;
-
-console.log("Variables loaded.")
-
-// IMAGES
-var noteLeftIMG = new Image();
-noteLeftIMG.src = "Resources/NoteLeftHQ.png";
-
-var noteDownIMG = new Image();
-noteDownIMG.src = "Resources/NoteDownHQ.png";
-
-var noteUpIMG = new Image();
-noteUpIMG.src = "Resources/NoteUpHQ.png";
-
-var noteRightIMG = new Image();
-noteRightIMG.src = "Resources/NoteRightHQ.png";
-
-var noteLeftPressIMG = new Image();
-noteLeftPressIMG.src = "Resources/NoteLeftPressHQ.png";
-
-var noteDownPressIMG = new Image();
-noteDownPressIMG.src = "Resources/NoteDownPressHQ.png";
-
-var noteUpPressIMG = new Image();
-noteUpPressIMG.src = "Resources/NoteUpPressHQ.png";
-
-var noteRightPressIMG = new Image();
-noteRightPressIMG.src = "Resources/NoteRightPressHQ.png";
-
-var noCover = new Image();
-noCover.src = "Resources/Covers/noCover.png";
-
-// Function to switch image source
-function switchImage(img, src1, src2) {
-    if (img.src.endsWith(src1)) {
-        img.src = 'Resources/' + src2;
-    } else {
-        img.src = 'Resources/' + src1;
-    }
-}
-
-document.getElementById('toggleNoteStyleButton').addEventListener('click', function() {
-    toggleNoteStyle();
-});
-
-// Ensure images are loaded before drawing
-window.onload = function() {
-    var images = [
-        noteLeftIMG, noteDownIMG, noteUpIMG, noteRightIMG,
-        noteLeftPressIMG, noteDownPressIMG, noteUpPressIMG, noteRightPressIMG
-    ];
-    
-    var loadedImages = 0;
-    images.forEach(function(image) {
-        image.onload = function() {
-            loadedImages++;
-            if (loadedImages === images.length) {
-                draw();
-            }
-        };
-    });
-};
-
-// BGs
-var BGbright = new Image();
-BGbright.src = "Resources/Background2.png";
-
-console.log("Textures loaded.")
-
-// Note positions
-var noteYPositions = {
-    left: [],
-    down: [],
-    up: [],
-    right: []
-};
 
 // Function to simulate key press
 function simulateKeyPress(key) {
@@ -803,8 +851,6 @@ window.onload = function () {
 };
 
 console.log("Window.onload loaded.")
-
-let canvasUpdating = false;
 
 function togglePause() {
     gamePaused = !gamePaused;
@@ -842,30 +888,24 @@ function startGame(index) {
     if (typeof index === 'undefined') {
         var randomSong = pickRandomSong();
         console.log("Randomly selected song:", randomSong);
-        // If no index is provided, call pickRandomSong
         currentSongPath = randomSong;
-        // Find the index of the selected song in the songList array
         currentSongIndex = songList.indexOf(currentSongPath);
     } else {
-        // Game start logic using the provided index
         currentSongIndex = index;
         currentSongPath = songList[currentSongIndex];
     }
 
-    // Load and play the song, initialize game variables, etc.
     currentSong = new Audio(currentSongPath);
     currentSong.volume = currentSongVolume;
 
-    // Wait for the song to load
     currentSong.onloadedmetadata = function() {
-        console.log("Loaded selected songs metadata")
-        // Set BPM, MILLISECONDS_PER_BEAT, and noteSpeed based on the song
-        var config = songConfigs[currentSongPath] || { BPM: 120, noteSpeed: 8 }; // Default values if song is not in the config
+        console.log("Loaded selected song's metadata");
+
+        var config = songConfigs[currentSongPath] || { BPM: 120, noteSpeed: 10 }; // Default values if song is not in the config
         BPM = config.BPM;
         MILLISECONDS_PER_BEAT = 60000 / BPM; // Calculate MILLISECONDS_PER_BEAT based on the BPM
         noteSpeed = config.noteSpeed;
 
-        // Generate random notes based on the new BPM
         notes = generateRandomNotes(currentSong.duration * 1000);
         noteYPositions = {
             left: [],
@@ -874,7 +914,31 @@ function startGame(index) {
             right: []
         };
 
-        currentSong.play();
+        const songTitle = getSongTitle(currentSongPath);
+        const songConfig = dynamicSpeed[currentSongPath];
+
+        if (songConfig) {
+            console.log(`Dynamic speed configuration found for "${songTitle}"`);
+            let currentConfigIndex = 0;
+
+            const speedUpdater = setInterval(() => {
+                if (currentSong && songConfig && currentConfigIndex < songConfig.length) {
+                    const currentTime = currentSong.currentTime;
+                    const nextConfig = songConfig[currentConfigIndex];
+                    if (currentTime >= nextConfig.timestamp) {
+                        noteSpeed = nextConfig.noteSpeed;
+                        console.log(`Updated note speed to: ${noteSpeed} at timestamp: ${nextConfig.timestamp}`);
+                        currentConfigIndex++;
+                    }
+                } else {
+                    clearInterval(speedUpdater);
+                }
+            }, 1);
+        } else {
+            console.log(`No dynamic speed configuration for "${songTitle}"`);
+        }
+
+        currentSong.play(); // Start playing the song immediately
         songStartTime = Date.now();
         songStarted = true;
         gamePaused = false;
@@ -889,20 +953,12 @@ function startGame(index) {
             requestAnimationFrame(updateCanvas);
         }
 
-        // 60 fps configuration.
-        //if (timer) {
-        //    clearInterval(timer);
-        //}
-        //timer = setInterval(updateCanvas, 16);
-
         console.log("Song selected: " + getSongTitle(currentSong.src), "by: " + getArtist(currentSong.src));
         console.log("Current song path:", currentSongPath);
         console.log("Beatz.io loaded and playing. Have Fun!");
 
-        // Add event listener for the song end event
         currentSong.addEventListener('ended', onSongEnd);
 
-        // Show the necessary buttons when the game starts
         document.getElementById("nextButton").style.display = "inline";
         document.getElementById("restartButton").style.display = "inline";
         document.getElementById("previousButton").style.display = "inline";
@@ -920,15 +976,13 @@ function startGame(index) {
 
 // Score logic
 
-let autoHitDisableSaving = false; // Flag to disable score saving if autoHit has been enabled
-
 // Function to save the score to localStorage
 function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
     console.log("saveScore called with:", { song, points, perfects, misses, earlylates, maxstreak });
 
     if (autoHitDisableSaving) {
-        console.log(`Score for ${song} not saved because Auto Hit was enabled during gameplay.`);
-        return; // Exit early, do not save score
+        console.log(`Score for ${song} not saved because Auto Hit was enabled during gameplay. Don't cheat!`);
+        return;
     }
 
     const score = {
@@ -948,14 +1002,16 @@ function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
             if (points > existingScore.points) {
                 // Update localStorage with new score
                 localStorage.setItem(song, JSON.stringify(score));
-                console.log(`New best score for ${song} saved to localStorage.`);
+                console.log(`New best score for ${song} saved to localStorage. Even better than before! Nice!`);
+            } else if (maxstreak === 0) {
+                console.log(`You went AFK for the entire ${song} duration, score has not been saved.`);
             } else {
                 console.log(`Score for ${song} is not higher than existing best score, score has not been saved.`);
             }
         } else {
             // If no existing score, save the new score
             localStorage.setItem(song, JSON.stringify(score));
-            console.log(`Score for ${song} saved to localStorage as the first best score.`);
+            console.log(`Score for ${song} saved to localStorage as the first best score. Nice!`);
         }
     } catch (e) {
         console.error(`Error saving score for ${song} to localStorage:`, e);
@@ -963,10 +1019,6 @@ function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
 }
 
 // Function to get the best score from localStorage
-
-let bestScoreLogged = {};
-
-
 function getBestScore(song) {
     const score = localStorage.getItem(song);
     if (score) {
@@ -998,24 +1050,6 @@ function displayBestScore(song) {
         ctx.fillText(`Most Misses: ${bestScore.misses}`, WIDTH - 10, HEIGHT - 75);
         ctx.fillText(`Max Streak: ${bestScore.maxstreak}`, WIDTH - 10, HEIGHT - 95);
     }
-}
-
-// Logic to activate when the song ends
-function onSongEnd() {
-    let songName = getSongTitle(currentSong.src);
-
-    try {
-        saveScore(songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
-    } catch (error) {
-        console.error("Error in onSongEnd:", error);
-    }
-
-    console.log("Song ended. Saving score...");
-    console.log("Parameters:", songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
-
-    canvasUpdating = false;
-
-    drawEndScreen();
 }
 
 // Function to check and display the best score if the selected song has one
@@ -1080,6 +1114,10 @@ function updateDebugInfo(deltaTime, timestamp) {
     if (debugInfoVisible) {
         const lineHeight = 20; // Adjust this based on your font size and line spacing
         const startY = HEIGHT / 2 - 150; // Starting y-coordinate for the first text
+        const left = parseFloat(noteYPositions.left);
+        const up = parseFloat(noteYPositions.up);
+        const down = parseFloat(noteYPositions.down);
+        const right = parseFloat(noteYPositions.right);
 
         // Calculate FPS
         let currentFPS = 1000 / deltaTime;
@@ -1091,7 +1129,7 @@ function updateDebugInfo(deltaTime, timestamp) {
         ctx.fillText(`Version: ${VERSION}`, 10, startY);
         ctx.fillText(`Delta Time: ${deltaTime.toFixed(3)} seconds`, 10, startY + lineHeight);
         ctx.fillText(`Timestamp: ${timestamp} milliseconds`, 10, startY + 2 * lineHeight);
-        ctx.fillText(`Current FPS: ${fps}`, 10, startY + 3 * lineHeight);
+        ctx.fillText(`Current FPS: ${fps.toString().slice(0, 3)}`, 10, startY + 3 * lineHeight);
         ctx.fillText(`Current song path: ${currentSongPath}`, 10, startY + 4 * lineHeight);
         ctx.fillText(`Current song source:`, 10, startY + 5 * lineHeight);
         ctx.fillText(`${currentSong.src}`, 10, startY + 6 * lineHeight);
@@ -1101,6 +1139,10 @@ function updateDebugInfo(deltaTime, timestamp) {
         ctx.fillText(`Last perfect note type: ${lastPerfectHitNoteType}`, 10, startY + 10 * lineHeight);
         ctx.fillText(`Last early/late note type: ${lastEarlyLateNoteType}`, 10, startY + 11 * lineHeight);
         ctx.fillText(`Last note type: ${lastNoteType}`, 10, startY + 12 * lineHeight);
+        ctx.fillText(`Auto hit disabled saving? ${autoHitDisableSaving}`, 10, startY + 13 * lineHeight);
+            
+        
+            ctx.fillText(`Note Y positions: ${left.toFixed(1)} | ${up.toFixed(1)} | ${down.toFixed(1)} | ${right.toFixed(1)}`, 10, startY + 14 * lineHeight);
     }
 }
 
