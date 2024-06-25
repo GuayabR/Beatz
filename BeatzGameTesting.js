@@ -2,12 +2,12 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 3.0.5.0 test (release.version.subversion.bugfix)
+ * Version: 3.0.6.1 test (release.version.subversion.bugfix)
  **/
 
 // CONSTANTS
 
-const VERSION = "3.0.5.0 (Release.Version.Subversion.Bugfix)";
+const VERSION = "3.0.6.1 (Release.Version.Subversion.Bugfix)";
 
 const PUBLICVERSION = "3.0! (GitHub Port)";
 
@@ -79,6 +79,8 @@ let songList = [];
 let songLoadCounter = 0;
 
 let currentSongIndex = 0;
+
+let dynamicSpeedInfo = "";
 
 var autoHitEnabled = false;
 
@@ -229,7 +231,7 @@ BGbright.src = "Resources/Background2.png";
 
 for (let i = 0; i < MAX_HIT_SOUNDS; i++) {
     let hitSound = new Audio("Resources/SFX/hitSound.mp3");
-    hitSound.volume = 0.05;
+    hitSound.volume = 0.03;
     hitSounds.push(hitSound);
 }
 
@@ -341,7 +343,7 @@ function preloadSongs() {
 
     // Function to check if all songs are loaded
     function checkAllSongsLoaded(totalSongs) {
-        if (songLoadCounter === Math.floor(totalSongs / 2)) {
+        if (songLoadCounter === 10) {
             const startButton = document.getElementById('startButton');
             startButton.style.display = 'inline';
         } else if (songLoadCounter === totalSongs) {
@@ -426,15 +428,24 @@ const songConfigs = {
     "Resources/Songs/ARCANGEL.mp3": { BPM: 124, noteSpeed: 14 },
 };
 
-const dynamicSpeed = {
-    "Resources/Songs/HIGHEST IN THE ROOM.mp3": [
-        { timestamp: 12.9, noteSpeed: 22.8 },  // 0:12 (starting point)
-        { timestamp: 13.35, noteSpeed: 12 }, // 0:13.35 (starting point 2)
-        { timestamp: 25.9, noteSpeed: 14 },  // 0:26
-        { timestamp: 112.8, noteSpeed: 9 },  // 1:54.8
-    ],
-    // Add more songs and their respective timestamp-speed mappings here
-};
+function getDynamicSpeed(songSrc) {
+    const dynamicSpeeds = {
+        "HIGHEST IN THE ROOM": [
+            { timestamp: 12.9, noteSpeed: 25 },  // 0:12 (starting point)
+            { timestamp: 13.35, noteSpeed: 12 }, // 0:13.35 (starting point 2)
+            { timestamp: 25.9, noteSpeed: 14 },  // 0:26
+            { timestamp: 112.8, noteSpeed: 9 },  // 1:54.8
+        ],
+        // Add more songs and their respective timestamp-speed mappings here
+    };
+
+    let songTitle = getSongTitle(songSrc);
+    if (dynamicSpeeds.hasOwnProperty(songTitle)) {
+        return dynamicSpeeds[songTitle];
+    } else {
+        return null;
+    }
+}
 
 console.log("Song Configurations loaded.");
 
@@ -915,12 +926,13 @@ function startGame(index) {
         };
 
         const songTitle = getSongTitle(currentSongPath);
-        const songConfig = dynamicSpeed[currentSongPath];
+        const songConfig = getDynamicSpeed(currentSongPath);
 
         if (songConfig) {
             console.log(`Dynamic speed configuration found for "${songTitle}"`);
+            dynamicSpeedInfo = songConfig.map(config => `Timestamp: ${config.timestamp}, Speed: ${config.noteSpeed}`).join(" | ");
             let currentConfigIndex = 0;
-
+        
             const speedUpdater = setInterval(() => {
                 if (currentSong && songConfig && currentConfigIndex < songConfig.length) {
                     const currentTime = currentSong.currentTime;
@@ -930,12 +942,21 @@ function startGame(index) {
                         console.log(`Updated note speed to: ${noteSpeed} at timestamp: ${nextConfig.timestamp}`);
                         currentConfigIndex++;
                     }
+                    // Update next imminent speed change
+                    if (currentConfigIndex < songConfig.length) {
+                        const upcomingConfig = songConfig[currentConfigIndex];
+                        nextSpeedChange = `Next speed change at: ${upcomingConfig.timestamp}s, Speed: ${upcomingConfig.noteSpeed}`;
+                    } else {
+                        nextSpeedChange = "No more speed changes.";
+                    }
                 } else {
                     clearInterval(speedUpdater);
                 }
             }, 1);
         } else {
             console.log(`No dynamic speed configuration for "${songTitle}"`);
+            dynamicSpeedInfo = "No dynamic speed configuration found.";
+            nextSpeedChange = "No speed changes.";
         }
 
         currentSong.play(); // Start playing the song immediately
@@ -1140,9 +1161,9 @@ function updateDebugInfo(deltaTime, timestamp) {
         ctx.fillText(`Last early/late note type: ${lastEarlyLateNoteType}`, 10, startY + 11 * lineHeight);
         ctx.fillText(`Last note type: ${lastNoteType}`, 10, startY + 12 * lineHeight);
         ctx.fillText(`Auto hit disabled saving? ${autoHitDisableSaving}`, 10, startY + 13 * lineHeight);
-            
-        
-            ctx.fillText(`Note Y positions: ${left.toFixed(1)} | ${up.toFixed(1)} | ${down.toFixed(1)} | ${right.toFixed(1)}`, 10, startY + 14 * lineHeight);
+        ctx.fillText(`Note Y positions: ${left.toFixed(1)} | ${up.toFixed(1)} | ${down.toFixed(1)} | ${right.toFixed(1)}`, 10, startY + 14 * lineHeight);
+        ctx.fillText(`Dynamic speeds for ${getSongTitle(currentSongPath)}: ${dynamicSpeedInfo}`, 10, startY + 15 * lineHeight);
+        ctx.fillText(nextSpeedChange, 10, startY + 16 * lineHeight);
     }
 }
 
