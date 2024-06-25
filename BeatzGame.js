@@ -114,7 +114,6 @@ function preloadSongs() {
         "Resources/Songs/YOU'RE TOO SLOW.mp3",
         "Resources/Songs/BAND4BAND.mp3",
         "Resources/Songs/Slide da Treme Melódica v2.mp3",
-        "Resources/Songs/testingsong.mp3",
     ];
 
     let currentIndex = 0;
