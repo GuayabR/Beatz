@@ -221,6 +221,7 @@ Added 2 new songs (BAND4BAND, Slide da Treme Melódica v2)
 Added 9 more debug statements (Version, Current song path and source, Hit sound index, Song start and paused time, Every last hit note type)
 
 Added my email in case any artist wants their song removed from the game.
+//
 
 3.0.5.0 (HFPS 3.0! 24/06/2024)
 
@@ -232,10 +233,22 @@ Added a function to restart the song after it ends in a set time in the settings
 
 3.0.6.0 (HFPS 3.0! 25/06/2024)
 
-Added a button to travel to the testing version, and vice-versa
+Added a button to travel to the testing version, and vice-versa.
+//
 
 3.0.6.1 (HFPS 3.0! 25/06/2024)
 
 Dynamic speeds are fixed and now link to their respective song.
 
-Added debug statements for total dynamic speed changes and the next inminent speed change
+Added debug statements for dynamic speeds (Total dynamic speeds, next dynamic speed change)
+//
+
+3.1.6.2 // 3.1! (HFPS 3.1! 26/06/2024)
+
+Fixed next imminent speed change flickering between 2 values.
+
+Added back onSongEnd, accidentaly deleted it in past updates.
+
+Made saveScore not save your score if you somehow manage to get 0 total points.
+
+Released Public Version 3.1!

@@ -2,14 +2,14 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 3.0.6.1 test (release.version.subversion.bugfix)
+ * Version: 3.1.6.2 test (release.version.subversion.bugfix)
  **/
 
 // CONSTANTS
 
-const VERSION = "3.0.6.1 (Release.Version.Subversion.Bugfix)";
+const VERSION = "3.1.6.2 (Release.Version.Subversion.Bugfix)";
 
-const PUBLICVERSION = "3.0! (GitHub Port)";
+const PUBLICVERSION = "3.1! (GitHub Port)";
 
 const WIDTH = 1280;
 
@@ -81,6 +81,8 @@ let songLoadCounter = 0;
 let currentSongIndex = 0;
 
 let dynamicSpeedInfo = "";
+
+let speedUpdater;
 
 var autoHitEnabled = false;
 
@@ -591,18 +593,7 @@ function nextSong() {
         currentSong.currentTime = 0; // Reset the song to the beginning
     }
 
-    // Reset variables
-    songStarted = false;
-    notes = []; // Clear the notes array
-    points = 0;
-    totalMisses = 0;
-    perfectHits = 0;
-    earlyLateHits = 0;
-    songPausedTime = null;
-    BPM = 0; // Reset BPM
-    noteSpeed = 0; // Reset note speed
-    maxStreak = 0;
-    currentStreak = 0;
+    resetSongVariables();
 
     // Increment currentSongIndex and loop back to 0 if it exceeds the array length
     currentSongIndex = (currentSongIndex + 1) % songList.length;
@@ -619,17 +610,7 @@ function restartSong() {
         currentSong.currentTime = 0; // Reset the song to the beginning
     }
 
-    songStarted = false;
-    notes = []; // Clear the notes array
-    points = 0;
-    totalMisses = 0;
-    perfectHits = 0;
-    earlyLateHits = 0;
-    songPausedTime = null;
-    BPM = 0; // Reset BPM
-    noteSpeed = 0; // Reset note speed
-    maxStreak = 0;
-    currentStreak = 0;
+    resetSongVariables();
     
     console.log("Restarting song from index: " + currentSongIndex);
     startGame(currentSongIndex);
@@ -641,18 +622,7 @@ function previousSong() {
         currentSong.currentTime = 0; // Reset the song to the beginning
     }
 
-    // Reset variables
-    songStarted = false;
-    notes = []; // Clear the notes array
-    points = 0;
-    totalMisses = 0;
-    perfectHits = 0;
-    earlyLateHits = 0;
-    songPausedTime = null;
-    BPM = 0; // Reset BPM
-    noteSpeed = 0; // Reset note speed
-    maxStreak = 0;
-    currentStreak = 0;
+    resetSongVariables();
 
     // Decrement currentSongIndex and wrap around to the last song if it goes negative
     currentSongIndex = (currentSongIndex - 1 + songList.length) % songList.length;
@@ -677,7 +647,17 @@ function randomizeSong() {
         currentSong.currentTime = 0; // Reset the song to the beginning
     }
 
-    // Reset variables
+    resetSongVariables();
+
+    // Randomize song
+    currentSongIndex = pickRandomSongIndex();
+    console.log("Randomizing song to: " + currentSongIndex);
+
+    // Start the game with the new random song
+    startGame(currentSongIndex);
+}
+
+function resetSongVariables() {
     songStarted = false;
     notes = []; // Clear the notes array
     points = 0;
@@ -691,16 +671,14 @@ function randomizeSong() {
     currentStreak = 0;
 
     // Clear the existing interval
-    if (timer) {
-        clearInterval(timer);
+    if (speedUpdater) {
+        clearInterval(speedUpdater);
     }
 
-    // Randomize song
-    currentSongIndex = pickRandomSongIndex();
-    console.log("Randomizing song to: " + currentSongIndex);
-
-    // Start the game with the new random song
-    startGame(currentSongIndex);
+    // Reset dynamic speed variables
+    dynamicSpeedInfo = "";
+    nextSpeedChange = "";
+    currentConfigIndex = 0;
 }
 
 function displaySongInfo() {
@@ -931,9 +909,10 @@ function startGame(index) {
         if (songConfig) {
             console.log(`Dynamic speed configuration found for "${songTitle}"`);
             dynamicSpeedInfo = songConfig.map(config => `Timestamp: ${config.timestamp}, Speed: ${config.noteSpeed}`).join(" | ");
-            let currentConfigIndex = 0;
-        
-            const speedUpdater = setInterval(() => {
+            let currentConfigIndex = 0;  // Reset currentConfigIndex
+            nextSpeedChange = ""; // Reset nextSpeedChange
+
+            speedUpdater = setInterval(() => {
                 if (currentSong && songConfig && currentConfigIndex < songConfig.length) {
                     const currentTime = currentSong.currentTime;
                     const nextConfig = songConfig[currentConfigIndex];
@@ -1026,6 +1005,8 @@ function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
                 console.log(`New best score for ${song} saved to localStorage. Even better than before! Nice!`);
             } else if (maxstreak === 0) {
                 console.log(`You went AFK for the entire ${song} duration, score has not been saved.`);
+            } else if (points === 0) {
+                console.log(`how do you manage to get 0 points`)
             } else {
                 console.log(`Score for ${song} is not higher than existing best score, score has not been saved.`);
             }
@@ -1071,6 +1052,24 @@ function displayBestScore(song) {
         ctx.fillText(`Most Misses: ${bestScore.misses}`, WIDTH - 10, HEIGHT - 75);
         ctx.fillText(`Max Streak: ${bestScore.maxstreak}`, WIDTH - 10, HEIGHT - 95);
     }
+}
+
+// Logic to activate when the song ends
+function onSongEnd() {
+    let songName = getSongTitle(currentSong.src);
+
+    try {
+        saveScore(songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
+    } catch (error) {
+        console.error("Error in onSongEnd:", error);
+    }
+
+    console.log("Song ended. Saving score...");
+    console.log("Parameters:", songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
+
+    canvasUpdating = false;
+
+    drawEndScreen();
 }
 
 // Function to check and display the best score if the selected song has one
