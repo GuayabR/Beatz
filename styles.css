@@ -1,11 +1,14 @@
 body {
     text-align: center;
     font-family: Arial, sans-serif;
+    background-image: url('Resources/BackgroundHtml2.png');
+    background-size: cover; /* Makes the background cover the entire page */
+    background-repeat: no-repeat; /* Prevents the background from repeating */
+    background-position: center; /* Centers the background image */
 }
 
 html {
     font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #00101f, #00255e); /* Gradient colors */
     display: flex;
     color: white;
     justify-content: center;
@@ -19,12 +22,12 @@ html {
 #startButton {
     padding: 10px 40px;
     font-size: 20px;
-    background-color: #002352;
+    background-color: #520047;
     color: white;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    box-shadow: 0 0 5px rgba(0, 35, 190, 0.623);
+    box-shadow: 0 0 5px rgba(146, 0, 190, 0.623);
     transition: box-shadow 0.5s ease;
 }
 
@@ -32,18 +35,18 @@ button {
     padding: 8px 15px;
     display: inline-block;
     margin: 5px;
-    background-color: #002352;
+    background-color: #520047;
     color: white;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    box-shadow: 0 0 5px rgba(0, 35, 190, 0.623);
+    box-shadow: 0 0 5px rgba(146, 0, 190, 0.623);
     transition: box-shadow 0.3s ease;
 }
 
 #startButton:hover,
 button:hover {
-    box-shadow: 0 0 10px rgba(0, 110, 255, 0.623);
+    box-shadow: 0 0 10px rgba(175, 0, 228, 0.74);
     transition: box-shadow 0.3s ease;
 }
 
@@ -70,12 +73,12 @@ canvas {
     background-size: cover;
     background-position: center;
     border-radius: 10px;
-    box-shadow: 0 0 50px rgba(0, 26, 141, 0.548);
+    box-shadow: 0 0 20px rgba(125, 0, 141, 0.548);
     transition: box-shadow 0.3s ease;
 }
 
 canvas:hover {
-    box-shadow: 0 0 20px rgba(0, 110, 255, 0.623);
+    box-shadow: 0 0 50px rgba(195, 0, 255, 0.74);
     transition: box-shadow 0.3s ease;
 }
 
@@ -172,7 +175,7 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
 }
 
 #saveSettings:hover {
-    box-shadow: 0 0 5px rgb(0, 139, 219);
+    box-shadow: 0 0 5px rgba(175, 0, 228, 0.74);
     transition: box-shadow 0.3s ease;
 }
 
@@ -201,20 +204,20 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     margin: 1px 0;
     box-sizing: border-box;
     font-size: 16px;
-    box-shadow: 0 0 10px rgba(0, 35, 190, 0.623);
+    box-shadow: 0 0 10px rgba(175, 0, 228, 0.74);
     transition: box-shadow 0.3s ease;
     cursor: pointer;
 }
 
 #songSelector:hover {
-    box-shadow: 0 0 20px rgba(0, 110, 255, 0.623);
+    box-shadow: 0 0 20px rgba(175, 0, 228, 0.74);
     transition: box-shadow 0.3s ease;
 }
 
 #songSelector:focus {
-    border-color: #0051ff;
+    border-color: #ea00ff;
     outline: none;
-    box-shadow: 0 0 10px rgba(0, 68, 255, 0.781);
+    box-shadow: 0 0 10px rgba(183, 0, 255, 0.753);
 }
 
 #songSelector option {
@@ -298,6 +301,7 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
 
 .volume-control {
     margin: 20px 0;
+    color: #ea00ff;
 }
 
 .volume-control label {
@@ -312,10 +316,5 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     margin-bottom: 5px;
     box-shadow: 0 0 0px rgba(160, 160, 160, 0);
     transition: box-shadow 0.3s ease;
-}
-
-.volume-control input[type="range"]:hover {
     cursor: pointer;
-    box-shadow: 0 0 10px rgba(0, 46, 172, 0.719);
-    transition: box-shadow 0.3s ease
 }

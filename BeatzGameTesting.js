@@ -2,14 +2,14 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 3.1.6.2 test (release.version.subversion.bugfix)
+ * Version: 3.1.7.2 test (release.version.subversion.bugfix)
  **/
 
 // CONSTANTS
 
-const VERSION = "3.1.6.2 (Release.Version.Subversion.Bugfix)";
-
+const VERSION = "3.1.7.2 (Release.Version.Subversion.Bugfix)";
 const PUBLICVERSION = "3.1! (GitHub Port)";
+console.log('Version: ' + VERSION)
 
 const WIDTH = 1280;
 
@@ -31,8 +31,8 @@ const textY = 670;
 
 const noteXPositions = {
     left: WIDTH / 2 - 110,
-    down: WIDTH / 2 + 53,
-    up: WIDTH / 2 - 53,
+    up: WIDTH / 2 - 51,
+    down: WIDTH / 2 + 51,
     right: WIDTH / 2 + 110,
 };
 
@@ -1140,8 +1140,8 @@ function updateDebugInfo(deltaTime, timestamp) {
         const right = parseFloat(noteYPositions.right);
 
         // Calculate FPS
-        let currentFPS = 1000 / deltaTime;
-        fps = currentFPS.toFixed(0);
+        let currentFPS = 1 / deltaTime;
+        fps = currentFPS.toFixed(1);
 
         ctx.font = '12px Arial';
         ctx.fillStyle = 'white';
@@ -1149,7 +1149,7 @@ function updateDebugInfo(deltaTime, timestamp) {
         ctx.fillText(`Version: ${VERSION}`, 10, startY);
         ctx.fillText(`Delta Time: ${deltaTime.toFixed(3)} seconds`, 10, startY + lineHeight);
         ctx.fillText(`Timestamp: ${timestamp} milliseconds`, 10, startY + 2 * lineHeight);
-        ctx.fillText(`Current FPS: ${fps.toString().slice(0, 3)}`, 10, startY + 3 * lineHeight);
+        ctx.fillText(`Current FPS: ${fps}`, 10, startY + 3 * lineHeight);
         ctx.fillText(`Current song path: ${currentSongPath}`, 10, startY + 4 * lineHeight);
         ctx.fillText(`Current song source:`, 10, startY + 5 * lineHeight);
         ctx.fillText(`${currentSong.src}`, 10, startY + 6 * lineHeight);

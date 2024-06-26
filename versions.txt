@@ -251,4 +251,6 @@ Added back onSongEnd, accidentaly deleted it in past updates.
 
 Made saveScore not save your score if you somehow manage to get 0 total points.
 
+Changed the colorway of the page from dark blue to orange and purple to match the background in the canvas.
+
 Released Public Version 3.1!
