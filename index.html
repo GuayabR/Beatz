@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Beatz 3.1!</title>
+    <title>Beatz 3.2!</title>
     <link rel="icon" type="image/x-icon" href="Resources/favicon.png">
     <link rel="stylesheet" type="text/css" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -27,9 +27,9 @@
     <button id="debugButton" style="display: none;"><i class="fa-solid fa-robot"></i></button>
     <button id="keybindsButton" style="display: none;"><i class="fa-solid fa-gear"></i></button>
     
-    <h2><select id="songSelector">
+    <h1><select id="songSelector">
         <option>Loading songs...</option>
-    </select></h2>
+    </select></h1>
     
 
     <!-- The Modal -->
@@ -42,36 +42,65 @@
             <h2>Customize Settings!</h2>
             <form id="keybindsForm">
                 <label for="up">Note Left:</label>
-                <input type="text" id="left" name="left"><br><br>
+                <input type="text" id="left" name="left">
                 <label for="left">Note Up:</label>
                 <input type="text" id="up" name="up"><br><br>
+
                 <label for="down">Note Down:</label>
-                <input type="text" id="down" name="down"><br><br>
+                <input type="text" id="down" name="down">
+
                 <label for="right">Note Right:</label>
                 <input type="text" id="right" name="right"><br><br>
+
                 <label for="pause">Pause Game:</label>
-                <input type="text" id="pause" name="pause"><br><br>
+                <input type="text" id="pause" name="pause">
+
                 <label for="autoHit">Toggle Auto Hit:</label>
                 <input type="text" id="autoHit" name="autoHit"><br><br>
+
                 <label for="fullscreenInput">Fullscreen:</label>
                 <input type="text" id="fullscreenInput" name="fullscreen"><br><br>
+
                 <label for="previousInput">Previous Song:</label>
                 <input type="text" id="previousInput" name="previous"><br><br>
+
                 <label for="restartInput">Restart Song:</label>
                 <input type="text" id="restartInput" name="restart"><br><br>
+
                 <label for="nextButton">Next Song:</label>
                 <input type="text" id="nextInput" name="next"><br><br>
+
                 <label for="randomize">Randomize Song:</label>
                 <input type="text" id="randomize" name="randomize"><br><br>
+
                 <label for="toggleNoteStyleInput">Toggle Note Style:</label>
                 <input type="text" id="toggleNoteStyleInput" name="toggleNoteStyle"><br><br>
-                <label for="debugInput">Debug:</label>
-                <input type="text" id="debugInput" name="debug"><br><br>
+
                 <label for="defaultNoteStyle">Default Note Style:</label>
                 <select id="defaultNoteStyle" name="defaultNoteStyle">
                 <option value="arrows">Arrows</option>
                 <option value="circles">Circles</option>
                 </select><br><br>
+
+                <label for="debugInput">Debug:</label>
+                <input type="text" id="debugInput" name="debug"><br><br>
+
+                <label for="songTimeoutAfterSongEnd">Restart song after it ends?</label>
+                <input type="checkbox" id="songTimeoutAfterSongEnd" name="songTimeoutSongEnd">
+
+                <label id="numTimeout" for="songTimeoutAfterSongEndNum">Delay:</label>
+                <input type="text" id="songTimeoutAfterSongEndNum" placeholder="Value in milliseconds" name="songTimeoutSongEndNum"><br><br>
+
+                <label for="defaultBackground">Background image:</label>
+                <select id="defaultBackground" name="backgroundForCanvas">
+                    <option value="defaultBG">Default (Uproxide)</option>
+                    <option value="transparentBG">Transparent</option>
+                    <option value="customBG">Custom background!</option>
+                </select><br><br>
+
+                <label id="customBGLabel" for="customBGInput" style="display: none;">Custom background image:</label>
+                <input type="file" id="customBGInput" accept="image/*" style="display: none;"><br><br>
+
                 <span id="settingsSaved" style="color: white; display: none;">Settings saved! <i class="fa-solid fa-check"></i></span>
                 <button id="saveSettings" type="button" onclick="saveKeybinds()">Save</button>
             </form>
@@ -83,22 +112,48 @@
         <input type="range" id="songVolume" name="songVolume" min="0" max="100" value="50">
     </div>
 
-    <button id="contactbtn" onclick="email()"><i class="fa-solid fa-envelope"></i> Contact</button><br><br>
+    <div id="hitSoundVol" class="volume-control" style="display: none;">
+        <label id="hitSoundVol" for="hitSoundSlider">Hit Sound volume:</label>
+        <input type="range" id="hitSoundSlider" name="hitSoundSlider" min="0" max="100" value="50">
+    </div><br><br>
 
-    <button id="testingbtn" onclick="toTesting()">Open testing game</button>
+
+    <!-- The Leaderboard 
+    <div id="leaderboard">
+        <h3>Leaderboard</h3>
+
+    </div>
+    -->
+
+    <div id="loginRedirects">
+        <button onclick="window.open('AccountForms/loginform.html', '_blank')">Login!</button>
+    </div>
+
+    <div id="contactBtn">
+    <button id="contactbtn" onclick="email()"><i class="fa-solid fa-envelope"></i> Contact</button>
+    </div>
+
+    <div id="publicToTestToggle">
+    <button id="publicbtn" onclick="toPublic()">Open public game</button><br><br>
+    </div>
+    <script src="ScoreLogic.js"></script>
+
 
     <h2>Background image from: <a href="https://github.com/Uproxide/Texture-Workshop/commit/457788213d900a980f559ae8f241febad3322bdd#diff-1dbd3c28454ab3b1596af576394661ba03597f51326dbbff288c6b8ccc353041">Uproxide's "Texture Workshop"</a></h2>
     <h2>Notes from: <a href="https://github.com/Simply-Love/Simply-Love-SM5?tab=readme-ov-file">Teejusb's "Simply Love" osu! mania skins</a></h2>
     <h3>If you are the artist of any of these songs, contact me through my email if you want them removed.</h3>
+    <h3>Credit of the songs goes to their respective creators.</h3>
+    <h3>Note that i am NOT making any money on this game, i just code occasionally for the fun of it. <3</h3>
 
     <script>
         var canvas = document.getElementById('myCanvas');
-document.addEventListener("DOMContentLoaded", function() {
-    detectAndHandleDevice();
-    loadKeybinds();
-    applyDefaultNoteStyle();
-    updateKeybindsFields();
-    toggleNoteStyleButtonDisplay(); // Add this line to display the toggle button based on the loaded note style
+    document.addEventListener("DOMContentLoaded", function() {
+        detectAndHandleDevice();
+        loadKeybinds();
+        applyDefaultNoteStyle();
+        updateKeybindsFields();
+        toggleNoteStyleButtonDisplay();
+        toggleTimeoutInput();
 });
 
 function toggleNoteStyleButtonDisplay() {
@@ -170,8 +225,8 @@ function toggleNoteStyleButtonDisplay() {
             window.open("mailto:antonviloriavictorgabriel@gmail.com");
         }
 
-        function toTesting() {
-            window.location.href = "BeatzGameTesting.html";
+        function toPublic() {
+            window.location.href = "index.html";
         }
 
         function toggleFullScreen() {
@@ -289,6 +344,9 @@ const defaultKeybinds = {
     fullscreen: ["f"],
     debug: ["control"],
     defaultNoteStyle: ["arrows"],
+    songTimeoutDelay: 5000,
+    backgroundOption: "defaultBG",
+    customBackground: ""
 };
 
 let keybinds = { ...defaultKeybinds };
@@ -296,6 +354,14 @@ let keybinds = { ...defaultKeybinds };
 function loadKeybinds() {
     const savedKeybinds = JSON.parse(localStorage.getItem('keybinds'));
     const savedNoteStyle = localStorage.getItem('noteStyle') || "arrows";
+    const songTimeoutAfterSongEnd = JSON.parse(localStorage.getItem('songTimeoutAfterSongEnd')) || false;
+    const savedSongTimeoutDelay = parseInt(localStorage.getItem('songTimeoutDelay')) || defaultKeybinds.songTimeoutDelay;
+
+    const savedBackgroundOption = localStorage.getItem('backgroundOption') || defaultKeybinds.backgroundOption;
+    const savedCustomBackground = localStorage.getItem('customBackground') || defaultKeybinds.customBackground;
+
+    document.getElementById('songTimeoutAfterSongEnd').checked = songTimeoutAfterSongEnd;
+    restartSongTimeout = songTimeoutAfterSongEnd;
 
     const defaultNoteStyleDropdown = document.getElementById('defaultNoteStyle');
     if (savedNoteStyle) {
@@ -305,6 +371,7 @@ function loadKeybinds() {
     if (savedKeybinds) {
         keybinds = savedKeybinds;
     }
+
     document.getElementById('up').value = keybinds.up.join(", ");
     document.getElementById('left').value = keybinds.left.join(", ");
     document.getElementById('down').value = keybinds.down.join(", ");
@@ -318,9 +385,41 @@ function loadKeybinds() {
     document.getElementById('toggleNoteStyleInput').value = keybinds.toggleNoteStyle.join(", ");
     document.getElementById('fullscreenInput').value = keybinds.fullscreen.join(", ");
     document.getElementById('debugInput').value = keybinds.debug.join(", ");
+    document.getElementById('songTimeoutAfterSongEndNum').value = savedSongTimeoutDelay;
+
+    // Load background settings
+    document.getElementById('defaultBackground').value = savedBackgroundOption;
+    if (savedBackgroundOption === 'customBG') {
+        document.getElementById('customBGLabel').style.display = 'inline';
+        document.getElementById('customBGInput').style.display = 'inline';
+        if (savedCustomBackground) {
+            customBG = new Image();
+            customBG.src = savedCustomBackground;
+        }
+    } else {
+        document.getElementById('customBGLabel').style.display = 'none';
+        document.getElementById('customBGInput').style.display = 'none';
+    }
+
+    if (keybinds.backgroundOption === 'transparentBG') {
+            document.getElementById('myCanvas').style.background = 'transparent';
+            backgroundIsntDefault = false;
+        } else {
+            document.getElementById('myCanvas').style.backgroundColor = '';
+            backgroundIsntDefault = true;
+        } if (keybinds.backgroundOption == 'customBG') {
+            document.getElementById('myCanvas').style.background = 'transparent';
+        }
+
+    // Update the songTimeoutDelay in the keybinds
+    keybinds.songTimeoutDelay = savedSongTimeoutDelay;
+    keybinds.backgroundOption = savedBackgroundOption;
+    keybinds.customBackground = savedCustomBackground;
+
     if (savedNoteStyle) {
         document.getElementById('defaultNoteStyle').value = savedNoteStyle;
     }
+
     keybindsHistory.push(JSON.parse(JSON.stringify(keybinds)));
     keybindsIndex++;
     console.log("Loaded settings", keybinds);
@@ -341,18 +440,39 @@ function saveKeybinds() {
         toggleNoteStyle: document.getElementById('toggleNoteStyleInput').value.split(", "),
         fullscreen: document.getElementById('fullscreenInput').value.split(", "),
         debug: document.getElementById('debugInput').value.split(", "),
-        noteStyle: document.getElementById('defaultNoteStyle').value
+        noteStyle: document.getElementById('defaultNoteStyle').value,
+        songTimeoutDelay: parseInt(document.getElementById('songTimeoutAfterSongEndNum').value, 10),
+        backgroundOption: document.getElementById('defaultBackground').value,
+        customBackground: localStorage.getItem('customBackground') || ""
     };
-    
-    const savedNoteStyle = localStorage.getItem('noteStyle');
 
-    // Compare new note style with saved note style
+    const savedNoteStyle = localStorage.getItem('noteStyle');
+    const songTimeoutAfterSongEnd = document.getElementById('songTimeoutAfterSongEnd').checked;
+
     if (newKeybinds.noteStyle !== savedNoteStyle) {
         // Change note style immediately
         applyDefaultNoteStyle(); // Call the function to apply the note style
     }
 
-    if (JSON.stringify(newKeybinds) === JSON.stringify(keybinds) && savedNoteStyle === newKeybinds.noteStyle) {
+    const savedKeybinds = JSON.parse(localStorage.getItem('keybinds'));
+    const savedSongTimeoutAfterSongEnd = JSON.parse(localStorage.getItem('songTimeoutAfterSongEnd'));
+    const timeoutInputValue = newKeybinds.songTimeoutDelay;
+
+    if (isNaN(timeoutInputValue)) {
+        alert("Please enter a valid number for the timeout delay.");
+        return;
+    }
+    if (timeoutInputValue > 15000) {
+        alert("Please enter a number that is below 15,000.")
+        return;
+    }
+
+    if (
+        JSON.stringify(newKeybinds) === JSON.stringify(savedKeybinds) &&
+        savedNoteStyle === newKeybinds.noteStyle &&
+        songTimeoutAfterSongEnd === savedSongTimeoutAfterSongEnd &&
+        timeoutInputValue === keybinds.songTimeoutDelay
+    ) {
         // No changes have been made
         saveMessage.textContent = "No changes have been made.";
         saveMessage.style.display = 'block';
@@ -361,6 +481,24 @@ function saveKeybinds() {
         keybinds = newKeybinds;
         localStorage.setItem('keybinds', JSON.stringify(keybinds));
         localStorage.setItem('noteStyle', newKeybinds.noteStyle); // Save the new note style
+        localStorage.setItem('songTimeoutAfterSongEnd', JSON.stringify(songTimeoutAfterSongEnd));
+        localStorage.setItem('songTimeoutDelay', newKeybinds.songTimeoutDelay);
+        localStorage.setItem('backgroundOption', newKeybinds.backgroundOption);
+
+        if (newKeybinds.backgroundOption === 'transparentBG') {
+            document.getElementById('myCanvas').style.background = 'transparent';
+            backgroundIsntDefault = false;
+        } else {
+            document.getElementById('myCanvas').style.backgroundColor = '';
+            backgroundIsntDefault = true;
+        }
+
+        if (newKeybinds.backgroundOption !== 'customBG') {
+            document.getElementById('myCanvas').style.background = 'transparent';
+            localStorage.setItem('customBackground', '');
+        }
+        
+        restartSongTimeout = songTimeoutAfterSongEnd;
 
         keybindsHistory = keybindsHistory.slice(0, keybindsIndex + 1);
         keybindsHistory.push(JSON.parse(JSON.stringify(keybinds)));
@@ -432,7 +570,14 @@ function switchToArrows() {
 }
 
 function resetKeybinds() {
-    keybinds = { ...defaultKeybinds, noteStyle: 'arrows' };
+    keybinds = { ...defaultKeybinds, noteStyle: 'arrows', };
+    document.getElementById('songTimeoutAfterSongEnd').checked = false;
+
+    const timeoutLabel = document.getElementById('numTimeout');
+    const timeoutInput = document.getElementById('songTimeoutAfterSongEndNum');
+    timeoutLabel.style.display = 'none';
+    timeoutInput.style.display = 'none';
+    
     updateKeybindsFields();
     saveKeybinds();
 }
@@ -468,7 +613,52 @@ function updateKeybindsFields() {
     document.getElementById('fullscreenInput').value = keybinds.fullscreen.join(", ");
     document.getElementById('debugInput').value = keybinds.debug.join(", ");
     document.getElementById('defaultNoteStyle').value = keybinds.noteStyle;
+    document.getElementById('songTimeoutAfterSongEnd').value = keybinds.songTimeoutCheck;
+    document.getElementById('songTimeoutAfterSongEndNum').value = keybinds.songTimeoutDelay;
 }
+
+function toggleTimeoutInput() {
+    const timeoutCheckbox = document.getElementById('songTimeoutAfterSongEnd');
+    const timeoutLabel = document.getElementById('numTimeout');
+    const timeoutInput = document.getElementById('songTimeoutAfterSongEndNum');
+
+    if (timeoutCheckbox.checked) {
+        timeoutLabel.style.display = 'inline';
+        timeoutInput.style.display = 'inline';
+    } else {
+        timeoutLabel.style.display = 'none';
+        timeoutInput.style.display = 'none';
+    }
+}
+
+let restartSongTimeout;
+let songTimeoutDelay = localStorage.getItem('songTimeoutDelay');
+
+// Logic to activate when the song ends
+function onSongEnd() {
+    let songName = getSongTitle(currentSong.src);
+
+    try {
+        saveScore(songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
+    } catch (error) {
+        console.error("Error in onSongEnd:", error);
+    }
+
+    if (restartSongTimeout) {
+        console.log("Restarting song in ",songTimeoutDelay / 1000," seconds...");
+        setTimeout(() => {
+            restartSong();
+        }, songTimeoutDelay); // Delay specified in settings
+    }
+
+    console.log("Song ended, Parameters:", songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
+
+    canvasUpdating = false;
+
+    drawEndScreen();
+}
+
+document.getElementById('songTimeoutAfterSongEnd').addEventListener('change', toggleTimeoutInput);
 
         function keyDownFunction(keyboardEvent) {
             var keyDown = keyboardEvent.key.toLowerCase();
@@ -548,6 +738,6 @@ function updateKeybindsFields() {
 
 
     </script>
-    <script src="BeatzGame.js"></script>
+    <script src="BeatzGamejs"></script>
 </body>
 </html>

@@ -2,12 +2,12 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 3.1.7.2 test (release.version.subversion.bugfix)
+ * Version: 3.2.7.2 test (release.version.subversion.bugfix)
  **/
 
 // CONSTANTS
 
-const VERSION = "3.1.7.2 (Release.Version.Subversion.Bugfix)";
+const VERSION = "3.2.7.2 (Release.Version.Subversion.Bugfix)";
 const PUBLICVERSION = "3.1! (GitHub Port)";
 console.log('Version: ' + VERSION)
 
@@ -181,12 +181,19 @@ window.onload = function() {
 };
 
 let currentSongVolume = localStorage.getItem('songVolume') ? parseFloat(localStorage.getItem('songVolume')) : 0.5; // Load volume or default to 50%
+let currentHitSoundVolume = localStorage.getItem('hitSoundVolume') ? parseFloat(localStorage.getItem('hitSoundVolume')) : 0.5; // Load volume or default to 50%
 
 // Event listeners for volume sliders
-document.getElementById('songVolume').addEventListener('input', function() {
+songVolume.addEventListener('input', function() {
     currentSongVolume = this.value / 100; // Convert to range 0-1
     localStorage.setItem('songVolume', currentSongVolume); // Save to localStorage
     adjustSongVolume(currentSongVolume);
+});
+
+hitSoundSlider.addEventListener('input', function() {
+    currentHitSoundVolume = this.value / 100; // Convert to range 0-1
+    localStorage.setItem('hitSoundVolume', currentHitSoundVolume); // Save to localStorage
+    adjustHitSoundVolume(currentHitSoundVolume);
 });
 
 // Function to adjust song volume
@@ -194,6 +201,20 @@ function adjustSongVolume(volume) {
     if (currentSong) {
         currentSong.volume = volume;
     }
+}
+
+// Function to adjust hit sound volume
+function adjustHitSoundVolume(volume) {
+    hitSounds.forEach(hitSound => {
+        hitSound.volume = volume;
+    });
+}
+
+// Initialize hit sounds with the loaded volume
+for (let i = 0; i < MAX_HIT_SOUNDS; i++) {
+    let hitSound = new Audio("Resources/SFX/hitSound.mp3");
+    hitSound.volume = currentHitSoundVolume; // Set volume to the saved or default volume
+    hitSounds.push(hitSound);
 }
 
 console.log("Variables loaded.")
@@ -230,12 +251,6 @@ noCover.src = "Resources/Covers/noCover.png";
 
 var BGbright = new Image();
 BGbright.src = "Resources/Background2.png";
-
-for (let i = 0; i < MAX_HIT_SOUNDS; i++) {
-    let hitSound = new Audio("Resources/SFX/hitSound.mp3");
-    hitSound.volume = 0.03;
-    hitSounds.push(hitSound);
-}
 
 console.log("Textures loaded.")
 
@@ -382,7 +397,7 @@ const songConfigs = {
     "Resources/Songs/Master Of Puppets (Live).mp3": { BPM: 210, noteSpeed: 12 },
     "Resources/Songs/Numb.mp3": { BPM: 110, noteSpeed: 10 },
     "Resources/Songs/sdp interlude.mp3": { BPM: 108, noteSpeed: 8 },
-    "Resources/Songs/Shiawase (VIP).mp3": { BPM: 150, noteSpeed: 11.55 },
+    "Resources/Songs/Shiawase (VIP).mp3": { BPM: 150, noteSpeed: 12.2 },
     "Resources/Songs/Sleepwalker X Icewhxre.mp3": { BPM: 120, noteSpeed: 10 },
     "Resources/Songs/Stressed Out.mp3": { BPM: 170, noteSpeed: 8 },
     "Resources/Songs/Ticking Away.mp3": { BPM: 95, noteSpeed: 10 },
@@ -437,6 +452,13 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 13.35, noteSpeed: 12 }, // 0:13.35 (starting point 2)
             { timestamp: 25.9, noteSpeed: 14 },  // 0:26
             { timestamp: 112.8, noteSpeed: 9 },  // 1:54.8
+        ],
+        "Shiawase (VIP)": [
+            { timestamp: 25.6, noteSpeed: 14 },
+            { timestamp: 36.8, noteSpeed: 10 },
+            { timestamp: 38.4, noteSpeed: 4 },
+            { timestamp: 41.58, noteSpeed: 16.2 },
+            { timestamp: 63.95, noteSpeed: 8.2 },
         ],
         // Add more songs and their respective timestamp-speed mappings here
     };
@@ -803,8 +825,13 @@ document.addEventListener('DOMContentLoaded', function() {
     songSelector.appendChild(loadingOption);
 
     const songVolumeSlider = document.getElementById('songVolume');
+    const hitSoundSlider = document.getElementById('hitSoundSlider');
+
     songVolumeSlider.value = currentSongVolume * 100;
-    console.log("Loaded saved song volume")
+    hitSoundSlider.value = currentHitSoundVolume * 100;
+
+    console.log("Loaded saved song volume");
+    console.log("Loaded saved hit sound volume");
 
     preloadSongs();
     preloadImages();
@@ -837,7 +864,50 @@ window.onload = function () {
     startButton.addEventListener("click", function() {
         document.getElementById("startButton").style.display = "none";
     });
-};
+
+
+    // Handle background option change
+    const defaultBackground = document.getElementById('defaultBackground');
+    const customBGLabel = document.getElementById('customBGLabel');
+    const customBGInput = document.getElementById('customBGInput');
+
+    // Load settings from localStorage
+    const savedBackgroundOption = localStorage.getItem('backgroundOption') || 'defaultBG';
+    const savedCustomBG = localStorage.getItem('customBackground');
+
+    if (savedBackgroundOption) {
+        defaultBackground.value = savedBackgroundOption;
+        if (savedBackgroundOption === 'customBG' && savedCustomBG) {
+            BGbright.src = savedCustomBG;
+        }
+    }
+
+    defaultBackground.addEventListener('change', function() {
+        const selectedOption = this.value;
+        localStorage.setItem('backgroundOption', selectedOption);
+        if (selectedOption === 'customBG') {
+            customBGLabel.style.display = 'inline';
+            customBGInput.style.display = 'inline';
+        } else {
+            customBGLabel.style.display = 'none';
+            customBGInput.style.display = 'none';
+            BGbright.src = "Resources/Background2.png"; // Switch back to default image
+        }
+        updateCanvas();
+    });
+
+    customBGInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                localStorage.setItem('customBackground', e.target.result);
+                BGbright.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
 
 console.log("Window.onload loaded.")
 
@@ -968,6 +1038,7 @@ function startGame(index) {
         document.getElementById("keybindsButton").style.display = "inline";
         document.getElementById("myYoutube").style.display = "inline";
         document.getElementById("songVol").style.display = "inline";
+        document.getElementById("hitSoundVol").style.display = "inline";
         document.getElementById("debugButton").style.display = "inline";
 
         document.getElementById("startButton").style.display = "none";
@@ -1064,8 +1135,14 @@ function onSongEnd() {
         console.error("Error in onSongEnd:", error);
     }
 
-    console.log("Song ended. Saving score...");
-    console.log("Parameters:", songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
+    if (restartSongTimeout) {
+        console.log("Restarting song in ",songTimeoutDelay / 1000," seconds...");
+        setTimeout(() => {
+            restartSong();
+        }, songTimeoutDelay); // Delay specified in settings
+    }
+
+    console.log("Song ended, Parameters:", songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
 
     canvasUpdating = false;
 
@@ -1130,10 +1207,13 @@ function toggleDebugInfo() {
     debugInfoVisible = !debugInfoVisible;
 }
 
+let newestNoteType = '';
+let newestNoteTime = 0;
+
 function updateDebugInfo(deltaTime, timestamp) {
     if (debugInfoVisible) {
         const lineHeight = 20; // Adjust this based on your font size and line spacing
-        const startY = HEIGHT / 2 - 150; // Starting y-coordinate for the first text
+        const startY = HEIGHT / 2 - 180; // Starting y-coordinate for the first text
         const left = parseFloat(noteYPositions.left);
         const up = parseFloat(noteYPositions.up);
         const down = parseFloat(noteYPositions.down);
@@ -1156,15 +1236,18 @@ function updateDebugInfo(deltaTime, timestamp) {
         ctx.fillText(`Hit sound index: ${currentHitSoundIndex}`, 10, startY + 7 * lineHeight);
         ctx.fillText(`Song start time: ${songStartTime}`, 10, startY + 8 * lineHeight);
         ctx.fillText(`Song paused time: ${songPausedTime}`, 10, startY + 9 * lineHeight);
-        ctx.fillText(`Last perfect note type: ${lastPerfectHitNoteType}`, 10, startY + 10 * lineHeight);
-        ctx.fillText(`Last early/late note type: ${lastEarlyLateNoteType}`, 10, startY + 11 * lineHeight);
-        ctx.fillText(`Last note type: ${lastNoteType}`, 10, startY + 12 * lineHeight);
-        ctx.fillText(`Auto hit disabled saving? ${autoHitDisableSaving}`, 10, startY + 13 * lineHeight);
-        ctx.fillText(`Note Y positions: ${left.toFixed(1)} | ${up.toFixed(1)} | ${down.toFixed(1)} | ${right.toFixed(1)}`, 10, startY + 14 * lineHeight);
-        ctx.fillText(`Dynamic speeds for ${getSongTitle(currentSongPath)}: ${dynamicSpeedInfo}`, 10, startY + 15 * lineHeight);
-        ctx.fillText(nextSpeedChange, 10, startY + 16 * lineHeight);
+        ctx.fillText(`Newest note: ${newestNoteType}, at timestamp: ${newestNoteTime.toFixed(3)}`, 10, startY + 10 * lineHeight);
+        ctx.fillText(`Note Y positions: ${left.toFixed(1)} | ${up.toFixed(1)} | ${down.toFixed(1)} | ${right.toFixed(1)}`, 10, startY + 11 * lineHeight);
+        ctx.fillText(`Last perfect note type: ${lastPerfectHitNoteType}`, 10, startY + 12 * lineHeight);
+        ctx.fillText(`Last early/late note type: ${lastEarlyLateNoteType}`, 10, startY + 13 * lineHeight);
+        ctx.fillText(`Last note type: ${lastNoteType}`, 10, startY + 14 * lineHeight);
+        ctx.fillText(`Auto hit disabled saving? ${autoHitDisableSaving}`, 10, startY + 15 * lineHeight);
+        ctx.fillText(`Dynamic speeds for ${getSongTitle(currentSongPath)}: ${dynamicSpeedInfo}`, 10, startY + 16 * lineHeight);
+        ctx.fillText(nextSpeedChange, 10, startY + 17 * lineHeight);
     }
 }
+
+let backgroundIsntDefault = true; // Default to true assuming default background
 
 function updateCanvas(timestamp) {
     if (!lastTime) {
@@ -1204,7 +1287,9 @@ function updateCanvas(timestamp) {
     pausedTextDrawn = false;
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
+    if (backgroundIsntDefault) {
     ctx.drawImage(BGbright, 0, 0, 1280, 720);
+    }
 
     ctx.drawImage(noteLeftIMG, noteXPositions.left - noteWidth / 2, 550, noteWidth, noteHeight);
     ctx.drawImage(noteUpIMG, noteXPositions.up - noteWidth / 2 + 15, 550, noteWidth, noteHeight);
@@ -1275,6 +1360,9 @@ function updateCanvas(timestamp) {
             if (note.time <= currentTime && note.time + 1000 > currentTime) {
                 if (noteYPositions[note.type].length === 0 || (HEIGHT - noteYPositions[note.type][noteYPositions[note.type].length - 1] >= MIN_NOTE_GAP)) {
                     noteYPositions[note.type].push(-noteHeight);
+
+                    newestNoteType = note.type;
+                    newestNoteTime = note.time;
                 }
             }
         }
@@ -1443,6 +1531,7 @@ function checkHit(noteType) {
             let hitSound = hitSounds[currentHitSoundIndex];
             hitSound.currentTime = 0;
             hitSound.play();
+            hitSound.volume = currentHitSoundVolume
             currentHitSoundIndex = (currentHitSoundIndex + 1) % MAX_HIT_SOUNDS;
             break;
         }

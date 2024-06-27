@@ -73,13 +73,6 @@ canvas {
     background-size: cover;
     background-position: center;
     border-radius: 10px;
-    box-shadow: 0 0 20px rgba(125, 0, 141, 0.548);
-    transition: box-shadow 0.3s ease;
-}
-
-canvas:hover {
-    box-shadow: 0 0 50px rgba(195, 0, 255, 0.74);
-    transition: box-shadow 0.3s ease;
 }
 
 canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {

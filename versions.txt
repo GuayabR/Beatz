@@ -243,7 +243,7 @@ Dynamic speeds are fixed and now link to their respective song.
 Added debug statements for dynamic speeds (Total dynamic speeds, next dynamic speed change)
 //
 
-3.1.6.2 // 3.1! (HFPS 3.1! 26/06/2024)
+3.1.7.2 // 3.1! (HFPS 3.1! 26/06/2024)
 
 Fixed next imminent speed change flickering between 2 values.
 
@@ -254,3 +254,13 @@ Made saveScore not save your score if you somehow manage to get 0 total points.
 Changed the colorway of the page from dark blue to orange and purple to match the background in the canvas.
 
 Released Public Version 3.1!
+
+//
+
+3.2.7.2 (HFPS 3.1! 27/06/2024)
+
+ADDED CUSTOM BACKGROUNDS!
+
+Background can now be customized to default, transparent, and one of your choice!
+
+Any format is supported! (jpeg | png | webp | jfif | etcetera)
