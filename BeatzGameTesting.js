@@ -1162,7 +1162,10 @@ function checkAndDisplayBestScore() {
 // Endscreen
 function drawEndScreen() {
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
-    ctx.drawImage(BGbright, 0, 0, 1280, 720);
+
+    if (backgroundIsntDefault) {
+        ctx.drawImage(BGbright, 0, 0, 1280, 720);
+    }
 
     // Draw "Song completed!" text
     ctx.fillStyle = "white";

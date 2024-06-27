@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 3.2.7.2 test (release.version.subversion.bugfix)
+ * Version: 3.2.7.2 public (release.version.subversion.bugfix)
  **/
 
 // CONSTANTS
@@ -1162,7 +1162,10 @@ function checkAndDisplayBestScore() {
 // Endscreen
 function drawEndScreen() {
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
-    ctx.drawImage(BGbright, 0, 0, 1280, 720);
+
+    if (backgroundIsntDefault) {
+        ctx.drawImage(BGbright, 0, 0, 1280, 720);
+    }
 
     // Draw "Song completed!" text
     ctx.fillStyle = "white";
