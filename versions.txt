@@ -278,6 +278,19 @@ New ingame shown version template (Codename.Release.Version.Subversion.Bugfix | 
 
 Added a backdrop blur filter for the background as a customizable option
 
+Hit sound volume now defaults to 15%
 // Fixes
 
 Fixed "P" reloading the settings when settings were already opened, loading settings is now only possible when settings weren't opened beforehand.
+//
+
+3.2.9.4 (HFPS 3.2! 28/06/2024)
+
+- Added a tutorial phase to introduce the player to a new game!
+Stages:
+- Shows the keybinds
+- Shows the player where the settings are
+- Socials are announced
+- Twitter
+- Youtube
+- Game thanks player for playing!

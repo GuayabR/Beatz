@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: HFPS 3.2.8.4 test (release.version.subversion.bugfix)
+ * Version: HFPS 3.2.9.4 test (release.version.subversion.bugfix)
  **/
 
 // CONSTANTS
@@ -39,6 +39,26 @@ const noteXPositions = {
 const loadedImages = {};
 
 const hitSounds = [];
+
+let notesHit = 0;
+let tutorialStage = 0;
+let isNewPlayer = !localStorage.getItem('keybinds');
+
+const keybindsText = {
+    initial: {
+        left: "A",
+        up: "W",
+        down: "S",
+        right: "D"
+    },
+    customizable: "Keybinds are customizable in the settings just below the canvas.",
+    thankYou: "Thank you for playing Beatz! Enjoy!",
+    followMe: { 
+        announce: "Follow me on my socials!",
+        twitter: "Twitter: @GuayabR",
+        yt: "Youtube: @GuayabR"
+    }
+};
 
 const noteImages = {
     'Left': noteLeftIMG,
@@ -181,7 +201,7 @@ window.onload = function() {
 };
 
 let currentSongVolume = localStorage.getItem('songVolume') ? parseFloat(localStorage.getItem('songVolume')) : 0.5; // Load volume or default to 50%
-let currentHitSoundVolume = localStorage.getItem('hitSoundVolume') ? parseFloat(localStorage.getItem('hitSoundVolume')) : 0.5; // Load volume or default to 50%
+let currentHitSoundVolume = localStorage.getItem('hitSoundVolume') ? parseFloat(localStorage.getItem('hitSoundVolume')) : 0.15; // Load volume or default to 15%
 
 // Event listeners for volume sliders
 songVolume.addEventListener('input', function() {
@@ -1247,9 +1267,10 @@ function updateDebugInfo(deltaTime, timestamp) {
         ctx.fillText(`Last perfect note type: ${lastPerfectHitNoteType}`, 10, startY + 12 * lineHeight);
         ctx.fillText(`Last early/late note type: ${lastEarlyLateNoteType}`, 10, startY + 13 * lineHeight);
         ctx.fillText(`Last note type: ${lastNoteType}`, 10, startY + 14 * lineHeight);
-        ctx.fillText(`Auto hit disabled saving? ${autoHitDisableSaving}`, 10, startY + 15 * lineHeight);
-        ctx.fillText(`Dynamic speeds for ${getSongTitle(currentSongPath)}: ${dynamicSpeedInfo}`, 10, startY + 16 * lineHeight);
-        ctx.fillText(nextSpeedChange, 10, startY + 17 * lineHeight);
+        ctx.fillText(`Total notes hit in this playthrough: ${notesHit}`, 10, startY + 15 * lineHeight);
+        ctx.fillText(`Auto hit disabled saving? ${autoHitDisableSaving}`, 10, startY + 16 * lineHeight);
+        ctx.fillText(`Dynamic speeds for ${getSongTitle(currentSongPath)}: ${dynamicSpeedInfo}`, 10, startY + 17 * lineHeight);
+        ctx.fillText(nextSpeedChange, 10, startY + 18 * lineHeight);
     }
 }
 
@@ -1301,6 +1322,39 @@ function updateCanvas(timestamp) {
     ctx.drawImage(noteUpIMG, noteXPositions.up - noteWidth / 2 + 15, 550, noteWidth, noteHeight);
     ctx.drawImage(noteDownIMG, noteXPositions.down - noteWidth / 2 - 15, 550, noteWidth, noteHeight);
     ctx.drawImage(noteRightIMG, noteXPositions.right - noteWidth / 2, 550, noteWidth, noteHeight);
+
+    if (isNewPlayer) {
+        switch (tutorialStage) {
+            case 0:
+                ctx.fillText(keybindsText.initial.left, noteXPositions.left + 8, 540);
+                ctx.fillText(keybindsText.initial.up, noteXPositions.up + 24, 540);
+                ctx.fillText(keybindsText.initial.down, noteXPositions.down - 8, 540);
+                ctx.fillText(keybindsText.initial.right, noteXPositions.right + 8, 540);
+                break;
+            case 1:
+                ctx.textAlign = "center"
+                ctx.fillText(keybindsText.customizable, WIDTH / 2, 510);
+                break;
+            case 2:
+                ctx.textAlign = "center"
+                ctx.fillText(keybindsText.followMe.announce, WIDTH / 2, 510);
+                break;
+            case 3:
+                ctx.textAlign = "center"
+                ctx.fillText(keybindsText.followMe.twitter, WIDTH / 2, 510);
+                break;
+            case 4:
+                ctx.textAlign = "center"
+                ctx.fillText(keybindsText.followMe.yt, WIDTH / 2, 510);
+                break;
+            case 5:
+                ctx.textAlign = "center"
+                ctx.fillText(keybindsText.thankYou, WIDTH / 2, 510);
+                break;
+            case 6:
+                break;
+            }
+        }
 
     ctx.fillStyle = "white";
     ctx.font = "30px Arial";
@@ -1530,6 +1584,12 @@ function checkHit(noteType) {
             if (currentStreak > maxStreak) {
                 maxStreak = currentStreak;
             }
+
+            notesHit++;
+            if (notesHit === 4) {
+                tutorialStage = 1;
+                cycleTutorialStages();
+            }
             
             lastNoteType = noteType;
 
@@ -1541,6 +1601,21 @@ function checkHit(noteType) {
             currentHitSoundIndex = (currentHitSoundIndex + 1) % MAX_HIT_SOUNDS;
             break;
         }
+    }
+}
+
+function cycleTutorialStages() {
+    if (tutorialStage < 6) {
+        const interval = (tutorialStage === 2 || tutorialStage === 3 || tutorialStage === 4) ? 2500 : 5000;
+        setTimeout(() => {
+            tutorialStage++;
+            cycleTutorialStages();
+        }, interval);
+    } else if (tutorialStage === 6) {
+        setTimeout(() => {
+            tutorialStage = 0;
+            isNewPlayer = false; // End the tutorial after the final message
+        }, 5000);
     }
 }
 
