@@ -73,6 +73,8 @@ canvas {
     background-size: cover;
     background-position: center;
     border-radius: 10px;
+    backdrop-filter: blur(0px);
+    transition: backdrop-filter ease 0.75s;
 }
 
 canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
@@ -113,7 +115,7 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
 }
 
 .modal-content {
-    background-color: #000000a1;
+    background-color: #00000048;
     margin: 8px auto;
     padding: 15px;
     border: 3px solid #ffffff;
@@ -122,6 +124,7 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     width: 80%;
     color: rgb(255, 255, 255);
     font-size: 14px;
+    backdrop-filter: blur(5px);
 }
 
 .keybind-button {
@@ -162,8 +165,8 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
 }
 
 #saveSettings {
-    background-color: #ffffff21;
-    box-shadow: 0 0 5px rgba(0, 35, 190, 0.623);
+    background-color: #2222223f;
+    box-shadow: 0 0 5px rgba(111, 0, 145, 0.74);
     transition: box-shadow 0.3s ease;
 }
 
@@ -234,11 +237,12 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     color: #fff; /* White text color */
     border: 1px solid rgba(255, 255, 255, 0.2); /* Light border color */
     border-radius: 5px; /* Rounded corners */
-    padding: 10px; /* Padding inside the input fields */
+    padding: 8px; /* Padding inside the input fields */
+    margin: 1px 10px;
     box-sizing: border-box; /* Ensure padding and border are included in the width */
     font-size: 14px; /* Font size */
     box-shadow: 0 0 10px rgba(114, 114, 114, 0.719);
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, padding ease 0.3s;
 }
 
 #keybindsForm input[type="text"]::placeholder {
@@ -250,12 +254,13 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     border-color: rgba(255, 255, 255, 0.4);
     background-color: rgba(255, 255, 255, 0.2);
     box-shadow: 0 0 10px rgba(248, 248, 248, 0.623);
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, padding ease 0.3s;
 }
 
 #keybindsForm input[type="text"]:hover {
     box-shadow: 0 0 10px rgba(221, 221, 221, 0.623);
-    transition: box-shadow 0.3s ease;
+    padding: 8px 12px; /* Padding inside the input fields */
+    transition: box-shadow 0.3s ease, padding ease 0.3s;
 }
 
 #keybindsForm select {
@@ -263,12 +268,12 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     color: #fff;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 5px;
-    padding: 10px;
+    padding: 8px;
     margin: 1px 0;
     box-sizing: border-box;
     font-size: 14px;
     box-shadow: 0 0 10px rgba(114, 114, 114, 0.719);
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, padding ease 0.3s;
 }
 
 #keybindsForm select option {
@@ -284,12 +289,13 @@ canvas:-moz-full-screen, canvas:-webkit-full-screen, canvas:-ms-fullscreen {
     border-color: rgba(255, 255, 255, 0.4);
     background-color: rgba(255, 255, 255, 0.2);
     box-shadow: 0 0 10px rgba(185, 185, 185, 0.719);
-    transition: box-shadow 0.25s ease;
+    transition: box-shadow 0.3s ease, padding ease 0.3s;
 }
 
 #keybindsForm select:hover {
     box-shadow: 0 0 10px rgba(160, 160, 160, 0.719);
-    transition: box-shadow 0.3s ease;
+    padding: 8px 12px; /* Padding inside the input fields */
+    transition: box-shadow 0.3s ease, padding ease 0.3s;
 }
 
 .volume-control {

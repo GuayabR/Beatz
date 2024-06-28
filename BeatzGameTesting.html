@@ -101,6 +101,9 @@
                 <label id="customBGLabel" for="customBGInput" style="display: none;">Custom background image:</label>
                 <input type="file" id="customBGInput" accept="image/*" style="display: none;"><br><br>
 
+                <label id="customTransparentBGblur" for="backdropBlurInput" style="display: none;">Background blur:</label>
+                <input type="text" id="backdropBlurInput" placeholder="Input a number" style="display: none;"><br><br>
+
                 <span id="settingsSaved" style="color: white; display: none;">Settings saved! <i class="fa-solid fa-check"></i></span>
                 <button id="saveSettings" type="button" onclick="saveKeybinds()">Save</button>
             </form>
@@ -300,27 +303,39 @@ function toggleNoteStyleButtonDisplay() {
         }
 
         document.addEventListener("keydown", function(event) {
-            if (event.key === "p" || event.key === "P") {
-                openModal();
+            if (modal.style.display === "block") {
+                if (event.key === "P" || event.key === "p") {
+                    event.stopPropagation();
+                    console.log("P key pressed. Modal is already open, no action taken.");
+                } else if (event.key === "Escape" || event.key === "escape") {
+                    closeModal();
+                    console.log("Escape key pressed. Modal closed.");
+                }
+                return; // Exit the function after handling keys when modal is open
             }
-            if (event.key === "Escape") {
+
+            if (event.key === "P" || event.key === "p") {
+                openModal();
+                console.log("P key pressed. Modal opened.");
+            } else if (event.key === "Escape" || event.key === "escape") {
                 closeModal();
+                console.log("Escape key pressed. Modal closed.");
             }
         });
 
         function deactivateKeybinds() {
             document.removeEventListener("keydown", keyDownFunction);
             document.removeEventListener("keyup", keyUpFunction);
-            document.addEventListener("keydown", filterEnterKey);
+            document.addEventListener("keydown", filterKeys);
         }
 
         function activateKeybinds() {
-            document.removeEventListener("keydown", filterEnterKey);
+            document.removeEventListener("keydown", filterKeys);
             document.addEventListener("keydown", keyDownFunction);
             document.addEventListener("keyup", keyUpFunction);
         }
 
-        function filterEnterKey(event) {
+        function filterKeys(event) {
             if (event.key === "Enter" || event.keyCode === 13) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -346,7 +361,8 @@ const defaultKeybinds = {
     defaultNoteStyle: ["arrows"],
     songTimeoutDelay: 5000,
     backgroundOption: "defaultBG",
-    customBackground: ""
+    customBackground: "",
+    customBackgroundBlur: 0,
 };
 
 let keybinds = { ...defaultKeybinds };
@@ -359,6 +375,7 @@ function loadKeybinds() {
 
     const savedBackgroundOption = localStorage.getItem('backgroundOption') || defaultKeybinds.backgroundOption;
     const savedCustomBackground = localStorage.getItem('customBackground') || defaultKeybinds.customBackground;
+    const savedCustomBackgroundBlur = localStorage.getItem('customBackgroundBlur') || defaultKeybinds.customBackgroundBlur;
 
     document.getElementById('songTimeoutAfterSongEnd').checked = songTimeoutAfterSongEnd;
     restartSongTimeout = songTimeoutAfterSongEnd;
@@ -389,32 +406,43 @@ function loadKeybinds() {
 
     // Load background settings
     document.getElementById('defaultBackground').value = savedBackgroundOption;
+    document.getElementById('backdropBlurInput').value = savedCustomBackgroundBlur;
+    document.getElementById('myCanvas').style.backdropFilter = `blur(${savedCustomBackgroundBlur}px)`;
     if (savedBackgroundOption === 'customBG') {
         document.getElementById('customBGLabel').style.display = 'inline';
         document.getElementById('customBGInput').style.display = 'inline';
+        document.getElementById('customTransparentBGblur').style.display = 'inline';
+        document.getElementById('backdropBlurInput').style.display = 'inline';
         if (savedCustomBackground) {
             customBG = new Image();
             customBG.src = savedCustomBackground;
         }
+    } else if (savedBackgroundOption === 'transparentBG') {
+        document.getElementById('customTransparentBGblur').style.display = 'inline';
+        document.getElementById('backdropBlurInput').style.display = 'inline';
     } else {
         document.getElementById('customBGLabel').style.display = 'none';
         document.getElementById('customBGInput').style.display = 'none';
+        document.getElementById('customTransparentBGblur').style.display = 'none';
+        document.getElementById('backdropBlurInput').style.display = 'none';
     }
 
     if (keybinds.backgroundOption === 'transparentBG') {
-            document.getElementById('myCanvas').style.background = 'transparent';
-            backgroundIsntDefault = false;
-        } else {
-            document.getElementById('myCanvas').style.backgroundColor = '';
-            backgroundIsntDefault = true;
-        } if (keybinds.backgroundOption == 'customBG') {
-            document.getElementById('myCanvas').style.background = 'transparent';
-        }
+        document.getElementById('myCanvas').style.background = 'transparent';
+        backgroundIsntDefault = false;
+    } else {
+        document.getElementById('myCanvas').style.backgroundColor = '';
+        backgroundIsntDefault = true;
+    }
+    if (keybinds.backgroundOption == 'customBG') {
+        document.getElementById('myCanvas').style.background = 'transparent';
+    }
 
     // Update the songTimeoutDelay in the keybinds
     keybinds.songTimeoutDelay = savedSongTimeoutDelay;
     keybinds.backgroundOption = savedBackgroundOption;
     keybinds.customBackground = savedCustomBackground;
+    keybinds.customBackgroundBlur = savedCustomBackgroundBlur;
 
     if (savedNoteStyle) {
         document.getElementById('defaultNoteStyle').value = savedNoteStyle;
@@ -443,7 +471,8 @@ function saveKeybinds() {
         noteStyle: document.getElementById('defaultNoteStyle').value,
         songTimeoutDelay: parseInt(document.getElementById('songTimeoutAfterSongEndNum').value, 10),
         backgroundOption: document.getElementById('defaultBackground').value,
-        customBackground: localStorage.getItem('customBackground') || ""
+        customBackground: localStorage.getItem('customBackground') || "",
+        customBackgroundBlur: document.getElementById('backdropBlurInput').value.trim().replace(/[^\d]/g, '') + 'px' || "0px"
     };
 
     const savedNoteStyle = localStorage.getItem('noteStyle');
@@ -467,6 +496,15 @@ function saveKeybinds() {
         return;
     }
 
+    // Validate and format blur input
+    const blurInput = newKeybinds.customBackgroundBlur;
+    const blurValue = parseInt(blurInput, 10);
+    if (isNaN(blurValue) || blurValue <= 0 || blurValue >= 1000) {
+        alert("Please enter a valid number for the background blur (1-999).");
+        return;
+    }
+    newKeybinds.customBackgroundBlur = blurValue + 'px';
+
     if (
         JSON.stringify(newKeybinds) === JSON.stringify(savedKeybinds) &&
         savedNoteStyle === newKeybinds.noteStyle &&
@@ -484,6 +522,8 @@ function saveKeybinds() {
         localStorage.setItem('songTimeoutAfterSongEnd', JSON.stringify(songTimeoutAfterSongEnd));
         localStorage.setItem('songTimeoutDelay', newKeybinds.songTimeoutDelay);
         localStorage.setItem('backgroundOption', newKeybinds.backgroundOption);
+        localStorage.setItem('customBackground', newKeybinds.customBackground);
+        localStorage.setItem('customBackgroundBlur', newKeybinds.customBackgroundBlur);
 
         if (newKeybinds.backgroundOption === 'transparentBG') {
             document.getElementById('myCanvas').style.background = 'transparent';
@@ -496,8 +536,13 @@ function saveKeybinds() {
         if (newKeybinds.backgroundOption !== 'customBG') {
             document.getElementById('myCanvas').style.background = 'transparent';
             localStorage.setItem('customBackground', '');
+        } else {
+            document.getElementById('myCanvas').style.backdropFilter = `blur(${newKeybinds.customBackgroundBlur})`;
         }
-        
+
+        // Apply the new blur value immediately
+        document.getElementById('myCanvas').style.backdropFilter = `blur(${newKeybinds.customBackgroundBlur})`;
+
         restartSongTimeout = songTimeoutAfterSongEnd;
 
         keybindsHistory = keybindsHistory.slice(0, keybindsIndex + 1);
@@ -613,8 +658,26 @@ function updateKeybindsFields() {
     document.getElementById('fullscreenInput').value = keybinds.fullscreen.join(", ");
     document.getElementById('debugInput').value = keybinds.debug.join(", ");
     document.getElementById('defaultNoteStyle').value = keybinds.noteStyle;
-    document.getElementById('songTimeoutAfterSongEnd').value = keybinds.songTimeoutCheck;
+    document.getElementById('songTimeoutAfterSongEnd').checked = keybinds.songTimeoutCheck;
     document.getElementById('songTimeoutAfterSongEndNum').value = keybinds.songTimeoutDelay;
+
+    document.getElementById('defaultBackground').value = keybinds.backgroundOption;
+    document.getElementById('backdropBlurInput').value = keybinds.customBackgroundBlur;
+
+    if (keybinds.backgroundOption === 'customBG' && keybinds.customBackground) {
+        document.getElementById('customBGLabel').style.display = 'inline';
+        document.getElementById('customBGInput').style.display = 'inline';
+        document.getElementById('customTransparentBGblur').style.display = 'inline';
+        document.getElementById('backdropBlurInput').style.display = 'inline';
+    } else if (keybinds.backgroundOption === 'transparentBG') {
+        document.getElementById('customTransparentBGblur').style.display = 'inline';
+        document.getElementById('backdropBlurInput').style.display = 'inline';
+    } else {
+        document.getElementById('customBGLabel').style.display = 'none';
+        document.getElementById('customBGInput').style.display = 'none';
+        document.getElementById('customTransparentBGblur').style.display = 'none';
+        document.getElementById('backdropBlurInput').style.display = 'none';
+    }
 }
 
 function toggleTimeoutInput() {

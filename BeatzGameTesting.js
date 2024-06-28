@@ -2,13 +2,13 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 3.2.7.2 test (release.version.subversion.bugfix)
+ * Version: HFPS 3.2.8.4 test (release.version.subversion.bugfix)
  **/
 
 // CONSTANTS
 
-const VERSION = "3.2.7.2 (Release.Version.Subversion.Bugfix)";
-const PUBLICVERSION = "3.1! (GitHub Port)";
+const VERSION = "HFPS 3.2.8.4 (Codename.Release.Version.Subversion.Bugfix)";
+const PUBLICVERSION = "3.2! (GitHub Port)";
 console.log('Version: ' + VERSION)
 
 const WIDTH = 1280;
@@ -866,14 +866,12 @@ window.onload = function () {
     });
 
 
-    // Handle background option change
-    const defaultBackground = document.getElementById('defaultBackground');
-    const customBGLabel = document.getElementById('customBGLabel');
-    const customBGInput = document.getElementById('customBGInput');
-
     // Load settings from localStorage
     const savedBackgroundOption = localStorage.getItem('backgroundOption') || 'defaultBG';
     const savedCustomBG = localStorage.getItem('customBackground');
+    const savedCustomBGBlur = localStorage.getItem('customBackgroundBlur') || '0px';
+    document.getElementById('backdropBlurInput').value = savedCustomBGBlur;
+    document.getElementById('myCanvas').style.backdropFilter = `blur(${savedCustomBGBlur})`;
 
     if (savedBackgroundOption) {
         defaultBackground.value = savedBackgroundOption;
@@ -888,12 +886,17 @@ window.onload = function () {
         if (selectedOption === 'customBG') {
             customBGLabel.style.display = 'inline';
             customBGInput.style.display = 'inline';
+            customTransparentBGblur.style.display = 'inline';
+            backdropBlurInput.style.display = 'inline';
+        } else if (selectedOption === 'transparentBG') {
+            customTransparentBGblur.style.display = 'inline';
+            backdropBlurInput.style.display = 'inline';
         } else {
             customBGLabel.style.display = 'none';
             customBGInput.style.display = 'none';
-            BGbright.src = "Resources/Background2.png"; // Switch back to default image
+            customTransparentBGblur.style.display = 'none';
+            backdropBlurInput.style.display = 'none';
         }
-        updateCanvas();
     });
 
     customBGInput.addEventListener('change', function(event) {
