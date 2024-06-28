@@ -485,10 +485,11 @@ function saveKeybinds() {
     // Validate and format blur input
     const blurInput = newKeybinds.customBackgroundBlur;
     const blurValue = parseInt(blurInput, 10);
-    if (isNaN(blurValue) || blurValue <= 0 || blurValue >= 1000) {
-        alert("Please enter a valid number for the background blur (1-999).");
+    if (isNaN(blurValue) || blurValue <= -1 || blurValue >= 1000) {
+        alert("Please enter a valid number for the background blur (0-999).");
         return;
     }
+
     newKeybinds.customBackgroundBlur = blurValue + 'px';
 
     if (
