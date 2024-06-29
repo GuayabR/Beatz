@@ -39,7 +39,7 @@
             <button id="resetKeybindsButton" class="keybind-button reset-keybinds"><i class="fa-solid fa-rotate"></i></button>
                 <button id="redoKeybindsButton" class="keybind-button redo-keybinds"><i class="fa-solid fa-rotate-right"></i></button>
                 <button id="undoKeybindsButton" class="keybind-button undo-keybinds"><i class="fa-solid fa-rotate-left"></i></button>
-            <h2>Customize Settings!</h2>
+            <h1>Customize Settings!</h1>
             <form id="keybindsForm">
                 <label for="up">Note Left:</label>
                 <input type="text" id="left" name="left">
@@ -62,17 +62,23 @@
                 <input type="text" id="fullscreenInput" name="fullscreen"><br><br>
 
                 <label for="previousInput">Previous Song:</label>
-                <input type="text" id="previousInput" name="previous"><br><br>
+                <input type="text" id="previousInput" name="previous">
 
                 <label for="restartInput">Restart Song:</label>
-                <input type="text" id="restartInput" name="restart"><br><br>
+                <input type="text" id="restartInput" name="restart">
 
                 <label for="nextButton">Next Song:</label>
                 <input type="text" id="nextInput" name="next"><br><br>
 
                 <label for="randomize">Randomize Song:</label>
                 <input type="text" id="randomize" name="randomize"><br><br>
+                
+                <label for="songTimeoutAfterSongEnd">Restart song after it ends?</label>
+                <input type="checkbox" id="songTimeoutAfterSongEnd" name="songTimeoutSongEnd">
 
+                <label id="numTimeout" for="songTimeoutAfterSongEndNum">Delay:</label>
+                <input type="text" id="songTimeoutAfterSongEndNum" placeholder="Value in milliseconds" name="songTimeoutSongEndNum"><br><br>            
+                
                 <label for="toggleNoteStyleInput">Toggle Note Style:</label>
                 <input type="text" id="toggleNoteStyleInput" name="toggleNoteStyle"><br><br>
 
@@ -81,15 +87,17 @@
                 <option value="arrows">Arrows</option>
                 <option value="circles">Circles</option>
                 </select><br><br>
-
+           
                 <label for="debugInput">Debug:</label>
                 <input type="text" id="debugInput" name="debug"><br><br>
 
-                <label for="songTimeoutAfterSongEnd">Restart song after it ends?</label>
-                <input type="checkbox" id="songTimeoutAfterSongEnd" name="songTimeoutSongEnd">
-
-                <label id="numTimeout" for="songTimeoutAfterSongEndNum">Delay:</label>
-                <input type="text" id="songTimeoutAfterSongEndNum" placeholder="Value in milliseconds" name="songTimeoutSongEndNum"><br><br>
+                <label for="circularImage">Circular Cover Images?</label>
+                <input type="checkbox" id="circularImage" name="circularImage" onchange="toggleVinylRotation()">
+    
+                <div id="vinylRotationContainer" style="display: none;">
+                    <label for="vinylRotation">Enable Cover Image Rotation:</label>
+                    <input type="checkbox" id="vinylRotation" name="vinylRotation">
+                </div><br><br>
 
                 <label for="defaultBackground">Background image:</label>
                 <select id="defaultBackground" name="backgroundForCanvas">
@@ -97,7 +105,7 @@
                     <option value="transparentBG">Transparent</option>
                     <option value="customBG">Custom background!</option>
                 </select><br><br>
-
+                
                 <label id="customBGLabel" for="customBGInput" style="display: none;">Custom background image:</label>
                 <input type="file" id="customBGInput" accept="image/*" style="display: none;"><br><br>
 
@@ -137,7 +145,7 @@
     </div>
 
     <div id="publicToTestToggle">
-    <button id="publicbtn" onclick="toPublic()">Open public game</button><br><br>
+    <button id="publicbtn" onclick="toVersion()">Open public game</button><br><br>
     </div>
     <script src="ScoreLogic.js"></script>
 
@@ -228,7 +236,7 @@ function toggleNoteStyleButtonDisplay() {
             window.open("mailto:antonviloriavictorgabriel@gmail.com");
         }
 
-        function toPublic() {
+        function toVersion() {
             window.location.href = "index.html";
         }
 
@@ -372,13 +380,23 @@ function loadKeybinds() {
     const savedNoteStyle = localStorage.getItem('noteStyle') || "arrows";
     const songTimeoutAfterSongEnd = JSON.parse(localStorage.getItem('songTimeoutAfterSongEnd')) || false;
     const savedSongTimeoutDelay = parseInt(localStorage.getItem('songTimeoutDelay')) || defaultKeybinds.songTimeoutDelay;
+    const savedVinylRotation = JSON.parse(localStorage.getItem('vinylRotation')) || false;
+    const savedCircularImage = JSON.parse(localStorage.getItem('circularImage')) || false;
 
     const savedBackgroundOption = localStorage.getItem('backgroundOption') || defaultKeybinds.backgroundOption;
-    const savedCustomBackground = localStorage.getItem('customBackground') || defaultKeybinds.customBackground;
+    const savedCustomBackground = localStorage.getItem('keybins.customBackground') || defaultKeybinds.customBackground;
     const savedCustomBackgroundBlur = localStorage.getItem('customBackgroundBlur') || defaultKeybinds.customBackgroundBlur;
 
     document.getElementById('songTimeoutAfterSongEnd').checked = songTimeoutAfterSongEnd;
     restartSongTimeout = songTimeoutAfterSongEnd;
+
+    document.getElementById('circularImage').checked = savedCircularImage;
+    circularImageEnabled = savedCircularImage;
+    toggleVinylRotation(); // Update UI based on circularImage setting
+
+    const vinylRotationCheckbox = document.getElementById('vinylRotation');
+    vinylRotationCheckbox.checked = savedVinylRotation;
+    vinylRotationEnabled = savedVinylRotation;
 
     const defaultNoteStyleDropdown = document.getElementById('defaultNoteStyle');
     if (savedNoteStyle) {
@@ -403,7 +421,9 @@ function loadKeybinds() {
     document.getElementById('fullscreenInput').value = keybinds.fullscreen.join(", ");
     document.getElementById('debugInput').value = keybinds.debug.join(", ");
     document.getElementById('songTimeoutAfterSongEndNum').value = savedSongTimeoutDelay;
-
+    document.getElementById('circularImage').value = savedCircularImage;
+    document.getElementById('vinylRotation').value = savedVinylRotation;
+    
     // Load background settings
     document.getElementById('defaultBackground').value = savedBackgroundOption;
     document.getElementById('backdropBlurInput').value = savedCustomBackgroundBlur;
@@ -455,28 +475,39 @@ function loadKeybinds() {
 
 function saveKeybinds() {
     const newKeybinds = {
-        up: document.getElementById('up').value.split(", "),
-        left: document.getElementById('left').value.split(", "),
-        down: document.getElementById('down').value.split(", "),
-        right: document.getElementById('right').value.split(", "),
-        pause: document.getElementById('pause').value.split(", "),
-        autoHit: document.getElementById('autoHit').value.split(", "),
-        previous: document.getElementById('previousInput').value.split(", "),
-        restart: document.getElementById('restartInput').value.split(", "),
-        next: document.getElementById('nextInput').value.split(", "),
-        randomize: document.getElementById('randomize').value.split(", "),
-        toggleNoteStyle: document.getElementById('toggleNoteStyleInput').value.split(", "),
-        fullscreen: document.getElementById('fullscreenInput').value.split(", "),
-        debug: document.getElementById('debugInput').value.split(", "),
+        up: document.getElementById('up').value.split(", ").map(key => key.trim()),
+        left: document.getElementById('left').value.split(", ").map(key => key.trim()),
+        down: document.getElementById('down').value.split(", ").map(key => key.trim()),
+        right: document.getElementById('right').value.split(", ").map(key => key.trim()),
+        pause: document.getElementById('pause').value.split(", ").map(key => key.trim()),
+        autoHit: document.getElementById('autoHit').value.split(", ").map(key => key.trim()),
+        previous: document.getElementById('previousInput').value.split(", ").map(key => key.trim()),
+        restart: document.getElementById('restartInput').value.split(", ").map(key => key.trim()),
+        next: document.getElementById('nextInput').value.split(", ").map(key => key.trim()),
+        randomize: document.getElementById('randomize').value.split(", ").map(key => key.trim()),
+        toggleNoteStyle: document.getElementById('toggleNoteStyleInput').value.split(", ").map(key => key.trim()),
+        fullscreen: document.getElementById('fullscreenInput').value.split(", ").map(key => key.trim()),
+        debug: document.getElementById('debugInput').value.split(", ").map(key => key.trim()),
         noteStyle: document.getElementById('defaultNoteStyle').value,
-        songTimeoutDelay: parseInt(document.getElementById('songTimeoutAfterSongEndNum').value, 10),
+        songTimeoutAfterSongEnd: document.getElementById('songTimeoutAfterSongEnd').checked,
+        songTimeoutDelay: parseInt(document.getElementById('songTimeoutAfterSongEndNum').value) || 0,
+        vinylRotation: document.getElementById('vinylRotation').checked,
+        circularImage: document.getElementById('circularImage').checked,
         backgroundOption: document.getElementById('defaultBackground').value,
-        customBackground: localStorage.getItem('customBackground') || "",
-        customBackgroundBlur: document.getElementById('backdropBlurInput').value.trim().replace(/[^\d]/g, '') + 'px' || "0px"
+        customBackgroundBlur: document.getElementById('backdropBlurInput').value
     };
+
+    if (vinylRotationEnabled && !newKeybinds.vinylRotation) {
+        rotationAngle = 0; // Reset rotation angle to 0 if rotation is disabled
+    }
+
+    restartSongTimeout = newKeybinds.songTimeoutAfterSongEnd;
+    vinylRotationEnabled = newKeybinds.vinylRotation;
+    circularImageEnabled = newKeybinds.circularImage;
 
     const savedNoteStyle = localStorage.getItem('noteStyle');
     const songTimeoutAfterSongEnd = document.getElementById('songTimeoutAfterSongEnd').checked;
+    const savedCustomBG = localStorage.getItem('customBackground');
 
     if (newKeybinds.noteStyle !== savedNoteStyle) {
         // Change note style immediately
@@ -509,23 +540,29 @@ function saveKeybinds() {
     if (
         JSON.stringify(newKeybinds) === JSON.stringify(savedKeybinds) &&
         savedNoteStyle === newKeybinds.noteStyle &&
-        songTimeoutAfterSongEnd === savedSongTimeoutAfterSongEnd &&
-        timeoutInputValue === keybinds.songTimeoutDelay
+        savedSongTimeoutAfterSongEnd === newKeybinds.songTimeoutAfterSongEnd &&
+        timeoutInputValue === keybinds.songTimeoutDelay &&
+        localStorage.getItem('customBackground') === savedCustomBG &&
+        savedVinylRotation === newKeybinds.vinylRotation &&  
+        savedCircularImage === newKeybinds.circularImage     
     ) {
         // No changes have been made
         saveMessage.textContent = "No changes have been made.";
         saveMessage.style.display = 'block';
+        return;
     } else {
         // Changes have been made
         keybinds = newKeybinds;
-        localStorage.setItem('keybinds', JSON.stringify(keybinds));
-        localStorage.setItem('noteStyle', newKeybinds.noteStyle); // Save the new note style
-        localStorage.setItem('songTimeoutAfterSongEnd', JSON.stringify(songTimeoutAfterSongEnd));
-        localStorage.setItem('songTimeoutDelay', newKeybinds.songTimeoutDelay);
-        localStorage.setItem('backgroundOption', newKeybinds.backgroundOption);
-        localStorage.setItem('customBackground', newKeybinds.customBackground);
-        localStorage.setItem('customBackgroundBlur', newKeybinds.customBackgroundBlur);
 
+        localStorage.setItem('keybinds', JSON.stringify(newKeybinds));
+        localStorage.setItem('noteStyle', newKeybinds.noteStyle);
+        localStorage.setItem('songTimeoutAfterSongEnd', JSON.stringify(newKeybinds.songTimeoutAfterSongEnd));
+        localStorage.setItem('songTimeoutDelay', newKeybinds.songTimeoutDelay);
+        localStorage.setItem('vinylRotation', JSON.stringify(newKeybinds.vinylRotation));
+        localStorage.setItem('circularImage', JSON.stringify(newKeybinds.circularImage));
+        localStorage.setItem('backgroundOption', newKeybinds.backgroundOption);
+        localStorage.setItem('customBackgroundBlur', newKeybinds.customBackgroundBlur);
+        
         if (newKeybinds.backgroundOption === 'transparentBG') {
             document.getElementById('myCanvas').style.background = 'transparent';
             backgroundIsntDefault = false;
@@ -541,19 +578,36 @@ function saveKeybinds() {
             document.getElementById('myCanvas').style.backdropFilter = `blur(${newKeybinds.customBackgroundBlur})`;
         }
 
-        // Apply the new blur value immediately
-        document.getElementById('myCanvas').style.backdropFilter = `blur(${newKeybinds.customBackgroundBlur})`;
+        // Handle background image change if applicable
+        const fileInput = document.getElementById('customBGInput');
+        const file = fileInput.files[0]; // Assuming single file upload
 
-        restartSongTimeout = songTimeoutAfterSongEnd;
+        if (file) {
+            handleFileUpload(file);
+        }
 
-        keybindsHistory = keybindsHistory.slice(0, keybindsIndex + 1);
-        keybindsHistory.push(JSON.parse(JSON.stringify(keybinds)));
+        keybindsHistory.push(JSON.parse(JSON.stringify(newKeybinds)));
         keybindsIndex++;
 
+        saveMessage.textContent = "Settings saved!";
         saveMessage.style.display = 'block';
     }
     console.log("Saved settings", keybinds);
 }
+
+function handleFileUpload(file) {
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        const imageData = e.target.result; // This will be in data URL format
+        // Store imageData in localStorage or use it as needed
+        localStorage.setItem('customBackground', imageData);
+        BGbright.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+}
+
 
 function applyDefaultNoteStyle() {
     const noteStyle = localStorage.getItem('noteStyle') || 'arrows';

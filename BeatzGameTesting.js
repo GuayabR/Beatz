@@ -2,12 +2,12 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: HFPS 3.2.9.4 test (release.version.subversion.bugfix)
+ * Version: HFPS 3.2.10.8 test (release.version.subversion.bugfix)
  **/
 
 // CONSTANTS
 
-const VERSION = "HFPS 3.2.8.4 (Codename.Release.Version.Subversion.Bugfix)";
+const VERSION = "HFPS 3.2.10.8 (Codename.Release.Version.Subversion.Bugfix)";
 const PUBLICVERSION = "3.2! (GitHub Port)";
 console.log('Version: ' + VERSION)
 
@@ -438,7 +438,7 @@ const songConfigs = {
     "Resources/Songs/From The Inside.mp3": { BPM: 95, noteSpeed: 10.5 },
     "Resources/Songs/Faint.mp3": { BPM: 135, noteSpeed: 11 },
     "Resources/Songs/Breaking The Habit.mp3": { BPM: 100, noteSpeed: 10 },
-    "Resources/Songs/I Wonder.mp3": { BPM: 191, noteSpeed: 8 },
+    "Resources/Songs/I Wonder.mp3": { BPM: 127, noteSpeed: 8 },
     "Resources/Songs/Godzilla.mp3": { BPM: 166, noteSpeed: 13 },
     "Resources/Songs/Houdini.mp3": { BPM: 141, noteSpeed: 12 },
     "Resources/Songs/Runaway.mp3": { BPM: 85, noteSpeed: 10 },
@@ -820,19 +820,126 @@ function getArtist(songSrc) {
     return artists[songTitle] || "N/A";
 }
 
-// Function to get the album cover image based on the song path
-function getCover(songPath) {
+// Function to get the album cover image based on the song path and rotate it
+function getCover(songPath, deltaTime) {
     const songTitle = getSongTitle(songPath);
     const coverImage = loadedImages[songTitle];
     if (coverImage) {
-        ctx.drawImage(coverImage, WIDTH - 190, 92, 180, 180);
+        let centerX = WIDTH - 190 + 180 / 2;
+        let centerY = 92 + 180 / 2;
+        let radius = 90;
+
+        // Calculate rotation speed and angle based on deltaTime
+        let rotationSpeed = 0.015 * BPM; // Adjust rotation speed as needed
+        if (vinylRotationEnabled) {
+            rotationAngle += rotationSpeed * deltaTime; // Accumulate rotation angle
+        }
+
+        if (circularImageEnabled) {
+            rotateImage(ctx, coverImage, centerX, centerY, radius, rotationAngle);
+        } else {
+            ctx.drawImage(coverImage, centerX - radius, centerY - radius, radius * 2, radius * 2);
+        }
     } else {
-        ctx.drawImage(noCover, WIDTH - 190, 92, 180, 180);
+        let centerX = WIDTH - 190 + 180 / 2;
+        let centerY = 92 + 180 / 2;
+        let radius = 90;
+
+        if (circularImageEnabled) {
+            ctx.save();
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.clip();
+
+            ctx.drawImage(noCover, centerX - radius, centerY - radius, radius * 2, radius * 2);
+
+            ctx.restore();
+        } else {
+            ctx.drawImage(noCover, centerX - radius, centerY - radius, radius * 2, radius * 2);
+        }
+
         ctx.fillStyle = "white";
         ctx.font = "20px Arial";
         ctx.textAlign = "right";
         ctx.fillText("No cover found", WIDTH - 10, 294);
         ctx.fillText("for " + getSongTitle(currentSong.src), WIDTH - 10, 318);
+    }
+}
+
+// Function to rotate the image
+function rotateImage(ctx, coverImage, centerX, centerY, radius, rotationAngle) {
+    ctx.save();
+
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+
+    ctx.translate(centerX, centerY);
+    ctx.rotate(rotationAngle);
+    ctx.drawImage(coverImage, -radius, -radius, radius * 2, radius * 2);
+
+    ctx.restore();
+}
+
+// Initialize variables
+let rotationAngle = 0; // Initial rotation angle
+let vinylRotationEnabled = false; // Initial rotation state
+let circularImageEnabled = false; // Initial circular image state
+
+// Toggle vinyl rotation visibility
+function toggleVinylRotation() {
+    const circularImageCheckbox = document.getElementById('circularImage');
+    const vinylRotationContainer = document.getElementById('vinylRotationContainer');
+    if (circularImageCheckbox.checked) {
+        vinylRotationContainer.style.display = 'block';
+    } else {
+        vinylRotationContainer.style.display = 'none';
+        document.getElementById('vinylRotation').checked = false;
+        vinylRotationEnabled = false;
+        rotationAngle = 0; // Reset rotation angle when disabled
+    }
+}
+
+function getCoverForEndScreen(songPath) {
+    const songTitle = getSongTitle(songPath);
+    const coverImage = loadedImages[songTitle];
+    if (coverImage) {
+        let centerX = WIDTH - 100;    // X-coordinate of the circle center
+        let centerY = (HEIGHT / 2) + 40;    // Y-coordinate of the circle center
+        let radius = 90;    // Radius of the circle
+
+        ctx.save();
+
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+
+        ctx.globalAlpha = 0.5;
+
+        ctx.drawImage(coverImage, centerX - radius, centerY - radius, radius * 2, radius * 2);
+
+        ctx.restore();
+    } else {
+        let centerX = WIDTH - 100;
+        let centerY = (HEIGHT / 2) + 40;
+        let radius = 90;
+
+        ctx.save();
+
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+
+        ctx.globalAlpha = 0.5;
+
+        ctx.drawImage(noCover, centerX - radius, centerY - radius, radius * 2, radius * 2);
+
+        ctx.restore();
     }
 }
 
@@ -885,7 +992,6 @@ window.onload = function () {
         document.getElementById("startButton").style.display = "none";
     });
 
-
     // Load settings from localStorage
     const savedBackgroundOption = localStorage.getItem('backgroundOption') || 'defaultBG';
     const savedCustomBG = localStorage.getItem('customBackground');
@@ -896,7 +1002,7 @@ window.onload = function () {
     if (savedBackgroundOption) {
         defaultBackground.value = savedBackgroundOption;
         if (savedBackgroundOption === 'customBG' && savedCustomBG) {
-            BGbright.src = savedCustomBG;
+            BGbright.src = localStorage.getItem('customBackground');
         }
     }
 
@@ -916,18 +1022,6 @@ window.onload = function () {
             customBGInput.style.display = 'none';
             customTransparentBGblur.style.display = 'none';
             backdropBlurInput.style.display = 'none';
-        }
-    });
-
-    customBGInput.addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                localStorage.setItem('customBackground', e.target.result);
-                BGbright.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
         }
     });
 }
@@ -1197,6 +1291,7 @@ function drawEndScreen() {
     ctx.fillText("Song completed!", WIDTH / 2, HEIGHT / 2 - 150);
 
     // Draw song information
+    getCoverForEndScreen(currentSongPath);
     ctx.font = "30px Arial";
     ctx.textAlign = "right";
     ctx.fillText("Song: " + getSongTitle(currentSongPath), WIDTH - 100, HEIGHT / 2);
@@ -1210,6 +1305,12 @@ function drawEndScreen() {
     ctx.fillText("Perfect Hits: " + perfectHits, 100, HEIGHT / 2 + 40);
     ctx.fillText("Early/Late Hits: " + earlyLateHits, 100, HEIGHT / 2 + 80);
     ctx.fillText("Misses: " + totalMisses, 100, HEIGHT / 2 + 120);
+
+    // Draw maximum streak
+    ctx.fillStyle = "white";
+    ctx.font = "40px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("Maximum streak: " + maxStreak, WIDTH / 2, HEIGHT / 2 + 200);
 }
 
 console.log("Functions saveScore, getBestScore, displayBestScore, and onSongEnd loaded.");
@@ -1409,7 +1510,7 @@ function updateCanvas(timestamp) {
     }
 
     displaySongInfo();
-    getCover(currentSongPath);
+    getCover(currentSongPath, timeDelta);
 
     if (songStarted) {
         let currentTime = Date.now() - songStartTime;

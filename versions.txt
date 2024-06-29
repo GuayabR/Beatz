@@ -294,3 +294,17 @@ Stages:
 - Twitter
 - Youtube
 - Game thanks player for playing!
+//
+
+3.2.10.4 (HFPS 3.2! 28/06/2024)
+
+- Cover images can now be round and spin like a vinyl record.
+- Cover images spinning speed is decided by the current BPM of the song.
+//
+
+3.2.10.8 (HFPS 3.2! 29/06/2024)
+
+- Fixed saving settings not checking wether there were any changes or not.
+- Fixed saving new custom background formatting the image as a fake path while loading the image looks for an image data format. All images should be formatted using image data.
+- Fixed custom backgrounds instantly saving and applying, now image only applies after settings are saved
+- Fixed circular cover images and vinyl rotation not saving to localStorage.
