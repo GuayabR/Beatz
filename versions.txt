@@ -293,7 +293,7 @@ Stages:
 - Socials are announced
 - Twitter
 - Youtube
-- Game thanks player for playing!
+- Game thanks user for playing!
 //
 
 3.2.10.4 (HFPS 3.2! 28/06/2024)
@@ -318,3 +318,10 @@ Stages:
 - Shiawase (VIP) now has a complete Dynamic speed setting. (More to come)
 - Dynamic speed settings can now end the song early by resetting the notes array at a set timestamp, and call to draw end screen at another set timestamp (Timestamp, note speed, notes, draw end screen call)
 - Next update: Dynamic speeds are going to be shown below the cover image, making the switch from a slow speed to a fast speed easier.
+//
+
+3.2.12.10 (HFPS 3.2! 30/06/2024)
+
+- Added 3 new default backgrounds. (Wavy chromatic, Dark orange sunset, Copy HTML)
+- Fixed saving settings not instantly switching to your preferred background.
+- Code is now readable (thanks prettier)

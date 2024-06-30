@@ -1,831 +1,151 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Beatz 3.2!</title>
-    <link rel="icon" type="image/x-icon" href="Resources/favicon.png">
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <canvas id="myCanvas" width="1280" height="720"></canvas>
-    <div id="unsupportedMessage"Aye! Thanks for checking out Beatz.io, unfortunately, your device does not support the canvas element, therefore, Beatz.io can not start. (ERR: UNSUPPORTED_DEVICE)></div>
-    <h1>Beatz.io</h1>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Beatz 3.2!</title>
+        <link rel="icon" type="image/x-icon" href="Resources/favicon.png" />
+        <link rel="stylesheet" type="text/css" href="styles.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    </head>
+    <body>
+        <canvas id="myCanvas" width="1280" height="720"></canvas>
+        <div id="unsupportedMessage" Aye! Thanks for checking out Beatz.io, unfortunately, your device does not support the canvas element, therefore, Beatz.io can not start. (ERR: UNSUPPORTED_DEVICE)></div>
+        <h1>Beatz.io</h1>
 
-    <button id="startButton" style="display: none;">Start! <i class="fa-solid fa-play"></i></button>
-    <button id="myYoutube" style="display: none;" onclick="NewTab()"> <i class="fa-brands fa-youtube"></i> </button>
-    <button id="toggleNoteStyleButton" style="display: none;">
-        <i class="fa-solid fa-arrow-up" style="display: none;"></i>
-        <i class="fa-solid fa-circle" style="display: none;"></i>
-    </button>
-    <button id="previousButton" style="display: none;"> <i class="fa-solid fa-backward-fast"></i> </button>
-    <button id="restartButton" style="display: none;"> <i class="fa-solid fa-repeat"></i> </button>
-    <button id ="randomizeButton" style="display: none"> <i class="fa-solid fa-shuffle"></i> </button>
-    <button id="nextButton" style="display: none;"> <i class="fa-solid fa-forward-fast"></i> </button>
-    <button id="toggleAutoHit" style="display: none;">Toggle Auto Hit</button>
-    <button id="fullscreen" style="display: none;" onclick="toggleFullScreen()"> <i class="fa-solid fa-expand"></i> </button>
-    <button id="debugButton" style="display: none;"><i class="fa-solid fa-robot"></i></button>
-    <button id="keybindsButton" style="display: none;"><i class="fa-solid fa-gear"></i></button>
-    
-    <h1><select id="songSelector">
-        <option>Loading songs...</option>
-    </select></h1>
-    
+        <button id="startButton" style="display: none">Start! <i class="fa-solid fa-play"></i></button>
+        <button id="myYoutube" style="display: none" onclick="NewTab()"><i class="fa-brands fa-youtube"></i></button>
+        <button id="toggleNoteStyleButton" style="display: none">
+            <i class="fa-solid fa-arrow-up" style="display: none"></i>
+            <i class="fa-solid fa-circle" style="display: none"></i>
+        </button>
+        <button id="previousButton" style="display: none"><i class="fa-solid fa-backward-fast"></i></button>
+        <button id="restartButton" style="display: none"><i class="fa-solid fa-repeat"></i></button>
+        <button id="randomizeButton" style="display: none"><i class="fa-solid fa-shuffle"></i></button>
+        <button id="nextButton" style="display: none"><i class="fa-solid fa-forward-fast"></i></button>
+        <button id="toggleAutoHit" style="display: none">Toggle Auto Hit</button>
+        <button id="fullscreen" style="display: none" onclick="toggleFullScreen()"><i class="fa-solid fa-expand"></i></button>
+        <button id="debugButton" style="display: none"><i class="fa-solid fa-robot"></i></button>
+        <button id="keybindsButton" style="display: none"><i class="fa-solid fa-gear"></i></button>
 
-    <!-- The Modal -->
-    <div id="keybindsModal" class="modal">
-        <div class="modal-content">
-            <span class="close"><i class="fa-solid fa-xmark"></i></span>
-            <button id="resetKeybindsButton" class="keybind-button reset-keybinds"><i class="fa-solid fa-rotate"></i></button>
+        <h1>
+            <select id="songSelector">
+                <option>Loading songs...</option>
+            </select>
+        </h1>
+
+        <!-- The Modal -->
+        <div id="keybindsModal" class="modal">
+            <div class="modal-content">
+                <span class="close"><i class="fa-solid fa-xmark"></i></span>
+                <button id="resetKeybindsButton" class="keybind-button reset-keybinds"><i class="fa-solid fa-rotate"></i></button>
                 <button id="redoKeybindsButton" class="keybind-button redo-keybinds"><i class="fa-solid fa-rotate-right"></i></button>
                 <button id="undoKeybindsButton" class="keybind-button undo-keybinds"><i class="fa-solid fa-rotate-left"></i></button>
-            <h1>Customize Settings!</h1>
-            <form id="keybindsForm">
-                <label for="up">Note Left:</label>
-                <input type="text" id="left" name="left">
-                <label for="left">Note Up:</label>
-                <input type="text" id="up" name="up"><br><br>
+                <h1>Customize Settings!</h1>
+                <form id="keybindsForm">
+                    <label for="up">Note Left:</label>
+                    <input type="text" id="left" name="left" />
+                    <label for="left">Note Up:</label>
+                    <input type="text" id="up" name="up" /><br /><br />
 
-                <label for="down">Note Down:</label>
-                <input type="text" id="down" name="down">
+                    <label for="down">Note Down:</label>
+                    <input type="text" id="down" name="down" />
 
-                <label for="right">Note Right:</label>
-                <input type="text" id="right" name="right"><br><br>
+                    <label for="right">Note Right:</label>
+                    <input type="text" id="right" name="right" /><br /><br />
 
-                <label for="pause">Pause Game:</label>
-                <input type="text" id="pause" name="pause">
+                    <label for="pause">Pause Game:</label>
+                    <input type="text" id="pause" name="pause" />
 
-                <label for="autoHit">Toggle Auto Hit:</label>
-                <input type="text" id="autoHit" name="autoHit"><br><br>
+                    <label for="autoHit">Toggle Auto Hit:</label>
+                    <input type="text" id="autoHit" name="autoHit" /><br /><br />
 
-                <label for="fullscreenInput">Fullscreen:</label>
-                <input type="text" id="fullscreenInput" name="fullscreen"><br><br>
+                    <label for="fullscreenInput">Fullscreen:</label>
+                    <input type="text" id="fullscreenInput" name="fullscreen" /><br /><br />
 
-                <label for="previousInput">Previous Song:</label>
-                <input type="text" id="previousInput" name="previous">
+                    <label for="previousInput">Previous Song:</label>
+                    <input type="text" id="previousInput" name="previous" />
 
-                <label for="restartInput">Restart Song:</label>
-                <input type="text" id="restartInput" name="restart">
+                    <label for="restartInput">Restart Song:</label>
+                    <input type="text" id="restartInput" name="restart" />
 
-                <label for="nextButton">Next Song:</label>
-                <input type="text" id="nextInput" name="next"><br><br>
+                    <label for="nextButton">Next Song:</label>
+                    <input type="text" id="nextInput" name="next" /><br /><br />
 
-                <label for="randomize">Randomize Song:</label>
-                <input type="text" id="randomize" name="randomize"><br><br>
-                
-                <label for="songTimeoutAfterSongEnd">Restart song after it ends?</label>
-                <input type="checkbox" id="songTimeoutAfterSongEnd" name="songTimeoutSongEnd">
+                    <label for="randomize">Randomize Song:</label>
+                    <input type="text" id="randomize" name="randomize" /><br /><br />
 
-                <label id="numTimeout" for="songTimeoutAfterSongEndNum">Delay:</label>
-                <input type="text" id="songTimeoutAfterSongEndNum" placeholder="Value in milliseconds" name="songTimeoutSongEndNum"><br><br>            
-                
-                <label for="toggleNoteStyleInput">Toggle Note Style:</label>
-                <input type="text" id="toggleNoteStyleInput" name="toggleNoteStyle"><br><br>
+                    <label for="songTimeoutAfterSongEnd">Restart song after it ends?</label>
+                    <input type="checkbox" id="songTimeoutAfterSongEnd" name="songTimeoutSongEnd" />
 
-                <label for="defaultNoteStyle">Default Note Style:</label>
-                <select id="defaultNoteStyle" name="defaultNoteStyle">
-                <option value="arrows">Arrows</option>
-                <option value="circles">Circles</option>
-                </select><br><br>
-           
-                <label for="debugInput">Debug:</label>
-                <input type="text" id="debugInput" name="debug"><br><br>
+                    <label id="numTimeout" for="songTimeoutAfterSongEndNum">Delay:</label>
+                    <input type="text" id="songTimeoutAfterSongEndNum" placeholder="Value in milliseconds" name="songTimeoutSongEndNum" /><br /><br />
 
-                <label for="circularImage">Circular Cover Images?</label>
-                <input type="checkbox" id="circularImage" name="circularImage" onchange="toggleVinylRotation()">
-    
-                <div id="vinylRotationContainer" style="display: none;">
-                    <label for="vinylRotation">Enable Cover Image Rotation:</label>
-                    <input type="checkbox" id="vinylRotation" name="vinylRotation">
-                </div><br><br>
+                    <label for="toggleNoteStyleInput">Toggle Note Style:</label>
+                    <input type="text" id="toggleNoteStyleInput" name="toggleNoteStyle" /><br /><br />
 
-                <label for="defaultBackground">Background image:</label>
-                <select id="defaultBackground" name="backgroundForCanvas">
-                    <option value="defaultBG">Default (Uproxide)</option>
-                    <option value="transparentBG">Transparent</option>
-                    <option value="customBG">Custom background!</option>
-                </select><br><br>
-                
-                <label id="customBGLabel" for="customBGInput" style="display: none;">Custom background image:</label>
-                <input type="file" id="customBGInput" accept="image/*" style="display: none;"><br><br>
+                    <label for="defaultNoteStyle">Default Note Style:</label>
+                    <select id="defaultNoteStyle" name="defaultNoteStyle">
+                        <option value="arrows">Arrows</option>
+                        <option value="circles">Circles</option></select
+                    ><br /><br />
 
-                <label id="customTransparentBGblur" for="backdropBlurInput" style="display: none;">Background blur:</label>
-                <input type="text" id="backdropBlurInput" placeholder="Input a number" style="display: none;"><br><br>
+                    <label for="debugInput">Debug:</label>
+                    <input type="text" id="debugInput" name="debug" /><br /><br />
 
-                <span id="settingsSaved" style="color: white; display: none;">Settings saved! <i class="fa-solid fa-check"></i></span>
-                <button id="saveSettings" type="button" onclick="saveKeybinds()">Save</button>
-            </form>
+                    <label for="circularImage">Circular Cover Images?</label>
+                    <input type="checkbox" id="circularImage" name="circularImage" onchange="toggleVinylRotation()" />
+
+                    <div id="vinylRotationContainer" style="display: none">
+                        <label for="vinylRotation">Enable Cover Image Rotation:</label>
+                        <input type="checkbox" id="vinylRotation" name="vinylRotation" />
+                    </div>
+                    <br /><br />
+
+                    <label for="defaultBackground">Background image:</label>
+                    <select id="defaultBackground" name="backgroundForCanvas">
+                        <option value="defaultBG">Default (Uproxide)</option>
+                        <option value="defaultBG2">Wavy chromatic</option>
+                        <option value="defaultBG3">Dark orange sunset</option>
+                        <option value="htmlBG">Copy HTML</option>
+                        <option value="transparentBG">Transparent</option>
+                        <option value="customBG">Custom background!</option></select
+                    ><br /><br />
+
+                    <label id="customBGLabel" for="customBGInput" style="display: none">Custom background image:</label>
+                    <input type="file" id="customBGInput" accept="image/*" style="display: none" /><br /><br />
+
+                    <label id="customTransparentBGblur" for="backdropBlurInput" style="display: none">Background blur:</label>
+                    <input type="text" id="backdropBlurInput" placeholder="Input a number" style="display: none" /><br /><br />
+
+                    <span id="settingsSaved" style="color: white; display: none">Settings saved! <i class="fa-solid fa-check"></i></span>
+                    <button id="saveSettings" type="button" onclick="saveKeybinds()">Save</button>
+                </form>
+            </div>
         </div>
-    </div>
 
-    <div id="songVol" class="volume-control" style="display: none;">
-        <label for="songVolume">Song Volume</label>
-        <input type="range" id="songVolume" name="songVolume" min="0" max="100" value="50">
-    </div>
-
-    <div id="hitSoundVol" class="volume-control" style="display: none;">
-        <label id="hitSoundVol" for="hitSoundSlider">Hit Sound volume:</label>
-        <input type="range" id="hitSoundSlider" name="hitSoundSlider" min="0" max="100" value="50">
-    </div><br><br>
-
-    <div id="contactBtn">
-    <button id="contactbtn" onclick="email()"><i class="fa-solid fa-envelope"></i> Contact</button>
-    </div>
-
-    <div id="publicToTestToggle">
-    <button id="publicbtn" onclick="toVersion()">Open testing game</button><br><br>
-    </div>
-
-
-    <h2>Background image from: <a href="https://github.com/Uproxide/Texture-Workshop/commit/457788213d900a980f559ae8f241febad3322bdd#diff-1dbd3c28454ab3b1596af576394661ba03597f51326dbbff288c6b8ccc353041">Uproxide's "Texture Workshop"</a></h2>
-    <h2>Notes from: <a href="https://github.com/Simply-Love/Simply-Love-SM5?tab=readme-ov-file">Teejusb's "Simply Love" osu! mania skins</a></h2>
-    <h3>If you are the artist of any of these songs, contact me through my email if you want them removed.</h3>
-    <h3>Credit of the songs goes to their respective creators.</h3>
-    <h3>Note that i am NOT making any money on this game, i just code occasionally for the fun of it. <3</h3>
-
-    <script>
-        var canvas = document.getElementById('myCanvas');
-        document.addEventListener("DOMContentLoaded", function() {
-        detectAndHandleDevice();
-        loadKeybinds();
-        applyDefaultNoteStyle();
-        updateKeybindsFields();
-        toggleNoteStyleButtonDisplay();
-        toggleTimeoutInput();
-});
-
-function toggleNoteStyleButtonDisplay() {
-    const toggleNoteStyleButton = document.getElementById('toggleNoteStyleButton');
-    const currentNoteStyle = localStorage.getItem('noteStyle') || 'arrows';
-
-    if (currentNoteStyle === 'arrows') {
-        toggleNoteStyleButton.innerHTML = '<i class="fa-solid fa-arrow-up" style="display: none;"></i> <i class="fa-solid fa-circle"></i>';
-    } else {
-        toggleNoteStyleButton.innerHTML = '<i class="fa-solid fa-arrow-up"></i> <i class="fa-solid fa-circle" style="display: none;"></i>';
-    }
-}
-
-        document.addEventListener("keydown", keyDownFunction);
-        document.addEventListener("keyup", keyUpFunction);
-
-        function detectDeviceType() {
-            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-            // Checks for iOS devices
-            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                return "iOS";
-            }
-
-            // Checks for Android devices
-            if (/android/i.test(userAgent)) {
-                return "Android";
-            }
-
-            // Checks for other mobile devices
-            if (/Mobile|iP(hone|od)|IEMobile|Windows Phone|kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(userAgent)) {
-                return "Mobile";
-            }
-
-            // Default to desktop
-            return "Desktop";
-        }
-
-        function detectAndHandleDevice() {
-            const deviceType = detectDeviceType();
-            if (deviceType === "Mobile" || deviceType === "iOS" || deviceType === "Android") {
-                // Deactivate buttons
-                document.querySelectorAll('button').forEach(button => button.disabled = true);
-                document.querySelectorAll('select').forEach(select => select.disabled = true);
-
-                // Remove canvas background image
-                canvas.style.backgroundimage = '';
-
-                // Display unsupported message
-                document.getElementById('unsupportedMessage').style.display = 'block';
-
-                console.log("Mobile device detected. Game is not supported.");
-            } else {
-                console.log("Desktop device detected. Game is supported.");
-            }
-        }
-
-        document.getElementById('undoKeybindsButton').addEventListener('click', undoKeybinds);
-        document.getElementById('redoKeybindsButton').addEventListener('click', redoKeybinds);
-
-        function NewTab() {
-            window.open("https://www.youtube.com/@GuayabR", "_blank");
-        }
-
-        function email() {
-            window.open("mailto:antonviloriavictorgabriel@gmail.com");
-        }
-
-        function toVersion() {
-            window.location.href = "BeatzGameTesting.html";
-        }
-
-        function toggleFullScreen() {
-            if (!document.fullscreenElement) {
-                canvas.requestFullscreen().catch(err => {
-                    console.log("Error attempting to enable full-screen mode: ${err.message} (${err.name})");
-                });
-                console.log("Entered Fullscreen")
-            } else {
-                document.exitFullscreen();
-                console.log("Exited Fullscreen")
-            }
-        }
-
-        document.addEventListener('fullscreenchange', function() {
-            if (document.fullscreenElement) {
-                canvas.style.cursor = 'none';
-            } else {
-                canvas.style.cursor = 'default';
-            }
-        });
-
-        var modal = document.getElementById("keybindsModal");
-        var btn = document.getElementById("keybindsButton");
-        var span = document.getElementsByClassName("close")[0];
-        var resetButton = document.getElementById("resetKeybindsButton");
-        const saveMessage = document.getElementById("settingsSaved"); 
-
-        function convertToLowerCase(inputElement) {
-            inputElement.value = inputElement.value.toLowerCase();
-        }
-        document.querySelectorAll('input[type="text"]').forEach(function(input) {
-            input.addEventListener('input', function() {
-                convertToLowerCase(input);
-                hideSaveMessage();
-            });
-        });
-
-        function hideSaveMessage() {
-            saveMessage.style.display = 'none';
-        }
-
-        btn.onclick = function() {
-            openModal();
-        }
-
-        span.onclick = function() {
-            closeModal();
-        }
-
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
-
-        resetButton.onclick = function() {
-            resetKeybinds();
-        }
-
-        function openModal() {
-            modal.style.display = "block";
-            loadKeybinds();
-            deactivateKeybinds();
-        }
-
-        function closeModal() {
-            modal.style.display = "none";
-            saveMessage.style.display = "none";
-            activateKeybinds();
-        }
-
-        document.addEventListener("keydown", function(event) {
-            if (modal.style.display === "block") {
-                if (event.key === "P" || event.key === "p") {
-                    event.stopPropagation();
-                    console.log("P key pressed. Modal is already open, no action taken.");
-                } else if (event.key === "Escape" || event.key === "escape") {
-                    closeModal();
-                    console.log("Escape key pressed. Modal closed.");
-                }
-                return; // Exit the function after handling keys when modal is open
-            }
-
-            if (event.key === "P" || event.key === "p") {
-                openModal();
-                console.log("P key pressed. Modal opened.");
-            } else if (event.key === "Escape" || event.key === "escape") {
-                closeModal();
-                console.log("Escape key pressed. Modal closed.");
-            }
-        });
-
-        function deactivateKeybinds() {
-            document.removeEventListener("keydown", keyDownFunction);
-            document.removeEventListener("keyup", keyUpFunction);
-            document.addEventListener("keydown", filterKeys);
-        }
-
-        function activateKeybinds() {
-            document.removeEventListener("keydown", filterKeys);
-            document.addEventListener("keydown", keyDownFunction);
-            document.addEventListener("keyup", keyUpFunction);
-        }
-
-        function filterKeys(event) {
-            if (event.key === "Enter" || event.keyCode === 13) {
-                event.preventDefault();
-                event.stopPropagation();
-                saveKeybinds();
-                console.log("Enter key pressed. Settings saved.");
-            }
-        }
-
-const defaultKeybinds = {
-    up: ["w"],
-    left: ["a"],
-    down: ["s"],
-    right: ["d"],
-    pause: ["escape"],
-    autoHit: ["1"],
-    previous: ["q"],
-    restart: ["r"],
-    next: ["e"],
-    randomize: ["t"],
-    toggleNoteStyle: ["c"],
-    fullscreen: ["f"],
-    debug: ["control"],
-    noteStyle: "arrows",
-    songTimeoutAfterSongEnd: false,
-    songTimeoutDelay: 5000,
-    vinylRotation: false,
-    circularImage: false,
-    backgroundOption: "defaultBG",
-    customBackgroundBlur: "0px",
-};
-
-let keybinds = { ...defaultKeybinds };
-let keybindsHistory = [];
-let keybindsIndex = -1;
-
-function loadKeybinds() {
-    const savedKeybinds = JSON.parse(localStorage.getItem('keybinds')) || {};
-    const savedNoteStyle = localStorage.getItem('noteStyle') || defaultKeybinds.noteStyle;
-    const songTimeoutAfterSongEnd = JSON.parse(localStorage.getItem('songTimeoutAfterSongEnd')) || defaultKeybinds.songTimeoutAfterSongEnd;
-    const savedSongTimeoutDelay = parseInt(localStorage.getItem('songTimeoutDelay')) || defaultKeybinds.songTimeoutDelay;
-    const savedVinylRotation = JSON.parse(localStorage.getItem('vinylRotation')) || defaultKeybinds.vinylRotation;
-    const savedCircularImage = JSON.parse(localStorage.getItem('circularImage')) || defaultKeybinds.circularImage;
-    const savedBackgroundOption = localStorage.getItem('backgroundOption') || defaultKeybinds.backgroundOption;
-    const savedCustomBackground = localStorage.getItem('customBackground') || defaultKeybinds.customBackground;
-    const savedCustomBackgroundBlur = localStorage.getItem('customBackgroundBlur') || defaultKeybinds.customBackgroundBlur;
-
-    // Merge saved keybinds with default keybinds
-    keybinds = { ...defaultKeybinds, ...savedKeybinds };
-
-    document.getElementById('songTimeoutAfterSongEnd').checked = songTimeoutAfterSongEnd;
-    restartSongTimeout = songTimeoutAfterSongEnd;
-
-    document.getElementById('circularImage').checked = savedCircularImage;
-    circularImageEnabled = savedCircularImage;
-    toggleVinylRotation(); // Update UI based on circularImage setting
-
-    const vinylRotationCheckbox = document.getElementById('vinylRotation');
-    vinylRotationCheckbox.checked = savedVinylRotation;
-    vinylRotationEnabled = savedVinylRotation;
-
-    const defaultNoteStyleDropdown = document.getElementById('defaultNoteStyle');
-    defaultNoteStyleDropdown.value = savedNoteStyle;
-
-    document.getElementById('up').value = keybinds.up.join(", ");
-    document.getElementById('left').value = keybinds.left.join(", ");
-    document.getElementById('down').value = keybinds.down.join(", ");
-    document.getElementById('right').value = keybinds.right.join(", ");
-    document.getElementById('pause').value = keybinds.pause.join(", ");
-    document.getElementById('autoHit').value = keybinds.autoHit.join(", ");
-    document.getElementById('previousInput').value = keybinds.previous.join(", ");
-    document.getElementById('restartInput').value = keybinds.restart.join(", ");
-    document.getElementById('nextInput').value = keybinds.next.join(", ");
-    document.getElementById('randomize').value = keybinds.randomize.join(", ");
-    document.getElementById('toggleNoteStyleInput').value = keybinds.toggleNoteStyle.join(", ");
-    document.getElementById('fullscreenInput').value = keybinds.fullscreen.join(", ");
-    document.getElementById('debugInput').value = keybinds.debug.join(", ");
-    document.getElementById('songTimeoutAfterSongEndNum').value = savedSongTimeoutDelay;
-    document.getElementById('circularImage').value = savedCircularImage;
-    document.getElementById('vinylRotation').value = savedVinylRotation;
-    
-    // Load background settings
-    document.getElementById('defaultBackground').value = savedBackgroundOption;
-    document.getElementById('backdropBlurInput').value = savedCustomBackgroundBlur;
-    document.getElementById('myCanvas').style.backdropFilter = `blur(${savedCustomBackgroundBlur})`;
-
-    if (savedBackgroundOption === 'customBG') {
-        document.getElementById('customBGLabel').style.display = 'inline';
-        document.getElementById('customBGInput').style.display = 'inline';
-        document.getElementById('customTransparentBGblur').style.display = 'inline';
-        document.getElementById('backdropBlurInput').style.display = 'inline';
-        if (savedCustomBackground) {
-            customBG = new Image();
-            customBG.src = savedCustomBackground;
-        }
-    } else if (savedBackgroundOption === 'transparentBG') {
-        document.getElementById('customTransparentBGblur').style.display = 'inline';
-        document.getElementById('backdropBlurInput').style.display = 'inline';
-    } else {
-        document.getElementById('customBGLabel').style.display = 'none';
-        document.getElementById('customBGInput').style.display = 'none';
-        document.getElementById('customTransparentBGblur').style.display = 'none';
-        document.getElementById('backdropBlurInput').style.display = 'none';
-    }
-
-    if (keybinds.backgroundOption === 'transparentBG') {
-        document.getElementById('myCanvas').style.background = 'transparent';
-        backgroundIsntDefault = false;
-    } else {
-        document.getElementById('myCanvas').style.backgroundColor = '';
-        backgroundIsntDefault = true;
-    }
-
-    if (keybinds.backgroundOption == 'customBG') {
-        document.getElementById('myCanvas').style.background = 'transparent';
-    }
-
-    // Update the songTimeoutDelay in the keybinds
-    keybinds.songTimeoutDelay = savedSongTimeoutDelay;
-    keybinds.backgroundOption = savedBackgroundOption;
-    keybinds.customBackground = savedCustomBackground;
-    keybinds.customBackgroundBlur = savedCustomBackgroundBlur;
-
-    console.log("Loaded settings", keybinds);
-}
-
-function saveKeybinds() {
-    const newKeybinds = {
-        up: document.getElementById('up').value.split(", ").map(key => key.trim()),
-        left: document.getElementById('left').value.split(", ").map(key => key.trim()),
-        down: document.getElementById('down').value.split(", ").map(key => key.trim()),
-        right: document.getElementById('right').value.split(", ").map(key => key.trim()),
-        pause: document.getElementById('pause').value.split(", ").map(key => key.trim()),
-        autoHit: document.getElementById('autoHit').value.split(", ").map(key => key.trim()),
-        previous: document.getElementById('previousInput').value.split(", ").map(key => key.trim()),
-        restart: document.getElementById('restartInput').value.split(", ").map(key => key.trim()),
-        next: document.getElementById('nextInput').value.split(", ").map(key => key.trim()),
-        randomize: document.getElementById('randomize').value.split(", ").map(key => key.trim()),
-        toggleNoteStyle: document.getElementById('toggleNoteStyleInput').value.split(", ").map(key => key.trim()),
-        fullscreen: document.getElementById('fullscreenInput').value.split(", ").map(key => key.trim()),
-        debug: document.getElementById('debugInput').value.split(", ").map(key => key.trim()),
-        noteStyle: document.getElementById('defaultNoteStyle').value,
-        songTimeoutAfterSongEnd: document.getElementById('songTimeoutAfterSongEnd').checked,
-        songTimeoutDelay: parseInt(document.getElementById('songTimeoutAfterSongEndNum').value) || defaultKeybinds.songTimeoutDelay,
-        vinylRotation: document.getElementById('vinylRotation').checked,
-        circularImage: document.getElementById('circularImage').checked,
-        backgroundOption: document.getElementById('defaultBackground').value,
-        customBackgroundBlur: document.getElementById('backdropBlurInput').value
-    };
-
-    if (vinylRotationEnabled && !newKeybinds.vinylRotation) {
-        rotationAngle = 0; // Reset rotation angle to 0 if rotation is disabled
-    }
-
-    restartSongTimeout = newKeybinds.songTimeoutAfterSongEnd;
-    vinylRotationEnabled = newKeybinds.vinylRotation;
-    circularImageEnabled = newKeybinds.circularImage;
-
-    const savedNoteStyle = localStorage.getItem('noteStyle') || defaultKeybinds.noteStyle;
-    const savedSongTimeoutAfterSongEnd = JSON.parse(localStorage.getItem('songTimeoutAfterSongEnd')) || defaultKeybinds.songTimeoutAfterSongEnd;
-    const timeoutInputValue = newKeybinds.songTimeoutDelay;
-    const savedKeybinds = JSON.parse(localStorage.getItem('keybinds')) || defaultKeybinds;
-    const savedVinylRotation = JSON.parse(localStorage.getItem('vinylRotation')) || defaultKeybinds.vinylRotation;
-    const savedCircularImage = JSON.parse(localStorage.getItem('circularImage')) || defaultKeybinds.circularImage;
-    const savedCustomBG = localStorage.getItem('customBackground') || defaultKeybinds.customBackground;
-
-    if (isNaN(timeoutInputValue)) {
-        alert("Please enter a valid number for the timeout delay.");
-        return;
-    }
-    if (timeoutInputValue > 15000) {
-        alert("Please enter a number that is below 15,000.");
-        return;
-    }
-
-    // Validate and format blur input
-    const blurInput = newKeybinds.customBackgroundBlur;
-    const blurValue = parseInt(blurInput, 10);
-    if (isNaN(blurValue) || blurValue < 0 || blurValue >= 1000) {
-        alert("Please enter a valid number for the background blur (0-999).");
-        return;
-    }
-
-    newKeybinds.customBackgroundBlur = blurValue + 'px';
-
-    if (
-        JSON.stringify(newKeybinds) === JSON.stringify(savedKeybinds) &&
-        savedNoteStyle === newKeybinds.noteStyle &&
-        savedSongTimeoutAfterSongEnd === newKeybinds.songTimeoutAfterSongEnd &&
-        timeoutInputValue === keybinds.songTimeoutDelay &&
-        localStorage.getItem('customBackground') === savedCustomBG &&
-        savedVinylRotation === newKeybinds.vinylRotation &&
-        savedCircularImage === newKeybinds.circularImage
-    ) {
-        // No changes have been made
-        saveMessage.textContent = "No changes have been made.";
-        saveMessage.style.display = 'block';
-        return;
-    }
-
-    // Handle note style change
-    if (savedNoteStyle !== newKeybinds.noteStyle) {
-        if (newKeybinds.noteStyle === 'circles') {
-            switchToCircles();
-        } else {
-            switchToArrows();
-        }
-    }
-
-    // Save changes to localStorage
-    keybinds = newKeybinds;
-
-    localStorage.setItem('keybinds', JSON.stringify(newKeybinds));
-    localStorage.setItem('noteStyle', newKeybinds.noteStyle);
-    localStorage.setItem('songTimeoutAfterSongEnd', JSON.stringify(newKeybinds.songTimeoutAfterSongEnd));
-    localStorage.setItem('songTimeoutDelay', newKeybinds.songTimeoutDelay);
-    localStorage.setItem('vinylRotation', JSON.stringify(newKeybinds.vinylRotation));
-    localStorage.setItem('circularImage', JSON.stringify(newKeybinds.circularImage));
-    localStorage.setItem('backgroundOption', newKeybinds.backgroundOption);
-    localStorage.setItem('customBackgroundBlur', newKeybinds.customBackgroundBlur);
-
-    if (newKeybinds.backgroundOption === 'transparentBG') {
-        document.getElementById('myCanvas').style.background = 'transparent';
-        backgroundIsntDefault = false;
-    } else {
-        document.getElementById('myCanvas').style.backgroundColor = '';
-        backgroundIsntDefault = true;
-    }
-
-    if (newKeybinds.backgroundOption !== 'customBG') {
-        document.getElementById('myCanvas').style.background = 'transparent';
-        localStorage.setItem('customBackground', '');
-    } else {
-        document.getElementById('myCanvas').style.backdropFilter = `blur(${newKeybinds.customBackgroundBlur})`;
-    }
-
-    // Handle background image change if applicable
-    const fileInput = document.getElementById('customBGInput');
-    const file = fileInput.files[0]; // Assuming single file upload
-
-    if (file) {
-        handleFileUpload(file);
-    }
-
-    // Store the current state in history for undo/redo functionality
-    if (keybindsIndex === keybindsHistory.length - 1) {
-        keybindsHistory.push(JSON.stringify(newKeybinds));
-        keybindsIndex++;
-    } else {
-        keybindsHistory = keybindsHistory.slice(0, keybindsIndex + 1);
-        keybindsHistory.push(JSON.stringify(newKeybinds));
-        keybindsIndex = keybindsHistory.length - 1;
-    }
-
-    saveMessage.textContent = "Settings saved!";
-    saveMessage.style.display = 'block';
-
-    console.log("Saved settings", keybinds);
-}
-
-function handleFileUpload(file) {
-    const reader = new FileReader();
-
-    reader.onload = function(e) {
-        const imageData = e.target.result; // This will be in data URL format
-        // Store imageData in localStorage or use it as needed
-        localStorage.setItem('customBackground', imageData);
-        BGbright.src = e.target.result;
-    };
-
-    reader.readAsDataURL(file);
-}
-
-
-function applyDefaultNoteStyle() {
-    const noteStyle = localStorage.getItem('noteStyle') || defaultKeybinds.noteStyle;
-    if (noteStyle === 'circles') {
-        switchToCircles();
-    } else {
-        switchToArrows();
-    }
-}
-
-function toggleNoteStyle() {
-    const noteStyleButton = document.getElementById('toggleNoteStyleButton');
-    const currentNoteStyle = localStorage.getItem('noteStyle') || 'arrows';
-
-    console.log("Current note style:", currentNoteStyle);
-
-    if (currentNoteStyle === 'arrows') {
-        // Switch to circles
-        console.log("Switching to circles...");
-        switchToCircles();
-        localStorage.setItem('noteStyle', 'circles');
-        noteStyleButton.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
-        console.log("Note style switched to circles.");
-    } else {
-        // Switch to arrows
-        console.log("Switching to arrows...");
-        switchToArrows();
-        localStorage.setItem('noteStyle', 'arrows');
-        noteStyleButton.innerHTML = '<i class="fa-solid fa-circle"></i>';
-        console.log("Note style switched to arrows.");
-    }
-}
-
-// Function to switch all note images to circles
-function switchToCircles() {
-    noteLeftIMG.src = "Resources/CircleLeftHQ.png";
-    noteDownIMG.src = "Resources/CircleDownHQ.png";
-    noteUpIMG.src = "Resources/CircleUpHQ.png";
-    noteRightIMG.src = "Resources/CircleRightHQ.png";
-    noteLeftPressIMG.src = "Resources/CircleLeftPressHQ.png";
-    noteDownPressIMG.src = "Resources/CircleDownPressHQ.png";
-    noteUpPressIMG.src = "Resources/CircleUpPressHQ.png";
-    noteRightPressIMG.src = "Resources/CircleRightPressHQ.png";
-    console.log("Changed textures to circles");
-}
-
-// Function to switch all note images to arrows
-function switchToArrows() {
-    noteLeftIMG.src = "Resources/NoteLeftHQ.png";
-    noteDownIMG.src = "Resources/NoteDownHQ.png";
-    noteUpIMG.src = "Resources/NoteUpHQ.png";
-    noteRightIMG.src = "Resources/NoteRightHQ.png";
-    noteLeftPressIMG.src = "Resources/NoteLeftPressHQ.png";
-    noteDownPressIMG.src = "Resources/NoteDownPressHQ.png";
-    noteUpPressIMG.src = "Resources/NoteUpPressHQ.png";
-    noteRightPressIMG.src = "Resources/NoteRightPressHQ.png";
-    console.log("Changed textures to arrows");
-}
-
-function resetKeybinds() {
-    keybinds = { ...defaultKeybinds, noteStyle: 'arrows', };
-    document.getElementById('songTimeoutAfterSongEnd').checked = false;
-    document.getElementById('circularImage').checked = false;
-    document.getElementById('vinylRotation').checked = false;
-
-    const timeoutLabel = document.getElementById('numTimeout');
-    const timeoutInput = document.getElementById('songTimeoutAfterSongEndNum');
-    timeoutLabel.style.display = 'none';
-    timeoutInput.style.display = 'none';
-    
-    switchToArrows();
-    updateKeybindsFields();
-    saveKeybinds();
-}
-
-function undoKeybinds() {
-    if (keybindsIndex > 0) {
-        keybindsIndex--;
-        keybinds = JSON.parse(keybindsHistory[keybindsIndex]);
-        updateKeybindsFields();
-    }
-}
-
-function redoKeybinds() {
-    if (keybindsIndex < keybindsHistory.length - 1) {
-        keybindsIndex++;
-        keybinds = JSON.parse(keybindsHistory[keybindsIndex]);
-        updateKeybindsFields();
-    }
-}
-
-function updateKeybindsFields() {
-    document.getElementById('up').value = keybinds.up.join(", ");
-    document.getElementById('left').value = keybinds.left.join(", ");
-    document.getElementById('down').value = keybinds.down.join(", ");
-    document.getElementById('right').value = keybinds.right.join(", ");
-    document.getElementById('pause').value = keybinds.pause.join(", ");
-    document.getElementById('autoHit').value = keybinds.autoHit.join(", ");
-    document.getElementById('previousInput').value = keybinds.previous.join(", ");
-    document.getElementById('restartInput').value = keybinds.restart.join(", ");
-    document.getElementById('nextInput').value = keybinds.next.join(", ");
-    document.getElementById('randomize').value = keybinds.randomize.join(", ");
-    document.getElementById('toggleNoteStyleInput').value = keybinds.toggleNoteStyle.join(", ");
-    document.getElementById('fullscreenInput').value = keybinds.fullscreen.join(", ");
-    document.getElementById('debugInput').value = keybinds.debug.join(", ");
-    document.getElementById('defaultNoteStyle').value = keybinds.noteStyle;
-    document.getElementById('songTimeoutAfterSongEnd').checked = keybinds.songTimeoutAfterSongEnd;
-    document.getElementById('songTimeoutAfterSongEndNum').value = keybinds.songTimeoutDelay;
-    document.getElementById('vinylRotation').checked = keybinds.vinylRotation;
-    document.getElementById('circularImage').checked = keybinds.circularImage;
-    document.getElementById('defaultBackground').value = keybinds.backgroundOption;
-    document.getElementById('backdropBlurInput').value = keybinds.customBackgroundBlur;
-
-    if (keybinds.backgroundOption === 'customBG' && keybinds.customBackground) {
-        document.getElementById('customBGLabel').style.display = 'inline';
-        document.getElementById('customBGInput').style.display = 'inline';
-        document.getElementById('customTransparentBGblur').style.display = 'inline';
-        document.getElementById('backdropBlurInput').style.display = 'inline';
-    } else if (keybinds.backgroundOption === 'transparentBG') {
-        document.getElementById('customTransparentBGblur').style.display = 'inline';
-        document.getElementById('backdropBlurInput').style.display = 'inline';
-    } else {
-        document.getElementById('customBGLabel').style.display = 'none';
-        document.getElementById('customBGInput').style.display = 'none';
-        document.getElementById('customTransparentBGblur').style.display = 'none';
-        document.getElementById('backdropBlurInput').style.display = 'none';
-    }
-}
-
-function toggleTimeoutInput() {
-    const timeoutCheckbox = document.getElementById('songTimeoutAfterSongEnd');
-    const timeoutLabel = document.getElementById('numTimeout');
-    const timeoutInput = document.getElementById('songTimeoutAfterSongEndNum');
-
-    if (timeoutCheckbox.checked) {
-        timeoutLabel.style.display = 'inline';
-        timeoutInput.style.display = 'inline';
-    } else {
-        timeoutLabel.style.display = 'none';
-        timeoutInput.style.display = 'none';
-    }
-}
-
-let restartSongTimeout;
-let songTimeoutDelay = localStorage.getItem('songTimeoutDelay');
-
-document.getElementById('songTimeoutAfterSongEnd').addEventListener('change', toggleTimeoutInput);
-
-        function keyDownFunction(keyboardEvent) {
-            var keyDown = keyboardEvent.key.toLowerCase();
-            console.log("Pressed:", keyDown);
-
-            if (!gameStarted) {
-                if (keyDown == "enter") {
-                    document.getElementById("startButton").click();
-                    gameStarted = true;
-                }
-                return;
-            }
-
-            if (gameStarted && keyDown == "enter") {
-                return;
-            }
-
-            if (keybinds.up.includes(keyDown)) {
-                upPressed = true;
-            }
-            if (keybinds.left.includes(keyDown)) {
-                leftPressed = true;
-            }
-            if (keybinds.down.includes(keyDown)) {
-                downPressed = true;
-            }
-            if (keybinds.right.includes(keyDown)) {
-                rightPressed = true;
-            }
-            if (keybinds.pause.includes(keyDown)) {
-                togglePause();
-            }
-            if (keybinds.autoHit.includes(keyDown)) {
-                toggleAutoHit();
-            }
-            if (keybinds.fullscreen.includes(keyDown)) {
-                toggleFullScreen();
-            }
-            if (keybinds.previous.includes(keyDown)) {
-                previousSong();
-            }
-            if (keybinds.restart.includes(keyDown)) {
-                restartSong();
-            }
-            if (keybinds.next.includes(keyDown)) {
-                nextSong();
-            }
-            if (keybinds.randomize.includes(keyDown)) {
-                randomizeSong();
-            }
-            if (keybinds.toggleNoteStyle.includes(keyDown)) {
-                toggleNoteStyle();
-            }
-            if (keybinds.debug.includes(keyDown)) {
-                toggleDebugInfo();
-            }
-
-        }
-
-        function keyUpFunction(keyboardEvent) {
-            var keyUp = keyboardEvent.key.toLowerCase();
-            console.log("Released:", keyUp);
-
-            if (keybinds.up.includes(keyUp)) {
-                upPressed = false;
-            }
-            if (keybinds.left.includes(keyUp)) {
-                leftPressed = false;
-            }
-            if (keybinds.down.includes(keyUp)) {
-                downPressed = false;
-            }
-            if (keybinds.right.includes(keyUp)) {
-                rightPressed = false;
-            }
-        }
-
-
-    </script>
-    <script src="BeatzGame.js"></script>
-</body>
+        <div id="songVol" class="volume-control" style="display: none">
+            <label for="songVolume">Song Volume</label>
+            <input type="range" id="songVolume" name="songVolume" min="0" max="100" value="50" />
+        </div>
+
+        <div id="hitSoundVol" class="volume-control" style="display: none">
+            <label id="hitSoundVol" for="hitSoundSlider">Hit Sound volume:</label>
+            <input type="range" id="hitSoundSlider" name="hitSoundSlider" min="0" max="100" value="50" />
+        </div>
+        <br /><br />
+
+        <div id="contactBtn">
+            <button id="contactbtn" onclick="email()"><i class="fa-solid fa-envelope"></i> Contact</button>
+        </div>
+
+        <div id="publicToTestToggle"><button id="publicbtn" onclick="toVersion()">Open testing game</button><br /><br /></div>
+
+        <h2>Background image from: <a href="https://github.com/Uproxide/Texture-Workshop/commit/457788213d900a980f559ae8f241febad3322bdd#diff-1dbd3c28454ab3b1596af576394661ba03597f51326dbbff288c6b8ccc353041">Uproxide's "Texture Workshop"</a></h2>
+        <h2>Notes from: <a href="https://github.com/Simply-Love/Simply-Love-SM5?tab=readme-ov-file">Teejusb's "Simply Love" osu! mania skins</a></h2>
+        <h3>If you are the artist of any of these songs, contact me through my email if you want them removed.</h3>
+        <h3>Credit of the songs goes to their respective creators.</h3>
+        <h3>Note that i am NOT making any money on this game, i just code occasionally for the fun of it. <3</h3>
+
+        <script src="BeatzGame.js"></script>
+    </body>
 </html>

@@ -2,14 +2,14 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: HFPS 3.2.11.9 test (release.version.subversion.bugfix)
+ * Version: HFPS 3.2.12.10 test (release.version.subversion.bugfix)
  **/
 
 // CONSTANTS
 
-const VERSION = "HFPS 3.2.11.9 (Codename.Release.Version.Subversion.Bugfix)";
+const VERSION = "HFPS 3.2.12.10 (Codename.Release.Version.Subversion.Bugfix)";
 const PUBLICVERSION = "3.2! (GitHub Port)";
-console.log('Version: ' + VERSION)
+console.log("Version: " + VERSION);
 
 const WIDTH = 1280;
 
@@ -42,39 +42,39 @@ const hitSounds = [];
 
 let notesHit = 0;
 let tutorialStage = 0;
-let isNewPlayer = !localStorage.getItem('keybinds');
+let isNewPlayer = !localStorage.getItem("keybinds");
 
 const keybindsText = {
     initial: {
         left: "A",
         up: "W",
         down: "S",
-        right: "D"
+        right: "D",
     },
     customizable: "Keybinds are customizable in the settings just below the canvas.",
     thankYou: "Thank you for playing Beatz! Enjoy!",
-    followMe: { 
+    followMe: {
         announce: "Follow me on my socials!",
         twitter: "Twitter: @GuayabR",
-        yt: "Youtube: @GuayabR"
-    }
+        yt: "Youtube: @GuayabR",
+    },
 };
 
 const noteImages = {
-    'Left': noteLeftIMG,
-    'Down': noteDownIMG,
-    'Up': noteUpIMG,
-    'Right': noteRightIMG
+    Left: noteLeftIMG,
+    Down: noteDownIMG,
+    Up: noteUpIMG,
+    Right: noteRightIMG,
 };
 
 const notePressImages = {
-    'Left': noteLeftPressIMG,
-    'Down': noteDownPressIMG,
-    'Up': noteUpPressIMG,
-    'Right': noteRightPressIMG
+    Left: noteLeftPressIMG,
+    Down: noteDownPressIMG,
+    Up: noteUpPressIMG,
+    Right: noteRightPressIMG,
 };
 
-console.log("Constants loaded.")
+console.log("Constants loaded.");
 
 // VARIABLES
 
@@ -138,22 +138,22 @@ var noteYPositions = {
     left: [],
     down: [],
     up: [],
-    right: []
+    right: [],
 };
 
 var perfectText = {
     active: false,
-    timer: 0
+    timer: 0,
 };
 
 var earlyLateText = {
     active: false,
-    timer: 0
+    timer: 0,
 };
 
 var missText = {
     active: false,
-    timer: 0
+    timer: 0,
 };
 
 var lastPerfectHitNoteType = null;
@@ -172,26 +172,23 @@ var notes = generateRandomNotes(696969);
 // Function to switch image source
 function switchImage(img, src1, src2) {
     if (img.src.endsWith(src1)) {
-        img.src = 'Resources/' + src2;
+        img.src = "Resources/" + src2;
     } else {
-        img.src = 'Resources/' + src1;
+        img.src = "Resources/" + src1;
     }
 }
 
-document.getElementById('toggleNoteStyleButton').addEventListener('click', function() {
+document.getElementById("toggleNoteStyleButton").addEventListener("click", function () {
     toggleNoteStyle();
 });
 
 // Ensure images are loaded before drawing
-window.onload = function() {
-    var images = [
-        noteLeftIMG, noteDownIMG, noteUpIMG, noteRightIMG,
-        noteLeftPressIMG, noteDownPressIMG, noteUpPressIMG, noteRightPressIMG
-    ];
-    
+window.onload = function () {
+    var images = [noteLeftIMG, noteDownIMG, noteUpIMG, noteRightIMG, noteLeftPressIMG, noteDownPressIMG, noteUpPressIMG, noteRightPressIMG];
+
     var loadedImages = 0;
-    images.forEach(function(image) {
-        image.onload = function() {
+    images.forEach(function (image) {
+        image.onload = function () {
             loadedImages++;
             if (loadedImages === images.length) {
                 draw();
@@ -200,19 +197,19 @@ window.onload = function() {
     });
 };
 
-let currentSongVolume = localStorage.getItem('songVolume') ? parseFloat(localStorage.getItem('songVolume')) : 0.5; // Load volume or default to 50%
-let currentHitSoundVolume = localStorage.getItem('hitSoundVolume') ? parseFloat(localStorage.getItem('hitSoundVolume')) : 0.15; // Load volume or default to 15%
+let currentSongVolume = localStorage.getItem("songVolume") ? parseFloat(localStorage.getItem("songVolume")) : 0.5; // Load volume or default to 50%
+let currentHitSoundVolume = localStorage.getItem("hitSoundVolume") ? parseFloat(localStorage.getItem("hitSoundVolume")) : 0.15; // Load volume or default to 15%
 
 // Event listeners for volume sliders
-songVolume.addEventListener('input', function() {
+songVolume.addEventListener("input", function () {
     currentSongVolume = this.value / 100; // Convert to range 0-1
-    localStorage.setItem('songVolume', currentSongVolume); // Save to localStorage
+    localStorage.setItem("songVolume", currentSongVolume); // Save to localStorage
     adjustSongVolume(currentSongVolume);
 });
 
-hitSoundSlider.addEventListener('input', function() {
+hitSoundSlider.addEventListener("input", function () {
     currentHitSoundVolume = this.value / 100; // Convert to range 0-1
-    localStorage.setItem('hitSoundVolume', currentHitSoundVolume); // Save to localStorage
+    localStorage.setItem("hitSoundVolume", currentHitSoundVolume); // Save to localStorage
     adjustHitSoundVolume(currentHitSoundVolume);
 });
 
@@ -225,7 +222,7 @@ function adjustSongVolume(volume) {
 
 // Function to adjust hit sound volume
 function adjustHitSoundVolume(volume) {
-    hitSounds.forEach(hitSound => {
+    hitSounds.forEach((hitSound) => {
         hitSound.volume = volume;
     });
 }
@@ -237,7 +234,7 @@ for (let i = 0; i < MAX_HIT_SOUNDS; i++) {
     hitSounds.push(hitSound);
 }
 
-console.log("Variables loaded.")
+console.log("Variables loaded.");
 
 // TEXTURES
 
@@ -272,7 +269,16 @@ noCover.src = "Resources/Covers/noCover.png";
 var BGbright = new Image();
 BGbright.src = "Resources/Background2.png";
 
-console.log("Textures loaded.")
+var BG2 = new Image();
+BG2.src = "Resources/Background3.jpg";
+
+var BG3 = new Image();
+BG3.src = "Resources/Background4.png";
+
+var BG4 = new Image();
+BG4.src = "Resources/BackgroundHtml2.png";
+
+console.log("Textures loaded.");
 
 // Function to preload songs
 function preloadSongs() {
@@ -347,9 +353,9 @@ function preloadSongs() {
     const totalSongs = songPaths.length;
 
     // Add counter text beside the header
-    const counterText = document.createElement('span');
+    const counterText = document.createElement("span");
     counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
-    const headerElement = document.querySelector('h1');
+    const headerElement = document.querySelector("h1");
     headerElement.appendChild(counterText);
 
     function loadNextSong() {
@@ -358,7 +364,7 @@ function preloadSongs() {
             const songTitle = getSongTitle(songPath);
             const audio = new Audio();
             audio.src = songPath;
-            audio.oncanplaythrough = function() {
+            audio.oncanplaythrough = function () {
                 songList.push(songPath);
                 console.log("Loaded song:", songTitle);
                 songLoadCounter++; // Increment songLoadCounter when a song is successfully loaded
@@ -367,7 +373,7 @@ function preloadSongs() {
                 loadNextSong(); // Load the next song recursively
                 checkAllSongsLoaded(totalSongs); // Check if all songs are loaded
             };
-            audio.onerror = function() {
+            audio.onerror = function () {
                 console.log("Failed to load song:", songTitle);
                 currentIndex++;
                 songLoadCounter++;
@@ -381,8 +387,8 @@ function preloadSongs() {
     // Function to check if all songs are loaded
     function checkAllSongsLoaded(totalSongs) {
         if (songLoadCounter === 10) {
-            const startButton = document.getElementById('startButton');
-            startButton.style.display = 'inline';
+            const startButton = document.getElementById("startButton");
+            startButton.style.display = "inline";
         } else if (songLoadCounter === totalSongs) {
             populateSongSelector();
             setTimeout(() => {
@@ -426,7 +432,7 @@ const songConfigs = {
     "Resources/Songs/WTF 2.mp3": { BPM: 93, noteSpeed: 10 },
     "Resources/Songs/MY EYES.mp3": { BPM: 132, noteSpeed: 12 },
     "Resources/Songs/Can't Slow Me Down.mp3": { BPM: 122, noteSpeed: 11 },
-    "Resources/Songs/LUNCH.mp3": { BPM: 125, noteSpeed: 14.6 }, // 
+    "Resources/Songs/LUNCH.mp3": { BPM: 125, noteSpeed: 14.6 }, //
     "Resources/Songs/Butterfly Effect.mp3": { BPM: 141, noteSpeed: 10 },
     "Resources/Songs/SWIM.mp3": { BPM: 120, noteSpeed: 10 },
     "Resources/Songs/You Need Jesus.mp3": { BPM: 110, noteSpeed: 11 },
@@ -459,7 +465,10 @@ const songConfigs = {
     "Resources/Songs/YOU'RE TOO SLOW.mp3": { BPM: 162, noteSpeed: 14.5 },
     "Resources/Songs/BAND4BAND.mp3": { BPM: 140, noteSpeed: 14 },
     "Resources/Songs/HIGHEST IN THE ROOM.mp3": { BPM: 156, noteSpeed: 0 },
-    "Resources/Songs/Slide da Treme Melódica v2.mp3": { BPM: 235, noteSpeed: 18 }, // original bpm is 157 but increased it to match the beat
+    "Resources/Songs/Slide da Treme Melódica v2.mp3": {
+        BPM: 235,
+        noteSpeed: 18,
+    }, // original bpm is 157 but increased it to match the beat
     "Resources/Songs/fantasmas.mp3": { BPM: 164, noteSpeed: 10 },
     "Resources/Songs/BIKE.mp3": { BPM: 105, noteSpeed: 14 },
     "Resources/Songs/ARCANGEL.mp3": { BPM: 124, noteSpeed: 14 },
@@ -468,10 +477,10 @@ const songConfigs = {
 function getDynamicSpeed(songSrc) {
     const dynamicSpeeds = {
         "HIGHEST IN THE ROOM": [
-            { timestamp: 12.9, noteSpeed: 25 },  // 0:12 (starting point)
+            { timestamp: 12.9, noteSpeed: 25 }, // 0:12 (starting point)
             { timestamp: 13.35, noteSpeed: 12 }, // 0:13.35 (starting point 2)
-            { timestamp: 25.9, noteSpeed: 14 },  // 0:26
-            { timestamp: 112.8, noteSpeed: 9 },  // 1:54.8
+            { timestamp: 25.9, noteSpeed: 14 }, // 0:26
+            { timestamp: 112.8, noteSpeed: 9 }, // 1:54.8
         ],
         "Shiawase (VIP)": [
             { timestamp: 25.6, noteSpeed: 14.2 },
@@ -574,11 +583,11 @@ function preloadImages() {
         const songTitle = getSongTitle(coverPath);
         const coverImage = new Image();
         coverImage.src = coverPath;
-        coverImage.onload = function() {
+        coverImage.onload = function () {
             loadedImages[songTitle] = coverImage;
             console.log("Loaded cover image for song:", songTitle);
         };
-        coverImage.onerror = function() {
+        coverImage.onerror = function () {
             console.log("Failed to load cover image for song:", songTitle);
         };
     }
@@ -586,11 +595,11 @@ function preloadImages() {
 
 // Function to populate song selector
 function populateSongSelector() {
-    const songSelector = document.getElementById('songSelector');
-    songSelector.innerHTML = ''; // Clear loading message
+    const songSelector = document.getElementById("songSelector");
+    songSelector.innerHTML = ""; // Clear loading message
 
     // Add default "Select song" option
-    const defaultOption = document.createElement('option');
+    const defaultOption = document.createElement("option");
     defaultOption.value = "";
     defaultOption.text = "Select song.";
     songSelector.appendChild(defaultOption);
@@ -598,14 +607,14 @@ function populateSongSelector() {
     let songsLoadedCounter = 0; // Counter for loaded songs
 
     songList.forEach((songPath, index) => {
-        const option = document.createElement('option');
+        const option = document.createElement("option");
         option.value = index; // Assign the index as the option value
         option.text = getSongTitle(songPath);
         songSelector.appendChild(option);
         songsLoadedCounter++; // Increment the counter for each loaded song
     });
 
-    songSelector.addEventListener('change', function() {
+    songSelector.addEventListener("change", function () {
         const selectedIndex = parseInt(this.value, 10); // Convert the value to an integer
         if (isNaN(selectedIndex)) return; // If the selected value is not a number, do nothing
 
@@ -662,7 +671,7 @@ function restartSong() {
     }
 
     resetSongVariables();
-    
+
     console.log("Restarting song from index: " + currentSongIndex);
     startGame(currentSongIndex);
 }
@@ -750,9 +759,9 @@ function getSongTitle(songPath) {
     }
 
     // Extract the file name without the directory path
-    let fileName = songPath.split('/').pop();
+    let fileName = songPath.split("/").pop();
     // Remove the file extension
-    fileName = fileName.replace('.mp3', '').replace('.jpg', '').replace("_", "'");
+    fileName = fileName.replace(".mp3", "").replace(".jpg", "").replace("_", "'");
     // Decode the URI component
     let decodedTitle = decodeURIComponent(fileName);
     return decodedTitle;
@@ -761,69 +770,69 @@ function getSongTitle(songPath) {
 function getArtist(songSrc) {
     // Define the artist for each song
     const artists = {
-    "Epilogue": "Creo",
-    "Exosphere": "Creo",
-    "Die For You": "VALORANT",
-    "Father Stretch My Hands": "Kanye West",
-    "Betty (Get Money)": "Yung Gravy",
-    "BURN IT DOWN": "Linkin Park",
-    "Aleph 0": "LeaF",
-    "Better Days": "LAKEY INSPIRED",
-    "KOCMOC": "SLEEPING HUMMINGBIRD",
-    "kompa pasion": "frozy",
-    "Legends Never Die": "League Of Legends",
-    "Star Walkin": "League Of Legends",
-    "What I've Done": "Linkin Park",
-    "Biggest NCS Songs": "NoCopyrightSounds",
-    "Goosebumps": "Travis Scott",
-    "Master Of Puppets (Live)": "Metallica",
-    "Numb": "Linkin Park",
-    "sdp interlude": "Travis Scott",
-    "Shiawase (VIP)": "Dion Timmer",
-    "VVV": "mikeysmind",
-    "Sleepwalker X Icewhxre": "akiaura X Lumi Athena",
-    "WTF 2": "Ugovhb",
-    "VISIONS": "VALORANT",
-    "Stressed Out": "twenty one pilots",
-    "Ticking Away": "VALORANT",
-    "MY EYES": "Travis Scott",
-    "Can't Slow Me Down": "VALORANT",
-    "LUNCH": "Billie Eilish",
-	"Butterfly Effect": "Travis Scott",
-	"SWIM": "Chase Atlantic",
-    "You Need Jesus": "BABY GRAVY",
-    "Crazy": "Creo",
-    "FE!N": "Travis Scott",
-    "Nautilus": "Creo",
-    "Levitating": "Dua Lipa",
-    "Somewhere I Belong": "Linkin Park",
-    "From The Inside": "Linkin Park",
-    "Faint": "Linkin Park",
-    "Breaking The Habit": "Linkin Park",
-    "I Wonder": "Kanye West",
-    "Godzilla": "Eminem",
-    "Houdini": "Eminem",
-    "Runaway": "Kanye West",
-    "Rush E": "M.J. Kelly",
-    "Vamp Anthem": "Playboi Carti",
-    "CARNIVAL": "Kanye West",
-    "HUMBLE.": "Kendrick Lamar",
-    "Stop Breathing": "Playboi Carti",
-    "CHEGOU 3": "shonci",
-    "KRUSH ALERT": "shonci",
-    "BAIXO": "xxanteria",
-    "MOVE YO BODY": "Bryansanon",
-    "SLAY!": "Eternxlkz",
-    "ROCK THAT SHIT!": "asteria",
-    "CUTE DEPRESSED": "Dyan Dxddy",
-    "LOOK DON'T TOUCH": "Odetari",
-    "YOU'RE TOO SLOW": "Odetari",
-    "BAND4BAND": "Central Cee",
-    "HIGHEST IN THE ROOM": "Travis Scott",
-    "Slide da Treme Melódica v2": "DJ FNK",
-    "fantasmas": "Humbe",
-    "BIKE": "tanger",
-    "ARCANGEL": "Bizarrap",
+        Epilogue: "Creo",
+        Exosphere: "Creo",
+        "Die For You": "VALORANT",
+        "Father Stretch My Hands": "Kanye West",
+        "Betty (Get Money)": "Yung Gravy",
+        "BURN IT DOWN": "Linkin Park",
+        "Aleph 0": "LeaF",
+        "Better Days": "LAKEY INSPIRED",
+        KOCMOC: "SLEEPING HUMMINGBIRD",
+        "kompa pasion": "frozy",
+        "Legends Never Die": "League Of Legends",
+        "Star Walkin": "League Of Legends",
+        "What I've Done": "Linkin Park",
+        "Biggest NCS Songs": "NoCopyrightSounds",
+        Goosebumps: "Travis Scott",
+        "Master Of Puppets (Live)": "Metallica",
+        Numb: "Linkin Park",
+        "sdp interlude": "Travis Scott",
+        "Shiawase (VIP)": "Dion Timmer",
+        VVV: "mikeysmind",
+        "Sleepwalker X Icewhxre": "akiaura X Lumi Athena",
+        "WTF 2": "Ugovhb",
+        VISIONS: "VALORANT",
+        "Stressed Out": "twenty one pilots",
+        "Ticking Away": "VALORANT",
+        "MY EYES": "Travis Scott",
+        "Can't Slow Me Down": "VALORANT",
+        LUNCH: "Billie Eilish",
+        "Butterfly Effect": "Travis Scott",
+        SWIM: "Chase Atlantic",
+        "You Need Jesus": "BABY GRAVY",
+        Crazy: "Creo",
+        "FE!N": "Travis Scott",
+        Nautilus: "Creo",
+        Levitating: "Dua Lipa",
+        "Somewhere I Belong": "Linkin Park",
+        "From The Inside": "Linkin Park",
+        Faint: "Linkin Park",
+        "Breaking The Habit": "Linkin Park",
+        "I Wonder": "Kanye West",
+        Godzilla: "Eminem",
+        Houdini: "Eminem",
+        Runaway: "Kanye West",
+        "Rush E": "M.J. Kelly",
+        "Vamp Anthem": "Playboi Carti",
+        CARNIVAL: "Kanye West",
+        "HUMBLE.": "Kendrick Lamar",
+        "Stop Breathing": "Playboi Carti",
+        "CHEGOU 3": "shonci",
+        "KRUSH ALERT": "shonci",
+        BAIXO: "xxanteria",
+        "MOVE YO BODY": "Bryansanon",
+        "SLAY!": "Eternxlkz",
+        "ROCK THAT SHIT!": "asteria",
+        "CUTE DEPRESSED": "Dyan Dxddy",
+        "LOOK DON'T TOUCH": "Odetari",
+        "YOU'RE TOO SLOW": "Odetari",
+        BAND4BAND: "Central Cee",
+        "HIGHEST IN THE ROOM": "Travis Scott",
+        "Slide da Treme Melódica v2": "DJ FNK",
+        fantasmas: "Humbe",
+        BIKE: "tanger",
+        ARCANGEL: "Bizarrap",
     };
     let songTitle = getSongTitle(songSrc);
     return artists[songTitle] || "N/A";
@@ -900,13 +909,13 @@ let circularImageEnabled = false; // Initial circular image state
 
 // Toggle vinyl rotation visibility
 function toggleVinylRotation() {
-    const circularImageCheckbox = document.getElementById('circularImage');
-    const vinylRotationContainer = document.getElementById('vinylRotationContainer');
+    const circularImageCheckbox = document.getElementById("circularImage");
+    const vinylRotationContainer = document.getElementById("vinylRotationContainer");
     if (circularImageCheckbox.checked) {
-        vinylRotationContainer.style.display = 'block';
+        vinylRotationContainer.style.display = "block";
     } else {
-        vinylRotationContainer.style.display = 'none';
-        document.getElementById('vinylRotation').checked = false;
+        vinylRotationContainer.style.display = "none";
+        document.getElementById("vinylRotation").checked = false;
         vinylRotationEnabled = false;
         rotationAngle = 0; // Reset rotation angle when disabled
     }
@@ -916,9 +925,9 @@ function getCoverForEndScreen(songPath) {
     const songTitle = getSongTitle(songPath);
     const coverImage = loadedImages[songTitle];
     if (coverImage) {
-        let centerX = WIDTH - 100;    // X-coordinate of the circle center
-        let centerY = (HEIGHT / 2) + 40;    // Y-coordinate of the circle center
-        let radius = 90;    // Radius of the circle
+        let centerX = WIDTH - 100; // X-coordinate of the circle center
+        let centerY = HEIGHT / 2 + 40; // Y-coordinate of the circle center
+        let radius = 90; // Radius of the circle
 
         ctx.save();
 
@@ -934,7 +943,7 @@ function getCoverForEndScreen(songPath) {
         ctx.restore();
     } else {
         let centerX = WIDTH - 100;
-        let centerY = (HEIGHT / 2) + 40;
+        let centerY = HEIGHT / 2 + 40;
         let radius = 90;
 
         ctx.save();
@@ -953,15 +962,15 @@ function getCoverForEndScreen(songPath) {
 }
 
 // Initialize on DOM content loaded
-document.addEventListener('DOMContentLoaded', function() {
-    const songSelector = document.getElementById('songSelector');
-    const loadingOption = document.createElement('option');
+document.addEventListener("DOMContentLoaded", function () {
+    const songSelector = document.getElementById("songSelector");
+    const loadingOption = document.createElement("option");
     loadingOption.value = "";
     loadingOption.text = "Loading songs...";
     songSelector.appendChild(loadingOption);
 
-    const songVolumeSlider = document.getElementById('songVolume');
-    const hitSoundSlider = document.getElementById('hitSoundSlider');
+    const songVolumeSlider = document.getElementById("songVolume");
+    const hitSoundSlider = document.getElementById("hitSoundSlider");
 
     songVolumeSlider.value = currentSongVolume * 100;
     hitSoundSlider.value = currentHitSoundVolume * 100;
@@ -976,7 +985,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Function to simulate key press
 function simulateKeyPress(key) {
     // Create a new KeyboardEvent with the specified key
-    var event = new KeyboardEvent('keydown', { key: key });
+    var event = new KeyboardEvent("keydown", { key: key });
 
     // Dispatch the event to simulate the key press
     document.dispatchEvent(event);
@@ -989,53 +998,53 @@ window.onload = function () {
     document.getElementById("restartButton").addEventListener("click", restartSong);
     document.getElementById("previousButton").addEventListener("click", previousSong);
     document.getElementById("randomizeButton").addEventListener("click", randomizeSong);
-    document.getElementById('debugButton').addEventListener('click', toggleDebugInfo);
+    document.getElementById("debugButton").addEventListener("click", toggleDebugInfo);
 
-    document.getElementById('startButton').onclick = function() {
+    document.getElementById("startButton").onclick = function () {
         startGame();
     };
 
     // Disable the button if it's clicked once
     var startButton = document.getElementById("startButton");
-    startButton.addEventListener("click", function() {
+    startButton.addEventListener("click", function () {
         document.getElementById("startButton").style.display = "none";
     });
 
     // Load settings from localStorage
-    const savedBackgroundOption = localStorage.getItem('backgroundOption') || 'defaultBG';
-    const savedCustomBG = localStorage.getItem('customBackground');
-    const savedCustomBGBlur = localStorage.getItem('customBackgroundBlur') || '0px';
-    document.getElementById('backdropBlurInput').value = savedCustomBGBlur;
-    document.getElementById('myCanvas').style.backdropFilter = `blur(${savedCustomBGBlur})`;
+    const savedBackgroundOption = localStorage.getItem("backgroundOption") || "defaultBG";
+    const savedCustomBG = localStorage.getItem("customBackground");
+    const savedCustomBGBlur = localStorage.getItem("customBackgroundBlur") || "0px";
+    document.getElementById("backdropBlurInput").value = savedCustomBGBlur;
+    document.getElementById("myCanvas").style.backdropFilter = `blur(${savedCustomBGBlur})`;
 
     if (savedBackgroundOption) {
         defaultBackground.value = savedBackgroundOption;
-        if (savedBackgroundOption === 'customBG' && savedCustomBG) {
-            BGbright.src = localStorage.getItem('customBackground');
+        if (savedBackgroundOption === "customBG" && savedCustomBG) {
+            BGbright.src = localStorage.getItem("customBackground");
         }
     }
 
-    defaultBackground.addEventListener('change', function() {
+    defaultBackground.addEventListener("change", function () {
         const selectedOption = this.value;
-        localStorage.setItem('backgroundOption', selectedOption);
-        if (selectedOption === 'customBG') {
-            customBGLabel.style.display = 'inline';
-            customBGInput.style.display = 'inline';
-            customTransparentBGblur.style.display = 'inline';
-            backdropBlurInput.style.display = 'inline';
-        } else if (selectedOption === 'transparentBG') {
-            customTransparentBGblur.style.display = 'inline';
-            backdropBlurInput.style.display = 'inline';
+        localStorage.setItem("backgroundOption", selectedOption);
+        if (selectedOption === "customBG") {
+            customBGLabel.style.display = "inline";
+            customBGInput.style.display = "inline";
+            customTransparentBGblur.style.display = "inline";
+            backdropBlurInput.style.display = "inline";
+        } else if (selectedOption === "transparentBG") {
+            customTransparentBGblur.style.display = "inline";
+            backdropBlurInput.style.display = "inline";
         } else {
-            customBGLabel.style.display = 'none';
-            customBGInput.style.display = 'none';
-            customTransparentBGblur.style.display = 'none';
-            backdropBlurInput.style.display = 'none';
+            customBGLabel.style.display = "none";
+            customBGInput.style.display = "none";
+            customTransparentBGblur.style.display = "none";
+            backdropBlurInput.style.display = "none";
         }
     });
-}
+};
 
-console.log("Window.onload loaded.")
+console.log("Window.onload loaded.");
 
 function togglePause() {
     gamePaused = !gamePaused;
@@ -1070,7 +1079,7 @@ function startGame(index) {
         currentSong.currentTime = 0; // Reset the song to the beginning
     }
 
-    if (typeof index === 'undefined') {
+    if (typeof index === "undefined") {
         var randomSong = pickRandomSong();
         console.log("Randomly selected song:", randomSong);
         currentSongPath = randomSong;
@@ -1083,10 +1092,13 @@ function startGame(index) {
     currentSong = new Audio(currentSongPath);
     currentSong.volume = currentSongVolume;
 
-    currentSong.onloadedmetadata = function() {
+    currentSong.onloadedmetadata = function () {
         console.log("Loaded selected song's metadata");
 
-        var config = songConfigs[currentSongPath] || { BPM: 120, noteSpeed: 10 }; // Default values if song is not in the config
+        var config = songConfigs[currentSongPath] || {
+            BPM: 120,
+            noteSpeed: 10,
+        }; // Default values if song is not in the config
         BPM = config.BPM;
         MILLISECONDS_PER_BEAT = 60000 / BPM; // Calculate MILLISECONDS_PER_BEAT based on the BPM
         noteSpeed = config.noteSpeed;
@@ -1096,7 +1108,7 @@ function startGame(index) {
             left: [],
             down: [],
             up: [],
-            right: []
+            right: [],
         };
 
         const songTitle = getSongTitle(currentSongPath);
@@ -1104,8 +1116,8 @@ function startGame(index) {
 
         if (songConfig) {
             console.log(`Dynamic speed configuration found for "${songTitle}"`);
-            dynamicSpeedInfo = songConfig.map(config => `Timestamp: ${config.timestamp}, Speed: ${config.noteSpeed}`).join(" | ");
-            let currentConfigIndex = 0;  // Reset currentConfigIndex
+            dynamicSpeedInfo = songConfig.map((config) => `Timestamp: ${config.timestamp}, Speed: ${config.noteSpeed}`).join(" | ");
+            let currentConfigIndex = 0; // Reset currentConfigIndex
             nextSpeedChange = ""; // Reset nextSpeedChange
 
             speedUpdater = setInterval(() => {
@@ -1162,7 +1174,7 @@ function startGame(index) {
         console.log("Current song path:", currentSongPath);
         console.log("Beatz.io loaded and playing. Have Fun!");
 
-        currentSong.addEventListener('ended', onSongEnd);
+        currentSong.addEventListener("ended", onSongEnd);
 
         document.getElementById("nextButton").style.display = "inline";
         document.getElementById("restartButton").style.display = "inline";
@@ -1184,7 +1196,14 @@ function startGame(index) {
 
 // Function to save the score to localStorage
 function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
-    console.log("saveScore called with:", { song, points, perfects, misses, earlylates, maxstreak });
+    console.log("saveScore called with:", {
+        song,
+        points,
+        perfects,
+        misses,
+        earlylates,
+        maxstreak,
+    });
 
     if (autoHitDisableSaving) {
         console.log(`Score for ${song} not saved because Auto Hit was enabled during gameplay. Don't cheat!`);
@@ -1196,7 +1215,7 @@ function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
         perfects: perfects,
         misses: misses,
         earlylates: earlylates,
-        maxstreak: maxstreak
+        maxstreak: maxstreak,
     };
 
     try {
@@ -1212,7 +1231,7 @@ function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
             } else if (maxstreak === 0) {
                 console.log(`You went AFK for the entire ${song} duration, score has not been saved.`);
             } else if (points === 0) {
-                console.log(`how do you manage to get 0 points`)
+                console.log(`how do you manage to get 0 points`);
             } else {
                 console.log(`Score for ${song} is not higher than existing best score, score has not been saved.`);
             }
@@ -1271,7 +1290,7 @@ function onSongEnd() {
     }
 
     if (restartSongTimeout) {
-        console.log("Restarting song in ",songTimeoutDelay / 1000," seconds...");
+        console.log("Restarting song in ", songTimeoutDelay / 1000, " seconds...");
         setTimeout(() => {
             restartSong();
         }, songTimeoutDelay); // Delay specified in settings
@@ -1335,7 +1354,7 @@ function drawEndScreen() {
 
 console.log("Functions saveScore, getBestScore, displayBestScore, and onSongEnd loaded.");
 
-console.log("Ready to start Beatz.")
+console.log("Ready to start Beatz.");
 
 let gamePaused = false;
 let pausedTextDrawn = false;
@@ -1354,7 +1373,7 @@ function toggleDebugInfo() {
     debugInfoVisible = !debugInfoVisible;
 }
 
-let newestNoteType = '';
+let newestNoteType = "";
 let newestNoteTime = 0;
 
 function updateDebugInfo(deltaTime, timestamp) {
@@ -1370,9 +1389,9 @@ function updateDebugInfo(deltaTime, timestamp) {
         let currentFPS = 1 / deltaTime;
         fps = currentFPS.toFixed(1);
 
-        ctx.font = '12px Arial';
-        ctx.fillStyle = 'white';
-        ctx.textAlign = 'left';
+        ctx.font = "12px Arial";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "left";
         ctx.fillText(`Version: ${VERSION}`, 10, startY);
         ctx.fillText(`Delta Time: ${deltaTime.toFixed(3)} seconds`, 10, startY + lineHeight);
         ctx.fillText(`Timestamp: ${timestamp} milliseconds`, 10, startY + 2 * lineHeight);
@@ -1401,11 +1420,11 @@ function updateCanvas(timestamp) {
     if (!lastTime) {
         lastTime = timestamp;
     }
-    
+
     // Calculate the time difference between frames
     timeDelta = (timestamp - lastTime) / 1000; // timeDelta in seconds
     lastTime = timestamp;
-    
+
     if (gamePaused) {
         // Calculate the time difference between frames
         let timeDelta = (timestamp - lastTime) / 1000; // timeDelta in seconds
@@ -1426,14 +1445,14 @@ function updateCanvas(timestamp) {
         onSongEnd();
         return;
     }
-    
+
     endScreenDrawn = false;
 
     pausedTextDrawn = false;
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
     if (backgroundIsntDefault) {
-    ctx.drawImage(BGbright, 0, 0, 1280, 720);
+        ctx.drawImage(BGbright, 0, 0, 1280, 720);
     }
 
     ctx.drawImage(noteLeftIMG, noteXPositions.left - noteWidth / 2, 550, noteWidth, noteHeight);
@@ -1450,36 +1469,36 @@ function updateCanvas(timestamp) {
                 ctx.fillText(keybindsText.initial.right, noteXPositions.right + 8, 540);
                 break;
             case 1:
-                ctx.textAlign = "center"
+                ctx.textAlign = "center";
                 ctx.fillText(keybindsText.customizable, WIDTH / 2, 510);
                 break;
             case 2:
-                ctx.textAlign = "center"
+                ctx.textAlign = "center";
                 ctx.fillText(keybindsText.followMe.announce, WIDTH / 2, 510);
                 break;
             case 3:
-                ctx.textAlign = "center"
+                ctx.textAlign = "center";
                 ctx.fillText(keybindsText.followMe.twitter, WIDTH / 2, 510);
                 break;
             case 4:
-                ctx.textAlign = "center"
+                ctx.textAlign = "center";
                 ctx.fillText(keybindsText.followMe.yt, WIDTH / 2, 510);
                 break;
             case 5:
-                ctx.textAlign = "center"
+                ctx.textAlign = "center";
                 ctx.fillText(keybindsText.thankYou, WIDTH / 2, 510);
                 break;
             case 6:
                 break;
-            }
         }
+    }
 
     ctx.fillStyle = "white";
     ctx.font = "30px Arial";
     ctx.textAlign = "left";
     ctx.fillText("Points: " + points, 10, 35);
     ctx.fillText("Total Misses: " + totalMisses, 10, 75);
-    ctx.fillText("Perfects: " + perfectHits, 10, 115); 
+    ctx.fillText("Perfects: " + perfectHits, 10, 115);
     ctx.fillText("Early/Late: " + earlyLateHits, 10, 155);
 
     ctx.fillStyle = "white";
@@ -1489,9 +1508,9 @@ function updateCanvas(timestamp) {
 
     ctx.font = "30px Arial";
     ctx.textAlign = "center";
-    ctx.fillText("" + currentStreak, WIDTH / 2, (HEIGHT / 2) - 120);
+    ctx.fillText("" + currentStreak, WIDTH / 2, HEIGHT / 2 - 120);
     ctx.font = "15px Arial";
-    ctx.fillText("( " + maxStreak + " )", WIDTH / 2, (HEIGHT / 2) - 160);
+    ctx.fillText("( " + maxStreak + " )", WIDTH / 2, HEIGHT / 2 - 160);
 
     if (perfectText.active) {
         ctx.fillStyle = "white";
@@ -1536,7 +1555,7 @@ function updateCanvas(timestamp) {
         for (let i = 0; i < notes.length; i++) {
             let note = notes[i];
             if (note.time <= currentTime && note.time + 1000 > currentTime) {
-                if (noteYPositions[note.type].length === 0 || (HEIGHT - noteYPositions[note.type][noteYPositions[note.type].length - 1] >= MIN_NOTE_GAP)) {
+                if (noteYPositions[note.type].length === 0 || HEIGHT - noteYPositions[note.type][noteYPositions[note.type].length - 1] >= MIN_NOTE_GAP) {
                     noteYPositions[note.type].push(-noteHeight);
 
                     newestNoteType = note.type;
@@ -1552,16 +1571,16 @@ function updateCanvas(timestamp) {
             for (let yPos of noteYPositions[type]) {
                 let xPos = noteXPositions[type];
                 switch (type) {
-                    case 'left':
+                    case "left":
                         ctx.drawImage(noteLeftIMG, xPos - noteWidth / 2, yPos, noteWidth, noteHeight);
                         break;
-                    case 'up':
+                    case "up":
                         ctx.drawImage(noteUpIMG, xPos - noteWidth / 2 + 15, yPos, noteWidth, noteHeight);
                         break;
-                    case 'down':
+                    case "down":
                         ctx.drawImage(noteDownIMG, xPos - noteWidth / 2 - 15, yPos, noteWidth, noteHeight);
                         break;
-                    case 'right':
+                    case "right":
                         ctx.drawImage(noteRightIMG, xPos - noteWidth / 2, yPos, noteWidth, noteHeight);
                         break;
                 }
@@ -1590,7 +1609,7 @@ function updateCanvas(timestamp) {
             drawAutoHitText();
         }
     }
-    requestAnimationFrame(updateCanvas)
+    requestAnimationFrame(updateCanvas);
 }
 
 function updateNotes(timeDelta) {
@@ -1608,7 +1627,7 @@ function moveNotes(timeDelta) {
         for (let i = 0; i < noteYPositions[type].length; i++) {
             noteYPositions[type][i] += noteSpeed * timeDelta * 60; // Multiply by 60 to scale with the base frame rate
         }
-        noteYPositions[type] = noteYPositions[type].filter(yPos => yPos <= HEIGHT);
+        noteYPositions[type] = noteYPositions[type].filter((yPos) => yPos <= HEIGHT);
     }
     updateNotes(timeDelta);
 }
@@ -1632,16 +1651,24 @@ function autoHitPerfectNotes() {
 function triggerHit(type) {
     if (type === "up") {
         upPressed = true;
-        setTimeout(() => { upPressed = false; }, 100);
+        setTimeout(() => {
+            upPressed = false;
+        }, 100);
     } else if (type === "down") {
         downPressed = true;
-        setTimeout(() => { downPressed = false; }, 100);
+        setTimeout(() => {
+            downPressed = false;
+        }, 100);
     } else if (type === "left") {
         leftPressed = true;
-        setTimeout(() => { leftPressed = false; }, 100);
+        setTimeout(() => {
+            leftPressed = false;
+        }, 100);
     } else if (type === "right") {
         rightPressed = true;
-        setTimeout(() => { rightPressed = false; }, 100);
+        setTimeout(() => {
+            rightPressed = false;
+        }, 100);
     }
 }
 
@@ -1649,22 +1676,22 @@ function checkHits() {
     if (leftPressed) {
         let xPos = noteXPositions.left;
         ctx.drawImage(noteLeftPressIMG, xPos - noteWidth / 2, 550, noteWidth, noteHeight);
-        checkHit('left');
+        checkHit("left");
     }
     if (downPressed) {
         let xPos = noteXPositions.down;
         ctx.drawImage(noteDownPressIMG, xPos - noteWidth / 2 - 15, 550, noteWidth, noteHeight);
-        checkHit('down');
+        checkHit("down");
     }
     if (upPressed) {
         let xPos = noteXPositions.up;
         ctx.drawImage(noteUpPressIMG, xPos - noteWidth / 2 + 15, 550, noteWidth, noteHeight);
-        checkHit('up');
+        checkHit("up");
     }
     if (rightPressed) {
         let xPos = noteXPositions.right;
         ctx.drawImage(noteRightPressIMG, xPos - noteWidth / 2, 550, noteWidth, noteHeight);
-        checkHit('right');
+        checkHit("right");
     }
 }
 
@@ -1708,14 +1735,14 @@ function checkHit(noteType) {
                 tutorialStage = 1;
                 cycleTutorialStages();
             }
-            
+
             lastNoteType = noteType;
 
             noteYPositions[noteType].splice(i, 1);
             let hitSound = hitSounds[currentHitSoundIndex];
             hitSound.currentTime = 0;
             hitSound.play();
-            hitSound.volume = currentHitSoundVolume
+            hitSound.volume = currentHitSoundVolume;
             currentHitSoundIndex = (currentHitSoundIndex + 1) % MAX_HIT_SOUNDS;
             break;
         }
@@ -1724,7 +1751,7 @@ function checkHit(noteType) {
 
 function cycleTutorialStages() {
     if (tutorialStage < 6) {
-        const interval = (tutorialStage === 2 || tutorialStage === 3 || tutorialStage === 4) ? 2500 : 5000;
+        const interval = tutorialStage === 2 || tutorialStage === 3 || tutorialStage === 4 ? 2500 : 5000;
         setTimeout(() => {
             tutorialStage++;
             cycleTutorialStages();
@@ -1760,7 +1787,7 @@ function checkMisses() {
 function toggleAutoHit() {
     autoHitEnabled = !autoHitEnabled;
     console.log("Auto Hit", autoHitEnabled ? "Enabled" : "Disabled");
-    
+
     // Set autoHitDisableSaving to true when autoHit is enabled
     if (autoHitEnabled) {
         autoHitDisableSaving = true;
@@ -1779,7 +1806,7 @@ function drawAutoHitText() {
 function generateRandomNotes(duration) {
     console.log("Generating notes for duration:", duration);
     const notes = [];
-    const noteTypes = ['left', 'down', 'up', 'right'];
+    const noteTypes = ["left", "down", "up", "right"];
     let lastNoteTime = -MIN_NOTE_GAP;
     let lastNoteType = null;
 
@@ -1794,4 +1821,741 @@ function generateRandomNotes(duration) {
     }
     console.log("Generated notes:", notes);
     return notes;
+}
+
+// SETTINGS
+
+var canvas = document.getElementById("myCanvas");
+document.addEventListener("DOMContentLoaded", function () {
+    detectAndHandleDevice();
+    loadKeybinds();
+    applyDefaultNoteStyle();
+    updateKeybindsFields();
+    toggleNoteStyleButtonDisplay();
+    toggleTimeoutInput();
+});
+
+function toggleNoteStyleButtonDisplay() {
+    const toggleNoteStyleButton = document.getElementById("toggleNoteStyleButton");
+    const currentNoteStyle = localStorage.getItem("noteStyle") || "arrows";
+
+    if (currentNoteStyle === "arrows") {
+        toggleNoteStyleButton.innerHTML = '<i class="fa-solid fa-arrow-up" style="display: none;"></i> <i class="fa-solid fa-circle"></i>';
+    } else {
+        toggleNoteStyleButton.innerHTML = '<i class="fa-solid fa-arrow-up"></i> <i class="fa-solid fa-circle" style="display: none;"></i>';
+    }
+}
+
+document.addEventListener("keydown", keyDownFunction);
+document.addEventListener("keyup", keyUpFunction);
+
+function detectDeviceType() {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+    // Checks for iOS devices
+    if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        return "iOS";
+    }
+
+    // Checks for Android devices
+    if (/android/i.test(userAgent)) {
+        return "Android";
+    }
+
+    // Checks for other mobile devices
+    if (/Mobile|iP(hone|od)|IEMobile|Windows Phone|kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(userAgent)) {
+        return "Mobile";
+    }
+
+    // Default to desktop
+    return "Desktop";
+}
+
+function detectAndHandleDevice() {
+    const deviceType = detectDeviceType();
+    if (deviceType === "Mobile" || deviceType === "iOS" || deviceType === "Android") {
+        // Deactivate buttons
+        document.querySelectorAll("button").forEach((button) => (button.disabled = true));
+        document.querySelectorAll("select").forEach((select) => (select.disabled = true));
+
+        // Remove canvas background image
+        canvas.style.backgroundimage = "";
+
+        // Display unsupported message
+        document.getElementById("unsupportedMessage").style.display = "block";
+
+        console.log("Mobile device detected. Game is not supported.");
+    } else {
+        console.log("Desktop device detected. Game is supported.");
+    }
+}
+
+document.getElementById("undoKeybindsButton").addEventListener("click", undoKeybinds);
+document.getElementById("redoKeybindsButton").addEventListener("click", redoKeybinds);
+
+function NewTab() {
+    window.open("https://www.youtube.com/@GuayabR", "_blank");
+}
+
+function email() {
+    window.open("mailto:antonviloriavictorgabriel@gmail.com");
+}
+
+function toVersion() {
+    window.location.href = "BeatzGameTesting.html";
+}
+
+function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+        canvas.requestFullscreen().catch((err) => {
+            console.log("Error attempting to enable full-screen mode: ${err.message} (${err.name})");
+        });
+        console.log("Entered Fullscreen");
+    } else {
+        document.exitFullscreen();
+        console.log("Exited Fullscreen");
+    }
+}
+
+document.addEventListener("fullscreenchange", function () {
+    if (document.fullscreenElement) {
+        canvas.style.cursor = "none";
+    } else {
+        canvas.style.cursor = "default";
+    }
+});
+
+var modal = document.getElementById("keybindsModal");
+var btn = document.getElementById("keybindsButton");
+var span = document.getElementsByClassName("close")[0];
+var resetButton = document.getElementById("resetKeybindsButton");
+const saveMessage = document.getElementById("settingsSaved");
+
+function convertToLowerCase(inputElement) {
+    inputElement.value = inputElement.value.toLowerCase();
+}
+document.querySelectorAll('input[type="text"]').forEach(function (input) {
+    input.addEventListener("input", function () {
+        convertToLowerCase(input);
+        hideSaveMessage();
+    });
+});
+
+function hideSaveMessage() {
+    saveMessage.style.display = "none";
+}
+
+btn.onclick = function () {
+    openModal();
+};
+
+span.onclick = function () {
+    closeModal();
+};
+
+window.onclick = function (event) {
+    if (event.target == modal) {
+        closeModal();
+    }
+};
+
+resetButton.onclick = function () {
+    resetKeybinds();
+};
+
+function openModal() {
+    modal.style.display = "block";
+    loadKeybinds();
+    deactivateKeybinds();
+}
+
+function closeModal() {
+    modal.style.display = "none";
+    saveMessage.style.display = "none";
+    activateKeybinds();
+}
+
+document.addEventListener("keydown", function (event) {
+    if (modal.style.display === "block") {
+        if (event.key === "P" || event.key === "p") {
+            event.stopPropagation();
+            console.log("P key pressed. Modal is already open, no action taken.");
+        } else if (event.key === "Escape" || event.key === "escape") {
+            closeModal();
+            console.log("Escape key pressed. Modal closed.");
+        }
+        return; // Exit the function after handling keys when modal is open
+    }
+
+    if (event.key === "P" || event.key === "p") {
+        openModal();
+        console.log("P key pressed. Modal opened.");
+    } else if (event.key === "Escape" || event.key === "escape") {
+        closeModal();
+        console.log("Escape key pressed. Modal closed.");
+    }
+});
+
+function deactivateKeybinds() {
+    document.removeEventListener("keydown", keyDownFunction);
+    document.removeEventListener("keyup", keyUpFunction);
+    document.addEventListener("keydown", filterKeys);
+}
+
+function activateKeybinds() {
+    document.removeEventListener("keydown", filterKeys);
+    document.addEventListener("keydown", keyDownFunction);
+    document.addEventListener("keyup", keyUpFunction);
+}
+
+function filterKeys(event) {
+    if (event.key === "Enter" || event.keyCode === 13) {
+        event.preventDefault();
+        event.stopPropagation();
+        saveKeybinds();
+        console.log("Enter key pressed. Settings saved.");
+    }
+}
+
+const defaultKeybinds = {
+    up: ["w"],
+    left: ["a"],
+    down: ["s"],
+    right: ["d"],
+    pause: ["escape"],
+    autoHit: ["1"],
+    previous: ["q"],
+    restart: ["r"],
+    next: ["e"],
+    randomize: ["t"],
+    toggleNoteStyle: ["c"],
+    fullscreen: ["f"],
+    debug: ["control"],
+    noteStyle: "arrows",
+    songTimeoutAfterSongEnd: false,
+    songTimeoutDelay: 5000,
+    vinylRotation: false,
+    circularImage: false,
+    backgroundOption: "defaultBG",
+    customBackgroundBlur: "0px",
+    customBackground: "",
+};
+
+let keybinds = { ...defaultKeybinds };
+let keybindsHistory = [];
+let keybindsIndex = -1;
+
+function loadKeybinds() {
+    const savedKeybinds = JSON.parse(localStorage.getItem("keybinds")) || {};
+    const savedNoteStyle = localStorage.getItem("noteStyle") || defaultKeybinds.noteStyle;
+    const songTimeoutAfterSongEnd = JSON.parse(localStorage.getItem("songTimeoutAfterSongEnd")) || defaultKeybinds.songTimeoutAfterSongEnd;
+    const savedSongTimeoutDelay = parseInt(localStorage.getItem("songTimeoutDelay")) || defaultKeybinds.songTimeoutDelay;
+    const savedVinylRotation = JSON.parse(localStorage.getItem("vinylRotation")) || defaultKeybinds.vinylRotation;
+    const savedCircularImage = JSON.parse(localStorage.getItem("circularImage")) || defaultKeybinds.circularImage;
+    const savedBackgroundOption = localStorage.getItem("backgroundOption") || defaultKeybinds.backgroundOption;
+    const savedCustomBackground = localStorage.getItem("customBackground") || defaultKeybinds.customBackground;
+    const savedCustomBackgroundBlur = localStorage.getItem("customBackgroundBlur") || defaultKeybinds.customBackgroundBlur;
+
+    // Merge saved keybinds with default keybinds
+    keybinds = { ...defaultKeybinds, ...savedKeybinds };
+
+    document.getElementById("songTimeoutAfterSongEnd").checked = songTimeoutAfterSongEnd;
+    restartSongTimeout = songTimeoutAfterSongEnd;
+
+    document.getElementById("circularImage").checked = savedCircularImage;
+    circularImageEnabled = savedCircularImage;
+    toggleVinylRotation(); // Update UI based on circularImage setting
+
+    const vinylRotationCheckbox = document.getElementById("vinylRotation");
+    vinylRotationCheckbox.checked = savedVinylRotation;
+    vinylRotationEnabled = savedVinylRotation;
+
+    const defaultNoteStyleDropdown = document.getElementById("defaultNoteStyle");
+    defaultNoteStyleDropdown.value = savedNoteStyle;
+
+    document.getElementById("up").value = keybinds.up.join(", ");
+    document.getElementById("left").value = keybinds.left.join(", ");
+    document.getElementById("down").value = keybinds.down.join(", ");
+    document.getElementById("right").value = keybinds.right.join(", ");
+    document.getElementById("pause").value = keybinds.pause.join(", ");
+    document.getElementById("autoHit").value = keybinds.autoHit.join(", ");
+    document.getElementById("previousInput").value = keybinds.previous.join(", ");
+    document.getElementById("restartInput").value = keybinds.restart.join(", ");
+    document.getElementById("nextInput").value = keybinds.next.join(", ");
+    document.getElementById("randomize").value = keybinds.randomize.join(", ");
+    document.getElementById("toggleNoteStyleInput").value = keybinds.toggleNoteStyle.join(", ");
+    document.getElementById("fullscreenInput").value = keybinds.fullscreen.join(", ");
+    document.getElementById("debugInput").value = keybinds.debug.join(", ");
+    document.getElementById("songTimeoutAfterSongEndNum").value = savedSongTimeoutDelay;
+    document.getElementById("circularImage").value = savedCircularImage;
+    document.getElementById("vinylRotation").value = savedVinylRotation;
+
+    // Load background settings
+    document.getElementById("defaultBackground").value = savedBackgroundOption;
+    document.getElementById("backdropBlurInput").value = savedCustomBackgroundBlur;
+    document.getElementById("myCanvas").style.backdropFilter = `blur(${savedCustomBackgroundBlur})`;
+
+    if (savedBackgroundOption === "customBG") {
+        document.getElementById("customBGLabel").style.display = "inline";
+        document.getElementById("customBGInput").style.display = "inline";
+        document.getElementById("customTransparentBGblur").style.display = "inline";
+        document.getElementById("backdropBlurInput").style.display = "inline";
+        if (savedCustomBackground) {
+            customBG = new Image();
+            customBG.src = savedCustomBackground;
+        }
+    } else if (savedBackgroundOption === "transparentBG") {
+        document.getElementById("customTransparentBGblur").style.display = "inline";
+        document.getElementById("backdropBlurInput").style.display = "inline";
+    } else {
+        document.getElementById("customBGLabel").style.display = "none";
+        document.getElementById("customBGInput").style.display = "none";
+        document.getElementById("customTransparentBGblur").style.display = "none";
+        document.getElementById("backdropBlurInput").style.display = "none";
+    }
+
+    // Set backgroundIsntDefault based on the loaded background option
+    backgroundIsntDefault = savedBackgroundOption !== "transparentBG" && savedBackgroundOption !== "customBG";
+
+    // Apply the background based on the saved option
+    switch (savedBackgroundOption) {
+        case "defaultBG":
+            BGbright.src = "Resources/Background2.png";
+            break;
+        case "defaultBG2":
+            BGbright.src = "Resources/Background3.jpg";
+            break;
+        case "defaultBG3":
+            BGbright.src = "Resources/Background4.png";
+            break;
+        case "htmlBG":
+            BGbright.src = "Resources/BackgroundHtml2.png";
+            break;
+        case "transparentBG":
+            document.getElementById("myCanvas").style.background = "transparent";
+            backgroundIsntDefault = false;
+            break;
+        case "customBG":
+            if (savedCustomBackground) {
+                BGbright.src = savedCustomBackground;
+            }
+            document.getElementById("myCanvas").style.backdropFilter = `blur(${savedCustomBackgroundBlur})`;
+            break;
+        default:
+            document.getElementById("myCanvas").style.backgroundColor = "";
+            backgroundIsntDefault = true;
+    }
+
+    // Update the songTimeoutDelay in the keybinds
+    keybinds.songTimeoutDelay = savedSongTimeoutDelay;
+    keybinds.backgroundOption = savedBackgroundOption;
+    keybinds.customBackground = savedCustomBackground;
+    keybinds.customBackgroundBlur = savedCustomBackgroundBlur;
+
+    console.log("Loaded settings", keybinds);
+}
+
+// Function to read the currently selected file as a data URL
+function getFileDataUrl(file, callback) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        callback(e.target.result);
+    };
+    reader.readAsDataURL(file);
+}
+
+function saveKeybinds() {
+    const newKeybinds = {
+        up: document
+            .getElementById("up")
+            .value.split(", ")
+            .map((key) => key.trim()),
+        left: document
+            .getElementById("left")
+            .value.split(", ")
+            .map((key) => key.trim()),
+        down: document
+            .getElementById("down")
+            .value.split(", ")
+            .map((key) => key.trim()),
+        right: document
+            .getElementById("right")
+            .value.split(", ")
+            .map((key) => key.trim()),
+        pause: document
+            .getElementById("pause")
+            .value.split(", ")
+            .map((key) => key.trim()),
+        autoHit: document
+            .getElementById("autoHit")
+            .value.split(", ")
+            .map((key) => key.trim()),
+        previous: document
+            .getElementById("previousInput")
+            .value.split(", ")
+            .map((key) => key.trim()),
+        restart: document
+            .getElementById("restartInput")
+            .value.split(", ")
+            .map((key) => key.trim()),
+        next: document
+            .getElementById("nextInput")
+            .value.split(", ")
+            .map((key) => key.trim()),
+        randomize: document
+            .getElementById("randomize")
+            .value.split(", ")
+            .map((key) => key.trim()),
+        toggleNoteStyle: document
+            .getElementById("toggleNoteStyleInput")
+            .value.split(", ")
+            .map((key) => key.trim()),
+        fullscreen: document
+            .getElementById("fullscreenInput")
+            .value.split(", ")
+            .map((key) => key.trim()),
+        debug: document
+            .getElementById("debugInput")
+            .value.split(", ")
+            .map((key) => key.trim()),
+        noteStyle: document.getElementById("defaultNoteStyle").value,
+        songTimeoutAfterSongEnd: document.getElementById("songTimeoutAfterSongEnd").checked,
+        songTimeoutDelay: parseInt(document.getElementById("songTimeoutAfterSongEndNum").value) || defaultKeybinds.songTimeoutDelay,
+        vinylRotation: document.getElementById("vinylRotation").checked,
+        circularImage: document.getElementById("circularImage").checked,
+        backgroundOption: document.getElementById("defaultBackground").value,
+        customBackgroundBlur: document.getElementById("backdropBlurInput").value,
+    };
+
+    if (vinylRotationEnabled && !newKeybinds.vinylRotation) {
+        rotationAngle = 0; // Reset rotation angle to 0 if rotation is disabled
+    }
+
+    restartSongTimeout = newKeybinds.songTimeoutAfterSongEnd;
+    vinylRotationEnabled = newKeybinds.vinylRotation;
+    circularImageEnabled = newKeybinds.circularImage;
+
+    const timeoutInputValue = newKeybinds.songTimeoutDelay;
+
+    if (isNaN(timeoutInputValue)) {
+        alert("Please enter a valid number for the timeout delay.");
+        return;
+    }
+    if (timeoutInputValue > 15000) {
+        alert("Please enter a number that is below 15,000.");
+        return;
+    }
+
+    // Validate and format blur input
+    const blurInput = newKeybinds.customBackgroundBlur;
+    const blurValue = parseInt(blurInput, 10);
+    if (isNaN(blurValue) || blurValue < 0 || blurValue >= 1000) {
+        alert("Please enter a valid number for the background blur (0-999).");
+        return;
+    }
+
+    newKeybinds.customBackgroundBlur = blurValue + "px";
+
+    const customBGInput = document.getElementById("customBGInput");
+    const file = customBGInput.files[0]; // Assuming single file upload
+
+    // Set backgroundIsntDefault based on the selected background option
+    backgroundIsntDefault = newKeybinds.backgroundOption !== "transparentBG" && newKeybinds.backgroundOption !== "customBG";
+
+    // Save changes to localStorage
+    keybinds = newKeybinds;
+
+    localStorage.setItem("keybinds", JSON.stringify(newKeybinds));
+    localStorage.setItem("noteStyle", newKeybinds.noteStyle);
+    localStorage.setItem("songTimeoutAfterSongEnd", JSON.stringify(newKeybinds.songTimeoutAfterSongEnd));
+    localStorage.setItem("songTimeoutDelay", newKeybinds.songTimeoutDelay);
+    localStorage.setItem("vinylRotation", JSON.stringify(newKeybinds.vinylRotation));
+    localStorage.setItem("circularImage", JSON.stringify(newKeybinds.circularImage));
+    localStorage.setItem("backgroundOption", newKeybinds.backgroundOption);
+    localStorage.setItem("customBackgroundBlur", newKeybinds.customBackgroundBlur);
+
+    // Apply the background immediately based on selection
+    switch (newKeybinds.backgroundOption) {
+        case "defaultBG":
+            BGbright.src = "Resources/Background2.png";
+            break;
+        case "defaultBG2":
+            BGbright.src = "Resources/Background3.jpg";
+            break;
+        case "defaultBG3":
+            BGbright.src = "Resources/Background4.png";
+            break;
+        case "htmlBG":
+            BGbright.src = "Resources/BackgroundHtml2.png";
+            break;
+        case "transparentBG":
+            document.getElementById("myCanvas").style.background = "transparent";
+            backgroundIsntDefault = false;
+            break;
+        case "customBG":
+            document.getElementById("myCanvas").style.backdropFilter = `blur(${newKeybinds.customBackgroundBlur})`;
+            break;
+        default:
+            document.getElementById("myCanvas").style.backgroundColor = "";
+            backgroundIsntDefault = true;
+    }
+
+    if (newKeybinds.backgroundOption !== "customBG") {
+        localStorage.setItem("customBackground", "");
+    }
+
+    // Handle background image change if applicable
+    if (file) {
+        handleFileUpload(file);
+    }
+
+    // Store the current state in history for undo/redo functionality
+    if (keybindsIndex === keybindsHistory.length - 1) {
+        keybindsHistory.push(JSON.stringify(newKeybinds));
+        keybindsIndex++;
+    } else {
+        keybindsHistory = keybindsHistory.slice(0, keybindsIndex + 1);
+        keybindsHistory.push(JSON.stringify(newKeybinds));
+        keybindsIndex = keybindsHistory.length - 1;
+    }
+
+    saveMessage.textContent = "Settings saved!";
+    saveMessage.style.display = "block";
+
+    console.log("Saved settings", keybinds);
+}
+
+function handleFileUpload(file) {
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+        const imageData = e.target.result; // This will be in data URL format
+        // Store imageData in localStorage or use it as needed
+        localStorage.setItem("customBackground", imageData);
+        BGbright.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+}
+
+function applyDefaultNoteStyle() {
+    const noteStyle = localStorage.getItem("noteStyle") || defaultKeybinds.noteStyle;
+    if (noteStyle === "circles") {
+        switchToCircles();
+    } else {
+        switchToArrows();
+    }
+}
+
+function toggleNoteStyle() {
+    const noteStyleButton = document.getElementById("toggleNoteStyleButton");
+    const currentNoteStyle = localStorage.getItem("noteStyle") || "arrows";
+
+    console.log("Current note style:", currentNoteStyle);
+
+    if (currentNoteStyle === "arrows") {
+        // Switch to circles
+        console.log("Switching to circles...");
+        switchToCircles();
+        localStorage.setItem("noteStyle", "circles");
+        noteStyleButton.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+        console.log("Note style switched to circles.");
+    } else {
+        // Switch to arrows
+        console.log("Switching to arrows...");
+        switchToArrows();
+        localStorage.setItem("noteStyle", "arrows");
+        noteStyleButton.innerHTML = '<i class="fa-solid fa-circle"></i>';
+        console.log("Note style switched to arrows.");
+    }
+}
+
+// Function to switch all note images to circles
+function switchToCircles() {
+    noteLeftIMG.src = "Resources/CircleLeftHQ.png";
+    noteDownIMG.src = "Resources/CircleDownHQ.png";
+    noteUpIMG.src = "Resources/CircleUpHQ.png";
+    noteRightIMG.src = "Resources/CircleRightHQ.png";
+    noteLeftPressIMG.src = "Resources/CircleLeftPressHQ.png";
+    noteDownPressIMG.src = "Resources/CircleDownPressHQ.png";
+    noteUpPressIMG.src = "Resources/CircleUpPressHQ.png";
+    noteRightPressIMG.src = "Resources/CircleRightPressHQ.png";
+    console.log("Changed textures to circles");
+}
+
+// Function to switch all note images to arrows
+function switchToArrows() {
+    noteLeftIMG.src = "Resources/NoteLeftHQ.png";
+    noteDownIMG.src = "Resources/NoteDownHQ.png";
+    noteUpIMG.src = "Resources/NoteUpHQ.png";
+    noteRightIMG.src = "Resources/NoteRightHQ.png";
+    noteLeftPressIMG.src = "Resources/NoteLeftPressHQ.png";
+    noteDownPressIMG.src = "Resources/NoteDownPressHQ.png";
+    noteUpPressIMG.src = "Resources/NoteUpPressHQ.png";
+    noteRightPressIMG.src = "Resources/NoteRightPressHQ.png";
+    console.log("Changed textures to arrows");
+}
+
+function resetKeybinds() {
+    keybinds = { ...defaultKeybinds, noteStyle: "arrows" };
+    document.getElementById("songTimeoutAfterSongEnd").checked = false;
+    document.getElementById("circularImage").checked = false;
+    document.getElementById("vinylRotation").checked = false;
+
+    const timeoutLabel = document.getElementById("numTimeout");
+    const timeoutInput = document.getElementById("songTimeoutAfterSongEndNum");
+    timeoutLabel.style.display = "none";
+    timeoutInput.style.display = "none";
+
+    switchToArrows();
+    updateKeybindsFields();
+    saveKeybinds();
+}
+
+function undoKeybinds() {
+    if (keybindsIndex > 0) {
+        keybindsIndex--;
+        keybinds = JSON.parse(keybindsHistory[keybindsIndex]);
+        updateKeybindsFields();
+    }
+}
+
+function redoKeybinds() {
+    if (keybindsIndex < keybindsHistory.length - 1) {
+        keybindsIndex++;
+        keybinds = JSON.parse(keybindsHistory[keybindsIndex]);
+        updateKeybindsFields();
+    }
+}
+
+function updateKeybindsFields() {
+    document.getElementById("up").value = keybinds.up.join(", ");
+    document.getElementById("left").value = keybinds.left.join(", ");
+    document.getElementById("down").value = keybinds.down.join(", ");
+    document.getElementById("right").value = keybinds.right.join(", ");
+    document.getElementById("pause").value = keybinds.pause.join(", ");
+    document.getElementById("autoHit").value = keybinds.autoHit.join(", ");
+    document.getElementById("previousInput").value = keybinds.previous.join(", ");
+    document.getElementById("restartInput").value = keybinds.restart.join(", ");
+    document.getElementById("nextInput").value = keybinds.next.join(", ");
+    document.getElementById("randomize").value = keybinds.randomize.join(", ");
+    document.getElementById("toggleNoteStyleInput").value = keybinds.toggleNoteStyle.join(", ");
+    document.getElementById("fullscreenInput").value = keybinds.fullscreen.join(", ");
+    document.getElementById("debugInput").value = keybinds.debug.join(", ");
+    document.getElementById("defaultNoteStyle").value = keybinds.noteStyle;
+    document.getElementById("songTimeoutAfterSongEnd").checked = keybinds.songTimeoutAfterSongEnd;
+    document.getElementById("songTimeoutAfterSongEndNum").value = keybinds.songTimeoutDelay;
+    document.getElementById("vinylRotation").checked = keybinds.vinylRotation;
+    document.getElementById("circularImage").checked = keybinds.circularImage;
+    document.getElementById("defaultBackground").value = keybinds.backgroundOption;
+    document.getElementById("backdropBlurInput").value = keybinds.customBackgroundBlur;
+
+    if (keybinds.backgroundOption === "customBG" && keybinds.customBackground) {
+        document.getElementById("customBGLabel").style.display = "inline";
+        document.getElementById("customBGInput").style.display = "inline";
+        document.getElementById("customTransparentBGblur").style.display = "inline";
+        document.getElementById("backdropBlurInput").style.display = "inline";
+    } else if (keybinds.backgroundOption === "transparentBG") {
+        document.getElementById("customTransparentBGblur").style.display = "inline";
+        document.getElementById("backdropBlurInput").style.display = "inline";
+    } else {
+        document.getElementById("customBGLabel").style.display = "none";
+        document.getElementById("customBGInput").style.display = "none";
+        document.getElementById("customTransparentBGblur").style.display = "none";
+        document.getElementById("backdropBlurInput").style.display = "none";
+    }
+}
+
+function toggleTimeoutInput() {
+    const timeoutCheckbox = document.getElementById("songTimeoutAfterSongEnd");
+    const timeoutLabel = document.getElementById("numTimeout");
+    const timeoutInput = document.getElementById("songTimeoutAfterSongEndNum");
+
+    if (timeoutCheckbox.checked) {
+        timeoutLabel.style.display = "inline";
+        timeoutInput.style.display = "inline";
+    } else {
+        timeoutLabel.style.display = "none";
+        timeoutInput.style.display = "none";
+    }
+}
+
+let restartSongTimeout;
+let songTimeoutDelay = localStorage.getItem("songTimeoutDelay");
+
+document.getElementById("songTimeoutAfterSongEnd").addEventListener("change", toggleTimeoutInput);
+
+function keyDownFunction(keyboardEvent) {
+    var keyDown = keyboardEvent.key.toLowerCase();
+    console.log("Pressed:", keyDown);
+
+    if (!gameStarted) {
+        if (keyDown == "enter") {
+            document.getElementById("startButton").click();
+            gameStarted = true;
+        }
+        return;
+    }
+
+    if (gameStarted && keyDown == "enter") {
+        return;
+    }
+
+    if (keybinds.up.includes(keyDown)) {
+        upPressed = true;
+    }
+    if (keybinds.left.includes(keyDown)) {
+        leftPressed = true;
+    }
+    if (keybinds.down.includes(keyDown)) {
+        downPressed = true;
+    }
+    if (keybinds.right.includes(keyDown)) {
+        rightPressed = true;
+    }
+    if (keybinds.pause.includes(keyDown)) {
+        togglePause();
+    }
+    if (keybinds.autoHit.includes(keyDown)) {
+        toggleAutoHit();
+    }
+    if (keybinds.fullscreen.includes(keyDown)) {
+        toggleFullScreen();
+    }
+    if (keybinds.previous.includes(keyDown)) {
+        previousSong();
+    }
+    if (keybinds.restart.includes(keyDown)) {
+        restartSong();
+    }
+    if (keybinds.next.includes(keyDown)) {
+        nextSong();
+    }
+    if (keybinds.randomize.includes(keyDown)) {
+        randomizeSong();
+    }
+    if (keybinds.toggleNoteStyle.includes(keyDown)) {
+        toggleNoteStyle();
+    }
+    if (keybinds.debug.includes(keyDown)) {
+        toggleDebugInfo();
+    }
+}
+
+function keyUpFunction(keyboardEvent) {
+    var keyUp = keyboardEvent.key.toLowerCase();
+    console.log("Released:", keyUp);
+
+    if (keybinds.up.includes(keyUp)) {
+        upPressed = false;
+    }
+    if (keybinds.left.includes(keyUp)) {
+        leftPressed = false;
+    }
+    if (keybinds.down.includes(keyUp)) {
+        downPressed = false;
+    }
+    if (keybinds.right.includes(keyUp)) {
+        rightPressed = false;
+    }
 }
