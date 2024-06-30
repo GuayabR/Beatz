@@ -2,12 +2,12 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: HFPS 3.2.10.8 test (release.version.subversion.bugfix)
+ * Version: HFPS 3.2.11.9 test (release.version.subversion.bugfix)
  **/
 
 // CONSTANTS
 
-const VERSION = "HFPS 3.2.10.8 (Codename.Release.Version.Subversion.Bugfix)";
+const VERSION = "HFPS 3.2.11.9 (Codename.Release.Version.Subversion.Bugfix)";
 const PUBLICVERSION = "3.2! (GitHub Port)";
 console.log('Version: ' + VERSION)
 
@@ -474,11 +474,20 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 112.8, noteSpeed: 9 },  // 1:54.8
         ],
         "Shiawase (VIP)": [
-            { timestamp: 25.6, noteSpeed: 14 },
+            { timestamp: 25.6, noteSpeed: 14.2 },
             { timestamp: 36.8, noteSpeed: 10 },
             { timestamp: 38.4, noteSpeed: 4 },
             { timestamp: 41.58, noteSpeed: 16.2 },
             { timestamp: 63.95, noteSpeed: 8.2 },
+            { timestamp: 76.8, noteSpeed: 12.2 },
+            { timestamp: 89.6, noteSpeed: 13.2 },
+            { timestamp: 100.85, noteSpeed: 10 },
+            { timestamp: 102.5, noteSpeed: 8.2 },
+            { timestamp: 105.58, noteSpeed: 16.2 },
+            { timestamp: 128.07, noteSpeed: 12.2 },
+            { timestamp: 131.2, noteSpeed: 17.2 },
+            { timestamp: 165.9, noteSpeed: 18.2, notes: [] },
+            { timestamp: 169, noteSpeed: 18.2, endScreenDrawn: true },
         ],
         // Add more songs and their respective timestamp-speed mappings here
     };
@@ -1106,6 +1115,14 @@ function startGame(index) {
                     if (currentTime >= nextConfig.timestamp) {
                         noteSpeed = nextConfig.noteSpeed;
                         console.log(`Updated note speed to: ${noteSpeed} at timestamp: ${nextConfig.timestamp}`);
+                        if (nextConfig.notes) {
+                            notes = nextConfig.notes;
+                            console.log(`Updated notes at timestamp: ${nextConfig.timestamp}`);
+                        }
+                        if (nextConfig.endScreenDrawn) {
+                            endScreenDrawn = nextConfig.endScreenDrawn;
+                            console.log(`End screen drawn at timestamp: ${nextConfig.timestamp}`);
+                        }
                         currentConfigIndex++;
                     }
                     // Update next imminent speed change
@@ -1130,6 +1147,7 @@ function startGame(index) {
         songStarted = true;
         gamePaused = false;
         gameStarted = true;
+        endScreenDrawn = false;
 
         // Reset time tracking variables
         lastTime = 0;
@@ -1249,7 +1267,7 @@ function onSongEnd() {
     try {
         saveScore(songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
     } catch (error) {
-        console.error("Error in onSongEnd:", error);
+        console.error("Song ending error:", error);
     }
 
     if (restartSongTimeout) {
@@ -1259,9 +1277,7 @@ function onSongEnd() {
         }, songTimeoutDelay); // Delay specified in settings
     }
 
-    console.log("Song ended, Parameters:", songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
-
-    canvasUpdating = false;
+    console.log("Parameters to save:", songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
 
     drawEndScreen();
 }
@@ -1279,6 +1295,10 @@ function checkAndDisplayBestScore() {
 // Endscreen
 function drawEndScreen() {
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+    canvasUpdating = false;
+
+    endScreenDrawn = true;
 
     if (backgroundIsntDefault) {
         ctx.drawImage(BGbright, 0, 0, 1280, 720);
@@ -1402,11 +1422,8 @@ function updateCanvas(timestamp) {
         }
         return;
     }
-    if (currentSong.ended) {
-        if (!endScreenDrawn) {
-        drawEndScreen();
-        endScreenDrawn = true; // Set the flag to true to indicate that the end screen has been drawn
-        }
+    if (endScreenDrawn === true) {
+        onSongEnd();
         return;
     }
     

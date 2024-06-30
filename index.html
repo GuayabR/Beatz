@@ -128,18 +128,6 @@
         <input type="range" id="hitSoundSlider" name="hitSoundSlider" min="0" max="100" value="50">
     </div><br><br>
 
-
-    <!-- The Leaderboard 
-    <div id="leaderboard">
-        <h3>Leaderboard</h3>
-
-    </div>
-    -->
-
-    <div id="loginRedirects">
-        <button onclick="window.open('AccountForms/loginform.html', '_blank')">Login!</button>
-    </div>
-
     <div id="contactBtn">
     <button id="contactbtn" onclick="email()"><i class="fa-solid fa-envelope"></i> Contact</button>
     </div>
@@ -147,7 +135,6 @@
     <div id="publicToTestToggle">
     <button id="publicbtn" onclick="toVersion()">Open testing game</button><br><br>
     </div>
-    <script src="ScoreLogic.js"></script>
 
 
     <h2>Background image from: <a href="https://github.com/Uproxide/Texture-Workshop/commit/457788213d900a980f559ae8f241febad3322bdd#diff-1dbd3c28454ab3b1596af576394661ba03597f51326dbbff288c6b8ccc353041">Uproxide's "Texture Workshop"</a></h2>
@@ -158,7 +145,7 @@
 
     <script>
         var canvas = document.getElementById('myCanvas');
-    document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function() {
         detectAndHandleDevice();
         loadKeybinds();
         applyDefaultNoteStyle();
@@ -224,9 +211,6 @@ function toggleNoteStyleButtonDisplay() {
 
         document.getElementById('undoKeybindsButton').addEventListener('click', undoKeybinds);
         document.getElementById('redoKeybindsButton').addEventListener('click', redoKeybinds);
-
-        let keybindsHistory = [];
-        let keybindsIndex = -1;
 
         function NewTab() {
             window.open("https://www.youtube.com/@GuayabR", "_blank");
@@ -366,26 +350,32 @@ const defaultKeybinds = {
     toggleNoteStyle: ["c"],
     fullscreen: ["f"],
     debug: ["control"],
-    defaultNoteStyle: ["arrows"],
+    noteStyle: "arrows",
+    songTimeoutAfterSongEnd: false,
     songTimeoutDelay: 5000,
+    vinylRotation: false,
+    circularImage: false,
     backgroundOption: "defaultBG",
-    customBackground: "",
-    customBackgroundBlur: 0,
+    customBackgroundBlur: "0px",
 };
 
 let keybinds = { ...defaultKeybinds };
+let keybindsHistory = [];
+let keybindsIndex = -1;
 
 function loadKeybinds() {
-    const savedKeybinds = JSON.parse(localStorage.getItem('keybinds'));
-    const savedNoteStyle = localStorage.getItem('noteStyle') || "arrows";
-    const songTimeoutAfterSongEnd = JSON.parse(localStorage.getItem('songTimeoutAfterSongEnd')) || false;
+    const savedKeybinds = JSON.parse(localStorage.getItem('keybinds')) || {};
+    const savedNoteStyle = localStorage.getItem('noteStyle') || defaultKeybinds.noteStyle;
+    const songTimeoutAfterSongEnd = JSON.parse(localStorage.getItem('songTimeoutAfterSongEnd')) || defaultKeybinds.songTimeoutAfterSongEnd;
     const savedSongTimeoutDelay = parseInt(localStorage.getItem('songTimeoutDelay')) || defaultKeybinds.songTimeoutDelay;
-    const savedVinylRotation = JSON.parse(localStorage.getItem('vinylRotation')) || false;
-    const savedCircularImage = JSON.parse(localStorage.getItem('circularImage')) || false;
-
+    const savedVinylRotation = JSON.parse(localStorage.getItem('vinylRotation')) || defaultKeybinds.vinylRotation;
+    const savedCircularImage = JSON.parse(localStorage.getItem('circularImage')) || defaultKeybinds.circularImage;
     const savedBackgroundOption = localStorage.getItem('backgroundOption') || defaultKeybinds.backgroundOption;
-    const savedCustomBackground = localStorage.getItem('keybins.customBackground') || defaultKeybinds.customBackground;
+    const savedCustomBackground = localStorage.getItem('customBackground') || defaultKeybinds.customBackground;
     const savedCustomBackgroundBlur = localStorage.getItem('customBackgroundBlur') || defaultKeybinds.customBackgroundBlur;
+
+    // Merge saved keybinds with default keybinds
+    keybinds = { ...defaultKeybinds, ...savedKeybinds };
 
     document.getElementById('songTimeoutAfterSongEnd').checked = songTimeoutAfterSongEnd;
     restartSongTimeout = songTimeoutAfterSongEnd;
@@ -399,13 +389,7 @@ function loadKeybinds() {
     vinylRotationEnabled = savedVinylRotation;
 
     const defaultNoteStyleDropdown = document.getElementById('defaultNoteStyle');
-    if (savedNoteStyle) {
-        defaultNoteStyleDropdown.value = savedNoteStyle;
-    }
-
-    if (savedKeybinds) {
-        keybinds = savedKeybinds;
-    }
+    defaultNoteStyleDropdown.value = savedNoteStyle;
 
     document.getElementById('up').value = keybinds.up.join(", ");
     document.getElementById('left').value = keybinds.left.join(", ");
@@ -427,7 +411,8 @@ function loadKeybinds() {
     // Load background settings
     document.getElementById('defaultBackground').value = savedBackgroundOption;
     document.getElementById('backdropBlurInput').value = savedCustomBackgroundBlur;
-    document.getElementById('myCanvas').style.backdropFilter = `blur(${savedCustomBackgroundBlur}px)`;
+    document.getElementById('myCanvas').style.backdropFilter = `blur(${savedCustomBackgroundBlur})`;
+
     if (savedBackgroundOption === 'customBG') {
         document.getElementById('customBGLabel').style.display = 'inline';
         document.getElementById('customBGInput').style.display = 'inline';
@@ -454,6 +439,7 @@ function loadKeybinds() {
         document.getElementById('myCanvas').style.backgroundColor = '';
         backgroundIsntDefault = true;
     }
+
     if (keybinds.backgroundOption == 'customBG') {
         document.getElementById('myCanvas').style.background = 'transparent';
     }
@@ -464,12 +450,6 @@ function loadKeybinds() {
     keybinds.customBackground = savedCustomBackground;
     keybinds.customBackgroundBlur = savedCustomBackgroundBlur;
 
-    if (savedNoteStyle) {
-        document.getElementById('defaultNoteStyle').value = savedNoteStyle;
-    }
-
-    keybindsHistory.push(JSON.parse(JSON.stringify(keybinds)));
-    keybindsIndex++;
     console.log("Loaded settings", keybinds);
 }
 
@@ -490,7 +470,7 @@ function saveKeybinds() {
         debug: document.getElementById('debugInput').value.split(", ").map(key => key.trim()),
         noteStyle: document.getElementById('defaultNoteStyle').value,
         songTimeoutAfterSongEnd: document.getElementById('songTimeoutAfterSongEnd').checked,
-        songTimeoutDelay: parseInt(document.getElementById('songTimeoutAfterSongEndNum').value) || 0,
+        songTimeoutDelay: parseInt(document.getElementById('songTimeoutAfterSongEndNum').value) || defaultKeybinds.songTimeoutDelay,
         vinylRotation: document.getElementById('vinylRotation').checked,
         circularImage: document.getElementById('circularImage').checked,
         backgroundOption: document.getElementById('defaultBackground').value,
@@ -505,32 +485,27 @@ function saveKeybinds() {
     vinylRotationEnabled = newKeybinds.vinylRotation;
     circularImageEnabled = newKeybinds.circularImage;
 
-    const savedNoteStyle = localStorage.getItem('noteStyle');
-    const songTimeoutAfterSongEnd = document.getElementById('songTimeoutAfterSongEnd').checked;
-    const savedCustomBG = localStorage.getItem('customBackground');
-
-    if (newKeybinds.noteStyle !== savedNoteStyle) {
-        // Change note style immediately
-        applyDefaultNoteStyle(); // Call the function to apply the note style
-    }
-
-    const savedKeybinds = JSON.parse(localStorage.getItem('keybinds'));
-    const savedSongTimeoutAfterSongEnd = JSON.parse(localStorage.getItem('songTimeoutAfterSongEnd'));
+    const savedNoteStyle = localStorage.getItem('noteStyle') || defaultKeybinds.noteStyle;
+    const savedSongTimeoutAfterSongEnd = JSON.parse(localStorage.getItem('songTimeoutAfterSongEnd')) || defaultKeybinds.songTimeoutAfterSongEnd;
     const timeoutInputValue = newKeybinds.songTimeoutDelay;
+    const savedKeybinds = JSON.parse(localStorage.getItem('keybinds')) || defaultKeybinds;
+    const savedVinylRotation = JSON.parse(localStorage.getItem('vinylRotation')) || defaultKeybinds.vinylRotation;
+    const savedCircularImage = JSON.parse(localStorage.getItem('circularImage')) || defaultKeybinds.circularImage;
+    const savedCustomBG = localStorage.getItem('customBackground') || defaultKeybinds.customBackground;
 
     if (isNaN(timeoutInputValue)) {
         alert("Please enter a valid number for the timeout delay.");
         return;
     }
     if (timeoutInputValue > 15000) {
-        alert("Please enter a number that is below 15,000.")
+        alert("Please enter a number that is below 15,000.");
         return;
     }
 
     // Validate and format blur input
     const blurInput = newKeybinds.customBackgroundBlur;
     const blurValue = parseInt(blurInput, 10);
-    if (isNaN(blurValue) || blurValue <= -1 || blurValue >= 1000) {
+    if (isNaN(blurValue) || blurValue < 0 || blurValue >= 1000) {
         alert("Please enter a valid number for the background blur (0-999).");
         return;
     }
@@ -543,55 +518,72 @@ function saveKeybinds() {
         savedSongTimeoutAfterSongEnd === newKeybinds.songTimeoutAfterSongEnd &&
         timeoutInputValue === keybinds.songTimeoutDelay &&
         localStorage.getItem('customBackground') === savedCustomBG &&
-        savedVinylRotation === newKeybinds.vinylRotation &&  
-        savedCircularImage === newKeybinds.circularImage     
+        savedVinylRotation === newKeybinds.vinylRotation &&
+        savedCircularImage === newKeybinds.circularImage
     ) {
         // No changes have been made
         saveMessage.textContent = "No changes have been made.";
         saveMessage.style.display = 'block';
         return;
-    } else {
-        // Changes have been made
-        keybinds = newKeybinds;
-
-        localStorage.setItem('keybinds', JSON.stringify(newKeybinds));
-        localStorage.setItem('noteStyle', newKeybinds.noteStyle);
-        localStorage.setItem('songTimeoutAfterSongEnd', JSON.stringify(newKeybinds.songTimeoutAfterSongEnd));
-        localStorage.setItem('songTimeoutDelay', newKeybinds.songTimeoutDelay);
-        localStorage.setItem('vinylRotation', JSON.stringify(newKeybinds.vinylRotation));
-        localStorage.setItem('circularImage', JSON.stringify(newKeybinds.circularImage));
-        localStorage.setItem('backgroundOption', newKeybinds.backgroundOption);
-        localStorage.setItem('customBackgroundBlur', newKeybinds.customBackgroundBlur);
-        
-        if (newKeybinds.backgroundOption === 'transparentBG') {
-            document.getElementById('myCanvas').style.background = 'transparent';
-            backgroundIsntDefault = false;
-        } else {
-            document.getElementById('myCanvas').style.backgroundColor = '';
-            backgroundIsntDefault = true;
-        }
-
-        if (newKeybinds.backgroundOption !== 'customBG') {
-            document.getElementById('myCanvas').style.background = 'transparent';
-            localStorage.setItem('customBackground', '');
-        } else {
-            document.getElementById('myCanvas').style.backdropFilter = `blur(${newKeybinds.customBackgroundBlur})`;
-        }
-
-        // Handle background image change if applicable
-        const fileInput = document.getElementById('customBGInput');
-        const file = fileInput.files[0]; // Assuming single file upload
-
-        if (file) {
-            handleFileUpload(file);
-        }
-
-        keybindsHistory.push(JSON.parse(JSON.stringify(newKeybinds)));
-        keybindsIndex++;
-
-        saveMessage.textContent = "Settings saved!";
-        saveMessage.style.display = 'block';
     }
+
+    // Handle note style change
+    if (savedNoteStyle !== newKeybinds.noteStyle) {
+        if (newKeybinds.noteStyle === 'circles') {
+            switchToCircles();
+        } else {
+            switchToArrows();
+        }
+    }
+
+    // Save changes to localStorage
+    keybinds = newKeybinds;
+
+    localStorage.setItem('keybinds', JSON.stringify(newKeybinds));
+    localStorage.setItem('noteStyle', newKeybinds.noteStyle);
+    localStorage.setItem('songTimeoutAfterSongEnd', JSON.stringify(newKeybinds.songTimeoutAfterSongEnd));
+    localStorage.setItem('songTimeoutDelay', newKeybinds.songTimeoutDelay);
+    localStorage.setItem('vinylRotation', JSON.stringify(newKeybinds.vinylRotation));
+    localStorage.setItem('circularImage', JSON.stringify(newKeybinds.circularImage));
+    localStorage.setItem('backgroundOption', newKeybinds.backgroundOption);
+    localStorage.setItem('customBackgroundBlur', newKeybinds.customBackgroundBlur);
+
+    if (newKeybinds.backgroundOption === 'transparentBG') {
+        document.getElementById('myCanvas').style.background = 'transparent';
+        backgroundIsntDefault = false;
+    } else {
+        document.getElementById('myCanvas').style.backgroundColor = '';
+        backgroundIsntDefault = true;
+    }
+
+    if (newKeybinds.backgroundOption !== 'customBG') {
+        document.getElementById('myCanvas').style.background = 'transparent';
+        localStorage.setItem('customBackground', '');
+    } else {
+        document.getElementById('myCanvas').style.backdropFilter = `blur(${newKeybinds.customBackgroundBlur})`;
+    }
+
+    // Handle background image change if applicable
+    const fileInput = document.getElementById('customBGInput');
+    const file = fileInput.files[0]; // Assuming single file upload
+
+    if (file) {
+        handleFileUpload(file);
+    }
+
+    // Store the current state in history for undo/redo functionality
+    if (keybindsIndex === keybindsHistory.length - 1) {
+        keybindsHistory.push(JSON.stringify(newKeybinds));
+        keybindsIndex++;
+    } else {
+        keybindsHistory = keybindsHistory.slice(0, keybindsIndex + 1);
+        keybindsHistory.push(JSON.stringify(newKeybinds));
+        keybindsIndex = keybindsHistory.length - 1;
+    }
+
+    saveMessage.textContent = "Settings saved!";
+    saveMessage.style.display = 'block';
+
     console.log("Saved settings", keybinds);
 }
 
@@ -610,13 +602,11 @@ function handleFileUpload(file) {
 
 
 function applyDefaultNoteStyle() {
-    const noteStyle = localStorage.getItem('noteStyle') || 'arrows';
+    const noteStyle = localStorage.getItem('noteStyle') || defaultKeybinds.noteStyle;
     if (noteStyle === 'circles') {
         switchToCircles();
-        console.log("Applied circle textures");
     } else {
         switchToArrows();
-        console.log("Applied arrow textures");
     }
 }
 
@@ -672,12 +662,15 @@ function switchToArrows() {
 function resetKeybinds() {
     keybinds = { ...defaultKeybinds, noteStyle: 'arrows', };
     document.getElementById('songTimeoutAfterSongEnd').checked = false;
+    document.getElementById('circularImage').checked = false;
+    document.getElementById('vinylRotation').checked = false;
 
     const timeoutLabel = document.getElementById('numTimeout');
     const timeoutInput = document.getElementById('songTimeoutAfterSongEndNum');
     timeoutLabel.style.display = 'none';
     timeoutInput.style.display = 'none';
     
+    switchToArrows();
     updateKeybindsFields();
     saveKeybinds();
 }
@@ -685,7 +678,7 @@ function resetKeybinds() {
 function undoKeybinds() {
     if (keybindsIndex > 0) {
         keybindsIndex--;
-        keybinds = { ...keybindsHistory[keybindsIndex] };
+        keybinds = JSON.parse(keybindsHistory[keybindsIndex]);
         updateKeybindsFields();
     }
 }
@@ -693,7 +686,7 @@ function undoKeybinds() {
 function redoKeybinds() {
     if (keybindsIndex < keybindsHistory.length - 1) {
         keybindsIndex++;
-        keybinds = { ...keybindsHistory[keybindsIndex] };
+        keybinds = JSON.parse(keybindsHistory[keybindsIndex]);
         updateKeybindsFields();
     }
 }
@@ -713,9 +706,10 @@ function updateKeybindsFields() {
     document.getElementById('fullscreenInput').value = keybinds.fullscreen.join(", ");
     document.getElementById('debugInput').value = keybinds.debug.join(", ");
     document.getElementById('defaultNoteStyle').value = keybinds.noteStyle;
-    document.getElementById('songTimeoutAfterSongEnd').checked = keybinds.songTimeoutCheck;
+    document.getElementById('songTimeoutAfterSongEnd').checked = keybinds.songTimeoutAfterSongEnd;
     document.getElementById('songTimeoutAfterSongEndNum').value = keybinds.songTimeoutDelay;
-
+    document.getElementById('vinylRotation').checked = keybinds.vinylRotation;
+    document.getElementById('circularImage').checked = keybinds.circularImage;
     document.getElementById('defaultBackground').value = keybinds.backgroundOption;
     document.getElementById('backdropBlurInput').value = keybinds.customBackgroundBlur;
 
@@ -751,30 +745,6 @@ function toggleTimeoutInput() {
 
 let restartSongTimeout;
 let songTimeoutDelay = localStorage.getItem('songTimeoutDelay');
-
-// Logic to activate when the song ends
-function onSongEnd() {
-    let songName = getSongTitle(currentSong.src);
-
-    try {
-        saveScore(songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
-    } catch (error) {
-        console.error("Error in onSongEnd:", error);
-    }
-
-    if (restartSongTimeout) {
-        console.log("Restarting song in ",songTimeoutDelay / 1000," seconds...");
-        setTimeout(() => {
-            restartSong();
-        }, songTimeoutDelay); // Delay specified in settings
-    }
-
-    console.log("Song ended, Parameters:", songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
-
-    canvasUpdating = false;
-
-    drawEndScreen();
-}
 
 document.getElementById('songTimeoutAfterSongEnd').addEventListener('change', toggleTimeoutInput);
 

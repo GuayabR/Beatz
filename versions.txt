@@ -308,3 +308,13 @@ Stages:
 - Fixed saving new custom background formatting the image as a fake path while loading the image looks for an image data format. All images should be formatted using image data.
 - Fixed custom backgrounds instantly saving and applying, now image only applies after settings are saved
 - Fixed circular cover images and vinyl rotation not saving to localStorage.
+//
+
+3.2.11.9 (HFPS 3.2! 30/06/2024)
+
+- Fixed saving new note style not toggling instantly.
+- Fixed savedVinylRotation being undefined.
+- Added new settings to default settings array.
+- Shiawase (VIP) now has a complete Dynamic speed setting. (More to come)
+- Dynamic speed settings can now end the song early by resetting the notes array at a set timestamp, and call to draw end screen at another set timestamp (Timestamp, note speed, notes, draw end screen call)
+- Next update: Dynamic speeds are going to be shown below the cover image, making the switch from a slow speed to a fast speed easier.
