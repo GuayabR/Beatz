@@ -1,18 +1,21 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Beatz Testing 3.2!</title>
+        <title>Beatz Testing 3.3!</title>
         <link rel="icon" type="image/x-icon" href="Resources/favicon.png" />
         <link rel="stylesheet" type="text/css" href="styles.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     </head>
     <body>
         <canvas id="myCanvas" width="1280" height="720"></canvas>
-        <div id="unsupportedMessage" Aye! Thanks for checking out Beatz.io, unfortunately, your device does not support the canvas element, therefore, Beatz.io can not start. (ERR: UNSUPPORTED_DEVICE)></div>
+        <div id="unsupportedMessage" style="display: none">
+            Aye! Thanks for checking out Beatz.io, unfortunately, your device does not support the HTML5 Canvas, therefore, Beatz.io can not start. Mobile will
+            be ported to Beatz soon!
+        </div>
         <h1>Beatz.io</h1>
 
-        <button id="startButton" style="display: none">Start! <i class="fa-solid fa-play"></i></button>
+        <button id="startButton" style="display: none">Play! <i class="fa-solid fa-play"></i></button>
         <button id="myYoutube" style="display: none" onclick="NewTab()"><i class="fa-brands fa-youtube"></i></button>
         <button id="toggleNoteStyleButton" style="display: none">
             <i class="fa-solid fa-arrow-up" style="display: none"></i>
@@ -36,11 +39,18 @@
         <!-- The Modal -->
         <div id="keybindsModal" class="modal">
             <div class="modal-content">
-                <span class="close"><i class="fa-solid fa-xmark"></i></span>
+                <span id="closeSettings" class="close"><i class="fa-solid fa-xmark"></i></span>
+
                 <button id="resetKeybindsButton" class="keybind-button reset-keybinds"><i class="fa-solid fa-rotate"></i></button>
+
                 <button id="redoKeybindsButton" class="keybind-button redo-keybinds"><i class="fa-solid fa-rotate-right"></i></button>
+
                 <button id="undoKeybindsButton" class="keybind-button undo-keybinds"><i class="fa-solid fa-rotate-left"></i></button>
+
+                <button id="presetSettingsButton" class="keybind-button preset-settings"><i class="fa-brands fa-uikit"></i></button>
+
                 <h1>Customize Settings!</h1>
+
                 <form id="keybindsForm">
                     <label for="up">Note Left:</label>
                     <input type="text" id="left" name="left" />
@@ -117,9 +127,31 @@
                     <label id="customTransparentBGblur" for="backdropBlurInput" style="display: none">Background blur:</label>
                     <input type="text" id="backdropBlurInput" placeholder="Input a number" style="display: none" /><br /><br />
 
-                    <span id="settingsSaved" style="color: white; display: none">Settings saved! <i class="fa-solid fa-check"></i></span>
+                    <span id="settingsSaved" style="color: white; display: none">Settings saved!</span>
                     <button id="saveSettings" type="button" onclick="saveKeybinds()">Save</button>
                 </form>
+            </div>
+        </div>
+
+        <div id="presetModal" class="modal">
+            <div class="modal-content">
+                <span id="closePresets" class="close"><i class="fa-solid fa-xmark"></i></span>
+
+                <button id="resetKeybindsButton" class="keybind-button reset-keybinds"><i class="fa-solid fa-rotate"></i></button>
+
+                <h1>Setting Presets</h1>
+
+                <label for="presetGuayabR">Preset 1:</label>
+                <button id="presetGuayabR" class="presetBTN">GuayabR</button><br /><br />
+
+                <label for="presetVERIDIAN">Preset 2:</label>
+                <button id="presetVERIDIAN" class="presetBTN">VERIDIAN</button><br /><br />
+
+                <span id="presetDescription" style="color: white; display: none"></span>
+
+                <h4><span id="presetSaved" style="color: white; display: none">Preset has been saved!</span></h4>
+
+                <button id="applyPresetButton" class="apply-preset">Apply Preset</button>
             </div>
         </div>
 
@@ -134,29 +166,24 @@
         </div>
         <br /><br />
 
-        <!-- The Leaderboard 
-    <div id="leaderboard">
-        <h3>Leaderboard</h3>
-
-    </div>
-    -->
-
-        <div id="loginRedirects">
-            <button onclick="window.open('AccountForms/loginform.html', '_blank')">Login!</button>
-        </div>
-
         <div id="contactBtn">
             <button id="contactbtn" onclick="email()"><i class="fa-solid fa-envelope"></i> Contact</button>
         </div>
 
         <div id="publicToTestToggle"><button id="publicbtn" onclick="toVersion()">Open public game</button><br /><br /></div>
-        <script src="ScoreLogic.js"></script>
 
-        <h2>Background image from: <a href="https://github.com/Uproxide/Texture-Workshop/commit/457788213d900a980f559ae8f241febad3322bdd#diff-1dbd3c28454ab3b1596af576394661ba03597f51326dbbff288c6b8ccc353041">Uproxide's "Texture Workshop"</a></h2>
+        <h2>
+            Background image from:
+            <a
+                href="https://github.com/Uproxide/Texture-Workshop/commit/457788213d900a980f559ae8f241febad3322bdd#diff-1dbd3c28454ab3b1596af576394661ba03597f51326dbbff288c6b8ccc353041"
+                >Uproxide's "Texture Workshop"</a
+            >
+        </h2>
         <h2>Notes from: <a href="https://github.com/Simply-Love/Simply-Love-SM5?tab=readme-ov-file">Teejusb's "Simply Love" osu! mania skins</a></h2>
         <h3>If you are the artist of any of these songs, contact me through my email if you want them removed.</h3>
         <h3>Credit of the songs goes to their respective creators.</h3>
         <h3>Note that i am NOT making any money on this game, i just code occasionally for the fun of it. <3</h3>
+
         <script src="BeatzGameTesting.js"></script>
     </body>
 </html>

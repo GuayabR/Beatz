@@ -2,14 +2,20 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: HFPS 3.2.12.10 test (release.version.subversion.bugfix)
+ * Version: HFPS 3.3.12.13 test (release.version.subversion.bugfix)
  **/
 
 // CONSTANTS
 
-const VERSION = "HFPS 3.2.12.10 (Codename.Release.Version.Subversion.Bugfix)";
-const PUBLICVERSION = "3.2! (GitHub Port)";
+const VERSION = "HFPS 3.3.12.13 (Codename.Release.Version.Subversion.Bugfix)";
+const PUBLICVERSION = "3.3! (GitHub Port)";
 console.log("Version: " + VERSION);
+
+const canvas = document.getElementById("myCanvas");
+
+const ctx = document.getElementById("myCanvas").getContext("2d");
+
+const userDevice = detectDeviceType();
 
 const WIDTH = 1280;
 
@@ -18,10 +24,6 @@ const HEIGHT = 720;
 const noteWidth = 50;
 
 const noteHeight = 50;
-
-const HIT_Y_RANGE_MIN = 500;
-
-const HIT_Y_RANGE_MAX = 600;
 
 const MIN_NOTE_GAP = 775;
 
@@ -78,8 +80,6 @@ console.log("Constants loaded.");
 
 // VARIABLES
 
-var ctx;
-
 var timer;
 
 var gameStarted = false;
@@ -116,9 +116,17 @@ var leftPressed = false;
 
 var rightPressed = false;
 
-var noteSpeed = 10;
+var noteSpeed;
 
-var BPM = 0;
+var HIT_Y_RANGE_MIN = 500;
+
+var HIT_Y_RANGE_MAX = 600;
+
+var PERFECT_HIT_RANGE_MIN = 540;
+
+var PERFECT_HIT_RANGE_MAX = 560;
+
+var BPM;
 
 var MILLISECONDS_PER_BEAT;
 
@@ -222,10 +230,12 @@ function adjustSongVolume(volume) {
 
 // Function to adjust hit sound volume
 function adjustHitSoundVolume(volume) {
-    hitSounds.forEach((hitSound) => {
+    hitSounds.forEach(hitSound => {
         hitSound.volume = volume;
     });
 }
+
+var currentHitSoundIndex = 0; // Keep track of the last played hit sound
 
 // Initialize hit sounds with the loaded volume
 for (let i = 0; i < MAX_HIT_SOUNDS; i++) {
@@ -263,19 +273,19 @@ noteUpPressIMG.src = "Resources/NoteUpPressHQ.png";
 var noteRightPressIMG = new Image();
 noteRightPressIMG.src = "Resources/NoteRightPressHQ.png";
 
-var noCover = new Image();
+var noCover = new Image(); // Used for covers that are not found in the files (e.g forgot to add it or misspelt it)
 noCover.src = "Resources/Covers/noCover.png";
 
-var BGbright = new Image();
+var BGbright = new Image(); // Default background
 BGbright.src = "Resources/Background2.png";
 
-var BG2 = new Image();
+var BG2 = new Image(); // Wavy chromatic background
 BG2.src = "Resources/Background3.jpg";
 
-var BG3 = new Image();
+var BG3 = new Image(); // Dark orange sunset
 BG3.src = "Resources/Background4.png";
 
-var BG4 = new Image();
+var BG4 = new Image(); // HTML Background (Windows orange-purple bloom)
 BG4.src = "Resources/BackgroundHtml2.png";
 
 console.log("Textures loaded.");
@@ -346,6 +356,8 @@ function preloadSongs() {
         "Resources/Songs/fantasmas.mp3",
         "Resources/Songs/BIKE.mp3",
         "Resources/Songs/ARCANGEL.mp3",
+        "Resources/Songs/TELEKINESIS.mp3",
+        "Resources/Songs/Bleed it out.mp3",
         "Resources/Songs/testingsong.mp3",
     ];
 
@@ -432,7 +444,7 @@ const songConfigs = {
     "Resources/Songs/WTF 2.mp3": { BPM: 93, noteSpeed: 10 },
     "Resources/Songs/MY EYES.mp3": { BPM: 132, noteSpeed: 12 },
     "Resources/Songs/Can't Slow Me Down.mp3": { BPM: 122, noteSpeed: 11 },
-    "Resources/Songs/LUNCH.mp3": { BPM: 125, noteSpeed: 14.6 }, //
+    "Resources/Songs/LUNCH.mp3": { BPM: 125, noteSpeed: 14.6 },
     "Resources/Songs/Butterfly Effect.mp3": { BPM: 141, noteSpeed: 10 },
     "Resources/Songs/SWIM.mp3": { BPM: 120, noteSpeed: 10 },
     "Resources/Songs/You Need Jesus.mp3": { BPM: 110, noteSpeed: 11 },
@@ -455,7 +467,7 @@ const songConfigs = {
     "Resources/Songs/Stop Breathing.mp3": { BPM: 155, noteSpeed: 12 },
     "Resources/Songs/CHEGOU 3.mp3": { BPM: 130, noteSpeed: 13.2 },
     "Resources/Songs/KRUSH ALERT.mp3": { BPM: 117, noteSpeed: 12.5 },
-    "Resources/Songs/CUTE DEPRESSED.mp3": { BPM: 228, noteSpeed: 16 }, // original bpm is 152 but increased it to match the beat
+    "Resources/Songs/CUTE DEPRESSED.mp3": { BPM: 228, noteSpeed: 16 },
     "Resources/Songs/MOVE YO BODY.mp3": { BPM: 133, noteSpeed: 12 },
     "Resources/Songs/SLAY!.mp3": { BPM: 130, noteSpeed: 13 },
     "Resources/Songs/ROCK THAT SHIT!.mp3": { BPM: 125, noteSpeed: 12 },
@@ -465,13 +477,12 @@ const songConfigs = {
     "Resources/Songs/YOU'RE TOO SLOW.mp3": { BPM: 162, noteSpeed: 14.5 },
     "Resources/Songs/BAND4BAND.mp3": { BPM: 140, noteSpeed: 14 },
     "Resources/Songs/HIGHEST IN THE ROOM.mp3": { BPM: 156, noteSpeed: 0 },
-    "Resources/Songs/Slide da Treme Melódica v2.mp3": {
-        BPM: 235,
-        noteSpeed: 18,
-    }, // original bpm is 157 but increased it to match the beat
+    "Resources/Songs/Slide da Treme Melódica v2.mp3": { BPM: 235, noteSpeed: 18 },
     "Resources/Songs/fantasmas.mp3": { BPM: 164, noteSpeed: 10 },
     "Resources/Songs/BIKE.mp3": { BPM: 105, noteSpeed: 14 },
     "Resources/Songs/ARCANGEL.mp3": { BPM: 124, noteSpeed: 14 },
+    "Resources/Songs/TELEKINESIS.mp3": { BPM: 166, noteSpeed: 12 },
+    "Resources/Songs/Bleed it out.mp3": { BPM: 140, noteSpeed: 0 },
 };
 
 function getDynamicSpeed(songSrc) {
@@ -495,10 +506,30 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 105.58, noteSpeed: 16.2 },
             { timestamp: 128.07, noteSpeed: 12.2 },
             { timestamp: 131.2, noteSpeed: 17.2 },
-            { timestamp: 165.9, noteSpeed: 18.2, notes: [] },
-            { timestamp: 169, noteSpeed: 18.2, endScreenDrawn: true },
+            { timestamp: 165.9, noteSpeed: 18.2, notes: [] }, // Notes end, last note is the ending note for the song
+            { timestamp: 169, noteSpeed: 18.2, endScreenDrawn: true }, // Endscreen is drawn before song ends in case song has a long ending without much beat
         ],
-        // Add more songs and their respective timestamp-speed mappings here
+        "Bleed it out": [
+            { timestamp: 2.7, noteSpeed: 20 },
+            { timestamp: 9.9, noteSpeed: 13 },
+            { timestamp: 20.2, noteSpeed: 14 },
+            { timestamp: 23.65, noteSpeed: 15 },
+            { timestamp: 33.95, noteSpeed: 13 },
+            { timestamp: 37.4, noteSpeed: 16 },
+            { timestamp: 51.05, noteSpeed: 13.5 },
+            { timestamp: 78.5, noteSpeed: 15 },
+            { timestamp: 92.25, noteSpeed: 17 },
+            { timestamp: 109.35, noteSpeed: 12 },
+            { timestamp: 116.2, noteSpeed: 13.5 },
+            { timestamp: 123.035, noteSpeed: 14.5 },
+            { timestamp: 128.1, noteSpeed: 12 },
+            { timestamp: 129.6, noteSpeed: 13.5 },
+            { timestamp: 130, noteSpeed: 16 },
+            { timestamp: 140.25, noteSpeed: 17 },
+            { timestamp: 143.7, noteSpeed: 18 },
+            { timestamp: 157.4, noteSpeed: 18, notes: [] },
+            { timestamp: 163.25, noteSpeed: 18, endScreenDrawn: true },
+        ],
     };
 
     let songTitle = getSongTitle(songSrc);
@@ -577,6 +608,8 @@ function preloadImages() {
         "Resources/Covers/fantasmas.jpg",
         "Resources/Covers/BIKE.jpg",
         "Resources/Covers/ARCANGEL.jpg",
+        "Resources/Covers/TELEKINESIS.jpg",
+        "Resources/Covers/Bleed it out.jpg",
     ];
 
     for (const coverPath of albumCovers) {
@@ -833,6 +866,8 @@ function getArtist(songSrc) {
         fantasmas: "Humbe",
         BIKE: "tanger",
         ARCANGEL: "Bizarrap",
+        TELEKINESIS: "Travis Scott",
+        "Bleed it out": "Linkin Park",
     };
     let songTitle = getSongTitle(songSrc);
     return artists[songTitle] || "N/A";
@@ -992,7 +1027,6 @@ function simulateKeyPress(key) {
 }
 
 window.onload = function () {
-    ctx = document.getElementById("myCanvas").getContext("2d");
     document.getElementById("toggleAutoHit").addEventListener("click", toggleAutoHit);
     document.getElementById("nextButton").addEventListener("click", nextSong);
     document.getElementById("restartButton").addEventListener("click", restartSong);
@@ -1116,7 +1150,7 @@ function startGame(index) {
 
         if (songConfig) {
             console.log(`Dynamic speed configuration found for "${songTitle}"`);
-            dynamicSpeedInfo = songConfig.map((config) => `Timestamp: ${config.timestamp}, Speed: ${config.noteSpeed}`).join(" | ");
+            dynamicSpeedInfo = songConfig.map(config => `Timestamp: ${config.timestamp}, Speed: ${config.noteSpeed}`).join(" | ");
             let currentConfigIndex = 0; // Reset currentConfigIndex
             nextSpeedChange = ""; // Reset nextSpeedChange
 
@@ -1389,28 +1423,29 @@ function updateDebugInfo(deltaTime, timestamp) {
         let currentFPS = 1 / deltaTime;
         fps = currentFPS.toFixed(1);
 
-        ctx.font = "12px Arial";
+        ctx.font = "11px Arial";
         ctx.fillStyle = "white";
         ctx.textAlign = "left";
         ctx.fillText(`Version: ${VERSION}`, 10, startY);
-        ctx.fillText(`Delta Time: ${deltaTime.toFixed(3)} seconds`, 10, startY + lineHeight);
-        ctx.fillText(`Timestamp: ${timestamp} milliseconds`, 10, startY + 2 * lineHeight);
-        ctx.fillText(`Current FPS: ${fps}`, 10, startY + 3 * lineHeight);
-        ctx.fillText(`Current song path: ${currentSongPath}`, 10, startY + 4 * lineHeight);
-        ctx.fillText(`Current song source:`, 10, startY + 5 * lineHeight);
-        ctx.fillText(`${currentSong.src}`, 10, startY + 6 * lineHeight);
-        ctx.fillText(`Hit sound index: ${currentHitSoundIndex}`, 10, startY + 7 * lineHeight);
-        ctx.fillText(`Song start time: ${songStartTime}`, 10, startY + 8 * lineHeight);
-        ctx.fillText(`Song paused time: ${songPausedTime}`, 10, startY + 9 * lineHeight);
-        ctx.fillText(`Newest note: ${newestNoteType}, at timestamp: ${newestNoteTime.toFixed(3)}`, 10, startY + 10 * lineHeight);
-        ctx.fillText(`Note Y positions: ${left.toFixed(1)} | ${up.toFixed(1)} | ${down.toFixed(1)} | ${right.toFixed(1)}`, 10, startY + 11 * lineHeight);
-        ctx.fillText(`Last perfect note type: ${lastPerfectHitNoteType}`, 10, startY + 12 * lineHeight);
-        ctx.fillText(`Last early/late note type: ${lastEarlyLateNoteType}`, 10, startY + 13 * lineHeight);
-        ctx.fillText(`Last note type: ${lastNoteType}`, 10, startY + 14 * lineHeight);
-        ctx.fillText(`Total notes hit in this playthrough: ${notesHit}`, 10, startY + 15 * lineHeight);
-        ctx.fillText(`Auto hit disabled saving? ${autoHitDisableSaving}`, 10, startY + 16 * lineHeight);
-        ctx.fillText(`Dynamic speeds for ${getSongTitle(currentSongPath)}: ${dynamicSpeedInfo}`, 10, startY + 17 * lineHeight);
-        ctx.fillText(nextSpeedChange, 10, startY + 18 * lineHeight);
+        ctx.fillText(`Device: ${userDevice}`, 10, startY + lineHeight);
+        ctx.fillText(`Delta Time: ${deltaTime.toFixed(3)} seconds`, 10, startY + 2 * lineHeight);
+        ctx.fillText(`Timestamp: ${timestamp} milliseconds`, 10, startY + 3 * lineHeight);
+        ctx.fillText(`Current FPS: ${fps}`, 10, startY + 4 * lineHeight);
+        ctx.fillText(`Current song path: ${currentSongPath}`, 10, startY + 5 * lineHeight);
+        ctx.fillText(`Current song source:`, 10, startY + 6 * lineHeight);
+        ctx.fillText(`${currentSong.src}`, 10, startY + 7 * lineHeight);
+        ctx.fillText(`Hit sound index: ${currentHitSoundIndex}`, 10, startY + 8 * lineHeight);
+        ctx.fillText(`Song start time: ${songStartTime}`, 10, startY + 9 * lineHeight);
+        ctx.fillText(`Song paused time: ${songPausedTime}`, 10, startY + 10 * lineHeight);
+        ctx.fillText(`Newest note: ${newestNoteType}, at timestamp: ${newestNoteTime.toFixed(3)}`, 10, startY + 11 * lineHeight);
+        ctx.fillText(`Note Y positions: ${left.toFixed(1)} | ${up.toFixed(1)} | ${down.toFixed(1)} | ${right.toFixed(1)}`, 10, startY + 12 * lineHeight);
+        ctx.fillText(`Last perfect note type: ${lastPerfectHitNoteType}`, 10, startY + 13 * lineHeight);
+        ctx.fillText(`Last early/late note type: ${lastEarlyLateNoteType}`, 10, startY + 14 * lineHeight);
+        ctx.fillText(`Last note type: ${lastNoteType}`, 10, startY + 15 * lineHeight);
+        ctx.fillText(`Total notes hit in this playthrough: ${notesHit}`, 10, startY + 16 * lineHeight);
+        ctx.fillText(`Auto hit disabled saving? ${autoHitDisableSaving}`, 10, startY + 17 * lineHeight);
+        ctx.fillText(`Dynamic speeds for ${getSongTitle(currentSongPath)}: ${dynamicSpeedInfo}`, 10, startY + 18 * lineHeight);
+        ctx.fillText(nextSpeedChange, 10, startY + 19 * lineHeight);
     }
 }
 
@@ -1442,8 +1477,9 @@ function updateCanvas(timestamp) {
         return;
     }
     if (endScreenDrawn === true) {
+        // In case dynamic speeds end the song earlier
         onSongEnd();
-        return;
+        return; // Stop updating canvas
     }
 
     endScreenDrawn = false;
@@ -1452,6 +1488,7 @@ function updateCanvas(timestamp) {
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
     if (backgroundIsntDefault) {
+        // If the background selected is transparent or custom
         ctx.drawImage(BGbright, 0, 0, 1280, 720);
     }
 
@@ -1627,21 +1664,18 @@ function moveNotes(timeDelta) {
         for (let i = 0; i < noteYPositions[type].length; i++) {
             noteYPositions[type][i] += noteSpeed * timeDelta * 60; // Multiply by 60 to scale with the base frame rate
         }
-        noteYPositions[type] = noteYPositions[type].filter((yPos) => yPos <= HEIGHT);
+        noteYPositions[type] = noteYPositions[type].filter(yPos => yPos <= HEIGHT);
     }
     updateNotes(timeDelta);
 }
 
 function autoHitPerfectNotes() {
+    // Hit notes perfectly, disables point saving after a song ends
     for (let type in noteYPositions) {
         for (let i = 0; i < noteYPositions[type].length; i++) {
             let yPos = noteYPositions[type][i];
             if (yPos >= 540) {
                 triggerHit(type);
-                points = -1;
-                perfectHits = -1;
-                totalMisses = 0;
-                earlyLateHits = 0;
                 break;
             }
         }
@@ -1649,6 +1683,7 @@ function autoHitPerfectNotes() {
 }
 
 function triggerHit(type) {
+    // So the note changes to pressed for 0.1 seconds
     if (type === "up") {
         upPressed = true;
         setTimeout(() => {
@@ -1673,6 +1708,7 @@ function triggerHit(type) {
 }
 
 function checkHits() {
+    // Makes the pressed note image appear on top of the normal note
     if (leftPressed) {
         let xPos = noteXPositions.left;
         ctx.drawImage(noteLeftPressIMG, xPos - noteWidth / 2, 550, noteWidth, noteHeight);
@@ -1695,33 +1731,33 @@ function checkHits() {
     }
 }
 
-var currentHitSoundIndex = 0; // Keep track of the last played hit sound
-
 function checkHit(noteType) {
+    // Checks if you have hit a note, and adds it to your stats in-game
     for (let i = 0; i < noteYPositions[noteType].length; i++) {
         let yPos = noteYPositions[noteType][i];
         if (yPos >= HIT_Y_RANGE_MIN && yPos <= HIT_Y_RANGE_MAX) {
-            if (yPos >= 540 && yPos <= 560) {
-                // Perfect hit range
+            // If the moving note is in range to hit
+            if (yPos >= PERFECT_HIT_RANGE_MIN && yPos <= PERFECT_HIT_RANGE_MAX) {
+                // If the mobing note is in range to hit perfectly
                 points += 1; // Increment by 1 point for perfect hit
-                perfectHits++;
+                perfectHits++; // Add a perfect hit to your score
                 perfectText.active = true; // Enable perfect text
                 perfectText.timer = 500; // Set timer for perfect text (0.5 seconds)
-                lastPerfectHitNoteType = noteType; // Store the last perfect hit note type
+                lastPerfectHitNoteType = noteType; // Store the last perfect hit note type, used for debug view
 
-                // Trigger animation on perfect hit
+                // Trigger animation on perfect hit, an animation has yet not been added, will add a proper pulse animation in further updated
                 notePulsing = true;
                 // Set a timer to stop the animation after 0.25 seconds (250 milliseconds)
                 setTimeout(() => {
                     notePulsing = false;
                 }, 200);
             } else {
-                // Early or late hit range
+                // If you have hit the note really early or really lately
                 points += 0.5; // Increment by 0.5 points for early or late hit
-                earlyLateHits++;
+                earlyLateHits++; // Add an early/late hit to your score
                 earlyLateText.active = true; // Enable early/late text
                 earlyLateText.timer = 500; // Set timer for early/late text (0.5 seconds)
-                lastEarlyLateNoteType = noteType;
+                lastEarlyLateNoteType = noteType; // Store the last early/late hit note type, used for debug view
             }
 
             // Update streaks
@@ -1730,15 +1766,15 @@ function checkHit(noteType) {
                 maxStreak = currentStreak;
             }
 
-            notesHit++;
+            notesHit++; // Used for tutorial stage, after 4 notes hit, cycle the stage
             if (notesHit === 4) {
                 tutorialStage = 1;
                 cycleTutorialStages();
             }
 
-            lastNoteType = noteType;
+            lastNoteType = noteType; // Used for debug view
 
-            noteYPositions[noteType].splice(i, 1);
+            noteYPositions[noteType].splice(i, 1); // Delete the note after its been hit to prepare for a new one to spawn
             let hitSound = hitSounds[currentHitSoundIndex];
             hitSound.currentTime = 0;
             hitSound.play();
@@ -1765,13 +1801,14 @@ function cycleTutorialStages() {
 }
 
 function checkMisses() {
+    // Checks wether you've missed a note, sometimes doesn't register in low framerates and high note speed, working on a fix
     for (let type in noteYPositions) {
         for (let i = 0; i < noteYPositions[type].length; i++) {
             let yPos = noteYPositions[type][i];
             if (yPos > HIT_Y_RANGE_MAX + 90) {
                 noteYPositions[type].splice(i, 1);
                 totalMisses++; // Increment total misses when a note is missed
-                points--;
+                points--; // Decrease total points when a note is missed
 
                 // Reset current streak
                 currentStreak = 0;
@@ -1788,7 +1825,7 @@ function toggleAutoHit() {
     autoHitEnabled = !autoHitEnabled;
     console.log("Auto Hit", autoHitEnabled ? "Enabled" : "Disabled");
 
-    // Set autoHitDisableSaving to true when autoHit is enabled
+    // Set autoHitDisableSaving to true when autoHit is enabled, only disables after you exit the song
     if (autoHitEnabled) {
         autoHitDisableSaving = true;
         console.log("SCORE SAVING DISABLED.");
@@ -1804,28 +1841,34 @@ function drawAutoHitText() {
 }
 
 function generateRandomNotes(duration) {
-    console.log("Generating notes for duration:", duration);
-    const notes = [];
-    const noteTypes = ["left", "down", "up", "right"];
-    let lastNoteTime = -MIN_NOTE_GAP;
-    let lastNoteType = null;
+    // Function to generate random notes over a given duration
+    console.log("Generating notes for duration:", duration); // Log the duration for which notes are being generated
+    const notes = []; // Initialize an empty array to hold the generated notes
+    const noteTypes = ["left", "down", "up", "right"]; // Define the possible note types
+    let lastNoteTime = -MIN_NOTE_GAP; // Initialize the last note time to ensure the first note can be placed
+    let lastNoteType = null; // Initialize the last note type to track the type of the previous note
 
     for (let time = 0; time < duration; time += MILLISECONDS_PER_BEAT) {
+        // Loop over the duration in steps of MILLISECONDS_PER_BEAT to place notes
         let type;
         do {
+            // Randomly select a note type from the noteTypes array
             type = noteTypes[Math.floor(Math.random() * noteTypes.length)];
-        } while (type === lastNoteType && time - lastNoteTime < MIN_NOTE_GAP); // Ensure no two notes of the same type spawn too close to each other
-        notes.push({ type, time });
-        lastNoteTime = time;
+        } while (type === lastNoteType && time - lastNoteTime < MIN_NOTE_GAP); // Ensure that the same note type is not placed over itself
+
+        notes.push({ type, time }); // Add the note with its type and time to the notes array
+
+        lastNoteTime = time; // Update the last note time and type for the next iteration
         lastNoteType = type;
     }
-    console.log("Generated notes:", notes);
-    return notes;
+    console.log("Generated notes:", notes); // Log the generated notes
+    return notes; // Return the generated notes array to startGame()
 }
 
-// SETTINGS
+// ----------------------------------------------------------------------------------
+// LOGIC FOR LOADING AND SAVING SETTINGS
+// ----------------------------------------------------------------------------------
 
-var canvas = document.getElementById("myCanvas");
 document.addEventListener("DOMContentLoaded", function () {
     detectAndHandleDevice();
     loadKeybinds();
@@ -1852,41 +1895,55 @@ document.addEventListener("keyup", keyUpFunction);
 function detectDeviceType() {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-    // Checks for iOS devices
     if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
         return "iOS";
     }
 
-    // Checks for Android devices
     if (/android/i.test(userAgent)) {
         return "Android";
     }
 
-    // Checks for other mobile devices
+    if (/CrOS/.test(userAgent)) {
+        return "Chromebook";
+    }
+
     if (/Mobile|iP(hone|od)|IEMobile|Windows Phone|kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(userAgent)) {
         return "Mobile";
     }
-
-    // Default to desktop
     return "Desktop";
 }
 
 function detectAndHandleDevice() {
-    const deviceType = detectDeviceType();
+    // Function to detect the type of device and handle accordingly
+    const deviceType = detectDeviceType(); // Detect the type of device
+
     if (deviceType === "Mobile" || deviceType === "iOS" || deviceType === "Android") {
-        // Deactivate buttons
-        document.querySelectorAll("button").forEach((button) => (button.disabled = true));
-        document.querySelectorAll("select").forEach((select) => (select.disabled = true));
+        // Check if the detected device is Mobile, iOS, or Android
 
-        // Remove canvas background image
-        canvas.style.backgroundimage = "";
+        document.querySelectorAll("button").forEach(button => (button.disabled = true)); // Disable all buttons on the page
 
-        // Display unsupported message
-        document.getElementById("unsupportedMessage").style.display = "block";
+        const startButton = document.getElementById("startButton"); // Disable the start button specifically
+        startButton.disabled = true;
 
-        console.log("Mobile device detected. Game is not supported.");
+        document.querySelectorAll("select").forEach(select => (select.disabled = true)); // Disable all select elements on the page
+
+        canvas.style.display = "none"; // Hide the canvas element
+
+        document.getElementById("unsupportedMessage").style.display = "block"; // Show the unsupported device message
+
+        console.log("Mobile device detected. Game is not supported."); // Log a message indicating the game is not supported on mobile devices
+    } else if (deviceType === "Chromebook") {
+        // Check if the detected device is a Chromebook
+        console.warn("Chromebook detected. Game might have reduced framerates."); // Log a warning about potential performance issues on Chromebooks
+
+        // Adjust the hit detection ranges to account for reduced framerates
+        HIT_Y_RANGE_MIN = HIT_Y_RANGE_MIN - 25; // Widen the hit range
+        HIT_Y_RANGE_MAX = HIT_Y_RANGE_MAX + 25;
+        PERFECT_HIT_RANGE_MIN = PERFECT_HIT_RANGE_MIN - 20; // Widen the perfect hit range
+        PERFECT_HIT_RANGE_MAX = PERFECT_HIT_RANGE_MAX + 20;
     } else {
-        console.log("Desktop device detected. Game is supported.");
+        // For desktop devices
+        console.log("Desktop device is supported. Enjoy Beatz!"); // Log a message indicating the game is supported
     }
 }
 
@@ -1894,20 +1951,23 @@ document.getElementById("undoKeybindsButton").addEventListener("click", undoKeyb
 document.getElementById("redoKeybindsButton").addEventListener("click", redoKeybinds);
 
 function NewTab() {
+    // My YouTube
     window.open("https://www.youtube.com/@GuayabR", "_blank");
 }
 
 function email() {
+    // Contact
     window.open("mailto:antonviloriavictorgabriel@gmail.com");
 }
 
 function toVersion() {
-    window.location.href = "BeatzGameTesting.html";
+    // Switch version
+    window.location.href = "index.html";
 }
 
 function toggleFullScreen() {
     if (!document.fullscreenElement) {
-        canvas.requestFullscreen().catch((err) => {
+        canvas.requestFullscreen().catch(err => {
             console.log("Error attempting to enable full-screen mode: ${err.message} (${err.name})");
         });
         console.log("Entered Fullscreen");
@@ -1920,23 +1980,166 @@ function toggleFullScreen() {
 document.addEventListener("fullscreenchange", function () {
     if (document.fullscreenElement) {
         canvas.style.cursor = "none";
+        if (!backgroundIsntDefault) {
+            // If the background is transparent, when on fullscreen, ensure no black screen is shown and displays the html background
+            canvas.style.background = "url('Resources/BackgroundHtml2.png')";
+        }
     } else {
         canvas.style.cursor = "default";
+        if (!backgroundIsntDefault) {
+            canvas.style.background = "transparent"; // If the background is transparent, when fullscreen is toggled off, make the canvas transparent again
+        }
     }
 });
 
-var modal = document.getElementById("keybindsModal");
-var btn = document.getElementById("keybindsButton");
-var span = document.getElementsByClassName("close")[0];
-var resetButton = document.getElementById("resetKeybindsButton");
+// Settings
+const modal = document.getElementById("keybindsModal");
+const btn = document.getElementById("keybindsButton");
+const span = document.getElementById("closeSettings");
+const resetButton = document.getElementById("resetKeybindsButton");
 const saveMessage = document.getElementById("settingsSaved");
 
-function convertToLowerCase(inputElement) {
-    inputElement.value = inputElement.value.toLowerCase();
+// Setting presets
+const presetsModal = document.getElementById("presetModal");
+const openP = document.getElementById("presetSettingsButton");
+const closeP = document.getElementById("closePresets");
+
+openP.onclick = function () {
+    openPresets();
+};
+
+closeP.onclick = function () {
+    closePresets();
+};
+
+function openPresets() {
+    modal.style.display = "none";
+    saveMessage.style.display = "none";
+    presetsModal.style.display = "block";
+}
+
+function closePresets() {
+    presetsModal.style.display = "none";
+    modal.style.display = "block";
+    document.getElementById("presetDescription").style.display = "none";
+    document.getElementById("presetSaved").style.display = "none";
+}
+
+// Variable to store the selected preset name to then give to applyPreset(presetName)
+let selectedPreset = "";
+
+// Event listener for preset button click
+document.getElementById("presetGuayabR").addEventListener("click", function () {
+    showPresetDescription("GuayabR");
+    selectedPreset = "GuayabR";
+});
+
+// Event listener for preset button click
+document.getElementById("presetVERIDIAN").addEventListener("click", function () {
+    showPresetDescription("VERIDIAN");
+    selectedPreset = "VERIDIAN";
+});
+
+document.getElementById("applyPresetButton").addEventListener("click", function () {
+    applyPreset(selectedPreset); // Apply the selected preset
+    document.getElementById("presetSaved").style.display = "block"; // Show the saved message
+    setTimeout(() => {
+        document.getElementById("presetSaved").style.display = "none"; // Hide the saved message after 2 seconds
+    }, 2000);
+});
+
+// Function to show what this preset is going to change
+function showPresetDescription(presetName) {
+    if (presetName === "GuayabR") {
+        document.getElementById("presetDescription").innerHTML = "A - S - K - L Keybinding layout.<br>Transparent BG - 10px blur.";
+    } else if (presetName === "VERIDIAN") {
+        document.getElementById("presetDescription").innerHTML = "D - F - J - K Keybinding layout.<br>Fullscreen: G<br>Default BG.";
+    }
+    document.getElementById("presetDescription").style.display = "block";
+}
+
+const Presets = {
+    GuayabR: {
+        left: ["A"],
+        up: ["S"],
+        down: ["K"],
+        right: ["L"],
+        pause: ["ESCAPE"],
+        autoHit: ["1"],
+        previous: ["Q"],
+        restart: ["R"],
+        next: ["E"],
+        randomize: ["T"],
+        toggleNoteStyle: ["C"],
+        fullscreen: ["F"],
+        debug: ["CONTROL"],
+        defaultNoteStyle: "arrows",
+        songTimeoutAfterSongEnd: false,
+        songTimeoutAfterSongEndNum: 5000,
+        vinylRotation: true,
+        circularImage: true,
+        backgroundForCanvas: "transparentBG",
+        customBackgroundBlur: "10px",
+        customBackground: "",
+    },
+    VERIDIAN: {
+        left: ["D"],
+        up: ["F"],
+        down: ["J"],
+        right: ["K"],
+        pause: ["ESCAPE"],
+        autoHit: ["1"],
+        previous: ["Q"],
+        restart: ["R"],
+        next: ["E"],
+        randomize: ["T"],
+        toggleNoteStyle: ["C"],
+        fullscreen: ["G"],
+        debug: ["CONTROL"],
+        defaultNoteStyle: "circles",
+        songTimeoutAfterSongEnd: false,
+        songTimeoutAfterSongEndNum: 5000,
+        vinylRotation: true,
+        circularImage: true,
+        backgroundForCanvas: "defaultBG",
+        customBackgroundBlur: "0px",
+        customBackground: "",
+    },
+};
+
+// Function to apply the preset based on the one you chose
+function applyPreset(presetName) {
+    const preset = Presets[presetName];
+    document.getElementById("up").value = preset.up.join(", ");
+    document.getElementById("left").value = preset.left.join(", ");
+    document.getElementById("down").value = preset.down.join(", ");
+    document.getElementById("right").value = preset.right.join(", ");
+    document.getElementById("pause").value = preset.pause.join(", ");
+    document.getElementById("autoHit").value = preset.autoHit.join(", ");
+    document.getElementById("previousInput").value = preset.previous.join(", ");
+    document.getElementById("restartInput").value = preset.restart.join(", ");
+    document.getElementById("nextInput").value = preset.next.join(", ");
+    document.getElementById("randomize").value = preset.randomize.join(", ");
+    document.getElementById("toggleNoteStyleInput").value = preset.toggleNoteStyle.join(", ");
+    document.getElementById("fullscreenInput").value = preset.fullscreen.join(", ");
+    document.getElementById("debugInput").value = preset.debug.join(", ");
+    document.getElementById("songTimeoutAfterSongEndNum").value = preset.songTimeoutAfterSongEndNum;
+    document.getElementById("circularImage").checked = preset.circularImage;
+    document.getElementById("vinylRotation").checked = preset.vinylRotation;
+    document.getElementById("defaultBackground").value = preset.backgroundForCanvas;
+    document.getElementById("backdropBlurInput").value = preset.customBackgroundBlur;
+    document.getElementById("myCanvas").style.backdropFilter = `blur(${preset.customBackgroundBlur})`;
+
+    saveKeybinds();
+}
+
+function convertToUpperCase(inputElement) {
+    inputElement.value = inputElement.value.toUpperCase();
 }
 document.querySelectorAll('input[type="text"]').forEach(function (input) {
+    // Make every character pressed an uppercase letter
     input.addEventListener("input", function () {
-        convertToLowerCase(input);
+        convertToUpperCase(input);
         hideSaveMessage();
     });
 });
@@ -1954,8 +2157,10 @@ span.onclick = function () {
 };
 
 window.onclick = function (event) {
+    // When you click off the modal, it closes
     if (event.target == modal) {
         closeModal();
+        closePresets();
     }
 };
 
@@ -1976,6 +2181,7 @@ function closeModal() {
 }
 
 document.addEventListener("keydown", function (event) {
+    // When P is pressed, modal is opened, if P is pressed again inside the modal, dont load the settings again, escape closes the modal
     if (modal.style.display === "block") {
         if (event.key === "P" || event.key === "p") {
             event.stopPropagation();
@@ -1984,31 +2190,39 @@ document.addEventListener("keydown", function (event) {
             closeModal();
             console.log("Escape key pressed. Modal closed.");
         }
-        return; // Exit the function after handling keys when modal is open
+        return;
+    }
+
+    if (presetsModal.style.display === "block") {
+        if (event.key === "Escape" || event.key === "escape") {
+            closePresets();
+            console.log("Escape key pressed. Setting presets closed.");
+        }
+        return;
     }
 
     if (event.key === "P" || event.key === "p") {
         openModal();
         console.log("P key pressed. Modal opened.");
-    } else if (event.key === "Escape" || event.key === "escape") {
-        closeModal();
-        console.log("Escape key pressed. Modal closed.");
     }
 });
 
 function deactivateKeybinds() {
+    // Deactivate all keys except the enter key
     document.removeEventListener("keydown", keyDownFunction);
     document.removeEventListener("keyup", keyUpFunction);
     document.addEventListener("keydown", filterKeys);
 }
 
 function activateKeybinds() {
+    // Activate back all keys
     document.removeEventListener("keydown", filterKeys);
     document.addEventListener("keydown", keyDownFunction);
     document.addEventListener("keyup", keyUpFunction);
 }
 
 function filterKeys(event) {
+    // If enter is pressed inside the settings modal, save the settings
     if (event.key === "Enter" || event.keyCode === 13) {
         event.preventDefault();
         event.stopPropagation();
@@ -2018,19 +2232,19 @@ function filterKeys(event) {
 }
 
 const defaultKeybinds = {
-    up: ["w"],
-    left: ["a"],
-    down: ["s"],
-    right: ["d"],
-    pause: ["escape"],
+    up: ["W"],
+    left: ["A"],
+    down: ["S"],
+    right: ["D"],
+    pause: ["ESCAPE"],
     autoHit: ["1"],
-    previous: ["q"],
-    restart: ["r"],
-    next: ["e"],
-    randomize: ["t"],
-    toggleNoteStyle: ["c"],
-    fullscreen: ["f"],
-    debug: ["control"],
+    previous: ["Q"],
+    restart: ["R"],
+    next: ["E"],
+    randomize: ["T"],
+    toggleNoteStyle: ["C"],
+    fullscreen: ["F"],
+    debug: ["CONTROL"],
     noteStyle: "arrows",
     songTimeoutAfterSongEnd: false,
     songTimeoutDelay: 5000,
@@ -2056,7 +2270,6 @@ function loadKeybinds() {
     const savedCustomBackground = localStorage.getItem("customBackground") || defaultKeybinds.customBackground;
     const savedCustomBackgroundBlur = localStorage.getItem("customBackgroundBlur") || defaultKeybinds.customBackgroundBlur;
 
-    // Merge saved keybinds with default keybinds
     keybinds = { ...defaultKeybinds, ...savedKeybinds };
 
     document.getElementById("songTimeoutAfterSongEnd").checked = songTimeoutAfterSongEnd;
@@ -2064,7 +2277,7 @@ function loadKeybinds() {
 
     document.getElementById("circularImage").checked = savedCircularImage;
     circularImageEnabled = savedCircularImage;
-    toggleVinylRotation(); // Update UI based on circularImage setting
+    toggleVinylRotation();
 
     const vinylRotationCheckbox = document.getElementById("vinylRotation");
     vinylRotationCheckbox.checked = savedVinylRotation;
@@ -2090,7 +2303,6 @@ function loadKeybinds() {
     document.getElementById("circularImage").value = savedCircularImage;
     document.getElementById("vinylRotation").value = savedVinylRotation;
 
-    // Load background settings
     document.getElementById("defaultBackground").value = savedBackgroundOption;
     document.getElementById("backdropBlurInput").value = savedCustomBackgroundBlur;
     document.getElementById("myCanvas").style.backdropFilter = `blur(${savedCustomBackgroundBlur})`;
@@ -2114,10 +2326,8 @@ function loadKeybinds() {
         document.getElementById("backdropBlurInput").style.display = "none";
     }
 
-    // Set backgroundIsntDefault based on the loaded background option
     backgroundIsntDefault = savedBackgroundOption !== "transparentBG" && savedBackgroundOption !== "customBG";
 
-    // Apply the background based on the saved option
     switch (savedBackgroundOption) {
         case "defaultBG":
             BGbright.src = "Resources/Background2.png";
@@ -2146,7 +2356,6 @@ function loadKeybinds() {
             backgroundIsntDefault = true;
     }
 
-    // Update the songTimeoutDelay in the keybinds
     keybinds.songTimeoutDelay = savedSongTimeoutDelay;
     keybinds.backgroundOption = savedBackgroundOption;
     keybinds.customBackground = savedCustomBackground;
@@ -2155,7 +2364,6 @@ function loadKeybinds() {
     console.log("Loaded settings", keybinds);
 }
 
-// Function to read the currently selected file as a data URL
 function getFileDataUrl(file, callback) {
     const reader = new FileReader();
     reader.onload = function (e) {
@@ -2169,55 +2377,55 @@ function saveKeybinds() {
         up: document
             .getElementById("up")
             .value.split(", ")
-            .map((key) => key.trim()),
+            .map(key => key.trim()),
         left: document
             .getElementById("left")
             .value.split(", ")
-            .map((key) => key.trim()),
+            .map(key => key.trim()),
         down: document
             .getElementById("down")
             .value.split(", ")
-            .map((key) => key.trim()),
+            .map(key => key.trim()),
         right: document
             .getElementById("right")
             .value.split(", ")
-            .map((key) => key.trim()),
+            .map(key => key.trim()),
         pause: document
             .getElementById("pause")
             .value.split(", ")
-            .map((key) => key.trim()),
+            .map(key => key.trim()),
         autoHit: document
             .getElementById("autoHit")
             .value.split(", ")
-            .map((key) => key.trim()),
+            .map(key => key.trim()),
         previous: document
             .getElementById("previousInput")
             .value.split(", ")
-            .map((key) => key.trim()),
+            .map(key => key.trim()),
         restart: document
             .getElementById("restartInput")
             .value.split(", ")
-            .map((key) => key.trim()),
+            .map(key => key.trim()),
         next: document
             .getElementById("nextInput")
             .value.split(", ")
-            .map((key) => key.trim()),
+            .map(key => key.trim()),
         randomize: document
             .getElementById("randomize")
             .value.split(", ")
-            .map((key) => key.trim()),
+            .map(key => key.trim()),
         toggleNoteStyle: document
             .getElementById("toggleNoteStyleInput")
             .value.split(", ")
-            .map((key) => key.trim()),
+            .map(key => key.trim()),
         fullscreen: document
             .getElementById("fullscreenInput")
             .value.split(", ")
-            .map((key) => key.trim()),
+            .map(key => key.trim()),
         debug: document
             .getElementById("debugInput")
             .value.split(", ")
-            .map((key) => key.trim()),
+            .map(key => key.trim()),
         noteStyle: document.getElementById("defaultNoteStyle").value,
         songTimeoutAfterSongEnd: document.getElementById("songTimeoutAfterSongEnd").checked,
         songTimeoutDelay: parseInt(document.getElementById("songTimeoutAfterSongEndNum").value) || defaultKeybinds.songTimeoutDelay,
@@ -2228,7 +2436,7 @@ function saveKeybinds() {
     };
 
     if (vinylRotationEnabled && !newKeybinds.vinylRotation) {
-        rotationAngle = 0; // Reset rotation angle to 0 if rotation is disabled
+        rotationAngle = 0;
     }
 
     restartSongTimeout = newKeybinds.songTimeoutAfterSongEnd;
@@ -2246,7 +2454,6 @@ function saveKeybinds() {
         return;
     }
 
-    // Validate and format blur input
     const blurInput = newKeybinds.customBackgroundBlur;
     const blurValue = parseInt(blurInput, 10);
     if (isNaN(blurValue) || blurValue < 0 || blurValue >= 1000) {
@@ -2257,12 +2464,10 @@ function saveKeybinds() {
     newKeybinds.customBackgroundBlur = blurValue + "px";
 
     const customBGInput = document.getElementById("customBGInput");
-    const file = customBGInput.files[0]; // Assuming single file upload
+    const file = customBGInput.files[0];
 
-    // Set backgroundIsntDefault based on the selected background option
     backgroundIsntDefault = newKeybinds.backgroundOption !== "transparentBG" && newKeybinds.backgroundOption !== "customBG";
 
-    // Save changes to localStorage
     keybinds = newKeybinds;
 
     localStorage.setItem("keybinds", JSON.stringify(newKeybinds));
@@ -2274,7 +2479,6 @@ function saveKeybinds() {
     localStorage.setItem("backgroundOption", newKeybinds.backgroundOption);
     localStorage.setItem("customBackgroundBlur", newKeybinds.customBackgroundBlur);
 
-    // Apply the background immediately based on selection
     switch (newKeybinds.backgroundOption) {
         case "defaultBG":
             BGbright.src = "Resources/Background2.png";
@@ -2304,12 +2508,10 @@ function saveKeybinds() {
         localStorage.setItem("customBackground", "");
     }
 
-    // Handle background image change if applicable
     if (file) {
         handleFileUpload(file);
     }
 
-    // Store the current state in history for undo/redo functionality
     if (keybindsIndex === keybindsHistory.length - 1) {
         keybindsHistory.push(JSON.stringify(newKeybinds));
         keybindsIndex++;
@@ -2329,8 +2531,8 @@ function handleFileUpload(file) {
     const reader = new FileReader();
 
     reader.onload = function (e) {
-        const imageData = e.target.result; // This will be in data URL format
-        // Store imageData in localStorage or use it as needed
+        const imageData = e.target.result;
+
         localStorage.setItem("customBackground", imageData);
         BGbright.src = e.target.result;
     };
@@ -2354,14 +2556,12 @@ function toggleNoteStyle() {
     console.log("Current note style:", currentNoteStyle);
 
     if (currentNoteStyle === "arrows") {
-        // Switch to circles
         console.log("Switching to circles...");
         switchToCircles();
         localStorage.setItem("noteStyle", "circles");
         noteStyleButton.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
         console.log("Note style switched to circles.");
     } else {
-        // Switch to arrows
         console.log("Switching to arrows...");
         switchToArrows();
         localStorage.setItem("noteStyle", "arrows");
@@ -2370,7 +2570,6 @@ function toggleNoteStyle() {
     }
 }
 
-// Function to switch all note images to circles
 function switchToCircles() {
     noteLeftIMG.src = "Resources/CircleLeftHQ.png";
     noteDownIMG.src = "Resources/CircleDownHQ.png";
@@ -2383,7 +2582,6 @@ function switchToCircles() {
     console.log("Changed textures to circles");
 }
 
-// Function to switch all note images to arrows
 function switchToArrows() {
     noteLeftIMG.src = "Resources/NoteLeftHQ.png";
     noteDownIMG.src = "Resources/NoteDownHQ.png";
@@ -2486,18 +2684,19 @@ let songTimeoutDelay = localStorage.getItem("songTimeoutDelay");
 document.getElementById("songTimeoutAfterSongEnd").addEventListener("change", toggleTimeoutInput);
 
 function keyDownFunction(keyboardEvent) {
-    var keyDown = keyboardEvent.key.toLowerCase();
+    var keyDown = keyboardEvent.key.toUpperCase();
+
     console.log("Pressed:", keyDown);
 
     if (!gameStarted) {
-        if (keyDown == "enter") {
+        if (keyDown == "ENTER") {
             document.getElementById("startButton").click();
             gameStarted = true;
         }
         return;
     }
 
-    if (gameStarted && keyDown == "enter") {
+    if (gameStarted && keyDown == "ENTER") {
         return;
     }
 
@@ -2543,7 +2742,8 @@ function keyDownFunction(keyboardEvent) {
 }
 
 function keyUpFunction(keyboardEvent) {
-    var keyUp = keyboardEvent.key.toLowerCase();
+    var keyUp = keyboardEvent.key.toUpperCase();
+
     console.log("Released:", keyUp);
 
     if (keybinds.up.includes(keyUp)) {

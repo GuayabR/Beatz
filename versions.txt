@@ -169,7 +169,7 @@ Changed the buttons from text to icons
 
 Styled all buttons with transformations and transitions
 
-Added 2 new songs (CARNIVAL, HUMBLE, Stop Breathing)
+Added 3 new songs (CARNIVAL, HUMBLE, Stop Breathing)
 /
 Added Auto Hit to the public version since it is fixed
 
@@ -198,7 +198,7 @@ Added 2 new songs! CHEGOU 3 by shonci and KRUSH ALERT also by shonci!
 
 Best score now doesnt spam your console.
 
-Added 7 more songs (CUTE DEPRESSED, YOU'RE TOO SLOW, LOOK DON'T TOUCH, SLAY!, ROCK THAT SHIT!, BAIXO and MOVE YO BODY)
+Added 7 new songs (CUTE DEPRESSED, YOU'RE TOO SLOW, LOOK DON'T TOUCH, SLAY!, ROCK THAT SHIT!, BAIXO and MOVE YO BODY)
 //
 
 3.0! (21/06/2024)
@@ -243,7 +243,13 @@ Dynamic speeds are fixed and now link to their respective song.
 Added debug statements for dynamic speeds (Total dynamic speeds, next dynamic speed change)
 //
 
-3.1.7.2 // 3.1! (HFPS 3.1! 26/06/2024)
+3.1! // 3.1.7.2 (HFPS 3.1! 26/06/2024)
+
+ADDED DYNAMIC SPEEDS!
+
+Dynamic speeds change the note speed depending on a timestamp of the song, used to better syncronise the notes with the song!
+
+//
 
 Fixed next imminent speed change flickering between 2 values.
 
@@ -252,9 +258,6 @@ Added back onSongEnd, accidentaly deleted it in past updates.
 Made saveScore not save your score if you somehow manage to get 0 total points.
 
 Changed the colorway of the page from dark blue to orange and purple to match the new background in the canvas.
-
-Released Public Version 3.1!
-
 //
 
 3.2.7.3 (HFPS 3.2! 27/06/2024)
@@ -267,7 +270,7 @@ Any format is supported! (jpeg | png | webp | jfif | etcetera)
 
 Added hit sound volume slider, change the volume of the hit sound
 
-/ Insider
+/ Fixes
 
 Fixed end screen showing default background when transparent background was selected
 //
@@ -325,3 +328,25 @@ Stages:
 - Added 3 new default backgrounds. (Wavy chromatic, Dark orange sunset, Copy HTML)
 - Fixed saving settings not instantly switching to your preferred background.
 - Code is now readable (thanks prettier)
+//
+
+3.3.12.12 (HFPS 3.3! 3/07/2024)
+
+Added setting presets!
+- Presets instantly change your settings to a selection of presets you want to use.
+- Presets include all settings.
+Added presets:
+- GuayabR's preset: ASKL Keybinds, transparent BG with 10px blur.
+- VERIDIAN's preset: DFJK Keybinds, default BG.
+/
+- Fixed device detection not showing the unsupported message.
+- Added chromebooks as a device type, if you play Beatz on a chromebook, notes are easier to hit by 25 pixels.
+- Keys now register in uppercase.
+- Fixed using fullscreen while having a transparent background showing a black color, fullscreen now shows the html's background if a transparent background is in use.
+//
+
+3.3.12.13 (10COM 3.3! 5/07/2024)
+
+- Added more comments
+- Fixed closing setting presets modal not going back to settings
+- Fixed pressing escape key in the setting presets modal not going back to settings
