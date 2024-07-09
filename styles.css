@@ -125,6 +125,89 @@ canvas:-ms-fullscreen {
     background-color: rgba(0, 0, 0, 0);
 }
 
+#songListModal .modal-body {
+    max-height: 675px;
+    overflow-y: scroll;
+}
+
+.song-button {
+    display: block;
+    width: 90%;
+    padding: 15px 15px;
+    margin: 5px auto;
+    margin-bottom: 13px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    cursor: pointer;
+    text-align: left;
+    font-size: 16px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(114, 114, 114, 0.719);
+    transition:
+        box-shadow 0.3s ease,
+        padding 0.3s ease;
+}
+
+.song-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(221, 221, 221, 0.623);
+    transition: box-shadow 0.3s ease;
+}
+
+#songListModal input[type="text"] {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    width: 75%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    padding: 12px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    font-size: 20px;
+    box-shadow: 0 0 10px rgba(114, 114, 114, 0.719);
+    text-align: center;
+    transition: box-shadow 0.3s ease;
+}
+
+#songListModal input[type="text"]::placeholder {
+    color: rgb(163, 163, 163);
+    text-align: center;
+}
+
+#songListModal input[type="text"]:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(248, 248, 248, 0.623);
+    transition: box-shadow 0.3s ease;
+}
+
+#songListModal input[type="text"]:hover {
+    box-shadow: 0 0 10px rgba(221, 221, 221, 0.623);
+    transition: box-shadow 0.3s ease;
+}
+
+.song-list-container {
+    max-height: 400px;
+    overflow-y: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    margin: 10px auto;
+    width: 95%;
+}
+
+#songCoverImage {
+    width: 400px;
+    height: 400px;
+}
+
+#selectedSongModal .modal-text {
+    font-size: 20px; /* Adjust the font size as needed */
+}
+
 #presetModal {
     display: none;
     position: fixed;
@@ -139,7 +222,7 @@ canvas:-ms-fullscreen {
 }
 
 .modal-content {
-    background-color: #00000048;
+    background-color: #0000006c;
     margin: 8px auto;
     padding: 15px;
     border: 3px solid #ffffff;
@@ -148,7 +231,7 @@ canvas:-ms-fullscreen {
     width: 80%;
     color: rgb(255, 255, 255);
     font-size: 14px;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(8px);
 }
 
 .keybind-button {
@@ -192,13 +275,13 @@ canvas:-ms-fullscreen {
     transform: rotate(360deg);
 }
 
-#saveSettings {
+#saveSettingsBtn {
     background-color: #2222223f;
     box-shadow: 0 0 5px rgba(111, 0, 145, 0.74);
     transition: box-shadow 0.3s ease;
 }
 
-#saveSettings:hover {
+#saveSettingsBtn:hover {
     box-shadow: 0 0 5px rgba(175, 0, 228, 0.74);
     transition: box-shadow 0.3s ease;
 }
@@ -294,6 +377,43 @@ canvas:-ms-fullscreen {
 }
 
 #keybindsForm input[type="text"]:hover {
+    box-shadow: 0 0 10px rgba(221, 221, 221, 0.623);
+    padding: 8px 12px;
+    transition:
+        box-shadow 0.3s ease,
+        padding ease 0.3s;
+}
+
+#keybindsForm input[type="number"] {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    padding: 8px;
+    margin: 1px 10px;
+    box-sizing: border-box;
+    font-size: 14px;
+    box-shadow: 0 0 10px rgba(114, 114, 114, 0.719);
+    transition:
+        box-shadow 0.3s ease,
+        padding ease 0.3s;
+}
+
+#keybindsForm input[type="number"]::placeholder {
+    color: rgb(163, 163, 163);
+}
+
+#keybindsForm input[type="number"]:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(248, 248, 248, 0.623);
+    transition:
+        box-shadow 0.3s ease,
+        padding ease 0.3s;
+}
+
+#keybindsForm input[type="number"]:hover {
     box-shadow: 0 0 10px rgba(221, 221, 221, 0.623);
     padding: 8px 12px;
     transition:

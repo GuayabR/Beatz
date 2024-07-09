@@ -2,18 +2,18 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: HFPS 3.3.12.13 test (release.version.subversion.bugfix)
+ * Version: 10COM 3.5.0.0 test (release.version.subversion.bugfix)
  **/
 
 // CONSTANTS
 
-const VERSION = "HFPS 3.3.12.13 (Codename.Release.Version.Subversion.Bugfix)";
+const VERSION = "10COM 3.5.0.0 (Codename.Release.Version.Subversion.Bugfix)";
 const PUBLICVERSION = "3.3! (GitHub Port)";
 console.log("Version: " + VERSION);
 
 const canvas = document.getElementById("myCanvas");
 
-const ctx = document.getElementById("myCanvas").getContext("2d");
+const ctx = canvas.getContext("2d");
 
 const userDevice = detectDeviceType();
 
@@ -175,7 +175,7 @@ let autoHitDisableSaving = false; // Flag to disable score saving if autoHit has
 let bestScoreLogged = {};
 
 // Generate random notes for 4 minutes
-var notes = generateRandomNotes(696969);
+var notes = [];
 
 // Function to switch image source
 function switchImage(img, src1, src2) {
@@ -382,6 +382,7 @@ function preloadSongs() {
                 songLoadCounter++; // Increment songLoadCounter when a song is successfully loaded
                 currentIndex++;
                 counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`; // Update the counter text
+                addSongToList(songPath, songTitle); // Add the song to the list
                 loadNextSong(); // Load the next song recursively
                 checkAllSongsLoaded(totalSongs); // Check if all songs are loaded
             };
@@ -398,17 +399,34 @@ function preloadSongs() {
 
     // Function to check if all songs are loaded
     function checkAllSongsLoaded(totalSongs) {
-        if (songLoadCounter === 10) {
+        if (songLoadCounter === 5) {
             const startButton = document.getElementById("startButton");
             startButton.style.display = "inline";
         } else if (songLoadCounter === totalSongs) {
-            populateSongSelector();
             setTimeout(() => {
                 if (headerElement.contains(counterText)) {
                     headerElement.removeChild(counterText);
                 }
             }, 2500);
         }
+    }
+
+    let listOfSongs = []; // Store song paths and titles for filtering
+
+    function addSongToList(songPath, songTitle) {
+        const songListContainer = document.getElementById("songList");
+        const songButton = document.createElement("button");
+        songButton.className = "song-button";
+        songButton.textContent = `Song ${currentIndex}: ${songTitle}, by ${getArtist(songTitle)}`;
+        songButton.dataset.path = songPath; // Store song path as a data attribute
+        songListContainer.appendChild(songButton);
+
+        songButton.onclick = function () {
+            openSelectedSongModal(songPath, songTitle);
+        };
+
+        // Store song path and title for filtering
+        listOfSongs.push({ path: songPath, title: songTitle });
     }
 
     // Start loading the first song
@@ -626,59 +644,94 @@ function preloadImages() {
     }
 }
 
-// Function to populate song selector
-function populateSongSelector() {
-    const songSelector = document.getElementById("songSelector");
-    songSelector.innerHTML = ""; // Clear loading message
+const selectedSongModal = document.getElementById("selectedSongModal");
+const songListModal = document.getElementById("songListModal");
 
-    // Add default "Select song" option
-    const defaultOption = document.createElement("option");
-    defaultOption.value = "";
-    defaultOption.text = "Select song.";
-    songSelector.appendChild(defaultOption);
+function openSelectedSongModal(songPath, songTitle) {
+    const song = songList.find(s => s === songPath);
+    if (song) {
+        document.getElementById("songTitle").textContent = songTitle;
+        document.getElementById("songArtist").textContent = getArtist(songTitle);
+        document.getElementById("songBPM").textContent = songConfigs[songPath]?.BPM || "BPM not available";
 
-    let songsLoadedCounter = 0; // Counter for loaded songs
-
-    songList.forEach((songPath, index) => {
-        const option = document.createElement("option");
-        option.value = index; // Assign the index as the option value
-        option.text = getSongTitle(songPath);
-        songSelector.appendChild(option);
-        songsLoadedCounter++; // Increment the counter for each loaded song
-    });
-
-    songSelector.addEventListener("change", function () {
-        const selectedIndex = parseInt(this.value, 10); // Convert the value to an integer
-        if (isNaN(selectedIndex)) return; // If the selected value is not a number, do nothing
-
-        const selectedSongPath = songList[selectedIndex];
-
-        if (currentSong) {
-            currentSong.pause();
-            currentSong.currentTime = 0;
+        // Display cover image
+        const coverImageElement = document.getElementById("songCoverImage");
+        if (loadedImages.hasOwnProperty(songTitle)) {
+            coverImageElement.src = loadedImages[songTitle].src;
+        } else {
+            coverImageElement.src = "default_cover.jpg"; // Default cover image path or placeholder
         }
 
-        currentSong = new Audio(selectedSongPath);
+        // Check if dynamic speeds are defined for the song
+        const dynamicSpeeds = getDynamicSpeed(songPath);
+        if (dynamicSpeeds) {
+            let totalNoteSpeed = dynamicSpeeds.reduce((acc, speed) => acc + speed.noteSpeed, 0);
+            let averageNoteSpeed = totalNoteSpeed / dynamicSpeeds.length;
+            document.getElementById("songSpeed").textContent = `${averageNoteSpeed.toFixed(2)}`;
+            document.getElementById("speedTXT").innerHTML = `<strong>Average Note Speed:</strong>`;
+        } else {
+            let noteSpeed = songConfigs[songPath]?.noteSpeed || "Note Speed not available";
+            document.getElementById("songSpeed").textContent = `${noteSpeed}`;
+            document.getElementById("speedTXT").innerHTML = `<strong>Note Speed:</strong>`;
+        }
 
-        songStarted = false;
-        notes = [];
-        points = 0;
-        totalMisses = 0;
-        perfectHits = 0;
-        earlyLateHits = 0;
-        songPausedTime = null;
-        BPM = 0;
-        noteSpeed = 0;
-        maxStreak = 0;
-        currentStreak = 0;
+        // Show the modal
+        document.getElementById("selectedSongModal").style.display = "block";
+        document.getElementById("songListModal").style.display = "none";
 
-        startGame(selectedIndex);
+        // Add click event listener to the play button
+        const playButton = document.getElementById("playSongButton");
+        playButton.addEventListener("click", function () {
+            const index = songList.findIndex(s => s === songPath);
+            startGame(index);
+            document.getElementById("selectedSongModal").style.display = "none"; // Close modal after starting the game
+            activateKeybinds();
+        });
+    }
+}
 
-        songSelector.selectedIndex = 0;
+function filterSongs() {
+    const searchInput = document.getElementById("songSearchInput").value.toLowerCase();
+    const songButtons = document.querySelectorAll(".song-button");
 
-        songSelector.blur();
+    songButtons.forEach(button => {
+        const songTitle = button.textContent.toLowerCase();
+        const songPath = button.dataset.path.toLowerCase();
+        if (songTitle.includes(searchInput) || songPath.includes(searchInput)) {
+            button.style.display = "block";
+        } else {
+            button.style.display = "none";
+        }
     });
 }
+
+function closeSelectedSongModal() {
+    selectedSongModal.style.display = "none";
+    songListModal.style.display = "block";
+}
+
+function openSongList() {
+    document.getElementById("songListModal").style.display = "block";
+    deactivateKeybinds();
+}
+
+function closeSongList() {
+    songListModal.style.display = "none";
+    activateKeybinds();
+}
+
+const closeSSongModal = document.getElementById("closeSelectedSongModal");
+const songBTN = document.getElementById("openSongListBTN");
+
+const searchInput = document.getElementById("songSearchInput");
+searchInput.addEventListener("input", filterSongs);
+
+const closeSongListBTN = document.getElementById("closeSongListModal");
+
+songBTN.onclick = openSongList;
+closeSSongModal.onclick = closeSelectedSongModal;
+
+closeSongListBTN.onclick = closeSongList;
 
 function nextSong() {
     if (currentSong) {
@@ -998,12 +1051,6 @@ function getCoverForEndScreen(songPath) {
 
 // Initialize on DOM content loaded
 document.addEventListener("DOMContentLoaded", function () {
-    const songSelector = document.getElementById("songSelector");
-    const loadingOption = document.createElement("option");
-    loadingOption.value = "";
-    loadingOption.text = "Loading songs...";
-    songSelector.appendChild(loadingOption);
-
     const songVolumeSlider = document.getElementById("songVolume");
     const hitSoundSlider = document.getElementById("hitSoundSlider");
 
@@ -1015,6 +1062,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     preloadSongs();
     preloadImages();
+
+    // Settings
+
+    detectAndHandleDevice();
+    loadSettings();
+    applyDefaultNoteStyle();
+    updateKeybindsFields();
+    toggleNoteStyleButtonDisplay();
+    toggleTimeoutInput();
 });
 
 // Function to simulate key press
@@ -1027,6 +1083,17 @@ function simulateKeyPress(key) {
 }
 
 window.onload = function () {
+    canvas.style.backgroundImage = "url('Resources/BeatzBanner.jpg')";
+    canvas.style.backgroundSize = "cover";
+    canvas.style.backgroundPosition = "center";
+
+    // Apply the saved blur value from localStorage immediately
+    const savedMiscellaneous = JSON.parse(localStorage.getItem("miscellaneous")) || {};
+    const savedCustomBackgroundBlur = savedMiscellaneous.customBackgroundBlur || "0px";
+    document.getElementById("backdropBlurInput").value = savedCustomBackgroundBlur;
+    canvas.style.backdropFilter = `blur(${savedCustomBackgroundBlur})`;
+
+    // Add event listeners to buttons
     document.getElementById("toggleAutoHit").addEventListener("click", toggleAutoHit);
     document.getElementById("nextButton").addEventListener("click", nextSong);
     document.getElementById("restartButton").addEventListener("click", restartSong);
@@ -1034,51 +1101,17 @@ window.onload = function () {
     document.getElementById("randomizeButton").addEventListener("click", randomizeSong);
     document.getElementById("debugButton").addEventListener("click", toggleDebugInfo);
 
+    // Add event listener to the start button
     document.getElementById("startButton").onclick = function () {
         startGame();
     };
 
-    // Disable the button if it's clicked once
+    // Disable the start button after it's clicked
     var startButton = document.getElementById("startButton");
     startButton.addEventListener("click", function () {
         document.getElementById("startButton").style.display = "none";
     });
-
-    // Load settings from localStorage
-    const savedBackgroundOption = localStorage.getItem("backgroundOption") || "defaultBG";
-    const savedCustomBG = localStorage.getItem("customBackground");
-    const savedCustomBGBlur = localStorage.getItem("customBackgroundBlur") || "0px";
-    document.getElementById("backdropBlurInput").value = savedCustomBGBlur;
-    document.getElementById("myCanvas").style.backdropFilter = `blur(${savedCustomBGBlur})`;
-
-    if (savedBackgroundOption) {
-        defaultBackground.value = savedBackgroundOption;
-        if (savedBackgroundOption === "customBG" && savedCustomBG) {
-            BGbright.src = localStorage.getItem("customBackground");
-        }
-    }
-
-    defaultBackground.addEventListener("change", function () {
-        const selectedOption = this.value;
-        localStorage.setItem("backgroundOption", selectedOption);
-        if (selectedOption === "customBG") {
-            customBGLabel.style.display = "inline";
-            customBGInput.style.display = "inline";
-            customTransparentBGblur.style.display = "inline";
-            backdropBlurInput.style.display = "inline";
-        } else if (selectedOption === "transparentBG") {
-            customTransparentBGblur.style.display = "inline";
-            backdropBlurInput.style.display = "inline";
-        } else {
-            customBGLabel.style.display = "none";
-            customBGInput.style.display = "none";
-            customTransparentBGblur.style.display = "none";
-            backdropBlurInput.style.display = "none";
-        }
-    });
 };
-
-console.log("Window.onload loaded.");
 
 function togglePause() {
     gamePaused = !gamePaused;
@@ -1223,6 +1256,12 @@ function startGame(index) {
         document.getElementById("debugButton").style.display = "inline";
 
         document.getElementById("startButton").style.display = "none";
+
+        document.title = `Song ${currentSongIndex + 1}: ${songTitle} | Beatz 3.5!`;
+
+        if (!backgroundIsDefault) {
+            canvas.style.backgroundImage = "none";
+        }
     };
 }
 
@@ -1353,7 +1392,7 @@ function drawEndScreen() {
 
     endScreenDrawn = true;
 
-    if (backgroundIsntDefault) {
+    if (backgroundIsDefault) {
         ctx.drawImage(BGbright, 0, 0, 1280, 720);
     }
 
@@ -1449,7 +1488,7 @@ function updateDebugInfo(deltaTime, timestamp) {
     }
 }
 
-let backgroundIsntDefault = true; // Default to true assuming default background
+let backgroundIsDefault = true; // Default to true assuming default background
 
 function updateCanvas(timestamp) {
     if (!lastTime) {
@@ -1487,7 +1526,7 @@ function updateCanvas(timestamp) {
     pausedTextDrawn = false;
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-    if (backgroundIsntDefault) {
+    if (backgroundIsDefault) {
         // If the background selected is transparent or custom
         ctx.drawImage(BGbright, 0, 0, 1280, 720);
     }
@@ -1738,7 +1777,7 @@ function checkHit(noteType) {
         if (yPos >= HIT_Y_RANGE_MIN && yPos <= HIT_Y_RANGE_MAX) {
             // If the moving note is in range to hit
             if (yPos >= PERFECT_HIT_RANGE_MIN && yPos <= PERFECT_HIT_RANGE_MAX) {
-                // If the mobing note is in range to hit perfectly
+                // If the moving note is in range to hit perfectly
                 points += 1; // Increment by 1 point for perfect hit
                 perfectHits++; // Add a perfect hit to your score
                 perfectText.active = true; // Enable perfect text
@@ -1869,15 +1908,6 @@ function generateRandomNotes(duration) {
 // LOGIC FOR LOADING AND SAVING SETTINGS
 // ----------------------------------------------------------------------------------
 
-document.addEventListener("DOMContentLoaded", function () {
-    detectAndHandleDevice();
-    loadKeybinds();
-    applyDefaultNoteStyle();
-    updateKeybindsFields();
-    toggleNoteStyleButtonDisplay();
-    toggleTimeoutInput();
-});
-
 function toggleNoteStyleButtonDisplay() {
     const toggleNoteStyleButton = document.getElementById("toggleNoteStyleButton");
     const currentNoteStyle = localStorage.getItem("noteStyle") || "arrows";
@@ -1980,13 +2010,15 @@ function toggleFullScreen() {
 document.addEventListener("fullscreenchange", function () {
     if (document.fullscreenElement) {
         canvas.style.cursor = "none";
-        if (!backgroundIsntDefault) {
+        if (!backgroundIsDefault) {
             // If the background is transparent, when on fullscreen, ensure no black screen is shown and displays the html background
             canvas.style.background = "url('Resources/BackgroundHtml2.png')";
+            canvas.style.backgroundSize = "cover";
+            canvas.style.backgroundPosition = "center";
         }
     } else {
         canvas.style.cursor = "default";
-        if (!backgroundIsntDefault) {
+        if (!backgroundIsDefault) {
             canvas.style.background = "transparent"; // If the background is transparent, when fullscreen is toggled off, make the canvas transparent again
         }
     }
@@ -1998,6 +2030,7 @@ const btn = document.getElementById("keybindsButton");
 const span = document.getElementById("closeSettings");
 const resetButton = document.getElementById("resetKeybindsButton");
 const saveMessage = document.getElementById("settingsSaved");
+const saveBtn = document.getElementById("saveSettingsBtn");
 
 // Setting presets
 const presetsModal = document.getElementById("presetModal");
@@ -2010,6 +2043,10 @@ openP.onclick = function () {
 
 closeP.onclick = function () {
     closePresets();
+};
+
+saveBtn.onclick = function () {
+    saveSettings();
 };
 
 function openPresets() {
@@ -2060,77 +2097,110 @@ function showPresetDescription(presetName) {
 
 const Presets = {
     GuayabR: {
-        left: ["A"],
-        up: ["S"],
-        down: ["K"],
-        right: ["L"],
-        pause: ["ESCAPE"],
-        autoHit: ["1"],
-        previous: ["Q"],
-        restart: ["R"],
-        next: ["E"],
-        randomize: ["T"],
-        toggleNoteStyle: ["C"],
-        fullscreen: ["F"],
-        debug: ["CONTROL"],
-        defaultNoteStyle: "arrows",
-        songTimeoutAfterSongEnd: false,
-        songTimeoutAfterSongEndNum: 5000,
-        vinylRotation: true,
-        circularImage: true,
-        backgroundForCanvas: "transparentBG",
-        customBackgroundBlur: "10px",
-        customBackground: "",
+        keybinds: {
+            left: ["A"],
+            up: ["S"],
+            down: ["K"],
+            right: ["L"],
+            pause: ["ESCAPE"],
+            autoHit: ["1"],
+            previous: ["Q"],
+            restart: ["R"],
+            next: ["E"],
+            randomize: ["T"],
+            toggleNoteStyle: ["C"],
+            fullscreen: ["F"],
+            debug: ["CONTROL"],
+        },
+        miscellaneous: {
+            defaultNoteStyle: "arrows",
+            songTimeoutAfterSongEnd: false,
+            songTimeoutAfterSongEndNum: 5000,
+            vinylRotation: true,
+            circularImage: true,
+            backgroundForCanvas: "transparentBG",
+            customBackgroundBlur: "1",
+            customBackground: "",
+            logKeys: false,
+        },
     },
     VERIDIAN: {
-        left: ["D"],
-        up: ["F"],
-        down: ["J"],
-        right: ["K"],
-        pause: ["ESCAPE"],
-        autoHit: ["1"],
-        previous: ["Q"],
-        restart: ["R"],
-        next: ["E"],
-        randomize: ["T"],
-        toggleNoteStyle: ["C"],
-        fullscreen: ["G"],
-        debug: ["CONTROL"],
-        defaultNoteStyle: "circles",
-        songTimeoutAfterSongEnd: false,
-        songTimeoutAfterSongEndNum: 5000,
-        vinylRotation: true,
-        circularImage: true,
-        backgroundForCanvas: "defaultBG",
-        customBackgroundBlur: "0px",
-        customBackground: "",
+        keybinds: {
+            left: ["D"],
+            up: ["F"],
+            down: ["J"],
+            right: ["K"],
+            pause: ["ESCAPE"],
+            autoHit: ["1"],
+            previous: ["Q"],
+            restart: ["R"],
+            next: ["E"],
+            randomize: ["T"],
+            toggleNoteStyle: ["C"],
+            fullscreen: ["G"],
+            debug: ["CONTROL"],
+        },
+        miscellaneous: {
+            defaultNoteStyle: "circles",
+            songTimeoutAfterSongEnd: false,
+            songTimeoutAfterSongEndNum: 5000,
+            vinylRotation: true,
+            circularImage: true,
+            backgroundForCanvas: "defaultBG",
+            customBackgroundBlur: "0",
+            customBackground: "",
+            logKeys: false,
+        },
     },
 };
 
 // Function to apply the preset based on the one you chose
 function applyPreset(presetName) {
     const preset = Presets[presetName];
-    document.getElementById("up").value = preset.up.join(", ");
-    document.getElementById("left").value = preset.left.join(", ");
-    document.getElementById("down").value = preset.down.join(", ");
-    document.getElementById("right").value = preset.right.join(", ");
-    document.getElementById("pause").value = preset.pause.join(", ");
-    document.getElementById("autoHit").value = preset.autoHit.join(", ");
-    document.getElementById("previousInput").value = preset.previous.join(", ");
-    document.getElementById("restartInput").value = preset.restart.join(", ");
-    document.getElementById("nextInput").value = preset.next.join(", ");
-    document.getElementById("randomize").value = preset.randomize.join(", ");
-    document.getElementById("toggleNoteStyleInput").value = preset.toggleNoteStyle.join(", ");
-    document.getElementById("fullscreenInput").value = preset.fullscreen.join(", ");
-    document.getElementById("debugInput").value = preset.debug.join(", ");
-    document.getElementById("songTimeoutAfterSongEndNum").value = preset.songTimeoutAfterSongEndNum;
-    document.getElementById("circularImage").checked = preset.circularImage;
-    document.getElementById("vinylRotation").checked = preset.vinylRotation;
-    document.getElementById("defaultBackground").value = preset.backgroundForCanvas;
-    document.getElementById("backdropBlurInput").value = preset.customBackgroundBlur;
-    document.getElementById("myCanvas").style.backdropFilter = `blur(${preset.customBackgroundBlur})`;
 
-    saveKeybinds();
+    // Apply keybinds
+    keybinds = preset.keybinds;
+    document.getElementById("up").value = keybinds.up.join(", ");
+    document.getElementById("left").value = keybinds.left.join(", ");
+    document.getElementById("down").value = keybinds.down.join(", ");
+    document.getElementById("right").value = keybinds.right.join(", ");
+    document.getElementById("pause").value = keybinds.pause.join(", ");
+    document.getElementById("autoHit").value = keybinds.autoHit.join(", ");
+    document.getElementById("previousInput").value = keybinds.previous.join(", ");
+    document.getElementById("restartInput").value = keybinds.restart.join(", ");
+    document.getElementById("nextInput").value = keybinds.next.join(", ");
+    document.getElementById("randomize").value = keybinds.randomize.join(", ");
+    document.getElementById("toggleNoteStyleInput").value = keybinds.toggleNoteStyle.join(", ");
+    document.getElementById("fullscreenInput").value = keybinds.fullscreen.join(", ");
+    document.getElementById("debugInput").value = keybinds.debug.join(", ");
+
+    // Apply miscellaneous settings
+    miscellaneous = preset.miscellaneous;
+    document.getElementById("defaultNoteStyle").value = miscellaneous.defaultNoteStyle;
+    document.getElementById("songTimeoutAfterSongEnd").checked = miscellaneous.songTimeoutAfterSongEnd;
+    document.getElementById("songTimeoutAfterSongEndNum").value = miscellaneous.songTimeoutAfterSongEndNum;
+    document.getElementById("vinylRotation").checked = miscellaneous.vinylRotation;
+    document.getElementById("circularImage").checked = miscellaneous.circularImage;
+    document.getElementById("defaultBackground").value = miscellaneous.backgroundForCanvas;
+    document.getElementById("backdropBlurInput").value = miscellaneous.customBackgroundBlur;
+    document.getElementById("logKeys").checked = miscellaneous.logKeys; // Update logKeys checkbox
+
+    if (miscellaneous.backgroundForCanvas === "customBG" && miscellaneous.customBackground) {
+        document.getElementById("customBGLabel").style.display = "inline";
+        document.getElementById("customBGInput").style.display = "inline";
+        document.getElementById("customTransparentBGblur").style.display = "inline";
+        document.getElementById("backdropBlurInput").style.display = "inline";
+    } else if (miscellaneous.backgroundForCanvas === "transparentBG") {
+        document.getElementById("customTransparentBGblur").style.display = "inline";
+        document.getElementById("backdropBlurInput").style.display = "inline";
+    } else {
+        document.getElementById("customBGLabel").style.display = "none";
+        document.getElementById("customBGInput").style.display = "none";
+        document.getElementById("customTransparentBGblur").style.display = "none";
+        document.getElementById("backdropBlurInput").style.display = "none";
+    }
+
+    saveSettings();
 }
 
 function convertToUpperCase(inputElement) {
@@ -2165,12 +2235,12 @@ window.onclick = function (event) {
 };
 
 resetButton.onclick = function () {
-    resetKeybinds();
+    resetSettings();
 };
 
 function openModal() {
     modal.style.display = "block";
-    loadKeybinds();
+    loadSettings();
     deactivateKeybinds();
 }
 
@@ -2201,11 +2271,45 @@ document.addEventListener("keydown", function (event) {
         return;
     }
 
-    if (event.key === "P" || event.key === "p") {
+    if (songListModal.style.display === "block") {
+        if (event.key === "Escape" || event.key === "escape") {
+            closeSongList();
+            console.log("Escape key pressed. Song list closed.");
+        }
+        return;
+    }
+
+    if (selectedSongModal.style.display === "block") {
+        if (event.key === "Escape" || event.key === "escape") {
+            closeSelectedSongModal();
+            console.log("Escape key pressed. Song modal closed.");
+        }
+        return;
+    }
+
+    // Check if no modals are currently open
+    const isModalOpen = isAnyModalOpen(); // Implement this function to check if any modal is open
+
+    // If "P" key is pressed and no modals are open, open the modal
+    if ((event.key === "P" || event.key === "p") && !isModalOpen) {
         openModal();
         console.log("P key pressed. Modal opened.");
     }
+
+    // If "O" key is pressed and no modals are open, open the song list
+    if ((event.key === "O" || event.key === "o") && !isModalOpen) {
+        openSongList();
+        console.log("O key pressed. Song list opened.");
+    }
 });
+
+// Function to check if any modal is currently open
+function isAnyModalOpen() {
+    const selectedSongModal = document.getElementById("selectedSongModal");
+    const songListModal = document.getElementById("songListModal");
+
+    return selectedSongModal.style.display === "block" || songListModal.style.display === "block";
+}
 
 function deactivateKeybinds() {
     // Deactivate all keys except the enter key
@@ -2226,9 +2330,16 @@ function filterKeys(event) {
     if (event.key === "Enter" || event.keyCode === 13) {
         event.preventDefault();
         event.stopPropagation();
-        saveKeybinds();
+
+        saveSettings(); // Save settings
         console.log("Enter key pressed. Settings saved.");
     }
+}
+
+function toggleKeyLogger() {
+    logKeys = document.getElementById("logKeys").checked;
+    localStorage.setItem("logKeys", JSON.stringify(logKeys));
+    console.log("Key logging is now", logKeys ? "enabled" : "disabled");
 }
 
 const defaultKeybinds = {
@@ -2245,6 +2356,9 @@ const defaultKeybinds = {
     toggleNoteStyle: ["C"],
     fullscreen: ["F"],
     debug: ["CONTROL"],
+};
+
+const defaultMiscellaneous = {
     noteStyle: "arrows",
     songTimeoutAfterSongEnd: false,
     songTimeoutDelay: 5000,
@@ -2252,39 +2366,41 @@ const defaultKeybinds = {
     circularImage: false,
     backgroundOption: "defaultBG",
     customBackgroundBlur: "0px",
-    customBackground: "",
+    logKeys: false,
 };
 
+let logKeys = true;
+
 let keybinds = { ...defaultKeybinds };
+let miscellaneous = { ...defaultMiscellaneous };
+
 let keybindsHistory = [];
+let miscellaneousHistory = [];
 let keybindsIndex = -1;
 
-function loadKeybinds() {
+function loadSettings() {
     const savedKeybinds = JSON.parse(localStorage.getItem("keybinds")) || {};
-    const savedNoteStyle = localStorage.getItem("noteStyle") || defaultKeybinds.noteStyle;
-    const songTimeoutAfterSongEnd = JSON.parse(localStorage.getItem("songTimeoutAfterSongEnd")) || defaultKeybinds.songTimeoutAfterSongEnd;
-    const savedSongTimeoutDelay = parseInt(localStorage.getItem("songTimeoutDelay")) || defaultKeybinds.songTimeoutDelay;
-    const savedVinylRotation = JSON.parse(localStorage.getItem("vinylRotation")) || defaultKeybinds.vinylRotation;
-    const savedCircularImage = JSON.parse(localStorage.getItem("circularImage")) || defaultKeybinds.circularImage;
-    const savedBackgroundOption = localStorage.getItem("backgroundOption") || defaultKeybinds.backgroundOption;
-    const savedCustomBackground = localStorage.getItem("customBackground") || defaultKeybinds.customBackground;
-    const savedCustomBackgroundBlur = localStorage.getItem("customBackgroundBlur") || defaultKeybinds.customBackgroundBlur;
+    const savedMiscellaneous = JSON.parse(localStorage.getItem("miscellaneous")) || {};
 
     keybinds = { ...defaultKeybinds, ...savedKeybinds };
+    miscellaneous = { ...defaultMiscellaneous, ...savedMiscellaneous };
 
-    document.getElementById("songTimeoutAfterSongEnd").checked = songTimeoutAfterSongEnd;
-    restartSongTimeout = songTimeoutAfterSongEnd;
+    document.getElementById("logKeys").checked = miscellaneous.logKeys;
+    logKeys = miscellaneous.logKeys;
 
-    document.getElementById("circularImage").checked = savedCircularImage;
-    circularImageEnabled = savedCircularImage;
+    document.getElementById("songTimeoutAfterSongEnd").checked = miscellaneous.songTimeoutAfterSongEnd;
+    restartSongTimeout = miscellaneous.songTimeoutAfterSongEnd;
+
+    document.getElementById("circularImage").checked = miscellaneous.circularImage;
+    circularImageEnabled = miscellaneous.circularImage;
     toggleVinylRotation();
 
     const vinylRotationCheckbox = document.getElementById("vinylRotation");
-    vinylRotationCheckbox.checked = savedVinylRotation;
-    vinylRotationEnabled = savedVinylRotation;
+    vinylRotationCheckbox.checked = miscellaneous.vinylRotation;
+    vinylRotationEnabled = miscellaneous.vinylRotation;
 
     const defaultNoteStyleDropdown = document.getElementById("defaultNoteStyle");
-    defaultNoteStyleDropdown.value = savedNoteStyle;
+    defaultNoteStyleDropdown.value = miscellaneous.noteStyle;
 
     document.getElementById("up").value = keybinds.up.join(", ");
     document.getElementById("left").value = keybinds.left.join(", ");
@@ -2299,69 +2415,76 @@ function loadKeybinds() {
     document.getElementById("toggleNoteStyleInput").value = keybinds.toggleNoteStyle.join(", ");
     document.getElementById("fullscreenInput").value = keybinds.fullscreen.join(", ");
     document.getElementById("debugInput").value = keybinds.debug.join(", ");
-    document.getElementById("songTimeoutAfterSongEndNum").value = savedSongTimeoutDelay;
-    document.getElementById("circularImage").value = savedCircularImage;
-    document.getElementById("vinylRotation").value = savedVinylRotation;
+    document.getElementById("songTimeoutAfterSongEndNum").value = miscellaneous.songTimeoutDelay;
 
-    document.getElementById("defaultBackground").value = savedBackgroundOption;
-    document.getElementById("backdropBlurInput").value = savedCustomBackgroundBlur;
-    document.getElementById("myCanvas").style.backdropFilter = `blur(${savedCustomBackgroundBlur})`;
+    const savedBackgroundOption = savedMiscellaneous.backgroundOption || "defaultBG";
+    const savedCustomBackgroundBlur = savedMiscellaneous.customBackgroundBlur || "0px";
+    const savedCustomBG = localStorage.getItem("customBackground");
 
-    if (savedBackgroundOption === "customBG") {
-        document.getElementById("customBGLabel").style.display = "inline";
-        document.getElementById("customBGInput").style.display = "inline";
-        document.getElementById("customTransparentBGblur").style.display = "inline";
-        document.getElementById("backdropBlurInput").style.display = "inline";
-        if (savedCustomBackground) {
-            customBG = new Image();
-            customBG.src = savedCustomBackground;
+    if (savedBackgroundOption) {
+        defaultBackground.value = savedBackgroundOption;
+        if (savedBackgroundOption === "customBG" && savedCustomBG) {
+            BGbright.src = savedCustomBG;
         }
-    } else if (savedBackgroundOption === "transparentBG") {
-        document.getElementById("customTransparentBGblur").style.display = "inline";
-        document.getElementById("backdropBlurInput").style.display = "inline";
-    } else {
-        document.getElementById("customBGLabel").style.display = "none";
-        document.getElementById("customBGInput").style.display = "none";
-        document.getElementById("customTransparentBGblur").style.display = "none";
-        document.getElementById("backdropBlurInput").style.display = "none";
     }
 
-    backgroundIsntDefault = savedBackgroundOption !== "transparentBG" && savedBackgroundOption !== "customBG";
+    // Add event listener for background option change
+    defaultBackground.addEventListener("change", function () {
+        const selectedOption = this.value;
+        savedMiscellaneous.backgroundOption = selectedOption;
+        localStorage.setItem("miscellaneous", JSON.stringify(savedMiscellaneous));
 
-    switch (savedBackgroundOption) {
+        if (selectedOption === "customBG") {
+            customBGLabel.style.display = "inline";
+            customBGInput.style.display = "inline";
+            customTransparentBGblur.style.display = "inline";
+            backdropBlurInput.style.display = "inline";
+        } else if (selectedOption === "transparentBG") {
+            customTransparentBGblur.style.display = "inline";
+            backdropBlurInput.style.display = "inline";
+        } else {
+            customBGLabel.style.display = "none";
+            customBGInput.style.display = "none";
+            customTransparentBGblur.style.display = "none";
+            backdropBlurInput.style.display = "none";
+        }
+    });
+
+    const savedCustomBackground = localStorage.getItem("customBackground");
+
+    switch (savedMiscellaneous.backgroundOption) {
         case "defaultBG":
             BGbright.src = "Resources/Background2.png";
+            backgroundIsDefault = true;
             break;
         case "defaultBG2":
             BGbright.src = "Resources/Background3.jpg";
+            backgroundIsDefault = true;
             break;
         case "defaultBG3":
             BGbright.src = "Resources/Background4.png";
+            backgroundIsDefault = true;
             break;
         case "htmlBG":
             BGbright.src = "Resources/BackgroundHtml2.png";
+            backgroundIsDefault = true;
             break;
         case "transparentBG":
-            document.getElementById("myCanvas").style.background = "transparent";
-            backgroundIsntDefault = false;
+            canvas.style.background = "transparent";
+            canvas.style.backdropFilter = `blur(${savedCustomBackgroundBlur}px`;
+            backgroundIsDefault = false;
             break;
         case "customBG":
             if (savedCustomBackground) {
                 BGbright.src = savedCustomBackground;
             }
-            document.getElementById("myCanvas").style.backdropFilter = `blur(${savedCustomBackgroundBlur})`;
+            backgroundIsDefault = true;
             break;
         default:
-            document.getElementById("myCanvas").style.backgroundColor = "";
-            backgroundIsntDefault = true;
+            BGbright.src = "Resources/Background2.png";
+            backgroundIsDefault = true;
     }
-
-    keybinds.songTimeoutDelay = savedSongTimeoutDelay;
-    keybinds.backgroundOption = savedBackgroundOption;
-    keybinds.customBackground = savedCustomBackground;
-    keybinds.customBackgroundBlur = savedCustomBackgroundBlur;
-
-    console.log("Loaded settings", keybinds);
+    console.log("Loaded settings", keybinds, miscellaneous);
 }
 
 function getFileDataUrl(file, callback) {
@@ -2372,7 +2495,7 @@ function getFileDataUrl(file, callback) {
     reader.readAsDataURL(file);
 }
 
-function saveKeybinds() {
+function saveSettings() {
     const newKeybinds = {
         up: document
             .getElementById("up")
@@ -2426,24 +2549,32 @@ function saveKeybinds() {
             .getElementById("debugInput")
             .value.split(", ")
             .map(key => key.trim()),
+    };
+
+    const newMiscellaneous = {
         noteStyle: document.getElementById("defaultNoteStyle").value,
         songTimeoutAfterSongEnd: document.getElementById("songTimeoutAfterSongEnd").checked,
-        songTimeoutDelay: parseInt(document.getElementById("songTimeoutAfterSongEndNum").value) || defaultKeybinds.songTimeoutDelay,
+        songTimeoutDelay: parseInt(document.getElementById("songTimeoutAfterSongEndNum").value) || defaultMiscellaneous.songTimeoutDelay,
         vinylRotation: document.getElementById("vinylRotation").checked,
         circularImage: document.getElementById("circularImage").checked,
         backgroundOption: document.getElementById("defaultBackground").value,
         customBackgroundBlur: document.getElementById("backdropBlurInput").value,
     };
 
-    if (vinylRotationEnabled && !newKeybinds.vinylRotation) {
+    // Compare new settings with saved settings
+    // const savedKeybinds = JSON.parse(localStorage.getItem("keybinds")) || {};
+    // const savedMiscellaneous = JSON.parse(localStorage.getItem("miscellaneous")) || {};
+
+    // Proceed with saving settings
+    if (vinylRotationEnabled && !newMiscellaneous.vinylRotation) {
         rotationAngle = 0;
     }
 
-    restartSongTimeout = newKeybinds.songTimeoutAfterSongEnd;
-    vinylRotationEnabled = newKeybinds.vinylRotation;
-    circularImageEnabled = newKeybinds.circularImage;
+    restartSongTimeout = newMiscellaneous.songTimeoutAfterSongEnd;
+    vinylRotationEnabled = newMiscellaneous.vinylRotation;
+    circularImageEnabled = newMiscellaneous.circularImage;
 
-    const timeoutInputValue = newKeybinds.songTimeoutDelay;
+    const timeoutInputValue = newMiscellaneous.songTimeoutDelay;
 
     if (isNaN(timeoutInputValue)) {
         alert("Please enter a valid number for the timeout delay.");
@@ -2454,77 +2585,60 @@ function saveKeybinds() {
         return;
     }
 
-    const blurInput = newKeybinds.customBackgroundBlur;
+    const blurInput = newMiscellaneous.customBackgroundBlur;
     const blurValue = parseInt(blurInput, 10);
     if (isNaN(blurValue) || blurValue < 0 || blurValue >= 1000) {
-        alert("Please enter a valid number for the background blur (0-999).");
+        alert("Please enter a number between 0 and 1000 for the blur value.");
         return;
     }
 
-    newKeybinds.customBackgroundBlur = blurValue + "px";
-
-    const customBGInput = document.getElementById("customBGInput");
-    const file = customBGInput.files[0];
-
-    backgroundIsntDefault = newKeybinds.backgroundOption !== "transparentBG" && newKeybinds.backgroundOption !== "customBG";
-
-    keybinds = newKeybinds;
-
-    localStorage.setItem("keybinds", JSON.stringify(newKeybinds));
-    localStorage.setItem("noteStyle", newKeybinds.noteStyle);
-    localStorage.setItem("songTimeoutAfterSongEnd", JSON.stringify(newKeybinds.songTimeoutAfterSongEnd));
-    localStorage.setItem("songTimeoutDelay", newKeybinds.songTimeoutDelay);
-    localStorage.setItem("vinylRotation", JSON.stringify(newKeybinds.vinylRotation));
-    localStorage.setItem("circularImage", JSON.stringify(newKeybinds.circularImage));
-    localStorage.setItem("backgroundOption", newKeybinds.backgroundOption);
-    localStorage.setItem("customBackgroundBlur", newKeybinds.customBackgroundBlur);
-
-    switch (newKeybinds.backgroundOption) {
+    switch (newMiscellaneous.backgroundOption) {
         case "defaultBG":
             BGbright.src = "Resources/Background2.png";
+            backgroundIsDefault = true;
             break;
         case "defaultBG2":
             BGbright.src = "Resources/Background3.jpg";
+            backgroundIsDefault = true;
             break;
         case "defaultBG3":
             BGbright.src = "Resources/Background4.png";
+            backgroundIsDefault = true;
             break;
         case "htmlBG":
             BGbright.src = "Resources/BackgroundHtml2.png";
+            backgroundIsDefault = true;
             break;
         case "transparentBG":
-            document.getElementById("myCanvas").style.background = "transparent";
-            backgroundIsntDefault = false;
+            canvas.style.background = "transparent";
+            canvas.style.backdropFilter = `blur(${newMiscellaneous.customBackgroundBlur}px)`;
+            backgroundIsDefault = false;
             break;
         case "customBG":
-            document.getElementById("myCanvas").style.backdropFilter = `blur(${newKeybinds.customBackgroundBlur})`;
+            const file = document.getElementById("customBGInput").files[0];
+            if (file) {
+                handleFileUpload(file);
+            }
+            backgroundIsDefault = true;
             break;
         default:
-            document.getElementById("myCanvas").style.backgroundColor = "";
-            backgroundIsntDefault = true;
+            BGbright.src = "Resources/Background2.png";
+            backgroundIsDefault = true;
     }
 
-    if (newKeybinds.backgroundOption !== "customBG") {
-        localStorage.setItem("customBackground", "");
-    }
+    localStorage.setItem("keybinds", JSON.stringify(newKeybinds));
+    localStorage.setItem("miscellaneous", JSON.stringify(newMiscellaneous));
 
-    if (file) {
-        handleFileUpload(file);
-    }
+    keybinds = { ...newKeybinds };
+    miscellaneous = { ...newMiscellaneous };
 
-    if (keybindsIndex === keybindsHistory.length - 1) {
-        keybindsHistory.push(JSON.stringify(newKeybinds));
-        keybindsIndex++;
-    } else {
-        keybindsHistory = keybindsHistory.slice(0, keybindsIndex + 1);
-        keybindsHistory.push(JSON.stringify(newKeybinds));
-        keybindsIndex = keybindsHistory.length - 1;
-    }
-
-    saveMessage.textContent = "Settings saved!";
     saveMessage.style.display = "block";
+    saveMessage.innerHTML = "Settings saved!<br><br>";
+    setTimeout(() => {
+        saveMessage.style.display = "none";
+    }, 2500); // Hide the message after 2.5 seconds
 
-    console.log("Saved settings", keybinds);
+    console.log("Saved settings", keybinds, miscellaneous);
 }
 
 function handleFileUpload(file) {
@@ -2594,38 +2708,39 @@ function switchToArrows() {
     console.log("Changed textures to arrows");
 }
 
-function resetKeybinds() {
-    keybinds = { ...defaultKeybinds, noteStyle: "arrows" };
-    document.getElementById("songTimeoutAfterSongEnd").checked = false;
-    document.getElementById("circularImage").checked = false;
-    document.getElementById("vinylRotation").checked = false;
-
-    const timeoutLabel = document.getElementById("numTimeout");
-    const timeoutInput = document.getElementById("songTimeoutAfterSongEndNum");
-    timeoutLabel.style.display = "none";
-    timeoutInput.style.display = "none";
-
-    switchToArrows();
-    updateKeybindsFields();
-    saveKeybinds();
+// Reset keybinds and miscellaneous settings to default values
+function resetSettings() {
+    if (confirm("Are you sure you want to reset all settings to their default values?")) {
+        localStorage.removeItem("keybinds");
+        localStorage.removeItem("miscellaneous");
+        keybinds = { ...defaultKeybinds };
+        miscellaneous = { ...defaultMiscellaneous };
+        loadSettings();
+        alert("Settings have been reset to default values.");
+    }
 }
 
+// Undo keybinds and miscellaneous settings
 function undoKeybinds() {
     if (keybindsIndex > 0) {
         keybindsIndex--;
         keybinds = JSON.parse(keybindsHistory[keybindsIndex]);
+        miscellaneous = JSON.parse(miscellaneousHistory[keybindsIndex]);
         updateKeybindsFields();
     }
 }
 
+// Redo keybinds and miscellaneous settings
 function redoKeybinds() {
     if (keybindsIndex < keybindsHistory.length - 1) {
         keybindsIndex++;
         keybinds = JSON.parse(keybindsHistory[keybindsIndex]);
+        miscellaneous = JSON.parse(miscellaneousHistory[keybindsIndex]);
         updateKeybindsFields();
     }
 }
 
+// Update the fields to reflect the current keybinds and miscellaneous settings
 function updateKeybindsFields() {
     document.getElementById("up").value = keybinds.up.join(", ");
     document.getElementById("left").value = keybinds.left.join(", ");
@@ -2640,20 +2755,22 @@ function updateKeybindsFields() {
     document.getElementById("toggleNoteStyleInput").value = keybinds.toggleNoteStyle.join(", ");
     document.getElementById("fullscreenInput").value = keybinds.fullscreen.join(", ");
     document.getElementById("debugInput").value = keybinds.debug.join(", ");
-    document.getElementById("defaultNoteStyle").value = keybinds.noteStyle;
-    document.getElementById("songTimeoutAfterSongEnd").checked = keybinds.songTimeoutAfterSongEnd;
-    document.getElementById("songTimeoutAfterSongEndNum").value = keybinds.songTimeoutDelay;
-    document.getElementById("vinylRotation").checked = keybinds.vinylRotation;
-    document.getElementById("circularImage").checked = keybinds.circularImage;
-    document.getElementById("defaultBackground").value = keybinds.backgroundOption;
-    document.getElementById("backdropBlurInput").value = keybinds.customBackgroundBlur;
 
-    if (keybinds.backgroundOption === "customBG" && keybinds.customBackground) {
+    document.getElementById("defaultNoteStyle").value = miscellaneous.noteStyle;
+    document.getElementById("songTimeoutAfterSongEnd").checked = miscellaneous.songTimeoutAfterSongEnd;
+    document.getElementById("songTimeoutAfterSongEndNum").value = miscellaneous.songTimeoutDelay;
+    document.getElementById("vinylRotation").checked = miscellaneous.vinylRotation;
+    document.getElementById("circularImage").checked = miscellaneous.circularImage;
+    document.getElementById("defaultBackground").value = miscellaneous.backgroundOption;
+    document.getElementById("backdropBlurInput").value = miscellaneous.customBackgroundBlur;
+    document.getElementById("logKeys").checked = miscellaneous.logKeys; // Update logKeys checkbox
+
+    if (miscellaneous.backgroundOption === "customBG" && miscellaneous.customBackground) {
         document.getElementById("customBGLabel").style.display = "inline";
         document.getElementById("customBGInput").style.display = "inline";
         document.getElementById("customTransparentBGblur").style.display = "inline";
         document.getElementById("backdropBlurInput").style.display = "inline";
-    } else if (keybinds.backgroundOption === "transparentBG") {
+    } else if (miscellaneous.backgroundOption === "transparentBG") {
         document.getElementById("customTransparentBGblur").style.display = "inline";
         document.getElementById("backdropBlurInput").style.display = "inline";
     } else {
@@ -2662,6 +2779,15 @@ function updateKeybindsFields() {
         document.getElementById("customTransparentBGblur").style.display = "none";
         document.getElementById("backdropBlurInput").style.display = "none";
     }
+}
+
+// Save the current keybinds and miscellaneous settings to history
+function saveToHistory() {
+    keybindsHistory = keybindsHistory.slice(0, keybindsIndex + 1);
+    miscellaneousHistory = miscellaneousHistory.slice(0, keybindsIndex + 1);
+    keybindsHistory.push(JSON.stringify(keybinds));
+    miscellaneousHistory.push(JSON.stringify(miscellaneous));
+    keybindsIndex++;
 }
 
 function toggleTimeoutInput() {
@@ -2686,7 +2812,9 @@ document.getElementById("songTimeoutAfterSongEnd").addEventListener("change", to
 function keyDownFunction(keyboardEvent) {
     var keyDown = keyboardEvent.key.toUpperCase();
 
-    console.log("Pressed:", keyDown);
+    if (logKeys) {
+        console.log("Pressed:", keyDown);
+    }
 
     if (!gameStarted) {
         if (keyDown == "ENTER") {
@@ -2744,7 +2872,9 @@ function keyDownFunction(keyboardEvent) {
 function keyUpFunction(keyboardEvent) {
     var keyUp = keyboardEvent.key.toUpperCase();
 
-    console.log("Released:", keyUp);
+    if (logKeys) {
+        console.log("Released:", keyUp);
+    }
 
     if (keybinds.up.includes(keyUp)) {
         upPressed = false;
@@ -2759,3 +2889,6 @@ function keyUpFunction(keyboardEvent) {
         rightPressed = false;
     }
 }
+
+// Thanks for playing Beatz!
+// - GuayabR.

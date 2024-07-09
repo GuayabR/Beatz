@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Beatz 3.3!</title>
+        <title>Beatz 3.5!</title>
         <link rel="icon" type="image/x-icon" href="Resources/favicon.png" />
         <link rel="stylesheet" type="text/css" href="styles.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -28,13 +28,9 @@
         <button id="toggleAutoHit" style="display: none">Toggle Auto Hit</button>
         <button id="fullscreen" style="display: none" onclick="toggleFullScreen()"><i class="fa-solid fa-expand"></i></button>
         <button id="debugButton" style="display: none"><i class="fa-solid fa-robot"></i></button>
-        <button id="keybindsButton" style="display: none"><i class="fa-solid fa-gear"></i></button>
+        <button id="keybindsButton" style="display: none"><i class="fa-solid fa-gear"></i></button><br /><br />
 
-        <h1>
-            <select id="songSelector">
-                <option>Loading songs...</option>
-            </select>
-        </h1>
+        <button id="openSongListBTN"><i class="fa-solid fa-music"></i> Song list!</button>
 
         <!-- The Modal -->
         <div id="keybindsModal" class="modal">
@@ -102,6 +98,9 @@
                     <label for="debugInput">Debug:</label>
                     <input type="text" id="debugInput" name="debug" /><br /><br />
 
+                    <label for="logKeys">Log Keys to Console</label>
+                    <input type="checkbox" id="logKeys" onclick="toggleKeyLogger()" /><br />
+
                     <label for="circularImage">Circular Cover Images?</label>
                     <input type="checkbox" id="circularImage" name="circularImage" onchange="toggleVinylRotation()" />
 
@@ -125,10 +124,10 @@
                     <input type="file" id="customBGInput" accept="image/*" style="display: none" /><br /><br />
 
                     <label id="customTransparentBGblur" for="backdropBlurInput" style="display: none">Background blur:</label>
-                    <input type="text" id="backdropBlurInput" placeholder="Input a number" style="display: none" /><br /><br />
+                    <input type="number" id="backdropBlurInput" style="display: none" /><br /><br />
 
                     <span id="settingsSaved" style="color: white; display: none">Settings saved!</span>
-                    <button id="saveSettings" type="button" onclick="saveKeybinds()">Save</button>
+                    <button id="saveSettingsBtn" type="button">Save</button>
                 </form>
             </div>
         </div>
@@ -184,6 +183,44 @@
         <h3>Credit of the songs goes to their respective creators.</h3>
         <h3>Note that i am NOT making any money on this game, i just code occasionally for the fun of it. <3</h3>
 
-        <script src="BeatzGameTesting.js"></script>
+        <!-- Song list modal -->
+        <div id="songListModal" class="modal">
+            <div class="modal-content">
+                <span id="closeSongListModal" class="close"><i class="fa-solid fa-xmark"></i></span>
+                <div class="modal-header">
+                    <h1 class="modal-title">Song List</h1>
+                </div>
+                <label for="songSearchInput">Search songs by keyword, index or artist.</label><br /><br />
+                <input type="text" id="songSearchInput" placeholder="Search..." />
+                <div class="modal-body" id="songList">
+                    <!-- Song buttons will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Selected Song Modal -->
+        <div id="selectedSongModal" class="modal">
+            <div class="modal-content">
+                <span id="closeSelectedSongModal" class="close"><i class="fa-solid fa-xmark"></i></span>
+                <h2 id="songTitle">Song Title</h2>
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <img id="songCoverImage" src="" alt="Cover Image not found or your browser doesn't support HTML5 images." class="img-fluid" />
+                    </div>
+                    <div class="col">
+                        <p class="modal-text"><strong>Artist:</strong> <span id="songArtist">Artist Name</span></p>
+                        <p class="modal-text"><strong>BPM:</strong> <span id="songBPM">120</span></p>
+                        <p class="modal-text">
+                            <span id="speedTXT"><strong>Note Speed:</strong></span> <span id="songSpeed">15.5</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="playSongButton">Play song!</button>
+                </div>
+            </div>
+        </div>
+
+        <script src="BeatzGame.js"></script>
     </body>
 </html>
