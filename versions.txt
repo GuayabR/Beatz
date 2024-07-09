@@ -351,28 +351,6 @@ Added presets:
 - Fixed closing setting presets modal not going back to settings
 - Fixed pressing escape key in the setting presets modal not going back to settings
 
-3.5.0 (10COM 3.4! 7/07/2024)
-
-- 3.3.12.12 (HFPS 3.3! 3/07/2024)
-Added setting presets!
-- Presets instantly change your settings to a selection of presets you want to use.
-- Presets include all settings.
-Added presets:
-- GuayabR's preset: ASKL Keybinds, transparent BG with 10px blur.
-- VERIDIAN's preset: DFJK Keybinds, default BG.
-/
-- Fixed device detection not showing the unsupported message.
-- Added chromebooks as a device type, if you play Beatz on a chromebook, notes are easier to hit by 25 pixels.
-- Keys now register in uppercase.
-- Fixed using fullscreen while having a transparent background showing a black color, fullscreen now shows the html's background if a transparent background is in use.
-//
-
-3.3.12.13 (10COM 3.3! 5/07/2024)
-- Added more comments
-- Fixed closing setting presets modal not going back to settings.
-- Fixed pressing escape key in the setting presets modal not going back to settings.
-//
-
 3.4.0 (10COM 3.4! 7/072024)
 Refactored all saving directories
 - Saving settings now saves 2 arrays of data: Keybinds, and Miscellaneous.
@@ -395,3 +373,4 @@ Added a new song list interface!
 - Page's title now changes depending on the current song playing. (Index, Title | Beatz 3.5!)
 - Fixed canvas background displaying transparently before game is initialized, background is now always the default banner, and changes once you start the game.
 - Added keys being logged to the console as an option.
+- Game now only needs 5 songs loaded to initialize.
