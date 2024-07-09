@@ -659,7 +659,7 @@ function openSelectedSongModal(songPath, songTitle) {
         if (loadedImages.hasOwnProperty(songTitle)) {
             coverImageElement.src = loadedImages[songTitle].src;
         } else {
-            coverImageElement.src = "default_cover.jpg"; // Default cover image path or placeholder
+            coverImageElement.src = "Resources/Covers/noCover.png"; // Default cover image path or placeholder
         }
 
         // Check if dynamic speeds are defined for the song
@@ -1257,7 +1257,7 @@ function startGame(index) {
 
         document.getElementById("startButton").style.display = "none";
 
-        document.title = `Song ${currentSongIndex + 1}: ${songTitle} | Beatz 3.5!`;
+        document.title = `Song ${currentSongIndex + 1}: ${songTitle} | Beatz Testing 3.5!`;
 
         if (!backgroundIsDefault) {
             canvas.style.backgroundImage = "none";
