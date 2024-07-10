@@ -2,12 +2,12 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 10COM 3.5.0.0 test (release.version.subversion.bugfix)
+ * Version: 10COM 3.5.0.1 test (release.version.subversion.bugfix)
  **/
 
 // CONSTANTS
 
-const VERSION = "10COM 3.5.0.0 (Codename.Release.Version.Subversion.Bugfix)";
+const VERSION = "10COM 3.5.0.1 (Codename.Release.Version.Subversion.Bugfix)";
 const PUBLICVERSION = "3.3! (GitHub Port)";
 console.log("Version: " + VERSION);
 
@@ -118,6 +118,8 @@ var rightPressed = false;
 
 var noteSpeed;
 
+let currentConfigIndex = 0;
+
 var HIT_Y_RANGE_MIN = 500;
 
 var HIT_Y_RANGE_MAX = 600;
@@ -174,7 +176,6 @@ let autoHitDisableSaving = false; // Flag to disable score saving if autoHit has
 
 let bestScoreLogged = {};
 
-// Generate random notes for 4 minutes
 var notes = [];
 
 // Function to switch image source
@@ -358,6 +359,9 @@ function preloadSongs() {
         "Resources/Songs/ARCANGEL.mp3",
         "Resources/Songs/TELEKINESIS.mp3",
         "Resources/Songs/Bleed it out.mp3",
+        "Resources/Songs/Grenade.mp3",
+        "Resources/Songs/24K Magic.mp3",
+        "Resources/Songs/Finesse.mp3",
         "Resources/Songs/testingsong.mp3",
     ];
 
@@ -501,6 +505,9 @@ const songConfigs = {
     "Resources/Songs/ARCANGEL.mp3": { BPM: 124, noteSpeed: 14 },
     "Resources/Songs/TELEKINESIS.mp3": { BPM: 166, noteSpeed: 12 },
     "Resources/Songs/Bleed it out.mp3": { BPM: 140, noteSpeed: 0 },
+    "Resources/Songs/Grenade.mp3": { BPM: 110, noteSpeed: 12 },
+    "Resources/Songs/24K Magic.mp3": { BPM: 107, noteSpeed: 15 },
+    "Resources/Songs/Finesse.mp3": { BPM: 105, noteSpeed: 22 },
 };
 
 function getDynamicSpeed(songSrc) {
@@ -548,6 +555,7 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 157.4, noteSpeed: 18, notes: [] },
             { timestamp: 163.25, noteSpeed: 18, endScreenDrawn: true },
         ],
+        Finesse: [{ timestamp: 4.85, noteSpeed: 14 }],
     };
 
     let songTitle = getSongTitle(songSrc);
@@ -628,6 +636,9 @@ function preloadImages() {
         "Resources/Covers/ARCANGEL.jpg",
         "Resources/Covers/TELEKINESIS.jpg",
         "Resources/Covers/Bleed it out.jpg",
+        "Resources/Covers/Grenade.jpg",
+        "Resources/Covers/24K Magic.jpg",
+        "Resources/Covers/Finesse.jpg",
     ];
 
     for (const coverPath of albumCovers) {
@@ -921,6 +932,9 @@ function getArtist(songSrc) {
         ARCANGEL: "Bizarrap",
         TELEKINESIS: "Travis Scott",
         "Bleed it out": "Linkin Park",
+        Grenade: "Bruno Mars",
+        "24K Magic": "Bruno Mars",
+        Finesse: "Bruno Mars",
     };
     let songTitle = getSongTitle(songSrc);
     return artists[songTitle] || "N/A";
@@ -1141,6 +1155,9 @@ function startGame(index) {
     // Reset the logging flag for best scores
     bestScoreLogged = {};
 
+    // Reset song-related variables
+    resetSongVariables();
+
     if (currentSong) {
         currentSong.pause();
         currentSong.currentTime = 0; // Reset the song to the beginning
@@ -1184,7 +1201,7 @@ function startGame(index) {
         if (songConfig) {
             console.log(`Dynamic speed configuration found for "${songTitle}"`);
             dynamicSpeedInfo = songConfig.map(config => `Timestamp: ${config.timestamp}, Speed: ${config.noteSpeed}`).join(" | ");
-            let currentConfigIndex = 0; // Reset currentConfigIndex
+            currentConfigIndex = 0; // Reset currentConfigIndex
             nextSpeedChange = ""; // Reset nextSpeedChange
 
             speedUpdater = setInterval(() => {
@@ -1257,7 +1274,7 @@ function startGame(index) {
 
         document.getElementById("startButton").style.display = "none";
 
-        document.title = `Song ${currentSongIndex + 1}: ${songTitle} | Beatz Testing 3.5!`;
+        document.title = `Song ${currentSongIndex + 1}: ${songTitle} | Beatz 3.5!`;
 
         if (!backgroundIsDefault) {
             canvas.style.backgroundImage = "none";
@@ -1451,7 +1468,7 @@ let newestNoteTime = 0;
 
 function updateDebugInfo(deltaTime, timestamp) {
     if (debugInfoVisible) {
-        const lineHeight = 20; // Adjust this based on your font size and line spacing
+        const lineHeight = 18; // Adjust this based on your font size and line spacing
         const startY = HEIGHT / 2 - 180; // Starting y-coordinate for the first text
         const left = parseFloat(noteYPositions.left);
         const up = parseFloat(noteYPositions.up);
@@ -1485,6 +1502,7 @@ function updateDebugInfo(deltaTime, timestamp) {
         ctx.fillText(`Auto hit disabled saving? ${autoHitDisableSaving}`, 10, startY + 17 * lineHeight);
         ctx.fillText(`Dynamic speeds for ${getSongTitle(currentSongPath)}: ${dynamicSpeedInfo}`, 10, startY + 18 * lineHeight);
         ctx.fillText(nextSpeedChange, 10, startY + 19 * lineHeight);
+        ctx.fillText(`Dynamic Speed index: ${currentConfigIndex}`, 10, startY + 20 * lineHeight);
     }
 }
 
@@ -1992,7 +2010,7 @@ function email() {
 
 function toVersion() {
     // Switch version
-    window.location.href = "index.html";
+    window.location.href = "BeatzGameTesting.html";
 }
 
 function toggleFullScreen() {
