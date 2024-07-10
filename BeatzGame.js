@@ -2,13 +2,13 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 10COM 3.5.0.1 test (release.version.subversion.bugfix)
+ * Version: 10COM 3.5.1.2 test (release.version.subversion.bugfix)
  **/
 
 // CONSTANTS
 
-const VERSION = "10COM 3.5.0.1 (Codename.Release.Version.Subversion.Bugfix)";
-const PUBLICVERSION = "3.3! (GitHub Port)";
+const VERSION = "10COM 3.5.1.2 (Codename.Release.Version.Subversion.Bugfix)";
+const PUBLICVERSION = "3.5! (GitHub Port)";
 console.log("Version: " + VERSION);
 
 const canvas = document.getElementById("myCanvas");
@@ -421,6 +421,7 @@ function preloadSongs() {
         const songListContainer = document.getElementById("songList");
         const songButton = document.createElement("button");
         songButton.className = "song-button";
+        const currentIndex = songList.indexOf(songPath) + 1; // Assuming songList is a zero-based array
         songButton.textContent = `Song ${currentIndex}: ${songTitle}, by ${getArtist(songTitle)}`;
         songButton.dataset.path = songPath; // Store song path as a data attribute
         songListContainer.appendChild(songButton);
@@ -505,7 +506,7 @@ const songConfigs = {
     "Resources/Songs/ARCANGEL.mp3": { BPM: 124, noteSpeed: 14 },
     "Resources/Songs/TELEKINESIS.mp3": { BPM: 166, noteSpeed: 12 },
     "Resources/Songs/Bleed it out.mp3": { BPM: 140, noteSpeed: 0 },
-    "Resources/Songs/Grenade.mp3": { BPM: 110, noteSpeed: 12 },
+    "Resources/Songs/Grenade.mp3": { BPM: 110, noteSpeed: 0 },
     "Resources/Songs/24K Magic.mp3": { BPM: 107, noteSpeed: 15 },
     "Resources/Songs/Finesse.mp3": { BPM: 105, noteSpeed: 22 },
 };
@@ -554,6 +555,12 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 143.7, noteSpeed: 18 },
             { timestamp: 157.4, noteSpeed: 18, notes: [] },
             { timestamp: 163.25, noteSpeed: 18, endScreenDrawn: true },
+        ],
+        Grenade: [
+            {
+                timestamp: 3.95,
+                noteSpeed: 12,
+            },
         ],
         Finesse: [{ timestamp: 4.85, noteSpeed: 14 }],
     };
@@ -658,11 +665,68 @@ function preloadImages() {
 const selectedSongModal = document.getElementById("selectedSongModal");
 const songListModal = document.getElementById("songListModal");
 
+function saveRecentSong(songPath, songTitle, songIndex, songArtist) {
+    localStorage.setItem("recentSongPath", songPath);
+    localStorage.setItem("recentSongTitle", songTitle);
+    localStorage.setItem("recentSongIndex", songIndex);
+    localStorage.setItem("recentSongArtist", songArtist);
+}
+
+// Load the most recent song from localStorage
+function loadRecentSong() {
+    const recentSongPath = localStorage.getItem("recentSongPath");
+    const recentSongTitle = localStorage.getItem("recentSongTitle");
+    const recentSongIndex = localStorage.getItem("recentSongIndex");
+    const recentSongArtist = localStorage.getItem("recentSongArtist");
+    if (recentSongPath && recentSongTitle && recentSongIndex && recentSongArtist) {
+        return {
+            path: recentSongPath,
+            title: recentSongTitle,
+            index: recentSongIndex,
+            artist: recentSongArtist,
+        };
+    }
+    return null;
+}
+
+// Update the "Play most recent song" button text
+function updateRecentSongButton() {
+    const recentSong = loadRecentSong();
+    const mostRecentButton = document.getElementById("mostRecent");
+    if (recentSong) {
+        mostRecentButton.textContent = `Play most recent song: #${recentSong.index}: ${recentSong.title}, by ${recentSong.artist}`;
+        mostRecentButton.style.display = "inline-block";
+    } else {
+        mostRecentButton.style.display = "none";
+    }
+}
+
+// Play the most recent song
+function playRecentSong() {
+    const recentSong = loadRecentSong();
+    if (recentSong) {
+        const index = songList.findIndex(s => s === recentSong.path);
+        startGame(index);
+        songListModal.style.display = "none";
+        activateKeybinds();
+    } else {
+        alert("No recent song found.");
+    }
+}
+
+// Event listener for "Play most recent song" button
+document.getElementById("mostRecent").addEventListener("click", playRecentSong);
+
+// Update the recent song button on page load
+window.addEventListener("load", updateRecentSongButton);
+
 function openSelectedSongModal(songPath, songTitle) {
     const song = songList.find(s => s === songPath);
     if (song) {
+        const songIndex = songList.indexOf(songPath) + 1; // Assuming songList is a zero-based array
+        const songArtist = getArtist(songTitle);
         document.getElementById("songTitle").textContent = songTitle;
-        document.getElementById("songArtist").textContent = getArtist(songTitle);
+        document.getElementById("songArtist").textContent = songArtist;
         document.getElementById("songBPM").textContent = songConfigs[songPath]?.BPM || "BPM not available";
 
         // Display cover image
@@ -670,7 +734,7 @@ function openSelectedSongModal(songPath, songTitle) {
         if (loadedImages.hasOwnProperty(songTitle)) {
             coverImageElement.src = loadedImages[songTitle].src;
         } else {
-            coverImageElement.src = "Resources/Covers/noCover.png"; // Default cover image path or placeholder
+            coverImageElement.src = "Resources/Covers/noCover.png"; // Placeholder cover image path
         }
 
         // Check if dynamic speeds are defined for the song
@@ -697,6 +761,8 @@ function openSelectedSongModal(songPath, songTitle) {
             startGame(index);
             document.getElementById("selectedSongModal").style.display = "none"; // Close modal after starting the game
             activateKeybinds();
+            saveRecentSong(songPath, songTitle, songIndex, songArtist); // Save the recent song
+            updateRecentSongButton(); // Update the button text
         });
     }
 }
@@ -1210,7 +1276,7 @@ function startGame(index) {
                     const nextConfig = songConfig[currentConfigIndex];
                     if (currentTime >= nextConfig.timestamp) {
                         noteSpeed = nextConfig.noteSpeed;
-                        console.log(`Updated note speed to: ${noteSpeed} at timestamp: ${nextConfig.timestamp}`);
+                        console.log(`Updated note speed to: ${noteSpeed} at timestamp: ${nextConfig.timestamp}`); // This logs, and speed still changes
                         if (nextConfig.notes) {
                             notes = nextConfig.notes;
                             console.log(`Updated notes at timestamp: ${nextConfig.timestamp}`);
@@ -1233,9 +1299,9 @@ function startGame(index) {
                 }
             }, 1);
         } else {
-            console.log(`No dynamic speed configuration for "${songTitle}"`);
-            dynamicSpeedInfo = "No dynamic speed configuration found.";
-            nextSpeedChange = "No speed changes.";
+            console.log(`No dynamic speed configuration for "${songTitle}"`); // This logs
+            dynamicSpeedInfo = "No dynamic speed configuration found."; // This does appear as not found
+            nextSpeedChange = "No speed changes."; // This does not reset
         }
 
         currentSong.play(); // Start playing the song immediately

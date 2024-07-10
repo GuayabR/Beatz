@@ -126,8 +126,32 @@ canvas:-ms-fullscreen {
 }
 
 #songListModal .modal-body {
-    max-height: 675px;
+    max-height: 600px;
     overflow-y: scroll;
+}
+
+.most-recent-button {
+    display: block;
+    width: 60%;
+    padding: 15px 15px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    cursor: pointer;
+    text-align: left;
+    font-size: 16px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(114, 114, 114, 0.719);
+    transition:
+        box-shadow 0.3s ease,
+        padding 0.3s ease;
+}
+
+.most-recent-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(221, 221, 221, 0.623);
+    transition: box-shadow 0.3s ease;
 }
 
 .song-button {

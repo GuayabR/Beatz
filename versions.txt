@@ -376,5 +376,9 @@ Added a new song list interface!
 - Game now only needs 5 songs loaded to initialize.
 
 3.5.0.1 (10COM 3.5! 10/07/2024)
-- Fixed dynamic speed index not resetting after a new song is selected.
 - Fixed version switching always deploying you to "index.html", the main game.
+
+3.5.1.2 (10COM 3.5! 10/07/2024)
+- Added a most recent song button to the song list layer. Plays the most recent song you've selected from the song list.
+- Added 3 new songs: Grenade, 24K Magic, and Finesse, all by Bruno Mars.
+- Fixed dynamic speed index not resetting after a new song is selected.

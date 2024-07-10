@@ -169,7 +169,7 @@
             <button id="contactbtn" onclick="email()"><i class="fa-solid fa-envelope"></i> Contact</button>
         </div>
 
-        <div id="publicToTestToggle"><button id="publicbtn" onclick="toVersion()">Open public game</button><br /><br /></div>
+        <div id="publicToTestToggle"><button id="publicbtn" onclick="toVersion()">Open testing game</button><br /><br /></div>
 
         <h2>
             Background image from:
@@ -191,7 +191,8 @@
                     <h1 class="modal-title">Song List</h1>
                 </div>
                 <label for="songSearchInput">Search songs by keyword, index or artist.</label><br /><br />
-                <input type="text" id="songSearchInput" placeholder="Search..." />
+                <input type="text" id="songSearchInput" placeholder="Search..." /><br /><br />
+                <button type="button" id="mostRecent" class="most-recent-button" style="display: none">Play most recent song</button>
                 <div class="modal-body" id="songList">
                     <!-- Song buttons will be dynamically inserted here -->
                 </div>
