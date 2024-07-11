@@ -390,3 +390,4 @@ Added a new song list interface!
 - Fixed dynamic speeds not updating beyond speed index 1.
 - Fixed game still being able to pause and unpause after end screen has been drawn, this caused the song to start over while on the endscreen.
 - Replaced the setting presets icon from "Font Awesome - Uikit" to "Font Awesome - Screwdriver/Wrench"
+- WHY DO I KEEP NAMING THE FILE BEATZGAMEJS DAWG
