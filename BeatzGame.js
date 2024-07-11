@@ -2,12 +2,12 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 10COM 3.5.1.2 test (release.version.subversion.bugfix)
+ * Version: 10COM 3.5.1.3 test (release.version.subversion.bugfix)
  **/
 
 // CONSTANTS
 
-const VERSION = "10COM 3.5.1.2 (Codename.Release.Version.Subversion.Bugfix)";
+const VERSION = "10COM 3.5.1.3 (Codename.Release.Version.Subversion.Bugfix)";
 const PUBLICVERSION = "3.5! (GitHub Port)";
 console.log("Version: " + VERSION);
 
@@ -557,10 +557,9 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 163.25, noteSpeed: 18, endScreenDrawn: true },
         ],
         Grenade: [
-            {
-                timestamp: 3.95,
-                noteSpeed: 12,
-            },
+            { timestamp: 3.95, noteSpeed: 12 },
+            { timestamp: 198.8, noteSpeed: 12, notes: [] },
+            { timestamp: 216.6, noteSpeed: 12, endScreenDrawn: true },
         ],
         Finesse: [{ timestamp: 4.85, noteSpeed: 14 }],
     };
@@ -1194,20 +1193,22 @@ window.onload = function () {
 };
 
 function togglePause() {
-    gamePaused = !gamePaused;
-    if (gamePaused) {
-        songPausedTime = Date.now();
-        currentSong.pause();
-        canvasUpdating = false;
-        console.log("Game Paused");
-    } else {
-        let pauseDuration = Date.now() - songPausedTime;
-        songStartTime += pauseDuration;
-        currentSong.play();
-        lastTime += pauseDuration; // Adjust lastTime to prevent jump in timeDelta
-        canvasUpdating = true;
-        requestAnimationFrame(updateCanvas);
-        console.log("Game Unpaused");
+    if (!endScreenDrawn) {
+        gamePaused = !gamePaused;
+        if (gamePaused) {
+            songPausedTime = Date.now();
+            currentSong.pause();
+            canvasUpdating = false;
+            console.log("Game Paused");
+        } else {
+            let pauseDuration = Date.now() - songPausedTime;
+            songStartTime += pauseDuration;
+            currentSong.play();
+            lastTime += pauseDuration; // Adjust lastTime to prevent jump in timeDelta
+            canvasUpdating = true;
+            requestAnimationFrame(updateCanvas);
+            console.log("Game Unpaused");
+        }
     }
 }
 
@@ -1276,7 +1277,7 @@ function startGame(index) {
                     const nextConfig = songConfig[currentConfigIndex];
                     if (currentTime >= nextConfig.timestamp) {
                         noteSpeed = nextConfig.noteSpeed;
-                        console.log(`Updated note speed to: ${noteSpeed} at timestamp: ${nextConfig.timestamp}`); // This logs, and speed still changes
+                        console.log(`Updated note speed to: ${noteSpeed} at timestamp: ${nextConfig.timestamp}`);
                         if (nextConfig.notes) {
                             notes = nextConfig.notes;
                             console.log(`Updated notes at timestamp: ${nextConfig.timestamp}`);
@@ -1297,11 +1298,11 @@ function startGame(index) {
                 } else {
                     clearInterval(speedUpdater);
                 }
-            }, 1);
+            }, 1); // Check for a speed update every millisecond, for accuracy
         } else {
-            console.log(`No dynamic speed configuration for "${songTitle}"`); // This logs
-            dynamicSpeedInfo = "No dynamic speed configuration found."; // This does appear as not found
-            nextSpeedChange = "No speed changes."; // This does not reset
+            console.log(`No dynamic speed configuration for "${songTitle}"`);
+            dynamicSpeedInfo = "No dynamic speed configuration found.";
+            nextSpeedChange = "No speed changes.";
         }
 
         currentSong.play(); // Start playing the song immediately

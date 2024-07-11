@@ -374,11 +374,19 @@ Added a new song list interface!
 - Fixed canvas background displaying transparently before game is initialized, background is now always the default banner, and changes once you start the game.
 - Added keys being logged to the console as an option.
 - Game now only needs 5 songs loaded to initialize.
+//
 
 3.5.0.1 (10COM 3.5! 10/07/2024)
 - Fixed version switching always deploying you to "index.html", the main game.
+//
 
 3.5.1.2 (10COM 3.5! 10/07/2024)
 - Added a most recent song button to the song list layer. Plays the most recent song you've selected from the song list.
 - Added 3 new songs: Grenade, 24K Magic, and Finesse, all by Bruno Mars.
 - Fixed dynamic speed index not resetting after a new song is selected.
+//
+
+3.5.1.3 (10COM 3.5! 11/07/2024)
+- Fixed dynamic speeds not updating beyond speed index 1.
+- Fixed game still being able to pause and unpause after end screen has been drawn, this caused the song to start over while on the endscreen.
+- Replaced the setting presets icon from "Font Awesome - Uikit" to "Font Awesome - Screwdriver/Wrench"

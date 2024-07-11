@@ -83,7 +83,9 @@ canvas {
     background-position: center;
     border-radius: 10px;
     backdrop-filter: blur(0px);
-    transition: backdrop-filter ease 0.75s;
+    transition:
+        backdrop-filter ease 0.75s,
+        transform 0.1s;
 }
 
 canvas:-moz-full-screen,
