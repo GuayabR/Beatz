@@ -390,4 +390,18 @@ Added a new song list interface!
 - Fixed dynamic speeds not updating beyond speed index 1.
 - Fixed game still being able to pause and unpause after end screen has been drawn, this caused the song to start over while on the endscreen.
 - Replaced the setting presets icon from "Font Awesome - Uikit" to "Font Awesome - Screwdriver/Wrench"
-- WHY DO I KEEP NAMING THE FILE BEATZGAMEJS DAWG
+//
+
+3.5.2.3 (10COM 3.5! 11/07/2024)
+- Updated all album covers to their proper high quality versions (640x640 pixels)
+- Updated Creo's "Crazy" album cover to its respective album cover "Octane"
+//
+
+3.6.0 (ALBUM 3.5! 12/07/2024)
+Reworked album cover logic!
+- All album covers are not loaded from a name of a song, now they load as one single image with the name of the album, reducing RAM usage.
+- Added albums to the song list, songs now either display "Single" or their album name, and songs are searcheable by their album too.
+- Added Despacito, cuz why not.
+- Added different versions for songs; Finesse (feat. Cardi B) is version 2 of Finesse, version 2 will not display in the song list, and is only accessible from Finesse's screen in a dropdown.
+- Multiple versions can be added to a song, they will all not be visible in the song list.
+- Eminem's The Death of Slim Shady (Coup de Grâce) album will be added next week since BPM is still not available to search so i can't syncronise it xd

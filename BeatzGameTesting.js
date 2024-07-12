@@ -2,13 +2,13 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 10COM 3.5.1.3 test (release.version.subversion.bugfix)
+ * Version: 10COM 3.6.0 test (release.version.subversion.bugfix)
  **/
 
 // CONSTANTS
 
-const VERSION = "10COM 3.5.1.3 (Codename.Release.Version.Subversion.Bugfix)";
-const PUBLICVERSION = "3.5! (GitHub Port)";
+const VERSION = "ALBUM 3.6.0 (Codename.Release.Version.Subversion.Bugfix)";
+const PUBLICVERSION = "3.6! (GitHub Port)";
 console.log("Version: " + VERSION);
 
 const canvas = document.getElementById("myCanvas");
@@ -326,6 +326,7 @@ function preloadSongs() {
         "Resources/Songs/SWIM.mp3",
         "Resources/Songs/FE!N.mp3",
         "Resources/Songs/Crazy.mp3",
+        "Resources/Songs/Despacito.mp3",
         "Resources/Songs/You Need Jesus.mp3",
         "Resources/Songs/Nautilus.mp3",
         "Resources/Songs/Levitating.mp3",
@@ -335,7 +336,7 @@ function preloadSongs() {
         "Resources/Songs/From The Inside.mp3",
         "Resources/Songs/I Wonder.mp3",
         "Resources/Songs/Godzilla.mp3",
-        "Resources/Songs/Houdini.mp3",
+        "Resources/Songs/HIGHEST IN THE ROOM.mp3",
         "Resources/Songs/Runaway.mp3",
         "Resources/Songs/Rush E.mp3",
         "Resources/Songs/Vamp Anthem.mp3",
@@ -352,7 +353,6 @@ function preloadSongs() {
         "Resources/Songs/LOOK DON'T TOUCH.mp3",
         "Resources/Songs/YOU'RE TOO SLOW.mp3",
         "Resources/Songs/BAND4BAND.mp3",
-        "Resources/Songs/HIGHEST IN THE ROOM.mp3",
         "Resources/Songs/Slide da Treme Melódica v2.mp3",
         "Resources/Songs/fantasmas.mp3",
         "Resources/Songs/BIKE.mp3",
@@ -362,6 +362,26 @@ function preloadSongs() {
         "Resources/Songs/Grenade.mp3",
         "Resources/Songs/24K Magic.mp3",
         "Resources/Songs/Finesse.mp3",
+        "Resources/Songs/Not Like Us.mp3",
+        "Resources/Songs/Type Shit.mp3",
+        "Resources/Songs/That's What I Like.mp3",
+        "Resources/Songs/Finesse (feat. Cardi B).mp3",
+        "Resources/Songs/Renaissance.mp3",
+        "Resources/Songs/Habits.mp3",
+        "Resources/Songs/Trouble.mp3",
+        "Resources/Songs/Brand New Dance.mp3",
+        "Resources/Songs/Evil.mp3",
+        "Resources/Songs/Lucifer.mp3",
+        "Resources/Songs/Antichrist.mp3",
+        "Resources/Songs/Fuel.mp3",
+        "Resources/Songs/Road Rage.mp3",
+        "Resources/Songs/Houdini.mp3",
+        "Resources/Songs/Guilty Conscience 2.mp3",
+        "Resources/Songs/Head Honcho.mp3",
+        "Resources/Songs/Temporary.mp3",
+        "Resources/Songs/Bad One.mp3",
+        "Resources/Songs/Tobey.mp3",
+        "Resources/Songs/Somebody Save Me.mp3",
         "Resources/Songs/testingsong.mp3",
     ];
 
@@ -373,6 +393,8 @@ function preloadSongs() {
     counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
     const headerElement = document.querySelector("h1");
     headerElement.appendChild(counterText);
+
+    let versionPaths = []; // Array to hold paths of subsequent versions
 
     function loadNextSong() {
         if (currentIndex < totalSongs) {
@@ -419,10 +441,46 @@ function preloadSongs() {
 
     function addSongToList(songPath, songTitle) {
         const songListContainer = document.getElementById("songList");
+
+        // Check if the song title exists in songVersions and has versions
+        if (songVersions.hasOwnProperty(songTitle) && Array.isArray(songVersions[songTitle]) && songVersions[songTitle].length > 0) {
+            const firstVersionPath = songVersions[songTitle][0].path;
+
+            // Populate the versionPaths array with subsequent versions' paths
+            for (let i = 1; i < songVersions[songTitle].length; i++) {
+                versionPaths.push(songVersions[songTitle][i].path);
+            }
+
+            console.log(`First Version Path: ${firstVersionPath}`);
+            console.log(`Current Song Path: ${songPath}`);
+            if (songPath !== firstVersionPath) {
+                console.log(`Skipping version: ${songTitle} - ${songPath}`);
+                return; // Ignore adding subsequent versions
+            }
+        } else if (versionPaths.includes(songPath)) {
+            console.log(`Skipping version (from array): ${songTitle} - ${songPath}`);
+            return; // Ignore adding subsequent versions from the versionPaths array
+        }
+
         const songButton = document.createElement("button");
         songButton.className = "song-button";
-        const currentIndex = songList.indexOf(songPath) + 1; // Assuming songList is a zero-based array
-        songButton.textContent = `Song ${currentIndex}: ${songTitle}, by ${getArtist(songTitle)}`;
+        const currentIndex = songListContainer.childElementCount + 1; // Get current count of child elements
+
+        // Get album information if available
+        let album = songToAlbumMap[songTitle] || "Unknown Album";
+
+        // If the album matches the song title, display "Single" instead of the album name
+        if (album.toLowerCase() === songTitle.toLowerCase()) {
+            album = "Single";
+        }
+
+        // Check if the song title ends with a dot
+        if (songTitle.endsWith(".")) {
+            songButton.textContent = `${album} | Song ${currentIndex}: ${songTitle} by ${getArtist(songTitle)}.`;
+        } else {
+            songButton.textContent = `${album} | Song ${currentIndex}: ${songTitle}, by ${getArtist(songTitle)}.`;
+        }
+
         songButton.dataset.path = songPath; // Store song path as a data attribute
         songListContainer.appendChild(songButton);
 
@@ -432,11 +490,21 @@ function preloadSongs() {
 
         // Store song path and title for filtering
         listOfSongs.push({ path: songPath, title: songTitle });
+
+        console.log(`Song added to list: ${songTitle} - ${songPath}`);
     }
 
     // Start loading the first song
     loadNextSong();
 }
+
+const songVersions = {
+    Finesse: [
+        { path: "Resources/Songs/Finesse.mp3", title: "Finesse" },
+        { path: "Resources/Songs/Finesse (feat. Cardi B).mp3", title: "Finesse (feat. Cardi B)" },
+    ],
+    // Add other songs and their versions here
+};
 
 // Song configurations
 const songConfigs = {
@@ -472,6 +540,7 @@ const songConfigs = {
     "Resources/Songs/SWIM.mp3": { BPM: 120, noteSpeed: 10 },
     "Resources/Songs/You Need Jesus.mp3": { BPM: 110, noteSpeed: 11 },
     "Resources/Songs/Crazy.mp3": { BPM: 120, noteSpeed: 10 },
+    "Resources/Songs/Despacito.mp3": { BPM: 89, noteSpeed: 10 },
     "Resources/Songs/FE!N.mp3": { BPM: 148, noteSpeed: 12 },
     "Resources/Songs/Nautilus.mp3": { BPM: 124, noteSpeed: 9 },
     "Resources/Songs/Levitating.mp3": { BPM: 103, noteSpeed: 10 },
@@ -481,7 +550,7 @@ const songConfigs = {
     "Resources/Songs/Breaking The Habit.mp3": { BPM: 100, noteSpeed: 10 },
     "Resources/Songs/I Wonder.mp3": { BPM: 127, noteSpeed: 8 },
     "Resources/Songs/Godzilla.mp3": { BPM: 166, noteSpeed: 13 },
-    "Resources/Songs/Houdini.mp3": { BPM: 141, noteSpeed: 12 },
+    "Resources/Songs/HIGHEST IN THE ROOM.mp3": { BPM: 156, noteSpeed: 0 },
     "Resources/Songs/Runaway.mp3": { BPM: 85, noteSpeed: 10 },
     "Resources/Songs/Rush E.mp3": { BPM: 500, noteSpeed: 20 },
     "Resources/Songs/Vamp Anthem.mp3": { BPM: 164, noteSpeed: 12 },
@@ -499,7 +568,6 @@ const songConfigs = {
     "Resources/Songs/MOVE YO BODY.mp3": { BPM: 133, noteSpeed: 12 },
     "Resources/Songs/YOU'RE TOO SLOW.mp3": { BPM: 162, noteSpeed: 14.5 },
     "Resources/Songs/BAND4BAND.mp3": { BPM: 140, noteSpeed: 14 },
-    "Resources/Songs/HIGHEST IN THE ROOM.mp3": { BPM: 156, noteSpeed: 0 },
     "Resources/Songs/Slide da Treme Melódica v2.mp3": { BPM: 235, noteSpeed: 18 },
     "Resources/Songs/fantasmas.mp3": { BPM: 164, noteSpeed: 10 },
     "Resources/Songs/BIKE.mp3": { BPM: 105, noteSpeed: 14 },
@@ -509,6 +577,11 @@ const songConfigs = {
     "Resources/Songs/Grenade.mp3": { BPM: 110, noteSpeed: 0 },
     "Resources/Songs/24K Magic.mp3": { BPM: 107, noteSpeed: 15 },
     "Resources/Songs/Finesse.mp3": { BPM: 105, noteSpeed: 22 },
+    "Resources/Songs/Not Like Us.mp3": { BPM: 101, noteSpeed: 0 },
+    "Resources/Songs/Type Shit.mp3": { BPM: 145, noteSpeed: 14 },
+    "Resources/Songs/That's What I Like.mp3": { BPM: 134, noteSpeed: 14 },
+    "Resources/Songs/Finesse (feat. Cardi B).mp3": { BPM: 105, noteSpeed: 22 },
+    "Resources/Songs/Houdini.mp3": { BPM: 141, noteSpeed: 12 },
 };
 
 function getDynamicSpeed(songSrc) {
@@ -562,6 +635,11 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 216.6, noteSpeed: 12, endScreenDrawn: true },
         ],
         Finesse: [{ timestamp: 4.85, noteSpeed: 14 }],
+        "Finesse (feat. Cardi B)": [
+            { timestamp: 4.85, noteSpeed: 14 },
+            { timestamp: 214.5, noteSpeed: 14, endScreenDrawn: true },
+        ],
+        "Not Like Us": [{ timestamp: 1.73, noteSpeed: 14 }],
     };
 
     let songTitle = getSongTitle(songSrc);
@@ -574,57 +652,142 @@ function getDynamicSpeed(songSrc) {
 
 console.log("Song Configurations loaded.");
 
+const songToAlbumMap = {
+    Epilogue: "Epilogue",
+    Exosphere: "Exosphere",
+    "Die For You": "Die For You",
+    "Father Stretch My Hands": "The Life Of Pablo",
+    "Betty (Get Money)": "Betty (Get Money)",
+    "BURN IT DOWN": "LIVING THINGS",
+    "Aleph 0": "Aleph 0",
+    "Better Days": "Better Days",
+    KOCMOC: "KOCMOC",
+    "kompa pasion": "kompa pasion",
+    "Legends Never Die": "Legends Never Die",
+    "Star Walkin": "Star Walkin",
+    "What I've Done": "Minutes To Midnight",
+    "Biggest NCS Songs": "Biggest NCS Songs",
+    Goosebumps: "Birds in the Trap Sing McKnight",
+    "Master Of Puppets (Live)": "Master Of Puppets (Live)",
+    Numb: "Meteora",
+    "sdp interlude": "Birds in the Trap Sing McKnight",
+    "Shiawase (VIP)": "Shiawase (VIP)",
+    VVV: "VVV",
+    "Sleepwalker X Icewhxre": "Sleepwalker X Icewhxre",
+    "WTF 2": "WTF 2",
+    VISIONS: "VISIONS",
+    "Stressed Out": "Blurryface",
+    "Ticking Away": "Ticking Away",
+    "MY EYES": "UTOPIA",
+    "Can't Slow Me Down": "Can't Slow Me Down",
+    LUNCH: "Hit Me Hard and Soft",
+    "Butterfly Effect": "ASTROWORLD",
+    SWIM: "Chase Atlantic",
+    "You Need Jesus": "You Need Jesus",
+    Crazy: "Octane",
+    Despacito: "Despacito",
+    "FE!N": "UTOPIA",
+    Nautilus: "Nautilus",
+    Levitating: "Future Nostalgia",
+    "Somewhere I Belong": "Meteora",
+    "From The Inside": "Meteora",
+    Faint: "Meteora",
+    "Breaking The Habit": "Meteora",
+    "I Wonder": "Graduation",
+    Godzilla: "Music to Be Murdered By",
+    "HIGHEST IN THE ROOM": "HIGHEST IN THE ROOM",
+    Runaway: "My Beautiful Dark Twisted Fantasy",
+    "Rush E": "Rush E",
+    "Vamp Anthem": "Whole Lotta Red",
+    CARNIVAL: "VULTURES",
+    "HUMBLE.": "DAMN.",
+    "Stop Breathing": "Whole Lotta Red",
+    "CHEGOU 3": "CHEGOU 3",
+    "KRUSH ALERT": "KRUSH ALERT",
+    BAIXO: "BAIXO",
+    "MOVE YO BODY": "MOVE YO BODY",
+    "SLAY!": "SLAY!",
+    "ROCK THAT SHIT!": "ROCK THAT SHIT!",
+    "CUTE DEPRESSED": "CUTE DEPRESSED",
+    "LOOK DON'T TOUCH": "LOOK DON'T TOUCH",
+    "YOU'RE TOO SLOW": "YOU'RE TOO SLOW",
+    BAND4BAND: "BAND4BAND",
+    "Slide da Treme Melódica v2": "Slide da Treme Melódica v2",
+    fantasmas: "fantasmas",
+    BIKE: "BIKE",
+    ARCANGEL: "ARCANGEL",
+    TELEKINESIS: "UTOPIA",
+    "Bleed it out": "Minutes To Midnight E",
+    Grenade: "Doo-Wops & Hooligans",
+    "24K Magic": "24K Magic",
+    Finesse: "24K Magic",
+    "Not Like Us": "Not Like Us",
+    "Type Shit": "We Don't Trust You",
+    "That's What I Like": "24K Magic",
+    "Finesse (feat. Cardi B)": "24K Magic",
+    Renaissance: "The Death of Slim Shady (Coup de Grâce)",
+    Habits: "The Death of Slim Shady (Coup de Grâce)",
+    Trouble: "The Death of Slim Shady (Coup de Grâce)",
+    "Brand New Dance": "The Death of Slim Shady (Coup de Grâce)",
+    Evil: "The Death of Slim Shady (Coup de Grâce)",
+    Lucifer: "The Death of Slim Shady (Coup de Grâce)",
+    Antichrist: "The Death of Slim Shady (Coup de Grâce)",
+    Fuel: "The Death of Slim Shady (Coup de Grâce)",
+    "Road Rage": "The Death of Slim Shady (Coup de Grâce)",
+    Houdini: "The Death of Slim Shady (Coup de Grâce)",
+    "Guilty Conscience 2": "The Death of Slim Shady (Coup de Grâce)",
+    "Head Honcho": "The Death of Slim Shady (Coup de Grâce)",
+    Temporary: "The Death of Slim Shady (Coup de Grâce)",
+    "Bad One": "The Death of Slim Shady (Coup de Grâce)",
+    Tobey: "The Death of Slim Shady (Coup de Grâce)",
+    "Somebody Save Me": "The Death of Slim Shady (Coup de Grâce)",
+};
+
 // Function to preload images
 function preloadImages() {
     const albumCovers = [
         "Resources/Covers/Epilogue.jpg",
         "Resources/Covers/Exosphere.jpg",
         "Resources/Covers/Die For You.jpg",
-        "Resources/Covers/Father Stretch My Hands.jpg",
+        "Resources/Covers/The Life Of Pablo.jpg",
         "Resources/Covers/Betty (Get Money).jpg",
-        "Resources/Covers/BURN IT DOWN.jpg",
+        "Resources/Covers/LIVING THINGS.jpg",
         "Resources/Covers/Aleph 0.jpg",
         "Resources/Covers/Better Days.jpg",
         "Resources/Covers/KOCMOC.jpg",
         "Resources/Covers/kompa pasion.jpg",
         "Resources/Covers/Legends Never Die.jpg",
         "Resources/Covers/Star Walkin.jpg",
-        "Resources/Covers/What I've Done.jpg",
+        "Resources/Covers/Minutes To Midnight.jpg",
+        "Resources/Covers/Minutes To Midnight E.jpg",
         "Resources/Covers/Biggest NCS Songs.jpg",
-        "Resources/Covers/Goosebumps.jpg",
+        "Resources/Covers/Birds in the Trap Sing McKnight.jpg",
         "Resources/Covers/Master Of Puppets (Live).jpg",
-        "Resources/Covers/Numb.jpg",
-        "Resources/Covers/sdp interlude.jpg",
+        "Resources/Covers/Meteora.jpg",
         "Resources/Covers/Shiawase (VIP).jpg",
         "Resources/Covers/Sleepwalker X Icewhxre.jpg",
-        "Resources/Covers/Stressed Out.jpg",
+        "Resources/Covers/Blurryface.jpg",
         "Resources/Covers/Ticking Away.jpg",
         "Resources/Covers/VISIONS.jpg",
         "Resources/Covers/VVV.jpg",
         "Resources/Covers/WTF 2.jpg",
-        "Resources/Covers/MY EYES.jpg",
+        "Resources/Covers/UTOPIA.jpg",
         "Resources/Covers/Can't Slow Me Down.jpg",
-        "Resources/Covers/LUNCH.jpg",
-        "Resources/Covers/Butterfly Effect.jpg",
-        "Resources/Covers/SWIM.jpg",
+        "Resources/Covers/Hit Me Hard and Soft.jpg",
+        "Resources/Covers/ASTROWORLD.jpg",
+        "Resources/Covers/Chase Atlantic.jpg",
         "Resources/Covers/You Need Jesus.jpg",
-        "Resources/Covers/Crazy.jpg",
-        "Resources/Covers/FE!N.jpg",
+        "Resources/Covers/Octane.jpg",
+        "Resources/Covers/Despacito.jpg",
         "Resources/Covers/Nautilus.jpg",
-        "Resources/Covers/Levitating.jpg",
-        "Resources/Covers/Somewhere I Belong.jpg",
-        "Resources/Covers/From The Inside.jpg",
-        "Resources/Covers/Faint.jpg",
-        "Resources/Covers/Breaking The Habit.jpg",
-        "Resources/Covers/I Wonder.jpg",
-        "Resources/Covers/Godzilla.jpg",
-        "Resources/Covers/Houdini.jpg",
-        "Resources/Covers/Runaway.jpg",
+        "Resources/Covers/Future Nostalgia.jpg",
+        "Resources/Covers/Graduation.jpg",
+        "Resources/Covers/Music to Be Murdered By.jpg",
+        "Resources/Covers/My Beautiful Dark Twisted Fantasy.jpg",
         "Resources/Covers/Rush E.jpg",
-        "Resources/Covers/Vamp Anthem.jpg",
-        "Resources/Covers/CARNIVAL.jpg",
-        "Resources/Covers/HUMBLE..jpg",
-        "Resources/Covers/Stop Breathing.jpg",
+        "Resources/Covers/Whole Lotta Red.jpg",
+        "Resources/Covers/VULTURES.jpg",
+        "Resources/Covers/DAMN..jpg",
         "Resources/Covers/CHEGOU 3.jpg",
         "Resources/Covers/KRUSH ALERT.jpg",
         "Resources/Covers/CUTE DEPRESSED.jpg",
@@ -640,25 +803,39 @@ function preloadImages() {
         "Resources/Covers/fantasmas.jpg",
         "Resources/Covers/BIKE.jpg",
         "Resources/Covers/ARCANGEL.jpg",
-        "Resources/Covers/TELEKINESIS.jpg",
-        "Resources/Covers/Bleed it out.jpg",
-        "Resources/Covers/Grenade.jpg",
+        "Resources/Covers/Doo-Wops & Hooligans.jpg",
         "Resources/Covers/24K Magic.jpg",
-        "Resources/Covers/Finesse.jpg",
+        "Resources/Covers/Not Like Us.jpg",
+        "Resources/Covers/We Don't Trust You.jpg",
+        "Resources/Covers/The Death of Slim Shady (Coup de Grâce).jpg",
     ];
 
+    // Load album cover images
     for (const coverPath of albumCovers) {
-        const songTitle = getSongTitle(coverPath);
+        const albumTitle = getAlbumTitle(coverPath);
         const coverImage = new Image();
         coverImage.src = coverPath;
         coverImage.onload = function () {
-            loadedImages[songTitle] = coverImage;
-            console.log("Loaded cover image for song:", songTitle);
+            loadedImages[albumTitle] = coverImage;
+            console.log("Loaded cover image for album:", albumTitle);
         };
         coverImage.onerror = function () {
-            console.log("Failed to load cover image for song:", songTitle);
+            console.log("Failed to load cover image for album:", albumTitle);
         };
     }
+}
+
+// Helper function to get album title from the cover path
+function getAlbumTitle(coverPath) {
+    const parts = coverPath.split("/");
+    const fileName = parts[parts.length - 1];
+    return fileName.replace(".jpg", "");
+}
+
+// Ensure getCoverImage correctly retrieves the image
+function getCoverImage(songTitle) {
+    const albumTitle = songToAlbumMap[songTitle];
+    return loadedImages[albumTitle];
 }
 
 const selectedSongModal = document.getElementById("selectedSongModal");
@@ -693,7 +870,12 @@ function updateRecentSongButton() {
     const recentSong = loadRecentSong();
     const mostRecentButton = document.getElementById("mostRecent");
     if (recentSong) {
-        mostRecentButton.textContent = `Play most recent song: #${recentSong.index}: ${recentSong.title}, by ${recentSong.artist}`;
+        // Check if the song title ends with a dot
+        if (recentSong.title.endsWith(".")) {
+            mostRecentButton.textContent = `Play most recent song: #${recentSong.index}: ${recentSong.title} by ${recentSong.artist}`;
+        } else {
+            mostRecentButton.textContent = `Play most recent song: #${recentSong.index}: ${recentSong.title}, by ${recentSong.artist}`;
+        }
         mostRecentButton.style.display = "inline-block";
     } else {
         mostRecentButton.style.display = "none";
@@ -722,16 +904,25 @@ window.addEventListener("load", updateRecentSongButton);
 function openSelectedSongModal(songPath, songTitle) {
     const song = songList.find(s => s === songPath);
     if (song) {
-        const songIndex = songList.indexOf(songPath) + 1; // Assuming songList is a zero-based array
         const songArtist = getArtist(songTitle);
-        document.getElementById("songTitle").textContent = songTitle;
-        document.getElementById("songArtist").textContent = songArtist;
-        document.getElementById("songBPM").textContent = songConfigs[songPath]?.BPM || "BPM not available";
+        const modal = document.getElementById("selectedSongModal");
+        const songTitleElement = document.getElementById("songTitle");
+        const songArtistElement = document.getElementById("songArtist");
+        const songBPMElement = document.getElementById("songBPM");
+        const songSpeedElement = document.getElementById("songSpeed");
+        const versionDropdownContainer = document.getElementById("versionDropdownContainer");
+        const versionDropdown = document.getElementById("versionDropdown");
+
+        // Set modal content
+        songTitleElement.textContent = songTitle;
+        songArtistElement.textContent = songArtist;
+        songBPMElement.textContent = songConfigs[songPath]?.BPM || "BPM not available";
 
         // Display cover image
         const coverImageElement = document.getElementById("songCoverImage");
-        if (loadedImages.hasOwnProperty(songTitle)) {
-            coverImageElement.src = loadedImages[songTitle].src;
+        const coverImage = getCoverImage(songTitle); // Get the cover image based on song title
+        if (coverImage) {
+            coverImageElement.src = coverImage.src;
         } else {
             coverImageElement.src = "Resources/Covers/noCover.png"; // Placeholder cover image path
         }
@@ -741,44 +932,95 @@ function openSelectedSongModal(songPath, songTitle) {
         if (dynamicSpeeds) {
             let totalNoteSpeed = dynamicSpeeds.reduce((acc, speed) => acc + speed.noteSpeed, 0);
             let averageNoteSpeed = totalNoteSpeed / dynamicSpeeds.length;
-            document.getElementById("songSpeed").textContent = `${averageNoteSpeed.toFixed(2)}`;
+            songSpeedElement.textContent = `${averageNoteSpeed.toFixed(2)}`;
             document.getElementById("speedTXT").innerHTML = `<strong>Average Note Speed:</strong>`;
         } else {
             let noteSpeed = songConfigs[songPath]?.noteSpeed || "Note Speed not available";
-            document.getElementById("songSpeed").textContent = `${noteSpeed}`;
+            songSpeedElement.textContent = `${noteSpeed}`;
             document.getElementById("speedTXT").innerHTML = `<strong>Note Speed:</strong>`;
         }
 
+        // Check for song versions
+        if (songVersions[songTitle]) {
+            versionDropdownContainer.style.display = "block";
+            versionDropdown.innerHTML = "";
+            songVersions[songTitle].forEach(version => {
+                const option = document.createElement("option");
+                option.value = version.path;
+                option.textContent = version.title;
+                versionDropdown.appendChild(option);
+            });
+        } else {
+            versionDropdownContainer.style.display = "none";
+        }
+
         // Show the modal
-        document.getElementById("selectedSongModal").style.display = "block";
+        modal.style.display = "block";
         document.getElementById("songListModal").style.display = "none";
 
         // Add click event listener to the play button
         const playButton = document.getElementById("playSongButton");
         playButton.addEventListener("click", function () {
-            const index = songList.findIndex(s => s === songPath);
-            startGame(index);
-            document.getElementById("selectedSongModal").style.display = "none"; // Close modal after starting the game
+            const selectedVersionPath = versionDropdown.value || songPath;
+            const index = songList.findIndex(s => s === selectedVersionPath);
+            startGame(index); // Ensure songIndex is defined
+            modal.style.display = "none"; // Close modal after starting the game
             activateKeybinds();
-            saveRecentSong(songPath, songTitle, songIndex, songArtist); // Save the recent song
+            saveRecentSong(selectedVersionPath, songTitle, index + 1, songArtist); // Save the recent song
             updateRecentSongButton(); // Update the button text
         });
     }
 }
 
+// Modify filterSongs function to handle the Easter eggs and version selection
 function filterSongs() {
-    const searchInput = document.getElementById("songSearchInput").value.toLowerCase();
+    const searchInput = document.getElementById("songSearchInput").value.trim().toLowerCase();
     const songButtons = document.querySelectorAll(".song-button");
+    const resultsForSearch = document.getElementById("resultsForSearch");
+    const noResultsTXT = document.getElementById("noResultsTXT");
+    let resultsCount = 0;
 
     songButtons.forEach(button => {
-        const songTitle = button.textContent.toLowerCase();
-        const songPath = button.dataset.path.toLowerCase();
-        if (songTitle.includes(searchInput) || songPath.includes(searchInput)) {
+        const songText = button.textContent.toLowerCase();
+        const isKanye = songText.includes("kanye west");
+        const isKendrick = songText.includes("kendrick lamar");
+        const isEminem = songText.includes("eminem");
+        const isCreo = songText.includes("creo");
+        const isTravis = songText.includes("travis");
+
+        if (searchInput === "ye" && isKanye) {
             button.style.display = "block";
+            resultsCount++;
+        } else if (searchInput === "kdot" && isKendrick) {
+            button.style.display = "block";
+            resultsCount++;
+        } else if (searchInput === "em" && isEminem) {
+            button.style.display = "block";
+            resultsCount++;
+        } else if (searchInput === "goat" && (isKanye || isKendrick || isEminem || isCreo || isTravis)) {
+            button.style.display = "block";
+            resultsCount++;
+        } else if (searchInput !== "ye" && searchInput !== "kdot" && searchInput !== "em" && searchInput !== "goat" && songText.includes(searchInput)) {
+            button.style.display = "block";
+            resultsCount++;
         } else {
             button.style.display = "none";
         }
     });
+
+    if (searchInput) {
+        if (resultsCount > 0) {
+            resultsForSearch.textContent = `${resultsCount} results found for "${searchInput}"`;
+            resultsForSearch.style.display = "block";
+            noResultsTXT.style.display = "none";
+        } else {
+            resultsForSearch.style.display = "none";
+            noResultsTXT.style.display = "block";
+        }
+    } else {
+        resultsForSearch.style.display = "none";
+        noResultsTXT.style.display = "none";
+    }
 }
 
 function closeSelectedSongModal() {
@@ -964,6 +1206,7 @@ function getArtist(songSrc) {
         SWIM: "Chase Atlantic",
         "You Need Jesus": "BABY GRAVY",
         Crazy: "Creo",
+        Despacito: "Luis Fonsi",
         "FE!N": "Travis Scott",
         Nautilus: "Creo",
         Levitating: "Dua Lipa",
@@ -973,7 +1216,7 @@ function getArtist(songSrc) {
         "Breaking The Habit": "Linkin Park",
         "I Wonder": "Kanye West",
         Godzilla: "Eminem",
-        Houdini: "Eminem",
+        "HIGHEST IN THE ROOM": "Travis Scott",
         Runaway: "Kanye West",
         "Rush E": "M.J. Kelly",
         "Vamp Anthem": "Playboi Carti",
@@ -990,7 +1233,6 @@ function getArtist(songSrc) {
         "LOOK DON'T TOUCH": "Odetari",
         "YOU'RE TOO SLOW": "Odetari",
         BAND4BAND: "Central Cee",
-        "HIGHEST IN THE ROOM": "Travis Scott",
         "Slide da Treme Melódica v2": "DJ FNK",
         fantasmas: "Humbe",
         BIKE: "tanger",
@@ -1000,36 +1242,53 @@ function getArtist(songSrc) {
         Grenade: "Bruno Mars",
         "24K Magic": "Bruno Mars",
         Finesse: "Bruno Mars",
+        "Not Like Us": "Kendrick Lamar",
+        "Type Shit": "Future",
+        "That's What I Like": "Bruno Mars",
+        "Finesse (feat. Cardi B)": "Bruno Mars",
+        Renaissance: "Eminem",
+        Habits: "Eminem",
+        Trouble: "Eminem",
+        "Brand New Dance": "Eminem",
+        Evil: "Eminem",
+        Lucifer: "Eminem",
+        Antichrist: "Eminem",
+        Fuel: "Eminem",
+        "Road Rage": "Eminem",
+        Houdini: "Eminem",
+        "Guilty Conscience 2": "Eminem",
+        "Head Honcho": "Eminem",
+        Temporary: "Eminem",
+        "Bad One": "Eminem",
+        Tobey: "Eminem",
+        "Somebody Save Me": "Eminem",
     };
     let songTitle = getSongTitle(songSrc);
     return artists[songTitle] || "N/A";
 }
 
-// Function to get the album cover image based on the song path and rotate it
+// Adjusted getCover function
 function getCover(songPath, deltaTime) {
     const songTitle = getSongTitle(songPath);
-    const coverImage = loadedImages[songTitle];
+    const coverImage = getCoverImage(songTitle);
+
+    let centerX = WIDTH - 190 + 180 / 2;
+    let centerY = 92 + 180 / 2;
+    let radius = 90;
+
+    // Calculate rotation speed and angle based on deltaTime
+    let rotationSpeed = 0.015 * BPM; // Adjust rotation speed as needed
+    if (vinylRotationEnabled) {
+        rotationAngle += rotationSpeed * deltaTime; // Accumulate rotation angle
+    }
+
     if (coverImage) {
-        let centerX = WIDTH - 190 + 180 / 2;
-        let centerY = 92 + 180 / 2;
-        let radius = 90;
-
-        // Calculate rotation speed and angle based on deltaTime
-        let rotationSpeed = 0.015 * BPM; // Adjust rotation speed as needed
-        if (vinylRotationEnabled) {
-            rotationAngle += rotationSpeed * deltaTime; // Accumulate rotation angle
-        }
-
         if (circularImageEnabled) {
             rotateImage(ctx, coverImage, centerX, centerY, radius, rotationAngle);
         } else {
             ctx.drawImage(coverImage, centerX - radius, centerY - radius, radius * 2, radius * 2);
         }
     } else {
-        let centerX = WIDTH - 190 + 180 / 2;
-        let centerY = 92 + 180 / 2;
-        let radius = 90;
-
         if (circularImageEnabled) {
             ctx.save();
 
@@ -1090,7 +1349,7 @@ function toggleVinylRotation() {
 
 function getCoverForEndScreen(songPath) {
     const songTitle = getSongTitle(songPath);
-    const coverImage = loadedImages[songTitle];
+    const coverImage = getCoverImage(songTitle);
     if (coverImage) {
         let centerX = WIDTH - 100; // X-coordinate of the circle center
         let centerY = HEIGHT / 2 + 40; // Y-coordinate of the circle center
@@ -1214,6 +1473,15 @@ function togglePause() {
 
 function startGame(index) {
     console.log("Starting game with index:", index);
+
+    const songPath = songList[index];
+    const versionDropdown = document.getElementById("versionDropdown");
+
+    if (versionDropdown && versionDropdown.value) {
+        currentSongPath = versionDropdown.value;
+    } else {
+        currentSongPath = songPath;
+    }
 
     // Reset autoHitDisableSaving and autoHit when starting a new game
     autoHitDisableSaving = false;
@@ -1341,7 +1609,7 @@ function startGame(index) {
 
         document.getElementById("startButton").style.display = "none";
 
-        document.title = `Song ${currentSongIndex + 1}: ${songTitle} | Beatz Testing 3.5!`;
+        document.title = `Song ${currentSongIndex + 1}: ${songTitle} | Beatz Testing 3.6!`;
 
         if (!backgroundIsDefault) {
             canvas.style.backgroundImage = "none";
@@ -2204,7 +2472,7 @@ const Presets = {
             vinylRotation: true,
             circularImage: true,
             backgroundForCanvas: "transparentBG",
-            customBackgroundBlur: "1",
+            customBackgroundBlur: "10",
             customBackground: "",
             logKeys: false,
         },
@@ -2974,6 +3242,8 @@ function keyUpFunction(keyboardEvent) {
         rightPressed = false;
     }
 }
+
+// - .  .- -- ---  .- -. --. .  .--. . .-. ---  - ..-  -. ---  .-.. ---  ... .- -... . ...  -.--  -. ---  ... .  --.- ..- .  .... .- -.-. . .-.
 
 // Thanks for playing Beatz!
 // - GuayabR.

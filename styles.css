@@ -128,7 +128,7 @@ canvas:-ms-fullscreen {
 }
 
 #songListModal .modal-body {
-    max-height: 600px;
+    max-height: 525px;
     overflow-y: scroll;
 }
 
@@ -226,12 +226,21 @@ canvas:-ms-fullscreen {
 }
 
 #songCoverImage {
-    width: 400px;
-    height: 400px;
+    width: 450px;
+    height: 450px;
 }
 
 #selectedSongModal .modal-text {
-    font-size: 20px; /* Adjust the font size as needed */
+    font-size: 22px; /* Adjust the font size as needed */
+}
+
+#noResultsTXT {
+    font-size: 20px;
+    color: gray;
+}
+
+#resultsForSearch {
+    font-size: 18px;
 }
 
 #presetModal {

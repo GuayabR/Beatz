@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Beatz Testing 3.5!</title>
+        <title>Beatz Testing 3.6!</title>
         <link rel="icon" type="image/x-icon" href="Resources/favicon.png" />
         <link rel="stylesheet" type="text/css" href="styles.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -183,16 +183,17 @@
         <h3>Credit of the songs goes to their respective creators.</h3>
         <h3>Note that i am NOT making any money on this game, i just code occasionally for the fun of it. <3</h3>
 
-        <!-- Song list modal -->
         <div id="songListModal" class="modal">
             <div class="modal-content">
                 <span id="closeSongListModal" class="close"><i class="fa-solid fa-xmark"></i></span>
                 <div class="modal-header">
                     <h1 class="modal-title">Song List</h1>
                 </div>
-                <label for="songSearchInput">Search songs by keyword, index or artist.</label><br /><br />
-                <input type="text" id="songSearchInput" placeholder="Search..." /><br /><br />
+                <label for="songSearchInput">Search songs by keyword, index, or artist.</label><br /><br />
+                <input type="text" id="songSearchInput" placeholder="Search..." oninput="filterSongs()" /><br /><br />
+                <label id="resultsForSearch" style="display: none">Results found</label><br /><br />
                 <button type="button" id="mostRecent" class="most-recent-button" style="display: none">Play most recent song</button>
+                <label id="noResultsTXT" style="display: none">No results found for your search.</label><br /><br />
                 <div class="modal-body" id="songList">
                     <!-- Song buttons will be dynamically inserted here -->
                 </div>
@@ -209,11 +210,15 @@
                         <img id="songCoverImage" src="" alt="Cover Image not found or your browser doesn't support HTML5 images." class="img-fluid" />
                     </div>
                     <div class="col">
-                        <p class="modal-text"><strong>Artist:</strong> <span id="songArtist">Artist Name</span></p>
-                        <p class="modal-text"><strong>BPM:</strong> <span id="songBPM">120</span></p>
-                        <p class="modal-text">
+                        <p><strong>Artist:</strong> <span id="songArtist">Artist Name</span></p>
+                        <p><strong>BPM:</strong> <span id="songBPM">120</span></p>
+                        <p>
                             <span id="speedTXT"><strong>Note Speed:</strong></span> <span id="songSpeed">15.5</span>
                         </p>
+                        <div id="versionDropdownContainer" style="display: none">
+                            <label for="versionDropdown"><strong>Choose version:</strong></label>
+                            <select id="versionDropdown"></select>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
