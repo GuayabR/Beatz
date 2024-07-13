@@ -397,7 +397,7 @@ Added a new song list interface!
 - Updated Creo's "Crazy" album cover to its respective album cover "Octane"
 //
 
-3.6.0 (ALBUM 3.5! 12/07/2024)
+3.6.0 (ALBUM 3.6! 12/07/2024)
 Reworked album cover logic!
 - All album covers are not loaded from a name of a song, now they load as one single image with the name of the album, reducing RAM usage.
 - Added albums to the song list, songs now either display "Single" or their album name, and songs are searcheable by their album too.
@@ -405,3 +405,9 @@ Reworked album cover logic!
 - Added different versions for songs; Finesse (feat. Cardi B) is version 2 of Finesse, version 2 will not display in the song list, and is only accessible from Finesse's screen in a dropdown.
 - Multiple versions can be added to a song, they will all not be visible in the song list.
 - Eminem's The Death of Slim Shady (Coup de Grâce) album will be added next week since BPM is still not available to search so i can't syncronise it xd
+//
+
+3.6.1 (ALBUM 3.6! 12/07/2024)
+- Added all songs from Eminem's The Death of Slim Shady (Coup de Grâce)!
+- Added Future's and Metro Boomin's "Type Shit" and "Like That" with Kendrick Lamar
+- Added new hit sounds! (Default (Osu Hit sound) Minecraft hit sound, COD Hitmarker and mouse click sound)

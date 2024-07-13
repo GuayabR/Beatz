@@ -40,8 +40,6 @@ const noteXPositions = {
 
 const loadedImages = {};
 
-const hitSounds = [];
-
 let notesHit = 0;
 let tutorialStage = 0;
 let isNewPlayer = !localStorage.getItem("keybinds");
@@ -208,6 +206,7 @@ window.onload = function () {
 
 let currentSongVolume = localStorage.getItem("songVolume") ? parseFloat(localStorage.getItem("songVolume")) : 0.5; // Load volume or default to 50%
 let currentHitSoundVolume = localStorage.getItem("hitSoundVolume") ? parseFloat(localStorage.getItem("hitSoundVolume")) : 0.15; // Load volume or default to 15%
+var hitSounds = [];
 
 // Event listeners for volume sliders
 songVolume.addEventListener("input", function () {
@@ -239,10 +238,21 @@ function adjustHitSoundVolume(volume) {
 var currentHitSoundIndex = 0; // Keep track of the last played hit sound
 
 // Initialize hit sounds with the loaded volume
-for (let i = 0; i < MAX_HIT_SOUNDS; i++) {
-    let hitSound = new Audio("Resources/SFX/hitSound.mp3");
-    hitSound.volume = currentHitSoundVolume; // Set volume to the saved or default volume
-    hitSounds.push(hitSound);
+function initializeHitSounds(hitSoundType) {
+    const hitSoundPathMap = {
+        defaultHit: "Resources/SFX/hitSound.mp3",
+        mcHit: "Resources/SFX/mcHitSound.mp3",
+        hitMarker: "Resources/SFX/Hitmarker.m4a",
+        clickHit: "Resources/SFX/Mouse Click.mp3",
+    };
+
+    const hitSoundPath = hitSoundPathMap[hitSoundType];
+
+    for (let i = 0; i < MAX_HIT_SOUNDS; i++) {
+        let hitSound = new Audio(hitSoundPath);
+        hitSound.volume = currentHitSoundVolume; // Set volume to the saved or default volume
+        hitSounds.push(hitSound);
+    }
 }
 
 console.log("Variables loaded.");
@@ -322,7 +332,7 @@ function preloadSongs() {
         "Resources/Songs/Somewhere I Belong.mp3",
         "Resources/Songs/Can't Slow Me Down.mp3",
         "Resources/Songs/LUNCH.mp3",
-        "Resources/Songs/Butterfly Effect.mp3",
+        "Resources/Songs/BUTTERFLY EFFECT.mp3",
         "Resources/Songs/SWIM.mp3",
         "Resources/Songs/FE!N.mp3",
         "Resources/Songs/Crazy.mp3",
@@ -364,8 +374,8 @@ function preloadSongs() {
         "Resources/Songs/Finesse.mp3",
         "Resources/Songs/Not Like Us.mp3",
         "Resources/Songs/Type Shit.mp3",
+        "Resources/Songs/Like That.mp3",
         "Resources/Songs/That's What I Like.mp3",
-        "Resources/Songs/Finesse (feat. Cardi B).mp3",
         "Resources/Songs/Renaissance.mp3",
         "Resources/Songs/Habits.mp3",
         "Resources/Songs/Trouble.mp3",
@@ -382,6 +392,8 @@ function preloadSongs() {
         "Resources/Songs/Bad One.mp3",
         "Resources/Songs/Tobey.mp3",
         "Resources/Songs/Somebody Save Me.mp3",
+        "Resources/Songs/this is what space feels like.mp3",
+        "Resources/Songs/Finesse (feat. Cardi B).mp3",
         "Resources/Songs/testingsong.mp3",
     ];
 
@@ -536,7 +548,7 @@ const songConfigs = {
     "Resources/Songs/MY EYES.mp3": { BPM: 132, noteSpeed: 12 },
     "Resources/Songs/Can't Slow Me Down.mp3": { BPM: 122, noteSpeed: 11 },
     "Resources/Songs/LUNCH.mp3": { BPM: 125, noteSpeed: 14.6 },
-    "Resources/Songs/Butterfly Effect.mp3": { BPM: 141, noteSpeed: 10 },
+    "Resources/Songs/BUTTERFLY EFFECT.mp3": { BPM: 141, noteSpeed: 10 },
     "Resources/Songs/SWIM.mp3": { BPM: 120, noteSpeed: 10 },
     "Resources/Songs/You Need Jesus.mp3": { BPM: 110, noteSpeed: 11 },
     "Resources/Songs/Crazy.mp3": { BPM: 120, noteSpeed: 10 },
@@ -579,9 +591,26 @@ const songConfigs = {
     "Resources/Songs/Finesse.mp3": { BPM: 105, noteSpeed: 22 },
     "Resources/Songs/Not Like Us.mp3": { BPM: 101, noteSpeed: 0 },
     "Resources/Songs/Type Shit.mp3": { BPM: 145, noteSpeed: 14 },
+    "Resources/Songs/Like That.mp3": { BPM: 162, noteSpeed: 16 },
     "Resources/Songs/That's What I Like.mp3": { BPM: 134, noteSpeed: 14 },
-    "Resources/Songs/Finesse (feat. Cardi B).mp3": { BPM: 105, noteSpeed: 22 },
+    "Resources/Songs/Renaissance.mp3": { BPM: 199, noteSpeed: 0 },
+    "Resources/Songs/Habits.mp3": { BPM: 100, noteSpeed: 10 },
+    "Resources/Songs/Trouble.mp3": { BPM: 83, noteSpeed: 8 },
+    "Resources/Songs/Brand New Dance.mp3": { BPM: 120, noteSpeed: 14 },
+    "Resources/Songs/Evil.mp3": { BPM: 81, noteSpeed: 10 },
+    "Resources/Songs/Lucifer.mp3": { BPM: 79, noteSpeed: 8 },
+    "Resources/Songs/Antichrist.mp3": { BPM: 99, noteSpeed: 10 },
+    "Resources/Songs/Fuel.mp3": { BPM: 138, noteSpeed: 12 },
+    "Resources/Songs/Road Rage.mp3": { BPM: 95, noteSpeed: 10 },
     "Resources/Songs/Houdini.mp3": { BPM: 141, noteSpeed: 12 },
+    "Resources/Songs/Guilty Conscience 2.mp3": { BPM: 164, noteSpeed: 14 },
+    "Resources/Songs/Head Honcho.mp3": { BPM: 173, noteSpeed: 16 },
+    "Resources/Songs/Temporary.mp3": { BPM: 78, noteSpeed: 8 },
+    "Resources/Songs/Bad One.mp3": { BPM: 146, noteSpeed: 14 },
+    "Resources/Songs/Tobey.mp3": { BPM: 139, noteSpeed: 14 },
+    "Resources/Songs/Somebody Save Me.mp3": { BPM: 181, noteSpeed: 16 },
+    "Resources/Songs/this is what space feels like.mp3": { BPM: 146, noteSpeed: 11 },
+    "Resources/Songs/Finesse (feat. Cardi B).mp3": { BPM: 105, noteSpeed: 22 },
 };
 
 function getDynamicSpeed(songSrc) {
@@ -634,12 +663,30 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 198.8, noteSpeed: 12, notes: [] },
             { timestamp: 216.6, noteSpeed: 12, endScreenDrawn: true },
         ],
-        Finesse: [{ timestamp: 4.85, noteSpeed: 14 }],
+        Finesse: [
+            { timestamp: 4.85, noteSpeed: 14 },
+            { timestamp: 214.5, noteSpeed: 14, endScreenDrawn: true },
+        ],
         "Finesse (feat. Cardi B)": [
             { timestamp: 4.85, noteSpeed: 14 },
             { timestamp: 214.5, noteSpeed: 14, endScreenDrawn: true },
         ],
         "Not Like Us": [{ timestamp: 1.73, noteSpeed: 14 }],
+        "Like That": [{ timestamp: 6.7, noteSpeed: 14 }],
+        "this is what space feels like": [
+            { timestamp: 35.95, noteSpeed: 0 },
+            { timestamp: 37.6, noteSpeed: 25 },
+            { timestamp: 38.35, noteSpeed: 0 },
+            { timestamp: 38.8, noteSpeed: 25 },
+            { timestamp: 39.55, noteSpeed: 0 },
+            { timestamp: 39.58, noteSpeed: 25 },
+            { timestamp: 40.4, noteSpeed: 0 },
+            { timestamp: 40.93, noteSpeed: 25 },
+            { timestamp: 41.7, noteSpeed: 0 },
+            { timestamp: 44.15, noteSpeed: 18 },
+            { timestamp: 63.94, noteSpeed: 14 },
+        ],
+        Renaissance: [{ timestamp: 11, noteSpeed: 14 }],
     };
 
     let songTitle = getSongTitle(songSrc);
@@ -668,10 +715,10 @@ const songToAlbumMap = {
     "What I've Done": "Minutes To Midnight",
     "Biggest NCS Songs": "Biggest NCS Songs",
     Goosebumps: "Birds in the Trap Sing McKnight",
-    "Master Of Puppets (Live)": "Master Of Puppets (Live)",
     Numb: "Meteora",
     "sdp interlude": "Birds in the Trap Sing McKnight",
     "Shiawase (VIP)": "Shiawase (VIP)",
+    "Master Of Puppets (Live)": "Master Of Puppets",
     VVV: "VVV",
     "Sleepwalker X Icewhxre": "Sleepwalker X Icewhxre",
     "WTF 2": "WTF 2",
@@ -681,7 +728,7 @@ const songToAlbumMap = {
     "MY EYES": "UTOPIA",
     "Can't Slow Me Down": "Can't Slow Me Down",
     LUNCH: "Hit Me Hard and Soft",
-    "Butterfly Effect": "ASTROWORLD",
+    "BUTTERFLY EFFECT": "ASTROWORLD",
     SWIM: "Chase Atlantic",
     "You Need Jesus": "You Need Jesus",
     Crazy: "Octane",
@@ -723,8 +770,8 @@ const songToAlbumMap = {
     Finesse: "24K Magic",
     "Not Like Us": "Not Like Us",
     "Type Shit": "We Don't Trust You",
+    "Like That": "We Don't Trust You",
     "That's What I Like": "24K Magic",
-    "Finesse (feat. Cardi B)": "24K Magic",
     Renaissance: "The Death of Slim Shady (Coup de Grâce)",
     Habits: "The Death of Slim Shady (Coup de Grâce)",
     Trouble: "The Death of Slim Shady (Coup de Grâce)",
@@ -741,6 +788,8 @@ const songToAlbumMap = {
     "Bad One": "The Death of Slim Shady (Coup de Grâce)",
     Tobey: "The Death of Slim Shady (Coup de Grâce)",
     "Somebody Save Me": "The Death of Slim Shady (Coup de Grâce)",
+    "this is what space feels like": "this is what space feels like",
+    "Finesse (feat. Cardi B)": "24K Magic",
 };
 
 // Function to preload images
@@ -762,7 +811,7 @@ function preloadImages() {
         "Resources/Covers/Minutes To Midnight E.jpg",
         "Resources/Covers/Biggest NCS Songs.jpg",
         "Resources/Covers/Birds in the Trap Sing McKnight.jpg",
-        "Resources/Covers/Master Of Puppets (Live).jpg",
+        "Resources/Covers/Master Of Puppets.jpg",
         "Resources/Covers/Meteora.jpg",
         "Resources/Covers/Shiawase (VIP).jpg",
         "Resources/Covers/Sleepwalker X Icewhxre.jpg",
@@ -808,6 +857,7 @@ function preloadImages() {
         "Resources/Covers/Not Like Us.jpg",
         "Resources/Covers/We Don't Trust You.jpg",
         "Resources/Covers/The Death of Slim Shady (Coup de Grâce).jpg",
+        "Resources/Covers/this is what space feels like.jpg",
     ];
 
     // Load album cover images
@@ -987,6 +1037,8 @@ function filterSongs() {
         const isEminem = songText.includes("eminem");
         const isCreo = songText.includes("creo");
         const isTravis = songText.includes("travis");
+        const isLinkin = songText.includes("linkin park");
+        const ptoLocoDeMrd = songText.includes("playboi carti");
 
         if (searchInput === "ye" && isKanye) {
             button.style.display = "block";
@@ -997,7 +1049,13 @@ function filterSongs() {
         } else if (searchInput === "em" && isEminem) {
             button.style.display = "block";
             resultsCount++;
-        } else if (searchInput === "goat" && (isKanye || isKendrick || isEminem || isCreo || isTravis)) {
+        } else if (searchInput === "goat" && (isKanye || isKendrick || isEminem || isCreo || isTravis || isLinkin)) {
+            button.style.display = "block";
+            resultsCount++;
+        } else if (searchInput === "got bit by a goat" && isEminem) {
+            button.style.display = "block";
+            resultsCount++;
+        } else if (searchInput === "loco d mrd" && ptoLocoDeMrd) {
             button.style.display = "block";
             resultsCount++;
         } else if (searchInput !== "ye" && searchInput !== "kdot" && searchInput !== "em" && searchInput !== "goat" && songText.includes(searchInput)) {
@@ -1176,7 +1234,7 @@ function getArtist(songSrc) {
     const artists = {
         Epilogue: "Creo",
         Exosphere: "Creo",
-        "Die For You": "VALORANT",
+        "Die For You": "VALORANT, Grabbitz",
         "Father Stretch My Hands": "Kanye West",
         "Betty (Get Money)": "Yung Gravy",
         "BURN IT DOWN": "Linkin Park",
@@ -1184,8 +1242,8 @@ function getArtist(songSrc) {
         "Better Days": "LAKEY INSPIRED",
         KOCMOC: "SLEEPING HUMMINGBIRD",
         "kompa pasion": "frozy",
-        "Legends Never Die": "League Of Legends",
-        "Star Walkin": "League Of Legends",
+        "Legends Never Die": "League Of Legends, Against The Current",
+        "Star Walkin": "Lil Nas X",
         "What I've Done": "Linkin Park",
         "Biggest NCS Songs": "NoCopyrightSounds",
         Goosebumps: "Travis Scott",
@@ -1193,34 +1251,34 @@ function getArtist(songSrc) {
         Numb: "Linkin Park",
         "sdp interlude": "Travis Scott",
         "Shiawase (VIP)": "Dion Timmer",
-        VVV: "mikeysmind",
-        "Sleepwalker X Icewhxre": "akiaura X Lumi Athena",
-        "WTF 2": "Ugovhb",
-        VISIONS: "VALORANT",
+        VVV: "mikeysmind, Sanikwave",
+        "Sleepwalker X Icewhxre": "akiaura, Lumi Athena",
+        "WTF 2": "Ugovhb, EF",
+        VISIONS: "VALORANT, eaJ, Safari Riot",
         "Stressed Out": "twenty one pilots",
-        "Ticking Away": "VALORANT",
+        "Ticking Away": "VALORANT, Grabbitz, bbno$",
         "MY EYES": "Travis Scott",
-        "Can't Slow Me Down": "VALORANT",
+        "Can't Slow Me Down": "MIRANI, IIIBOI, GroovyRoom, VALORANT",
         LUNCH: "Billie Eilish",
-        "Butterfly Effect": "Travis Scott",
+        "BUTTERFLY EFFECT": "Travis Scott",
         SWIM: "Chase Atlantic",
-        "You Need Jesus": "BABY GRAVY",
+        "You Need Jesus": "Yung Gravy, bbno$",
         Crazy: "Creo",
         Despacito: "Luis Fonsi",
-        "FE!N": "Travis Scott",
+        "FE!N": "Travis Scott, Playboi Carti",
         Nautilus: "Creo",
-        Levitating: "Dua Lipa",
+        Levitating: "Dua Lipa, DaBaby",
         "Somewhere I Belong": "Linkin Park",
         "From The Inside": "Linkin Park",
         Faint: "Linkin Park",
         "Breaking The Habit": "Linkin Park",
         "I Wonder": "Kanye West",
-        Godzilla: "Eminem",
+        Godzilla: "Eminem, Juice WRLD",
         "HIGHEST IN THE ROOM": "Travis Scott",
         Runaway: "Kanye West",
         "Rush E": "M.J. Kelly",
         "Vamp Anthem": "Playboi Carti",
-        CARNIVAL: "Kanye West",
+        CARNIVAL: "¥$, Rich The Kid, Playboi Carti",
         "HUMBLE.": "Kendrick Lamar",
         "Stop Breathing": "Playboi Carti",
         "CHEGOU 3": "shonci",
@@ -1232,36 +1290,38 @@ function getArtist(songSrc) {
         "CUTE DEPRESSED": "Dyan Dxddy",
         "LOOK DON'T TOUCH": "Odetari",
         "YOU'RE TOO SLOW": "Odetari",
-        BAND4BAND: "Central Cee",
-        "Slide da Treme Melódica v2": "DJ FNK",
+        BAND4BAND: "Central Cee, Lil Baby",
+        "Slide da Treme Melódica v2": "DJ FNK, Polaris",
         fantasmas: "Humbe",
         BIKE: "tanger",
-        ARCANGEL: "Bizarrap",
-        TELEKINESIS: "Travis Scott",
+        ARCÀNGEL: "Bizarrap, Arcàngel",
+        TELEKINESIS: "Travis Scott, SZA, Future",
         "Bleed it out": "Linkin Park",
         Grenade: "Bruno Mars",
         "24K Magic": "Bruno Mars",
         Finesse: "Bruno Mars",
         "Not Like Us": "Kendrick Lamar",
-        "Type Shit": "Future",
+        "Type Shit": "Future, Metro Boomin, Travis Scott, Playboi Carti",
+        "Like That": "Future, Metro Boomin, Kendrick Lamar",
         "That's What I Like": "Bruno Mars",
-        "Finesse (feat. Cardi B)": "Bruno Mars",
         Renaissance: "Eminem",
-        Habits: "Eminem",
+        Habits: "Eminem, White Gold",
         Trouble: "Eminem",
         "Brand New Dance": "Eminem",
         Evil: "Eminem",
-        Lucifer: "Eminem",
+        Lucifer: "Eminem, Sly Pyper",
         Antichrist: "Eminem",
-        Fuel: "Eminem",
-        "Road Rage": "Eminem",
+        Fuel: "Eminem, JID",
+        "Road Rage": "Eminem, Dem Jointz, Sly Pyper",
         Houdini: "Eminem",
         "Guilty Conscience 2": "Eminem",
-        "Head Honcho": "Eminem",
-        Temporary: "Eminem",
-        "Bad One": "Eminem",
-        Tobey: "Eminem",
-        "Somebody Save Me": "Eminem",
+        "Head Honcho": "Eminem, Ez Mil",
+        Temporary: "Eminem, Skylar Grey",
+        "Bad One": "Eminem, White Gold",
+        Tobey: "Eminem, Big Sean, BabyTron",
+        "Somebody Save Me": "Eminem, Jelly Roll",
+        "this is what space feels like": "JVKE",
+        "Finesse (feat. Cardi B)": "Bruno Mars, Cardi B",
     };
     let songTitle = getSongTitle(songSrc);
     return artists[songTitle] || "N/A";
@@ -1571,6 +1631,7 @@ function startGame(index) {
             console.log(`No dynamic speed configuration for "${songTitle}"`);
             dynamicSpeedInfo = "No dynamic speed configuration found.";
             nextSpeedChange = "No speed changes.";
+            currentConfigIndex = 0;
         }
 
         currentSong.play(); // Start playing the song immediately
@@ -2720,6 +2781,7 @@ const defaultMiscellaneous = {
     backgroundOption: "defaultBG",
     customBackgroundBlur: "0px",
     logKeys: false,
+    hitSound: "mcHit",
 };
 
 let logKeys = true;
@@ -2754,6 +2816,10 @@ function loadSettings() {
 
     const defaultNoteStyleDropdown = document.getElementById("defaultNoteStyle");
     defaultNoteStyleDropdown.value = miscellaneous.noteStyle;
+
+    // Load hit sound setting
+    const hitSoundDropdown = document.getElementById("defaultHitSound");
+    hitSoundDropdown.value = miscellaneous.hitSound;
 
     document.getElementById("up").value = keybinds.up.join(", ");
     document.getElementById("left").value = keybinds.left.join(", ");
@@ -2824,7 +2890,7 @@ function loadSettings() {
             break;
         case "transparentBG":
             canvas.style.background = "transparent";
-            canvas.style.backdropFilter = `blur(${savedCustomBackgroundBlur}px`;
+            canvas.style.backdropFilter = `blur(${savedCustomBackgroundBlur}px)`;
             backgroundIsDefault = false;
             break;
         case "customBG":
@@ -2837,6 +2903,9 @@ function loadSettings() {
             BGbright.src = "Resources/Background2.png";
             backgroundIsDefault = true;
     }
+
+    initializeHitSounds(miscellaneous.hitSound);
+
     console.log("Loaded settings", keybinds, miscellaneous);
 }
 
@@ -2912,6 +2981,7 @@ function saveSettings() {
         circularImage: document.getElementById("circularImage").checked,
         backgroundOption: document.getElementById("defaultBackground").value,
         customBackgroundBlur: document.getElementById("backdropBlurInput").value,
+        hitSound: document.getElementById("defaultHitSound").value, // Add this line
     };
 
     // Compare new settings with saved settings
@@ -2984,6 +3054,10 @@ function saveSettings() {
 
     keybinds = { ...newKeybinds };
     miscellaneous = { ...newMiscellaneous };
+
+    // Reset and initialize hit sounds
+    hitSounds = [];
+    initializeHitSounds(miscellaneous.hitSound);
 
     saveMessage.style.display = "block";
     saveMessage.innerHTML = "Settings saved!<br><br>";

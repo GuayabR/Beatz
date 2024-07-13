@@ -92,8 +92,17 @@
                     <label for="defaultNoteStyle">Default Note Style:</label>
                     <select id="defaultNoteStyle" name="defaultNoteStyle">
                         <option value="arrows">Arrows</option>
-                        <option value="circles">Circles</option></select
-                    ><br /><br />
+                        <option value="circles">Circles</option>
+                    </select>
+
+                    <label for="defaultHitSound">Hit Sound:</label>
+                    <select id="defaultHitSound" name="hitSoundSelector">
+                        <option value="defaultHit">Osu Hit Sound</option>
+                        <option value="mcHit">Minecraft Hit Sound</option>
+                        <option value="hitMarker">CoD Hitmarker Sound</option>
+                        <option value="clickHit">Click Hit Sound</option>
+                    </select>
+                    <br /><br />
 
                     <label for="debugInput">Debug:</label>
                     <input type="text" id="debugInput" name="debug" /><br /><br />
@@ -169,7 +178,7 @@
             <button id="contactbtn" onclick="email()"><i class="fa-solid fa-envelope"></i> Contact</button>
         </div>
 
-        <div id="publicToTestToggle"><button id="publicbtn" onclick="toVersion()">Open public game</button><br /><br /></div>
+        <div id="publicToTestToggle"><button id="publicbtn" onclick="toVersion()">Open testing game</button><br /><br /></div>
 
         <h2>
             Background image from:
@@ -227,6 +236,6 @@
             </div>
         </div>
 
-        <script src="BeatzGame.js"></script>
+        <script src="BeatzGameTesting.js"></script>
     </body>
 </html>

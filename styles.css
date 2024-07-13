@@ -230,8 +230,8 @@ canvas:-ms-fullscreen {
     height: 450px;
 }
 
-#selectedSongModal .modal-text {
-    font-size: 22px; /* Adjust the font size as needed */
+#selectedSongModal .modal-content {
+    font-size: 20px;
 }
 
 #noResultsTXT {
