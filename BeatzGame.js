@@ -2781,7 +2781,7 @@ const defaultMiscellaneous = {
     backgroundOption: "defaultBG",
     customBackgroundBlur: "0px",
     logKeys: false,
-    hitSound: "mcHit",
+    hitSound: "defaultHit",
 };
 
 let logKeys = true;
