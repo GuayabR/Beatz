@@ -407,7 +407,13 @@ Reworked album cover logic!
 - Eminem's The Death of Slim Shady (Coup de Grâce) album will be added next week since BPM is still not available to search so i can't syncronise it xd
 //
 
-3.6.1 (ALBUM 3.6! 12/07/2024)
+3.6.1 (ALBUM 3.6! 13/07/2024)
 - Added all songs from Eminem's The Death of Slim Shady (Coup de Grâce)!
-- Added Future's and Metro Boomin's "Type Shit" and "Like That" with Kendrick Lamar
+- Added Future's and Metro Boomin's "Type Shit" and "Like That" with Kendrick Lamar.
 - Added new hit sounds! (Default (Osu Hit sound) Minecraft hit sound, COD Hitmarker and mouse click sound)
+//
+
+3.6.1.1 (ALBUM 3.6! 15/07/2024)
+- Added a GitHub Repository button.
+- Added titles for all buttons.
+- Small bugfixes and tweaks.

@@ -2,12 +2,13 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 10COM 3.6.1 test (release.version.subversion.bugfix)
+ * Version: 10COM 3.6.1.1 test (release.version.subversion.bugfix)
+ * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
 // CONSTANTS
 
-const VERSION = "ALBUM 3.6.1 (Codename.Release.Version.Subversion.Bugfix)";
+const VERSION = "ALBUM 3.6.1.1 (Codename.Release.Version.Subversion.Bugfix)";
 const PUBLICVERSION = "3.6! (GitHub Port)";
 console.log("Version: " + VERSION);
 
@@ -366,7 +367,7 @@ function preloadSongs() {
         "Resources/Songs/Slide da Treme Melódica v2.mp3",
         "Resources/Songs/fantasmas.mp3",
         "Resources/Songs/BIKE.mp3",
-        "Resources/Songs/ARCANGEL.mp3",
+        "Resources/Songs/ARCÀNGEL.mp3",
         "Resources/Songs/TELEKINESIS.mp3",
         "Resources/Songs/Bleed it out.mp3",
         "Resources/Songs/Grenade.mp3",
@@ -583,7 +584,7 @@ const songConfigs = {
     "Resources/Songs/Slide da Treme Melódica v2.mp3": { BPM: 235, noteSpeed: 18 },
     "Resources/Songs/fantasmas.mp3": { BPM: 164, noteSpeed: 10 },
     "Resources/Songs/BIKE.mp3": { BPM: 105, noteSpeed: 14 },
-    "Resources/Songs/ARCANGEL.mp3": { BPM: 124, noteSpeed: 14 },
+    "Resources/Songs/ARCÀNGEL.mp3": { BPM: 124, noteSpeed: 14 },
     "Resources/Songs/TELEKINESIS.mp3": { BPM: 166, noteSpeed: 12 },
     "Resources/Songs/Bleed it out.mp3": { BPM: 140, noteSpeed: 0 },
     "Resources/Songs/Grenade.mp3": { BPM: 110, noteSpeed: 0 },
@@ -746,7 +747,7 @@ const songToAlbumMap = {
     Runaway: "My Beautiful Dark Twisted Fantasy",
     "Rush E": "Rush E",
     "Vamp Anthem": "Whole Lotta Red",
-    CARNIVAL: "VULTURES",
+    CARNIVAL: "VULTURES 1",
     "HUMBLE.": "DAMN.",
     "Stop Breathing": "Whole Lotta Red",
     "CHEGOU 3": "CHEGOU 3",
@@ -762,7 +763,7 @@ const songToAlbumMap = {
     "Slide da Treme Melódica v2": "Slide da Treme Melódica v2",
     fantasmas: "fantasmas",
     BIKE: "BIKE",
-    ARCANGEL: "ARCANGEL",
+    ARCÀNGEL: "ARCÀNGEL",
     TELEKINESIS: "UTOPIA",
     "Bleed it out": "Minutes To Midnight E",
     Grenade: "Doo-Wops & Hooligans",
@@ -835,7 +836,7 @@ function preloadImages() {
         "Resources/Covers/My Beautiful Dark Twisted Fantasy.jpg",
         "Resources/Covers/Rush E.jpg",
         "Resources/Covers/Whole Lotta Red.jpg",
-        "Resources/Covers/VULTURES.jpg",
+        "Resources/Covers/VULTURES 1.jpg",
         "Resources/Covers/DAMN..jpg",
         "Resources/Covers/CHEGOU 3.jpg",
         "Resources/Covers/KRUSH ALERT.jpg",
@@ -851,7 +852,7 @@ function preloadImages() {
         "Resources/Covers/Slide da Treme Melódica v2.jpg",
         "Resources/Covers/fantasmas.jpg",
         "Resources/Covers/BIKE.jpg",
-        "Resources/Covers/ARCANGEL.jpg",
+        "Resources/Covers/ARCÀNGEL.jpg",
         "Resources/Covers/Doo-Wops & Hooligans.jpg",
         "Resources/Covers/24K Magic.jpg",
         "Resources/Covers/Not Like Us.jpg",
@@ -1278,7 +1279,7 @@ function getArtist(songSrc) {
         Runaway: "Kanye West",
         "Rush E": "M.J. Kelly",
         "Vamp Anthem": "Playboi Carti",
-        CARNIVAL: "¥$, Rich The Kid, Playboi Carti",
+        CARNIVAL: "¥$, Kanye West, Ty Dolla $ign, Rich The Kid, Playboi Carti",
         "HUMBLE.": "Kendrick Lamar",
         "Stop Breathing": "Playboi Carti",
         "CHEGOU 3": "shonci",
@@ -1412,7 +1413,7 @@ function getCoverForEndScreen(songPath) {
     const coverImage = getCoverImage(songTitle);
     if (coverImage) {
         let centerX = WIDTH - 100; // X-coordinate of the circle center
-        let centerY = HEIGHT / 2 + 40; // Y-coordinate of the circle center
+        let centerY = HEIGHT / 2 + 50; // Y-coordinate of the circle center
         let radius = 90; // Radius of the circle
 
         ctx.save();
@@ -1429,7 +1430,7 @@ function getCoverForEndScreen(songPath) {
         ctx.restore();
     } else {
         let centerX = WIDTH - 100;
-        let centerY = HEIGHT / 2 + 40;
+        let centerY = HEIGHT / 2 + 50;
         let radius = 90;
 
         ctx.save();
@@ -1497,10 +1498,10 @@ window.onload = function () {
     document.getElementById("restartButton").addEventListener("click", restartSong);
     document.getElementById("previousButton").addEventListener("click", previousSong);
     document.getElementById("randomizeButton").addEventListener("click", randomizeSong);
-    document.getElementById("debugButton").addEventListener("click", toggleDebugInfo);
+    document.getElementById("githubRepo").addEventListener("click", toRepo);
 
     // Add event listener to the start button
-    document.getElementById("startButton").onclick = function () {
+    document.getElementById("startButton").onclick = () => {
         startGame();
     };
 
@@ -1664,9 +1665,9 @@ function startGame(index) {
         document.getElementById("fullscreen").style.display = "inline";
         document.getElementById("keybindsButton").style.display = "inline";
         document.getElementById("myYoutube").style.display = "inline";
+        document.getElementById("githubRepo").style.display = "inline";
         document.getElementById("songVol").style.display = "inline";
         document.getElementById("hitSoundVol").style.display = "inline";
-        document.getElementById("debugButton").style.display = "inline";
 
         document.getElementById("startButton").style.display = "none";
 
@@ -1797,7 +1798,6 @@ function checkAndDisplayBestScore() {
     }
 }
 
-// Endscreen
 function drawEndScreen() {
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
@@ -1820,9 +1820,19 @@ function drawEndScreen() {
     ctx.font = "30px Arial";
     ctx.textAlign = "right";
     ctx.fillText("Song: " + getSongTitle(currentSongPath), WIDTH - 100, HEIGHT / 2);
-    ctx.fillText("Artist: " + getArtist(currentSongPath), WIDTH - 100, HEIGHT / 2 + 40);
-    ctx.fillText("BPM: " + BPM, WIDTH - 100, HEIGHT / 2 + 80);
-    ctx.fillText("Speed: " + noteSpeed, WIDTH - 100, HEIGHT / 2 + 120);
+
+    // Get the artist(s)
+    let artists = getArtist(currentSongPath).split(", ");
+    if (artists.length > 3) {
+        ctx.fillText("Artist: " + artists.slice(0, 3).join(", ") + ",", WIDTH - 100, HEIGHT / 2 + 40);
+        ctx.fillText(artists.slice(3).join(", "), WIDTH - 100, HEIGHT / 2 + 80);
+        ctx.fillText("BPM: " + BPM, WIDTH - 100, HEIGHT / 2 + 120);
+        ctx.fillText("Speed: " + noteSpeed, WIDTH - 100, HEIGHT / 2 + 160);
+    } else {
+        ctx.fillText("Artist: " + artists.join(", "), WIDTH - 100, HEIGHT / 2 + 40);
+        ctx.fillText("BPM: " + BPM, WIDTH - 100, HEIGHT / 2 + 80);
+        ctx.fillText("Speed: " + noteSpeed, WIDTH - 100, HEIGHT / 2 + 120);
+    }
 
     // Draw statistical information
     ctx.textAlign = "left";
@@ -2407,6 +2417,11 @@ function email() {
 function toVersion() {
     // Switch version
     window.location.href = "BeatzGameTesting.html";
+}
+
+function toRepo() {
+    // Go to GitHub repository for Beatz!
+    window.open("https://github.com/GuayabR/Beatz");
 }
 
 function toggleFullScreen() {
@@ -3293,6 +3308,10 @@ function keyDownFunction(keyboardEvent) {
     }
     if (keybinds.debug.includes(keyDown)) {
         toggleDebugInfo();
+    }
+    if (keyboardEvent.ctrlKey && keyDown === ".") {
+        autoHitDisableSaving = true;
+        endScreenDrawn = true;
     }
 }
 

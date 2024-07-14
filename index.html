@@ -16,19 +16,21 @@
         <h1>Beatz.io</h1>
 
         <button id="startButton" style="display: none">Play! <i class="fa-solid fa-play"></i></button>
-        <button id="myYoutube" style="display: none" onclick="NewTab()"><i class="fa-brands fa-youtube"></i></button>
-        <button id="toggleNoteStyleButton" style="display: none">
+        <button id="myYoutube" title="My YouTube! (@GuayabR)" style="display: none" onclick="NewTab()"><i class="fa-brands fa-youtube"></i></button>
+        <button id="githubRepo" title="GitHub Repository for Beatz! Where you can download the game for offline use!" style="display: none">
+            <i class="fa-brands fa-github"></i>
+        </button>
+        <button id="toggleNoteStyleButton" title="Toggle Note Style (Arrows / Circles)" style="display: none">
             <i class="fa-solid fa-arrow-up" style="display: none"></i>
             <i class="fa-solid fa-circle" style="display: none"></i>
         </button>
-        <button id="previousButton" style="display: none"><i class="fa-solid fa-backward-fast"></i></button>
-        <button id="restartButton" style="display: none"><i class="fa-solid fa-repeat"></i></button>
-        <button id="randomizeButton" style="display: none"><i class="fa-solid fa-shuffle"></i></button>
-        <button id="nextButton" style="display: none"><i class="fa-solid fa-forward-fast"></i></button>
+        <button id="previousButton" title="Previous Song" style="display: none"><i class="fa-solid fa-backward-fast"></i></button>
+        <button id="restartButton" title="Restart Song" style="display: none"><i class="fa-solid fa-repeat"></i></button>
+        <button id="nextButton" title="Next Song" style="display: none"><i class="fa-solid fa-forward-fast"></i></button>
+        <button id="randomizeButton" title="Randomize Song" style="display: none"><i class="fa-solid fa-shuffle"></i></button>
         <button id="toggleAutoHit" style="display: none">Toggle Auto Hit</button>
-        <button id="fullscreen" style="display: none" onclick="toggleFullScreen()"><i class="fa-solid fa-expand"></i></button>
-        <button id="debugButton" style="display: none"><i class="fa-solid fa-robot"></i></button>
-        <button id="keybindsButton" style="display: none"><i class="fa-solid fa-gear"></i></button><br /><br />
+        <button id="fullscreen" title="Toggle Fullscreen" style="display: none" onclick="toggleFullScreen()"><i class="fa-solid fa-expand"></i></button>
+        <button id="keybindsButton" title="Game Settings" style="display: none"><i class="fa-solid fa-gear"></i></button><br /><br />
 
         <button id="openSongListBTN"><i class="fa-solid fa-music"></i> Song list!</button>
 
@@ -178,7 +180,7 @@
             <button id="contactbtn" onclick="email()"><i class="fa-solid fa-envelope"></i> Contact</button>
         </div>
 
-        <div id="publicToTestToggle"><button id="publicbtn" onclick="toVersion()">Open testing game</button><br /><br /></div>
+        <div id="publicToTestToggle"><button id="publicbtn" onclick="toVersion()">Open public game</button><br /><br /></div>
 
         <h2>
             Background image from:
@@ -236,6 +238,6 @@
             </div>
         </div>
 
-        <script src="BeatzGameTesting.js"></script>
+        <script src="BeatzGame.js"></script>
     </body>
 </html>
