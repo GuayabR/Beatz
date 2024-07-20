@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Beatz Testing 3.6!</title>
+        <title>Beatz Testing 3.7!</title>
         <link rel="icon" type="image/x-icon" href="Resources/favicon.png" />
         <link rel="stylesheet" type="text/css" href="styles.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -106,9 +106,6 @@
                     </select>
                     <br /><br />
 
-                    <label for="debugInput">Debug:</label>
-                    <input type="text" id="debugInput" name="debug" /><br /><br />
-
                     <label for="logKeys">Log Keys to Console</label>
                     <input type="checkbox" id="logKeys" onclick="toggleKeyLogger()" /><br />
 
@@ -126,6 +123,7 @@
                         <option value="defaultBG">Default (Uproxide)</option>
                         <option value="defaultBG2">Wavy chromatic</option>
                         <option value="defaultBG3">Dark orange sunset</option>
+                        <option value="defaultBG4">Dark Blue Flow</option>
                         <option value="htmlBG">Copy HTML</option>
                         <option value="transparentBG">Transparent</option>
                         <option value="customBG">Custom background!</option></select
@@ -200,9 +198,9 @@
                 <div class="modal-header">
                     <h1 class="modal-title">Song List</h1>
                 </div>
-                <label for="songSearchInput">Search songs by keyword, index, or artist.</label><br /><br />
+                <label for="songSearchInput">Search songs by keyword, index, album, or artist.</label><br /><br />
                 <input type="text" id="songSearchInput" placeholder="Search..." oninput="filterSongs()" /><br /><br />
-                <label id="resultsForSearch" style="display: none">Results found</label><br /><br />
+                <label id="resultsForSearch" style="display: none">Results found</label>
                 <button type="button" id="mostRecent" class="most-recent-button" style="display: none">Play most recent song</button>
                 <label id="noResultsTXT" style="display: none">No results found for your search.</label><br /><br />
                 <div class="modal-body" id="songList">

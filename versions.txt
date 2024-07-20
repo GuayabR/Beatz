@@ -417,3 +417,22 @@ Reworked album cover logic!
 - Added a GitHub Repository button.
 - Added titles for all buttons.
 - Small bugfixes and tweaks.
+//
+
+3.6.2.1 (ALBUM 3.6! 17/07/2024)
+- Added a hitbox viewer, views hit range, and perfect hit range.
+- Dynamic speeds can now delete notes and refill them, used for empty spaces in the middle of a song.
+- Nerfed perfect hit ranges, from Y positions 540 - 560 to 542 - 568.
+- Auto hit now hits a note somewhere random in the perfect hit range.
+//
+
+3.7.0 (SONGv 3.7! 20/07/2024)
+# REWORKED SONG VERSIONS.
+---- Song versions are now not listed in the main song list.
+--- Song versions are now only accessible with the version dropdown inside the selected song modal.
+-- Song versions are NOT accessible by randomizing, pressing next or previous song.
+
+- Added versions for songs: Slide da Treme Melódica v2 by DJ FNK, WTF 2 by Ugovhb, Goosebumps by Travis Scott.
+- Song versions include: Slowed down or Sped up versions of the songs, mainly in phonk songs
+- Songs from other genres include songs featuring other artists.
+- Made the song list modal stuck to 95% the viewport height so the elements displayed don't make it scrollable.

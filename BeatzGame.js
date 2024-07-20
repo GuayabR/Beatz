@@ -2,14 +2,14 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: 10COM 3.6.1.1 test (release.version.subversion.bugfix)
+ * Version: SONGv 3.7.0 (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
 // CONSTANTS
 
-const VERSION = "ALBUM 3.6.1.1 (Codename.Release.Version.Subversion.Bugfix)";
-const PUBLICVERSION = "3.6! (GitHub Port)";
+const VERSION = "SONGv 3.7.0 (Codename.Release.Version.Subversion.Bugfix)";
+const PUBLICVERSION = "3.7! (GitHub Port)";
 console.log("Version: " + VERSION);
 
 const canvas = document.getElementById("myCanvas");
@@ -43,16 +43,19 @@ const loadedImages = {};
 
 let notesHit = 0;
 let tutorialStage = 0;
-let isNewPlayer = !localStorage.getItem("keybinds");
+let isNewPlayer = !localStorage.getItem("newPlayer");
+
+// Retrieve the keybinds object from localStorage and parse it
+var storedKeybinds = JSON.parse(localStorage.getItem("keybinds")) || {};
 
 const keybindsText = {
     initial: {
-        left: "A",
-        up: "W",
-        down: "S",
-        right: "D",
+        left: storedKeybinds.left ? storedKeybinds.left[0] : "A",
+        up: storedKeybinds.up ? storedKeybinds.up[0] : "W",
+        down: storedKeybinds.down ? storedKeybinds.down[0] : "S",
+        right: storedKeybinds.right ? storedKeybinds.right[0] : "D",
     },
-    customizable: "Keybinds are customizable in the settings just below the canvas.",
+    customizable: "Keybinds are customizable in the gear icon just below the canvas.",
     thankYou: "Thank you for playing Beatz! Enjoy!",
     followMe: {
         announce: "Follow me on my socials!",
@@ -123,9 +126,9 @@ var HIT_Y_RANGE_MIN = 500;
 
 var HIT_Y_RANGE_MAX = 600;
 
-var PERFECT_HIT_RANGE_MIN = 540;
+var PERFECT_HIT_RANGE_MIN = 542;
 
-var PERFECT_HIT_RANGE_MAX = 560;
+var PERFECT_HIT_RANGE_MAX = 568;
 
 var BPM;
 
@@ -262,43 +265,32 @@ console.log("Variables loaded.");
 
 // IMAGES
 var noteLeftIMG = new Image();
-noteLeftIMG.src = "Resources/NoteLeftHQ.png";
 
 var noteDownIMG = new Image();
-noteDownIMG.src = "Resources/NoteDownHQ.png";
 
 var noteUpIMG = new Image();
-noteUpIMG.src = "Resources/NoteUpHQ.png";
 
 var noteRightIMG = new Image();
-noteRightIMG.src = "Resources/NoteRightHQ.png";
 
 var noteLeftPressIMG = new Image();
-noteLeftPressIMG.src = "Resources/NoteLeftPressHQ.png";
 
 var noteDownPressIMG = new Image();
-noteDownPressIMG.src = "Resources/NoteDownPressHQ.png";
 
 var noteUpPressIMG = new Image();
-noteUpPressIMG.src = "Resources/NoteUpPressHQ.png";
 
 var noteRightPressIMG = new Image();
-noteRightPressIMG.src = "Resources/NoteRightPressHQ.png";
 
-var noCover = new Image(); // Used for covers that are not found in the files (e.g forgot to add it or misspelt it)
-noCover.src = "Resources/Covers/noCover.png";
+var noCover = new Image("Resources/Covers/noCover.png"); // Used for covers that are not found in the files (e.g forgot to add it or misspelt it)
 
-var BGbright = new Image(); // Default background
-BGbright.src = "Resources/Background2.png";
+var BGbright = new Image("Resources/Background2.png"); // Default background
 
-var BG2 = new Image(); // Wavy chromatic background
-BG2.src = "Resources/Background3.jpg";
+var BG2 = new Image("Resources/Background3.jpg"); // Wavy chromatic background
 
-var BG3 = new Image(); // Dark orange sunset
-BG3.src = "Resources/Background4.png";
+var BG3 = new Image("Resources/Background4.png"); // Dark orange sunset
 
-var BG4 = new Image(); // HTML Background (Windows orange-purple bloom)
-BG4.src = "Resources/BackgroundHtml2.png";
+var BG4 = new Image("Resources/BackgroundHtml2.png"); // HTML Background (Windows orange-purple bloom)
+
+var BG5 = new Image("Resources/Background5.jpg"); // Dark Blue Flow Background
 
 console.log("Textures loaded.");
 
@@ -394,7 +386,8 @@ function preloadSongs() {
         "Resources/Songs/Tobey.mp3",
         "Resources/Songs/Somebody Save Me.mp3",
         "Resources/Songs/this is what space feels like.mp3",
-        "Resources/Songs/Finesse (feat. Cardi B).mp3",
+        "Resources/Songs/SICKO MODE.mp3",
+        "Resources/Songs/THE SCOTTS.mp3",
         "Resources/Songs/testingsong.mp3",
     ];
 
@@ -407,12 +400,11 @@ function preloadSongs() {
     const headerElement = document.querySelector("h1");
     headerElement.appendChild(counterText);
 
-    let versionPaths = []; // Array to hold paths of subsequent versions
-
     function loadNextSong() {
         if (currentIndex < totalSongs) {
             const songPath = songPaths[currentIndex];
             const songTitle = getSongTitle(songPath);
+
             const audio = new Audio();
             audio.src = songPath;
             audio.oncanplaythrough = function () {
@@ -438,7 +430,7 @@ function preloadSongs() {
 
     // Function to check if all songs are loaded
     function checkAllSongsLoaded(totalSongs) {
-        if (songLoadCounter === 5) {
+        if (songLoadCounter === 1) {
             const startButton = document.getElementById("startButton");
             startButton.style.display = "inline";
         } else if (songLoadCounter === totalSongs) {
@@ -454,26 +446,6 @@ function preloadSongs() {
 
     function addSongToList(songPath, songTitle) {
         const songListContainer = document.getElementById("songList");
-
-        // Check if the song title exists in songVersions and has versions
-        if (songVersions.hasOwnProperty(songTitle) && Array.isArray(songVersions[songTitle]) && songVersions[songTitle].length > 0) {
-            const firstVersionPath = songVersions[songTitle][0].path;
-
-            // Populate the versionPaths array with subsequent versions' paths
-            for (let i = 1; i < songVersions[songTitle].length; i++) {
-                versionPaths.push(songVersions[songTitle][i].path);
-            }
-
-            console.log(`First Version Path: ${firstVersionPath}`);
-            console.log(`Current Song Path: ${songPath}`);
-            if (songPath !== firstVersionPath) {
-                console.log(`Skipping version: ${songTitle} - ${songPath}`);
-                return; // Ignore adding subsequent versions
-            }
-        } else if (versionPaths.includes(songPath)) {
-            console.log(`Skipping version (from array): ${songTitle} - ${songPath}`);
-            return; // Ignore adding subsequent versions from the versionPaths array
-        }
 
         const songButton = document.createElement("button");
         songButton.className = "song-button";
@@ -514,7 +486,22 @@ function preloadSongs() {
 const songVersions = {
     Finesse: [
         { path: "Resources/Songs/Finesse.mp3", title: "Finesse" },
-        { path: "Resources/Songs/Finesse (feat. Cardi B).mp3", title: "Finesse (feat. Cardi B)" },
+        { path: "Resources/Songs/Finesse (feat. Cardi B).mp3", title: "Finesse (feat. Cardi B)" }, // Other version, don't recognize this one
+    ],
+    "WTF 2": [
+        { path: "Resources/Songs/WTF 2.mp3", title: "WTF 2" },
+        { path: "Resources/Songs/WTF 2 - Slowed.mp3", title: "WTF 2 - Slowed" }, // Other version, don't recognize this one
+        { path: "Resources/Songs/WTF 2 - Sped Up.mp3", title: "WTF 2 - Sped Up" }, // Other version, don't recognize this one
+    ],
+    "Slide da Treme Melódica v2": [
+        { path: "Resources/Songs/Slide da Treme Melódica v2.mp3", title: "Slide da Treme Melódica v2" },
+        { path: "Resources/Songs/Slide da Treme Melódica v2 - Slowed.mp3", title: "Slide da Treme Melódica v2 - Slowed" }, // Other version, don't recognize this one
+        { path: "Resources/Songs/Slide da Treme Melódica v2 - Ultra Slowed.mp3", title: "Slide da Treme Melódica v2 - Ultra Slowed" }, // Other version, don't recognize this one
+        { path: "Resources/Songs/Slide da Treme Melódica v2 - Sped Up.mp3", title: "Slide da Treme Melódica v2 - Sped Up" }, // Other version, don't recognize this one
+    ],
+    Goosebumps: [
+        { path: "Resources/Songs/Goosebumps.mp3", title: "Goosebumps" },
+        { path: "Resources/Songs/Goosebumps (feat. 21 Savage).mp3", title: "Goosebumps (feat. 21 Savage)" }, // Other version, don't recognize this one
     ],
     // Add other songs and their versions here
 };
@@ -545,7 +532,7 @@ const songConfigs = {
     "Resources/Songs/Ticking Away.mp3": { BPM: 95, noteSpeed: 10 },
     "Resources/Songs/VISIONS.mp3": { BPM: 157, noteSpeed: 8 },
     "Resources/Songs/VVV.mp3": { BPM: 131, noteSpeed: 10 },
-    "Resources/Songs/WTF 2.mp3": { BPM: 93, noteSpeed: 10 },
+    "Resources/Songs/WTF 2.mp3": { BPM: 116, noteSpeed: 14 },
     "Resources/Songs/MY EYES.mp3": { BPM: 132, noteSpeed: 12 },
     "Resources/Songs/Can't Slow Me Down.mp3": { BPM: 122, noteSpeed: 11 },
     "Resources/Songs/LUNCH.mp3": { BPM: 125, noteSpeed: 14.6 },
@@ -568,7 +555,7 @@ const songConfigs = {
     "Resources/Songs/Rush E.mp3": { BPM: 500, noteSpeed: 20 },
     "Resources/Songs/Vamp Anthem.mp3": { BPM: 164, noteSpeed: 12 },
     "Resources/Songs/CARNIVAL.mp3": { BPM: 148, noteSpeed: 12 },
-    "Resources/Songs/HUMBLE..mp3": { BPM: 150, noteSpeed: 13 },
+    "Resources/Songs/HUMBLE..mp3": { BPM: 150, noteSpeed: 0 },
     "Resources/Songs/Stop Breathing.mp3": { BPM: 155, noteSpeed: 12 },
     "Resources/Songs/CHEGOU 3.mp3": { BPM: 130, noteSpeed: 13.2 },
     "Resources/Songs/KRUSH ALERT.mp3": { BPM: 117, noteSpeed: 12.5 },
@@ -581,7 +568,7 @@ const songConfigs = {
     "Resources/Songs/MOVE YO BODY.mp3": { BPM: 133, noteSpeed: 12 },
     "Resources/Songs/YOU'RE TOO SLOW.mp3": { BPM: 162, noteSpeed: 14.5 },
     "Resources/Songs/BAND4BAND.mp3": { BPM: 140, noteSpeed: 14 },
-    "Resources/Songs/Slide da Treme Melódica v2.mp3": { BPM: 235, noteSpeed: 18 },
+    "Resources/Songs/Slide da Treme Melódica v2.mp3": { BPM: 210, noteSpeed: 18 },
     "Resources/Songs/fantasmas.mp3": { BPM: 164, noteSpeed: 10 },
     "Resources/Songs/BIKE.mp3": { BPM: 105, noteSpeed: 14 },
     "Resources/Songs/ARCÀNGEL.mp3": { BPM: 124, noteSpeed: 14 },
@@ -611,8 +598,18 @@ const songConfigs = {
     "Resources/Songs/Tobey.mp3": { BPM: 139, noteSpeed: 14 },
     "Resources/Songs/Somebody Save Me.mp3": { BPM: 181, noteSpeed: 16 },
     "Resources/Songs/this is what space feels like.mp3": { BPM: 146, noteSpeed: 11 },
+    "Resources/Songs/SICKO MODE.mp3": { BPM: 155, noteSpeed: 0 },
+    "Resources/Songs/THE SCOTTS.mp3": { BPM: 130, noteSpeed: 0 },
     "Resources/Songs/Finesse (feat. Cardi B).mp3": { BPM: 105, noteSpeed: 22 },
+    "Resources/Songs/WTF 2 - Slowed.mp3": { BPM: 148, noteSpeed: 12 },
+    "Resources/Songs/WTF 2 - Sped Up.mp3": { BPM: 130, noteSpeed: 16 },
+    "Resources/Songs/Slide da Treme Melódica v2 - Slowed.mp3": { BPM: 125, noteSpeed: 16 },
+    "Resources/Songs/Slide da Treme Melódica v2 - Ultra Slowed.mp3": { BPM: 159, noteSpeed: 16 },
+    "Resources/Songs/Slide da Treme Melódica v2 - Sped Up.mp3": { BPM: 157, noteSpeed: 18 },
+    "Resources/Songs/Goosebumps (feat. 21 Savage).mp3": { BPM: 130, noteSpeed: 8 },
 };
+
+let savedNotes;
 
 function getDynamicSpeed(songSrc) {
     const dynamicSpeeds = {
@@ -688,6 +685,19 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 63.94, noteSpeed: 14 },
         ],
         Renaissance: [{ timestamp: 11, noteSpeed: 14 }],
+        "HUMBLE.": [
+            { timestamp: 6.78, noteSpeed: 12 },
+            { timestamp: 7.7, noteSpeed: 14 },
+        ],
+        "SICKO MODE": [
+            { timestamp: 27.6, noteSpeed: 12 }, // sun is down
+            { timestamp: 56, noteSpeed: 14 }, // omega bass
+            { timestamp: 58.85, noteSpeed: 14, savedNotes: notes },
+            { timestamp: 58.9, noteSpeed: 14, notes: [] },
+            { timestamp: 64.3, noteSpeed: 14, notes: savedNotes },
+            { timestamp: 65, noteSpeed: 14 },
+        ],
+        "THE SCOTTS": [{ timestamp: 22.2, noteSpeed: 14 }],
     };
 
     let songTitle = getSongTitle(songSrc);
@@ -729,7 +739,7 @@ const songToAlbumMap = {
     "MY EYES": "UTOPIA",
     "Can't Slow Me Down": "Can't Slow Me Down",
     LUNCH: "Hit Me Hard and Soft",
-    "BUTTERFLY EFFECT": "ASTROWORLD",
+    "BUTTERFLY EFFECT": "BUTTERFLY EFFECT",
     SWIM: "Chase Atlantic",
     "You Need Jesus": "You Need Jesus",
     Crazy: "Octane",
@@ -790,7 +800,15 @@ const songToAlbumMap = {
     Tobey: "The Death of Slim Shady (Coup de Grâce)",
     "Somebody Save Me": "The Death of Slim Shady (Coup de Grâce)",
     "this is what space feels like": "this is what space feels like",
+    "SICKO MODE": "ASTROWORLD",
+    "THE SCOTTS": "THE SCOTTS",
     "Finesse (feat. Cardi B)": "24K Magic",
+    "WTF 2 - Slowed": "WTF 2 - Slowed",
+    "WTF 2 - Sped Up": "WTF 2 - Sped Up",
+    "Slide da Treme Melódica v2 - Slowed": "Slide da Treme Melódica v2 - Slowed",
+    "Slide da Treme Melódica v2 - Ultra Slowed": "Slide da Treme Melódica v2 - Ultra Slowed",
+    "Slide da Treme Melódica v2 - Sped Up": "Slide da Treme Melódica v2 - Sped Up",
+    "Goosebumps (feat. 21 Savage)": "Birds in the Trap Sing McKnight",
 };
 
 // Function to preload images
@@ -824,7 +842,7 @@ function preloadImages() {
         "Resources/Covers/UTOPIA.jpg",
         "Resources/Covers/Can't Slow Me Down.jpg",
         "Resources/Covers/Hit Me Hard and Soft.jpg",
-        "Resources/Covers/ASTROWORLD.jpg",
+        "Resources/Covers/BUTTERFLY EFFECT.jpg",
         "Resources/Covers/Chase Atlantic.jpg",
         "Resources/Covers/You Need Jesus.jpg",
         "Resources/Covers/Octane.jpg",
@@ -859,6 +877,14 @@ function preloadImages() {
         "Resources/Covers/We Don't Trust You.jpg",
         "Resources/Covers/The Death of Slim Shady (Coup de Grâce).jpg",
         "Resources/Covers/this is what space feels like.jpg",
+        "Resources/Covers/ASTROWORLD.jpg",
+        "Resources/Covers/THE SCOTTS.jpg",
+        "Resources/Covers/ASTRONOMICAL.jpg",
+        "Resources/Covers/WTF 2 - Slowed.jpg",
+        "Resources/Covers/WTF 2 - Sped Up.jpg",
+        "Resources/Covers/Slide da Treme Melódica v2 - Slowed.jpg",
+        "Resources/Covers/Slide da Treme Melódica v2 - Ultra Slowed.jpg",
+        "Resources/Covers/Slide da Treme Melódica v2 - Sped Up.jpg",
     ];
 
     // Load album cover images
@@ -942,7 +968,7 @@ function playRecentSong() {
         songListModal.style.display = "none";
         activateKeybinds();
     } else {
-        alert("No recent song found.");
+        alert("No recent song found. Select one from the index!");
     }
 }
 
@@ -956,7 +982,6 @@ function openSelectedSongModal(songPath, songTitle) {
     const song = songList.find(s => s === songPath);
     if (song) {
         const songArtist = getArtist(songTitle);
-        const modal = document.getElementById("selectedSongModal");
         const songTitleElement = document.getElementById("songTitle");
         const songArtistElement = document.getElementById("songArtist");
         const songBPMElement = document.getElementById("songBPM");
@@ -964,58 +989,96 @@ function openSelectedSongModal(songPath, songTitle) {
         const versionDropdownContainer = document.getElementById("versionDropdownContainer");
         const versionDropdown = document.getElementById("versionDropdown");
 
-        // Set modal content
-        songTitleElement.textContent = songTitle;
-        songArtistElement.textContent = songArtist;
-        songBPMElement.textContent = songConfigs[songPath]?.BPM || "BPM not available";
+        // Function to update modal content
+        function updateModalContent(versionPath, versionTitle) {
+            const versionConfig = songConfigs[versionPath] || {};
+            songTitleElement.textContent = versionTitle;
+            songArtistElement.textContent = getArtist(versionTitle);
+            songBPMElement.textContent = versionConfig.BPM || "BPM not available";
 
-        // Display cover image
-        const coverImageElement = document.getElementById("songCoverImage");
-        const coverImage = getCoverImage(songTitle); // Get the cover image based on song title
-        if (coverImage) {
-            coverImageElement.src = coverImage.src;
-        } else {
-            coverImageElement.src = "Resources/Covers/noCover.png"; // Placeholder cover image path
+            // Display cover image
+            const coverImageElement = document.getElementById("songCoverImage");
+            const coverImage = getCoverImage(versionTitle); // Get the cover image based on version title
+            if (coverImage) {
+                coverImageElement.src = coverImage.src;
+            } else {
+                coverImageElement.src = "Resources/Covers/noCover.png"; // Placeholder cover image path
+            }
+
+            // Check if dynamic speeds are defined for the song
+            const dynamicSpeeds = getDynamicSpeed(versionPath);
+            if (dynamicSpeeds) {
+                let totalNoteSpeed = dynamicSpeeds.reduce((acc, speed) => acc + speed.noteSpeed, 0);
+                let averageNoteSpeed = totalNoteSpeed / dynamicSpeeds.length;
+                songSpeedElement.textContent = `${averageNoteSpeed.toFixed(2)}`;
+                document.getElementById("speedTXT").innerHTML = `<strong>Average Note Speed:</strong>`;
+            } else {
+                let noteSpeed = versionConfig.noteSpeed || "Note Speed not available";
+                songSpeedElement.textContent = `${noteSpeed}`;
+                document.getElementById("speedTXT").innerHTML = `<strong>Note Speed:</strong>`;
+            }
         }
 
-        // Check if dynamic speeds are defined for the song
-        const dynamicSpeeds = getDynamicSpeed(songPath);
-        if (dynamicSpeeds) {
-            let totalNoteSpeed = dynamicSpeeds.reduce((acc, speed) => acc + speed.noteSpeed, 0);
-            let averageNoteSpeed = totalNoteSpeed / dynamicSpeeds.length;
-            songSpeedElement.textContent = `${averageNoteSpeed.toFixed(2)}`;
-            document.getElementById("speedTXT").innerHTML = `<strong>Average Note Speed:</strong>`;
-        } else {
-            let noteSpeed = songConfigs[songPath]?.noteSpeed || "Note Speed not available";
-            songSpeedElement.textContent = `${noteSpeed}`;
-            document.getElementById("speedTXT").innerHTML = `<strong>Note Speed:</strong>`;
-        }
+        // Set initial modal content
+        updateModalContent(songPath, songTitle);
+
+        // Determine default version path
+        const defaultVersionPath = songList.find(s => s === songPath);
+        const isDefaultVersion = songPath === defaultVersionPath;
 
         // Check for song versions
         if (songVersions[songTitle]) {
             versionDropdownContainer.style.display = "block";
+            versionDropdownContainer.style.paddingBottom = "20px"; // Adjust this value to create space similar to <br><br>
             versionDropdown.innerHTML = "";
-            songVersions[songTitle].forEach(version => {
+            songVersions[songTitle].forEach((version, index) => {
                 const option = document.createElement("option");
                 option.value = version.path;
                 option.textContent = version.title;
                 versionDropdown.appendChild(option);
+
+                // Check if this version is the default version
+                if (version.path === defaultVersionPath) {
+                    versionDropdown.selectedIndex = index; // Set the default option
+                }
+            });
+
+            // Add change event listener to the dropdown
+            versionDropdown.addEventListener("change", function () {
+                const selectedVersionPath = versionDropdown.value;
+                const selectedVersionTitle = versionDropdown.options[versionDropdown.selectedIndex].textContent;
+                updateModalContent(selectedVersionPath, selectedVersionTitle);
             });
         } else {
             versionDropdownContainer.style.display = "none";
         }
 
         // Show the modal
-        modal.style.display = "block";
-        document.getElementById("songListModal").style.display = "none";
+        selectedSongModal.style.display = "block";
+        songListModal.style.display = "none";
 
         // Add click event listener to the play button
         const playButton = document.getElementById("playSongButton");
         playButton.addEventListener("click", function () {
             const selectedVersionPath = versionDropdown.value || songPath;
-            const index = songList.findIndex(s => s === selectedVersionPath);
-            startGame(index); // Ensure songIndex is defined
-            modal.style.display = "none"; // Close modal after starting the game
+            let setIndex;
+            let index;
+
+            if (selectedVersionPath === defaultVersionPath) {
+                // If the selected version is the default, use the index of the default version
+                index = songList.findIndex(s => s === selectedVersionPath); // Get the index of the selected version
+                setIndex = index; // Set setIndex to the index of the normal song
+            } else {
+                // If the selected version is not the default, use the index of the normal song
+                index = songList.findIndex(s => s === defaultVersionPath);
+                setIndex = index; // Set setIndex to the index of the normal song
+            }
+
+            // Pass index and setIndex to startGame
+            console.log(`setIndex: ${setIndex}, index: ${index}`);
+            startGame(index, selectedVersionPath, setIndex);
+
+            selectedSongModal.style.display = "none"; // Close modal after starting the game
             activateKeybinds();
             saveRecentSong(selectedVersionPath, songTitle, index + 1, songArtist); // Save the recent song
             updateRecentSongButton(); // Update the button text
@@ -1039,7 +1102,9 @@ function filterSongs() {
         const isCreo = songText.includes("creo");
         const isTravis = songText.includes("travis");
         const isLinkin = songText.includes("linkin park");
-        const ptoLocoDeMrd = songText.includes("playboi carti");
+        const isTrash = songText.includes("playboi carti");
+        const isBillie = songText.includes("billie eilish");
+        const isZesty = songText.includes("drake");
 
         if (searchInput === "ye" && isKanye) {
             button.style.display = "block";
@@ -1056,10 +1121,31 @@ function filterSongs() {
         } else if (searchInput === "got bit by a goat" && isEminem) {
             button.style.display = "block";
             resultsCount++;
-        } else if (searchInput === "loco d mrd" && ptoLocoDeMrd) {
+        } else if (searchInput === "marshall" && isEminem) {
             button.style.display = "block";
             resultsCount++;
-        } else if (searchInput !== "ye" && searchInput !== "kdot" && searchInput !== "em" && searchInput !== "goat" && songText.includes(searchInput)) {
+        } else if (searchInput === "marshall mathers" && isEminem) {
+            button.style.display = "block";
+            resultsCount++;
+        } else if (searchInput === "trash" && isTrash) {
+            button.style.display = "block";
+            resultsCount++;
+        } else if (searchInput === "zesty" && isZesty) {
+            button.style.display = "block";
+            resultsCount++;
+        } else if (searchInput === "zest" && isZesty) {
+            button.style.display = "block";
+            resultsCount++;
+        } else if (searchInput === "zes" && isZesty) {
+            button.style.display = "block";
+            resultsCount++;
+        } else if (searchInput === "ze" && isZesty) {
+            button.style.display = "block";
+            resultsCount++;
+        } else if (searchInput === "bili" && isBillie) {
+            button.style.display = "block";
+            resultsCount++;
+        } else if (songText.includes(searchInput)) {
             button.style.display = "block";
             resultsCount++;
         } else {
@@ -1067,10 +1153,12 @@ function filterSongs() {
         }
     });
 
+    // Adjust resultsForSearch display and padding
     if (searchInput) {
         if (resultsCount > 0) {
             resultsForSearch.textContent = `${resultsCount} results found for "${searchInput}"`;
             resultsForSearch.style.display = "block";
+            resultsForSearch.style.paddingBottom = "20px"; // Adjust this value to create space similar to <br><br>
             noResultsTXT.style.display = "none";
         } else {
             resultsForSearch.style.display = "none";
@@ -1122,8 +1210,6 @@ function nextSong() {
     currentSongIndex = (currentSongIndex + 1) % songList.length;
 
     // Start the game with the next song in the songList array
-    currentSongPath = songList[currentSongIndex];
-    console.log("Spinning again from index: " + currentSongIndex);
     startGame(currentSongIndex);
 }
 
@@ -1135,7 +1221,7 @@ function restartSong() {
 
     resetSongVariables();
 
-    console.log("Restarting song from index: " + currentSongIndex);
+    console.log("Restarting song: " + currentSongIndex);
     startGame(currentSongIndex);
 }
 
@@ -1151,8 +1237,6 @@ function previousSong() {
     currentSongIndex = (currentSongIndex - 1 + songList.length) % songList.length;
 
     // Start the game with the previous song in the songList array
-    currentSongPath = songList[currentSongIndex];
-    console.log("Previous song from index: " + currentSongIndex);
     startGame(currentSongIndex);
 }
 
@@ -1174,6 +1258,7 @@ function randomizeSong() {
 
     // Randomize song
     currentSongIndex = pickRandomSongIndex();
+
     console.log("Randomizing song to: " + currentSongIndex);
 
     // Start the game with the new random song
@@ -1204,11 +1289,14 @@ function resetSongVariables() {
     currentConfigIndex = 0;
 }
 
-function displaySongInfo() {
+function displaySongInfo(setIndex) {
+    // Determine the index to display based on setIndex
+    indexToDisplay = setIndex >= 0 ? setIndex : currentSongIndex;
+
     ctx.fillStyle = "white";
     ctx.font = "22px Arial";
     ctx.textAlign = "right";
-    ctx.fillText("Song " + (currentSongIndex + 1) + ": " + getSongTitle(currentSong.src), WIDTH - 10, 28);
+    ctx.fillText(`Song ${indexToDisplay + 1}: ${getSongTitle(currentSong.src)}`, WIDTH - 10, 28);
     ctx.fillText(getArtist(currentSong.src), WIDTH - 10, 56);
     ctx.font = "22px Arial";
     ctx.fillText("BPM: " + BPM + " / Speed: " + noteSpeed, WIDTH - 10, 84);
@@ -1217,8 +1305,8 @@ function displaySongInfo() {
 function getSongTitle(songPath) {
     // Ensure songPath is a string
     if (typeof songPath !== "string") {
-        console.error("songPath is not a string:", songPath);
-        return "Unknown Title";
+        console.log("songPath is not a string:", songPath);
+        return songPath;
     }
 
     // Extract the file name without the directory path
@@ -1247,7 +1335,7 @@ function getArtist(songSrc) {
         "Star Walkin": "Lil Nas X",
         "What I've Done": "Linkin Park",
         "Biggest NCS Songs": "NoCopyrightSounds",
-        Goosebumps: "Travis Scott",
+        Goosebumps: "Travis Scott, Kendrick Lamar",
         "Master Of Puppets (Live)": "Metallica",
         Numb: "Linkin Park",
         "sdp interlude": "Travis Scott",
@@ -1282,8 +1370,8 @@ function getArtist(songSrc) {
         CARNIVAL: "¥$, Kanye West, Ty Dolla $ign, Rich The Kid, Playboi Carti",
         "HUMBLE.": "Kendrick Lamar",
         "Stop Breathing": "Playboi Carti",
-        "CHEGOU 3": "shonci",
-        "KRUSH ALERT": "shonci",
+        "CHEGOU 3": "shonci, Mc Magrinho",
+        "KRUSH ALERT": "shonci, HR",
         BAIXO: "xxanteria",
         "MOVE YO BODY": "Bryansanon",
         "SLAY!": "Eternxlkz",
@@ -1322,7 +1410,15 @@ function getArtist(songSrc) {
         Tobey: "Eminem, Big Sean, BabyTron",
         "Somebody Save Me": "Eminem, Jelly Roll",
         "this is what space feels like": "JVKE",
+        "SICKO MODE": "Travis Scott, Drake",
+        "THE SCOTTS": "THE SCOTTS, Travis Scott, Kid Cudi",
         "Finesse (feat. Cardi B)": "Bruno Mars, Cardi B",
+        "WTF 2 - Slowed": "Ugovhb, EF",
+        "WTF 2 - Sped Up": "Ugovhb, EF",
+        "Slide da Treme Melódica v2 - Slowed": "DJ FNK, Polaris",
+        "Slide da Treme Melódica v2 - Ultra Slowed": "DJ FNK, Polaris",
+        "Slide da Treme Melódica v2 - Sped Up": "DJ FNK, Polaris",
+        "Goosebumps (feat. 21 Savage)": "Travis Scott, Kendrick Lamar, 21 Savage",
     };
     let songTitle = getSongTitle(songSrc);
     return artists[songTitle] || "N/A";
@@ -1532,16 +1628,44 @@ function togglePause() {
     }
 }
 
-function startGame(index) {
-    console.log("Starting game with index:", index);
+function startGame(index, versionPath, setIndex) {
+    let songPath;
 
-    const songPath = songList[index];
+    if (versionPath) {
+        currentSongPath = versionPath;
+        songPath = versionPath;
+        currentSongIndex = setIndex >= 0 ? setIndex : songList.indexOf(currentSongPath);
+    } else {
+        if (setIndex >= 0) {
+            currentSongPath = songList[setIndex];
+            currentSongIndex = setIndex;
+            songPath = currentSongPath;
+        } else if (index >= 0) {
+            currentSongIndex = index;
+            currentSongPath = songList[index];
+            songPath = currentSongPath;
+        } else {
+            var randomSong = pickRandomSong();
+            console.log("Randomly selected song:", randomSong);
+            currentSongPath = randomSong;
+            currentSongIndex = songList.indexOf(currentSongPath);
+            songPath = randomSong;
+        }
+    }
+
+    console.log(`Starting game with index: ${currentSongIndex}`);
+    console.log(`Starting game with songPath: ${songPath}`);
+
+    // Check for default versions in the dropdown
     const versionDropdown = document.getElementById("versionDropdown");
 
-    if (versionDropdown && versionDropdown.value) {
-        currentSongPath = versionDropdown.value;
-    } else {
-        currentSongPath = songPath;
+    if (versionDropdown && versionDropdown.value && setIndex === -1 && !versionPath) {
+        const selectedSongTitle = versionDropdown.value;
+        const songVersionsForSelectedTitle = songVersions[selectedSongTitle];
+        if (songVersionsForSelectedTitle) {
+            currentSongPath = songVersionsForSelectedTitle[0].path;
+            songPath = currentSongPath;
+        }
     }
 
     // Reset autoHitDisableSaving and autoHit when starting a new game
@@ -1557,16 +1681,6 @@ function startGame(index) {
     if (currentSong) {
         currentSong.pause();
         currentSong.currentTime = 0; // Reset the song to the beginning
-    }
-
-    if (typeof index === "undefined") {
-        var randomSong = pickRandomSong();
-        console.log("Randomly selected song:", randomSong);
-        currentSongPath = randomSong;
-        currentSongIndex = songList.indexOf(currentSongPath);
-    } else {
-        currentSongIndex = index;
-        currentSongPath = songList[currentSongIndex];
     }
 
     currentSong = new Audio(currentSongPath);
@@ -1591,6 +1705,9 @@ function startGame(index) {
             right: [],
         };
 
+        // Set notesGenerated to true once notes are generated
+        notesGenerated = true;
+
         const songTitle = getSongTitle(currentSongPath);
         const songConfig = getDynamicSpeed(currentSongPath);
 
@@ -1614,6 +1731,10 @@ function startGame(index) {
                         if (nextConfig.endScreenDrawn) {
                             endScreenDrawn = nextConfig.endScreenDrawn;
                             console.log(`End screen drawn at timestamp: ${nextConfig.timestamp}`);
+                        }
+                        if (nextConfig.savedNotes) {
+                            savedNotes = nextConfig.savedNotes;
+                            console.log(`Saved current notes for future use: ${nextConfig.timestamp}`);
                         }
                         currentConfigIndex++;
                     }
@@ -1642,15 +1763,6 @@ function startGame(index) {
         gameStarted = true;
         endScreenDrawn = false;
 
-        // Reset time tracking variables
-        lastTime = 0;
-        timeDelta = 0;
-
-        if (!canvasUpdating) {
-            canvasUpdating = true; // Set the flag to indicate the canvas is being updated
-            requestAnimationFrame(updateCanvas);
-        }
-
         console.log("Song selected: " + getSongTitle(currentSong.src), "by: " + getArtist(currentSong.src));
         console.log("Current song path:", currentSongPath);
         console.log("Beatz.io loaded and playing. Have Fun!");
@@ -1671,11 +1783,38 @@ function startGame(index) {
 
         document.getElementById("startButton").style.display = "none";
 
-        document.title = `Song ${currentSongIndex + 1}: ${songTitle} | Beatz 3.6!`;
+        // Update the page title
+        indexToDisplay = setIndex >= 0 ? setIndex : currentSongIndex;
+        document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 3.6!`;
 
-        if (!backgroundIsDefault) {
-            canvas.style.backgroundImage = "none";
+        console.log(`indexToDisplay converted in startGame: ${indexToDisplay}`);
+
+        if (document.fullscreenElement) {
+            canvas.style.cursor = "none";
+            if (!backgroundIsDefault && document.fullscreenElement) {
+                canvas.style.background = "url('Resources/BackgroundHtml2.png')";
+                canvas.style.backgroundSize = "cover";
+                canvas.style.backgroundPosition = "center";
+            }
+        } else if (!backgroundIsDefault && !document.fullscreenElement) {
+            canvas.style.background = "transparent"; // If the background is transparent, when fullscreen is toggled off, make the canvas transparent again
+            canvas.style.cursor = "default";
         }
+
+        function waitForNotesGeneration() {
+            lastTime = 0;
+            lastFrameTime = 0;
+            deltaTime = 0;
+            if (notesGenerated) {
+                requestAnimationFrame(timestamp => updateCanvas(timestamp, setIndex));
+                canvasUpdating = true; // Ensure canvasUpdating is true before updateCanvas starts
+                notesGenerated = false; // Reset notesGenerated after calling updateCanvas
+            } else {
+                setTimeout(waitForNotesGeneration, 100); // Retry after 100ms if notesGenerated is still false
+            }
+        }
+
+        waitForNotesGeneration();
     };
 }
 
@@ -1872,9 +2011,11 @@ function toggleDebugInfo() {
 let newestNoteType = "";
 let newestNoteTime = 0;
 
+var indexToDisplay;
+
 function updateDebugInfo(deltaTime, timestamp) {
     if (debugInfoVisible) {
-        const lineHeight = 18; // Adjust this based on your font size and line spacing
+        const lineHeight = 18;
         const startY = HEIGHT / 2 - 180; // Starting y-coordinate for the first text
         const left = parseFloat(noteYPositions.left);
         const up = parseFloat(noteYPositions.up);
@@ -1909,12 +2050,19 @@ function updateDebugInfo(deltaTime, timestamp) {
         ctx.fillText(`Dynamic speeds for ${getSongTitle(currentSongPath)}: ${dynamicSpeedInfo}`, 10, startY + 18 * lineHeight);
         ctx.fillText(nextSpeedChange, 10, startY + 19 * lineHeight);
         ctx.fillText(`Dynamic Speed index: ${currentConfigIndex}`, 10, startY + 20 * lineHeight);
+        ctx.fillText(`Saved notes: ${savedNotes}`, 10, startY + 21 * lineHeight);
+        ctx.fillText(`Index to Display: ${indexToDisplay + 1}`, 10, startY + 22 * lineHeight);
+
+        ctx.font = "14px Arial";
+        ctx.textAlign = "right";
+        ctx.fillText(`Control + Shift + H`, WIDTH - 10, startY + 10 * lineHeight);
+        ctx.fillText(`To open Hitbox View`, WIDTH - 10, startY + 11 * lineHeight);
     }
 }
 
 let backgroundIsDefault = true; // Default to true assuming default background
 
-function updateCanvas(timestamp) {
+function updateCanvas(timestamp, setIndex) {
     if (!lastTime) {
         lastTime = timestamp;
     }
@@ -1933,8 +2081,7 @@ function updateCanvas(timestamp) {
             ctx.fillStyle = "red";
             ctx.font = "60px Arial";
             ctx.textAlign = "center";
-            const textX = WIDTH / 2;
-            ctx.fillText("Game Paused", textX, HEIGHT / 2);
+            ctx.fillText("Game Paused", WIDTH / 2, HEIGHT / 2);
             pausedTextDrawn = true;
         }
         return;
@@ -1963,29 +2110,36 @@ function updateCanvas(timestamp) {
     if (isNewPlayer) {
         switch (tutorialStage) {
             case 0:
-                ctx.fillText(keybindsText.initial.left, noteXPositions.left + 8, 540);
-                ctx.fillText(keybindsText.initial.up, noteXPositions.up + 24, 540);
-                ctx.fillText(keybindsText.initial.down, noteXPositions.down - 8, 540);
-                ctx.fillText(keybindsText.initial.right, noteXPositions.right + 8, 540);
+                ctx.textAlign = "center";
+                ctx.font = "22px Arial";
+                ctx.fillText(keybindsText.initial.left, noteXPositions.left, 540);
+                ctx.fillText(keybindsText.initial.up, noteXPositions.up + 16, 540);
+                ctx.fillText(keybindsText.initial.down, noteXPositions.down - 16, 540);
+                ctx.fillText(keybindsText.initial.right, noteXPositions.right, 540);
                 break;
             case 1:
                 ctx.textAlign = "center";
+                ctx.font = "22px Arial";
                 ctx.fillText(keybindsText.customizable, WIDTH / 2, 510);
                 break;
             case 2:
                 ctx.textAlign = "center";
+                ctx.font = "22px Arial";
                 ctx.fillText(keybindsText.followMe.announce, WIDTH / 2, 510);
                 break;
             case 3:
                 ctx.textAlign = "center";
+                ctx.font = "22px Arial";
                 ctx.fillText(keybindsText.followMe.twitter, WIDTH / 2, 510);
                 break;
             case 4:
                 ctx.textAlign = "center";
+                ctx.font = "22px Arial";
                 ctx.fillText(keybindsText.followMe.yt, WIDTH / 2, 510);
                 break;
             case 5:
                 ctx.textAlign = "center";
+                ctx.font = "22px Arial";
                 ctx.fillText(keybindsText.thankYou, WIDTH / 2, 510);
                 break;
             case 6:
@@ -2045,7 +2199,9 @@ function updateCanvas(timestamp) {
         }
     }
 
-    displaySongInfo();
+    indexToDisplay = setIndex > -1 ? setIndex : currentSongIndex;
+
+    displaySongInfo(setIndex);
     getCover(currentSongPath, timeDelta);
 
     if (songStarted) {
@@ -2055,7 +2211,10 @@ function updateCanvas(timestamp) {
         for (let i = 0; i < notes.length; i++) {
             let note = notes[i];
             if (note.time <= currentTime && note.time + 1000 > currentTime) {
-                if (noteYPositions[note.type].length === 0 || HEIGHT - noteYPositions[note.type][noteYPositions[note.type].length - 1] >= MIN_NOTE_GAP) {
+                if (
+                    noteYPositions[note.type].length === 0 ||
+                    HEIGHT - noteYPositions[note.type][noteYPositions[noteYPositions[note.type].length - 1]] >= MIN_NOTE_GAP
+                ) {
                     noteYPositions[note.type].push(-noteHeight);
 
                     newestNoteType = note.type;
@@ -2064,28 +2223,7 @@ function updateCanvas(timestamp) {
             }
         }
 
-        // Move and draw moving notes
-        moveNotes(timeDelta);
-
-        for (let type in noteYPositions) {
-            for (let yPos of noteYPositions[type]) {
-                let xPos = noteXPositions[type];
-                switch (type) {
-                    case "left":
-                        ctx.drawImage(noteLeftIMG, xPos - noteWidth / 2, yPos, noteWidth, noteHeight);
-                        break;
-                    case "up":
-                        ctx.drawImage(noteUpIMG, xPos - noteWidth / 2 + 15, yPos, noteWidth, noteHeight);
-                        break;
-                    case "down":
-                        ctx.drawImage(noteDownIMG, xPos - noteWidth / 2 - 15, yPos, noteWidth, noteHeight);
-                        break;
-                    case "right":
-                        ctx.drawImage(noteRightIMG, xPos - noteWidth / 2, yPos, noteWidth, noteHeight);
-                        break;
-                }
-            }
-        }
+        drawMovingNotes(timeDelta);
 
         // Automatically hit notes in the perfect range if enabled
         if (autoHitEnabled) {
@@ -2108,8 +2246,13 @@ function updateCanvas(timestamp) {
         if (autoHitEnabled) {
             drawAutoHitText();
         }
+
+        if (!canvasUpdating) {
+            console.log("Canvas stopped updating.");
+            return;
+        }
     }
-    requestAnimationFrame(updateCanvas);
+    requestAnimationFrame(timestamp => updateCanvas(timestamp, setIndex));
 }
 
 function updateNotes(timeDelta) {
@@ -2137,7 +2280,8 @@ function autoHitPerfectNotes() {
     for (let type in noteYPositions) {
         for (let i = 0; i < noteYPositions[type].length; i++) {
             let yPos = noteYPositions[type][i];
-            if (yPos >= 540) {
+            if (yPos >= Math.random() * (PERFECT_HIT_RANGE_MAX - PERFECT_HIT_RANGE_MIN) + PERFECT_HIT_RANGE_MIN - 2) {
+                // if (yPos >= PERFECT_HIT_RANGE_MIN + 9) {
                 triggerHit(type);
                 break;
             }
@@ -2250,7 +2394,7 @@ function checkHit(noteType) {
 
 function cycleTutorialStages() {
     if (tutorialStage < 6) {
-        const interval = tutorialStage === 2 || tutorialStage === 3 || tutorialStage === 4 ? 2500 : 5000;
+        const interval = tutorialStage === 2 || tutorialStage === 3 || tutorialStage === 4 ? 2000 : 5000;
         setTimeout(() => {
             tutorialStage++;
             cycleTutorialStages();
@@ -2259,6 +2403,7 @@ function cycleTutorialStages() {
         setTimeout(() => {
             tutorialStage = 0;
             isNewPlayer = false; // End the tutorial after the final message
+            localStorage.setItem("newPlayer", "true");
         }, 5000);
     }
 }
@@ -2303,7 +2448,16 @@ function drawAutoHitText() {
     ctx.fillText("Points are disabled for this playthrough.", 10, HEIGHT - 10);
 }
 
+// Global variable to track if notes are generated
+let notesGenerated = false;
+
 function generateRandomNotes(duration) {
+    // Check if the duration given is not a number, if so exit the function
+    if (isNaN(duration)) {
+        console.log("Duration is not defined.");
+        return;
+    }
+
     // Function to generate random notes over a given duration
     console.log("Generating notes for duration:", duration); // Log the duration for which notes are being generated
     const notes = []; // Initialize an empty array to hold the generated notes
@@ -2324,6 +2478,8 @@ function generateRandomNotes(duration) {
         lastNoteTime = time; // Update the last note time and type for the next iteration
         lastNoteType = type;
     }
+    // Set notesGenerated to true after generating notes
+    notesGenerated = true;
     console.log("Generated notes:", notes); // Log the generated notes
     return notes; // Return the generated notes array to startGame()
 }
@@ -2427,7 +2583,7 @@ function toRepo() {
 function toggleFullScreen() {
     if (!document.fullscreenElement) {
         canvas.requestFullscreen().catch(err => {
-            console.log("Error attempting to enable full-screen mode: ${err.message} (${err.name})");
+            console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
         });
         console.log("Entered Fullscreen");
     } else {
@@ -2440,7 +2596,7 @@ document.addEventListener("fullscreenchange", function () {
     if (document.fullscreenElement) {
         canvas.style.cursor = "none";
         if (!backgroundIsDefault) {
-            // If the background is transparent, when on fullscreen, ensure no black screen is shown and displays the html background
+            // If the background is transparent, when on fullscreen, ensure no black screen is shown and displays the HTML background
             canvas.style.background = "url('Resources/BackgroundHtml2.png')";
             canvas.style.backgroundSize = "cover";
             canvas.style.backgroundPosition = "center";
@@ -2539,7 +2695,6 @@ const Presets = {
             randomize: ["T"],
             toggleNoteStyle: ["C"],
             fullscreen: ["F"],
-            debug: ["CONTROL"],
         },
         miscellaneous: {
             defaultNoteStyle: "arrows",
@@ -2567,7 +2722,6 @@ const Presets = {
             randomize: ["T"],
             toggleNoteStyle: ["C"],
             fullscreen: ["G"],
-            debug: ["CONTROL"],
         },
         miscellaneous: {
             defaultNoteStyle: "circles",
@@ -2601,7 +2755,6 @@ function applyPreset(presetName) {
     document.getElementById("randomize").value = keybinds.randomize.join(", ");
     document.getElementById("toggleNoteStyleInput").value = keybinds.toggleNoteStyle.join(", ");
     document.getElementById("fullscreenInput").value = keybinds.fullscreen.join(", ");
-    document.getElementById("debugInput").value = keybinds.debug.join(", ");
 
     // Apply miscellaneous settings
     miscellaneous = preset.miscellaneous;
@@ -2702,8 +2855,14 @@ document.addEventListener("keydown", function (event) {
 
     if (songListModal.style.display === "block") {
         if (event.key === "Escape" || event.key === "escape") {
-            closeSongList();
-            console.log("Escape key pressed. Song list closed.");
+            if (searchInput.value !== "") {
+                searchInput.value = "";
+                filterSongs();
+                console.log("Escape key pressed. Search input cleared.");
+            } else {
+                closeSongList();
+                console.log("Escape key pressed. Song list closed.");
+            }
         }
         return;
     }
@@ -2784,7 +2943,6 @@ const defaultKeybinds = {
     randomize: ["T"],
     toggleNoteStyle: ["C"],
     fullscreen: ["F"],
-    debug: ["CONTROL"],
 };
 
 const defaultMiscellaneous = {
@@ -2848,7 +3006,6 @@ function loadSettings() {
     document.getElementById("randomize").value = keybinds.randomize.join(", ");
     document.getElementById("toggleNoteStyleInput").value = keybinds.toggleNoteStyle.join(", ");
     document.getElementById("fullscreenInput").value = keybinds.fullscreen.join(", ");
-    document.getElementById("debugInput").value = keybinds.debug.join(", ");
     document.getElementById("songTimeoutAfterSongEndNum").value = miscellaneous.songTimeoutDelay;
 
     const savedBackgroundOption = savedMiscellaneous.backgroundOption || "defaultBG";
@@ -2897,6 +3054,10 @@ function loadSettings() {
             break;
         case "defaultBG3":
             BGbright.src = "Resources/Background4.png";
+            backgroundIsDefault = true;
+            break;
+        case "defaultBG4":
+            BGbright.src = "Resources/Background5.jpg";
             backgroundIsDefault = true;
             break;
         case "htmlBG":
@@ -2982,10 +3143,6 @@ function saveSettings() {
             .getElementById("fullscreenInput")
             .value.split(", ")
             .map(key => key.trim()),
-        debug: document
-            .getElementById("debugInput")
-            .value.split(", ")
-            .map(key => key.trim()),
     };
 
     const newMiscellaneous = {
@@ -3041,6 +3198,10 @@ function saveSettings() {
             break;
         case "defaultBG3":
             BGbright.src = "Resources/Background4.png";
+            backgroundIsDefault = true;
+            break;
+        case "defaultBG4":
+            BGbright.src = "Resources/Background5.jpg";
             backgroundIsDefault = true;
             break;
         case "htmlBG":
@@ -3157,8 +3318,10 @@ function resetSettings() {
         localStorage.removeItem("miscellaneous");
         keybinds = { ...defaultKeybinds };
         miscellaneous = { ...defaultMiscellaneous };
+        updateKeybindsFields();
         loadSettings();
-        alert("Settings have been reset to default values.");
+        saveMessage.innerHTML = "Settings have been reset.<br><br>";
+        saveMessage.style.display = "block";
     }
 }
 
@@ -3196,7 +3359,6 @@ function updateKeybindsFields() {
     document.getElementById("randomize").value = keybinds.randomize.join(", ");
     document.getElementById("toggleNoteStyleInput").value = keybinds.toggleNoteStyle.join(", ");
     document.getElementById("fullscreenInput").value = keybinds.fullscreen.join(", ");
-    document.getElementById("debugInput").value = keybinds.debug.join(", ");
 
     document.getElementById("defaultNoteStyle").value = miscellaneous.noteStyle;
     document.getElementById("songTimeoutAfterSongEnd").checked = miscellaneous.songTimeoutAfterSongEnd;
@@ -3306,12 +3468,105 @@ function keyDownFunction(keyboardEvent) {
     if (keybinds.toggleNoteStyle.includes(keyDown)) {
         toggleNoteStyle();
     }
-    if (keybinds.debug.includes(keyDown)) {
+    if (keyboardEvent.ctrlKey && keyDown === ";") {
         toggleDebugInfo();
     }
     if (keyboardEvent.ctrlKey && keyDown === ".") {
         autoHitDisableSaving = true;
         endScreenDrawn = true;
+    }
+    if (keyboardEvent.ctrlKey && keyboardEvent.shiftKey && keyDown === "L") {
+        toggleCanvasRefresh();
+    }
+    if (keyboardEvent.ctrlKey && keyboardEvent.shiftKey && keyDown === "H") {
+        toggleHitboxes();
+    }
+}
+
+var showHitboxes = false;
+
+function toggleHitboxes() {
+    showHitboxes = !showHitboxes;
+}
+
+function toggleCanvasRefresh() {
+    if (canvasUpdating) {
+        canvasUpdating = false;
+    } else if (!canvasUpdating) {
+        canvasUpdating = true;
+        requestAnimationFrame(updateCanvas);
+    }
+}
+
+function drawHitboxes() {
+    if (showHitboxes) {
+        // Draw green hitboxes for stationary notes
+        ctx.strokeStyle = "green";
+        ctx.strokeRect(noteXPositions.left - noteWidth / 2, HIT_Y_RANGE_MAX - 50, noteWidth, noteHeight);
+        ctx.strokeRect(noteXPositions.up - noteWidth / 2 + 15, HIT_Y_RANGE_MAX - 50, noteWidth, noteHeight);
+        ctx.strokeRect(noteXPositions.down - noteWidth / 2 - 15, HIT_Y_RANGE_MAX - 50, noteWidth, noteHeight);
+        ctx.strokeRect(noteXPositions.right - noteWidth / 2, HIT_Y_RANGE_MAX - 50, noteWidth, noteHeight);
+
+        // Draw red rectangles for the perfect hit range
+        ctx.strokeStyle = "red";
+        ctx.strokeRect(noteXPositions.left - noteWidth / 2, PERFECT_HIT_RANGE_MIN + 20, noteWidth, PERFECT_HIT_RANGE_MAX - PERFECT_HIT_RANGE_MIN);
+        ctx.strokeRect(noteXPositions.up - noteWidth / 2 + 15, PERFECT_HIT_RANGE_MIN + 20, noteWidth, PERFECT_HIT_RANGE_MAX - PERFECT_HIT_RANGE_MIN);
+        ctx.strokeRect(noteXPositions.down - noteWidth / 2 - 15, PERFECT_HIT_RANGE_MIN + 20, noteWidth, PERFECT_HIT_RANGE_MAX - PERFECT_HIT_RANGE_MIN);
+        ctx.strokeRect(noteXPositions.right - noteWidth / 2, PERFECT_HIT_RANGE_MIN + 20, noteWidth, PERFECT_HIT_RANGE_MAX - PERFECT_HIT_RANGE_MIN);
+    }
+}
+
+function drawMovingNotes(timeDelta) {
+    moveNotes(timeDelta);
+
+    drawHitboxes();
+
+    for (let type in noteYPositions) {
+        for (let yPos of noteYPositions[type]) {
+            let xPos = noteXPositions[type];
+            switch (type) {
+                case "left":
+                    ctx.drawImage(noteLeftIMG, xPos - noteWidth / 2, yPos, noteWidth, noteHeight);
+                    if (showHitboxes) {
+                        ctx.strokeStyle = "green";
+                        ctx.strokeRect(xPos - noteWidth / 2, yPos, noteWidth, noteHeight);
+                        ctx.strokeStyle = "rgba(255, 0, 0, 1)"; // Red with full opacity
+                        ctx.strokeRect(xPos - noteWidth / 2, yPos + 20, noteWidth, PERFECT_HIT_RANGE_MAX - PERFECT_HIT_RANGE_MAX);
+                        ctx.strokeRect(xPos - noteWidth / 2, PERFECT_HIT_RANGE_MIN + 20, noteWidth, PERFECT_HIT_RANGE_MAX - PERFECT_HIT_RANGE_MIN);
+                    }
+                    break;
+                case "up":
+                    ctx.drawImage(noteUpIMG, xPos - noteWidth / 2 + 15, yPos, noteWidth, noteHeight);
+                    if (showHitboxes) {
+                        ctx.strokeStyle = "green";
+                        ctx.strokeRect(xPos - noteWidth / 2 + 15, yPos, noteWidth, noteHeight);
+                        ctx.strokeStyle = "rgba(255, 0, 0, 1)"; // Red with full opacity
+                        ctx.strokeRect(xPos - noteWidth / 2 + 15, yPos + 20, noteWidth, PERFECT_HIT_RANGE_MAX - PERFECT_HIT_RANGE_MAX);
+                        ctx.strokeRect(xPos - noteWidth / 2 + 15, PERFECT_HIT_RANGE_MIN + 20, noteWidth, PERFECT_HIT_RANGE_MAX - PERFECT_HIT_RANGE_MIN);
+                    }
+                    break;
+                case "down":
+                    ctx.drawImage(noteDownIMG, xPos - noteWidth / 2 - 15, yPos, noteWidth, noteHeight);
+                    if (showHitboxes) {
+                        ctx.strokeStyle = "green";
+                        ctx.strokeRect(xPos - noteWidth / 2 - 15, yPos, noteWidth, noteHeight);
+                        ctx.strokeStyle = "rgba(255, 0, 0, 1)"; // Red with full opacity
+                        ctx.strokeRect(xPos - noteWidth / 2 - 15, yPos + 20, noteWidth, PERFECT_HIT_RANGE_MAX - PERFECT_HIT_RANGE_MAX);
+                        ctx.strokeRect(xPos - noteWidth / 2 - 15, PERFECT_HIT_RANGE_MIN + 20, noteWidth, PERFECT_HIT_RANGE_MAX - PERFECT_HIT_RANGE_MIN);
+                    }
+                    break;
+                case "right":
+                    ctx.drawImage(noteRightIMG, xPos - noteWidth / 2, yPos, noteWidth, noteHeight);
+                    if (showHitboxes) {
+                        ctx.strokeStyle = "green";
+                        ctx.strokeRect(xPos - noteWidth / 2, yPos, noteWidth, noteHeight);
+                        ctx.strokeStyle = "rgba(255, 0, 0, 1)"; // Red with full opacity
+                        ctx.strokeRect(xPos - noteWidth / 2, yPos + 20, noteWidth, PERFECT_HIT_RANGE_MAX - PERFECT_HIT_RANGE_MAX);
+                        ctx.strokeRect(xPos - noteWidth / 2, PERFECT_HIT_RANGE_MIN + 20, noteWidth, PERFECT_HIT_RANGE_MAX - PERFECT_HIT_RANGE_MIN);
+                    }
+                    break;
+            }
+        }
     }
 }
 

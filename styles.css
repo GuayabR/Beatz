@@ -119,7 +119,7 @@ canvas:-ms-fullscreen {
     position: fixed;
     z-index: 1;
     left: 0;
-    top: 0;
+    top: 2vh;
     width: 100%;
     height: 100%;
     overflow: auto;
@@ -127,9 +127,19 @@ canvas:-ms-fullscreen {
     background-color: rgba(0, 0, 0, 0);
 }
 
-#songListModal .modal-body {
-    max-height: 525px;
-    overflow-y: scroll;
+#songListModal {
+    max-height: 100vh;
+    overflow: hidden; /* Hide overflow of the entire modal */
+}
+
+#songListModal .modal-content {
+    max-height: 90vh;
+    overflow: hidden; /* Hide overflow within the modal content */
+}
+
+#songListModal #songList {
+    max-height: 61vh;
+    overflow-y: auto; /* Ensure scrolling within #songList only if needed */
 }
 
 .most-recent-button {
