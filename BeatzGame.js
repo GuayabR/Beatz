@@ -1804,7 +1804,7 @@ function startGame(index, versionPath, setIndex) {
         console.log("Current song path:", currentSongPath);
         console.log("Beatz.io loaded and playing. Have Fun!");
 
-        currentSong.addEventListener("ended", onSongEnd);
+        currentSong.addEventListener("ended", songEnd);
 
         document.getElementById("nextButton").style.display = "inline";
         document.getElementById("restartButton").style.display = "inline";
@@ -1838,6 +1838,10 @@ function startGame(index, versionPath, setIndex) {
             canvas.style.cursor = "default";
         }
     };
+}
+
+function songEnd() {
+    endScreenDrawn = true;
 }
 
 // Score logic

@@ -443,3 +443,4 @@ Reworked album cover logic!
 - Fixed restarting a song version going back to the default version.
 - Added missing songs from Eminem's The Death of Slim Shady (Coup de Grâce) album.
 - Made a second JavaScript file for all of the setting's logic.
+- Song end now no longer spams saveScore.
