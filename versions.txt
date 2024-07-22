@@ -436,3 +436,10 @@ Reworked album cover logic!
 - Song versions include: Slowed down or Sped up versions of the songs, mainly in phonk songs
 - Songs from other genres include songs featuring other artists.
 - Made the song list modal stuck to 95% the viewport height so the elements displayed don't make it scrollable.
+//
+
+3.7.0.1 (SONGv 3.7! 22/07/2024)
+- Fixed playing a new song making the fps displayed infinite and delta time to be 0.
+- Fixed restarting a song version going back to the default version.
+- Added missing songs from Eminem's The Death of Slim Shady (Coup de Grâce) album.
+- Made a second JavaScript file for all of the setting's logic.
