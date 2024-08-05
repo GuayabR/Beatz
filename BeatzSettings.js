@@ -62,13 +62,8 @@ function detectAndHandleDevice() {
         console.log("Mobile device detected. Game is not supported."); // Log a message indicating the game is not supported on mobile devices
     } else if (deviceType === "Chromebook") {
         // Check if the detected device is a Chromebook
+        canvas.style.scale = "0.8";
         console.warn("Chromebook detected. Game might have reduced framerates."); // Log a warning about potential performance issues on Chromebooks
-
-        // Adjust the hit detection ranges to account for reduced framerates
-        HIT_Y_RANGE_MIN = HIT_Y_RANGE_MIN - 25; // Widen the hit range
-        HIT_Y_RANGE_MAX = HIT_Y_RANGE_MAX + 25;
-        PERFECT_HIT_RANGE_MIN = PERFECT_HIT_RANGE_MIN - 20; // Widen the perfect hit range
-        PERFECT_HIT_RANGE_MAX = PERFECT_HIT_RANGE_MAX + 20;
     } else {
         // For desktop devices
         console.log("Desktop device is supported. Enjoy Beatz!"); // Log a message indicating the game is supported
@@ -456,9 +451,13 @@ function filterKeys(event) {
 }
 
 function toggleKeyLogger() {
-    logKeys = document.getElementById("logKeys").checked;
-    localStorage.setItem("logKeys", JSON.stringify(logKeys));
+    logKeys = document.getElementById("logKeysCheck").checked;
     console.log("Key logging is now", logKeys ? "enabled" : "disabled");
+}
+
+function toggleSavingSongs() {
+    saveSongUsingControllers = document.getElementById("saveRecentSongs").checked;
+    console.log("Song saving is now", saveSongUsingControllers ? "enabled" : "disabled");
 }
 
 const defaultKeybinds = {
@@ -486,7 +485,10 @@ const defaultMiscellaneous = {
     customBackgroundBlur: "0px",
     logKeys: false,
     hitSound: "defaultHit",
+    saveSongUsingControllers: false,
 };
+
+var saveSongUsingControllers = false;
 
 let logKeys = true;
 
@@ -501,11 +503,14 @@ function loadSettings() {
     const savedKeybinds = JSON.parse(localStorage.getItem("keybinds")) || {};
     const savedMiscellaneous = JSON.parse(localStorage.getItem("miscellaneous")) || {};
 
-    keybinds = { ...defaultKeybinds, ...savedKeybinds };
-    miscellaneous = { ...defaultMiscellaneous, ...savedMiscellaneous };
+    keybinds = { ...savedKeybinds };
+    miscellaneous = { ...savedMiscellaneous };
 
-    document.getElementById("logKeys").checked = miscellaneous.logKeys;
+    document.getElementById("logKeysCheck").checked = miscellaneous.logKeys;
     logKeys = miscellaneous.logKeys;
+
+    document.getElementById("saveRecentSongs").checked = miscellaneous.saveSongUsingControllers;
+    saveSongUsingControllers = miscellaneous.saveSongUsingControllers;
 
     document.getElementById("songTimeoutAfterSongEnd").checked = miscellaneous.songTimeoutAfterSongEnd;
     restartSongTimeout = miscellaneous.songTimeoutAfterSongEnd;
@@ -521,9 +526,14 @@ function loadSettings() {
     const defaultNoteStyleDropdown = document.getElementById("defaultNoteStyle");
     defaultNoteStyleDropdown.value = miscellaneous.noteStyle;
 
-    // Load hit sound setting
     const hitSoundDropdown = document.getElementById("defaultHitSound");
     hitSoundDropdown.value = miscellaneous.hitSound;
+
+    const loggingKeysCheck = document.getElementById("logKeysCheck");
+    loggingKeysCheck.value = miscellaneous.logKeys;
+
+    const savingSongs = document.getElementById("saveRecentSongs");
+    savingSongs.value = miscellaneous.saveSongUsingControllers;
 
     document.getElementById("up").value = keybinds.up.join(", ");
     document.getElementById("left").value = keybinds.left.join(", ");
@@ -684,7 +694,9 @@ function saveSettings() {
         circularImage: document.getElementById("circularImage").checked,
         backgroundOption: document.getElementById("defaultBackground").value,
         customBackgroundBlur: document.getElementById("backdropBlurInput").value,
-        hitSound: document.getElementById("defaultHitSound").value, // Add this line
+        logKeys: document.getElementById("logKeysCheck").checked,
+        hitSound: document.getElementById("defaultHitSound").value,
+        saveSongUsingControllers: document.getElementById("saveRecentSongs").checked,
     };
 
     // Compare new settings with saved settings
@@ -696,9 +708,12 @@ function saveSettings() {
         rotationAngle = 0;
     }
 
+    // Apply the changes
     restartSongTimeout = newMiscellaneous.songTimeoutAfterSongEnd;
     vinylRotationEnabled = newMiscellaneous.vinylRotation;
     circularImageEnabled = newMiscellaneous.circularImage;
+    logKeys = newMiscellaneous.logKeys;
+    saveSongUsingControllers = newMiscellaneous.saveSongUsingControllers;
 
     const timeoutInputValue = newMiscellaneous.songTimeoutDelay;
 
@@ -898,7 +913,7 @@ function updateKeybindsFields() {
     document.getElementById("circularImage").checked = miscellaneous.circularImage;
     document.getElementById("defaultBackground").value = miscellaneous.backgroundOption;
     document.getElementById("backdropBlurInput").value = miscellaneous.customBackgroundBlur;
-    document.getElementById("logKeys").checked = miscellaneous.logKeys; // Update logKeys checkbox
+    document.getElementById("logKeysCheck").checked = miscellaneous.logKeys;
 
     if (miscellaneous.backgroundOption === "customBG" && miscellaneous.customBackground) {
         document.getElementById("customBGLabel").style.display = "inline";

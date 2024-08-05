@@ -444,3 +444,17 @@ Reworked album cover logic!
 - Added missing songs from Eminem's The Death of Slim Shady (Coup de Grâce) album.
 - Made a second JavaScript file for all of the setting's logic.
 - Song end now no longer spams saveScore.
+//
+
+3.7.1.1 (SONGv 3.7! 27/07/2024 - 05/08/2024)
+## Additions
+- Added The Automotivo Infernal 1.0 by MRL and MC GW.
+- Added its respective Dynamic Speeds.
+- Added BPM changes being made by Dynamic Speeds.
+- Added incoming speed changes below the cover image.
+- Added a progress bar with timestamp and duration of the current song playing. Flashes depending on the song's BPM.
+- Recent songs now saves when pressing next, previous or randomize song.
+- If user is playing Beatz on a Chromebook device, the scale factor for the canvas is reduced to 0.8 so it fits on the user's screen.
+## Fixes
+- Fixed recent song randomizing the index instead of playing your recent song.
+- Fixed notes being inconsistently checked for misses in lower framerates.

@@ -2,13 +2,13 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: SONGv 3.7.0.1 test (release.version.subversion.bugfix)
+ * Version: SONGv 3.7.1.1 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
 // CONSTANTS
 
-const VERSION = "SONGv 3.7.0 (Codename.Release.Version.Subversion.Bugfix)";
+const VERSION = "SONGv 3.7.1.1 (Codename.Release.Version.Subversion.Bugfix)";
 const PUBLICVERSION = "3.7! (GitHub Port)";
 console.log("Version: " + VERSION);
 
@@ -130,6 +130,8 @@ var PERFECT_HIT_RANGE_MIN = 542;
 
 var PERFECT_HIT_RANGE_MAX = 568;
 
+var MISS_RANGE = 690;
+
 var showHitboxes = false;
 
 var BPM;
@@ -180,7 +182,38 @@ let autoHitDisableSaving = false; // Flag to disable score saving if autoHit has
 
 let bestScoreLogged = {};
 
-var notes = [];
+var speedChanges;
+
+var nextSpeedChange;
+
+let backgroundIsDefault = true; // Default to true assuming default background
+
+let fpsBuffedHitRanges = false;
+
+let newestNoteType = "";
+let newestNoteTime = 0;
+
+var indexToDisplay;
+
+let gamePaused = false;
+let pausedTextDrawn = false;
+let endScreenDrawn = false;
+
+// Initialize variables for time tracking
+let lastTime = 0;
+let timeDelta = 0;
+let lastFrameTime = 0;
+let FPS = 0;
+let globalTimestamp;
+
+let debugInfoVisible = false;
+
+let songMetadataLoaded = false; // Flag to track if song metadata is loaded
+
+// Initialize variables
+let rotationAngle = 0; // Initial rotation angle
+let vinylRotationEnabled = false; // Initial rotation state
+let circularImageEnabled = false; // Initial circular image state
 
 // Function to switch image source
 function switchImage(img, src1, src2) {
@@ -390,6 +423,9 @@ function preloadSongs() {
         "Resources/Songs/this is what space feels like.mp3",
         "Resources/Songs/SICKO MODE.mp3",
         "Resources/Songs/THE SCOTTS.mp3",
+        "Resources/Songs/The Automotivo Infernal 1.0.mp3",
+        "Resources/Songs/WAKE UP!.mp3",
+        "Resources/Songs/Flashing Lights.mp3",
         "Resources/Songs/testingsong.mp3",
     ];
 
@@ -505,6 +541,14 @@ const songVersions = {
         { path: "Resources/Songs/Goosebumps.mp3", title: "Goosebumps" },
         { path: "Resources/Songs/Goosebumps (feat. 21 Savage).mp3", title: "Goosebumps (feat. 21 Savage)" }, // Other version, don't recognize this one
     ],
+    "The Automotivo Infernal 1.0": [
+        { path: "Resources/Songs/The Automotivo Infernal 1.0.mp3", title: "The Automotivo Infernal 1.0" },
+        { path: "Resources/Songs/The Automotivo Infernal 1.0 - Red.mp3", title: "The Automotivo Infernal 1.0 - Red" }, // Other version, don't recognize this one
+        { path: "Resources/Songs/The Automotivo Infernal 1.0 - Slowed.mp3", title: "The Automotivo Infernal 1.0 - Slowed" }, // Other version, don't recognize this one
+        { path: "Resources/Songs/The Automotivo Infernal 1.0 - Sped Up.mp3", title: "The Automotivo Infernal 1.0 - Sped Up" }, // Other version, don't recognize this one
+        { path: "Resources/Songs/The Automotivo Infernal 1.0 - Red - Slowed.mp3", title: "The Automotivo Infernal 1.0 - Red - Slowed" }, // Other version, don't recognize this one
+        { path: "Resources/Songs/The Automotivo Infernal 1.0 - Red - Sped Up.mp3", title: "The Automotivo Infernal 1.0 - Red - Sped Up" }, // Other version, don't recognize this one
+    ],
     // Add other songs and their versions here
 };
 
@@ -550,7 +594,7 @@ const songConfigs = {
     "Resources/Songs/From The Inside.mp3": { BPM: 95, noteSpeed: 10.5 },
     "Resources/Songs/Faint.mp3": { BPM: 135, noteSpeed: 11 },
     "Resources/Songs/Breaking The Habit.mp3": { BPM: 100, noteSpeed: 10 },
-    "Resources/Songs/I Wonder.mp3": { BPM: 127, noteSpeed: 8 },
+    "Resources/Songs/I Wonder.mp3": { BPM: 127, noteSpeed: 10 },
     "Resources/Songs/Godzilla.mp3": { BPM: 166, noteSpeed: 13 },
     "Resources/Songs/HIGHEST IN THE ROOM.mp3": { BPM: 156, noteSpeed: 0 },
     "Resources/Songs/Runaway.mp3": { BPM: 85, noteSpeed: 10 },
@@ -602,6 +646,11 @@ const songConfigs = {
     "Resources/Songs/this is what space feels like.mp3": { BPM: 146, noteSpeed: 11 },
     "Resources/Songs/SICKO MODE.mp3": { BPM: 155, noteSpeed: 0 },
     "Resources/Songs/THE SCOTTS.mp3": { BPM: 130, noteSpeed: 0 },
+    "Resources/Songs/WAKE UP!.mp3": { BPM: 125, noteSpeed: 8 },
+    "Resources/Songs/Flashing Lights.mp3": { BPM: 90, noteSpeed: 10.5 },
+
+    // Song Versions
+
     "Resources/Songs/Finesse (feat. Cardi B).mp3": { BPM: 105, noteSpeed: 22 },
     "Resources/Songs/WTF 2 - Slowed.mp3": { BPM: 148, noteSpeed: 12 },
     "Resources/Songs/WTF 2 - Sped Up.mp3": { BPM: 130, noteSpeed: 16 },
@@ -609,6 +658,12 @@ const songConfigs = {
     "Resources/Songs/Slide da Treme Melódica v2 - Ultra Slowed.mp3": { BPM: 159, noteSpeed: 16 },
     "Resources/Songs/Slide da Treme Melódica v2 - Sped Up.mp3": { BPM: 157, noteSpeed: 18 },
     "Resources/Songs/Goosebumps (feat. 21 Savage).mp3": { BPM: 130, noteSpeed: 8 },
+    "Resources/Songs/The Automotivo Infernal 1.0.mp3": { BPM: 140, noteSpeed: 12 },
+    "Resources/Songs/The Automotivo Infernal 1.0 - Red.mp3": { BPM: 140, noteSpeed: 12 },
+    "Resources/Songs/The Automotivo Infernal 1.0 - Slowed.mp3": { BPM: 117, noteSpeed: 12 },
+    "Resources/Songs/The Automotivo Infernal 1.0 - Sped Up.mp3": { BPM: 140, noteSpeed: 12 },
+    "Resources/Songs/The Automotivo Infernal 1.0 - Red - Slowed.mp3": { BPM: 140, noteSpeed: 12 },
+    "Resources/Songs/The Automotivo Infernal 1.0 - Red - Sped Up.mp3": { BPM: 140, noteSpeed: 12 },
 };
 
 let savedNotes;
@@ -700,6 +755,74 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 65, noteSpeed: 14 },
         ],
         "THE SCOTTS": [{ timestamp: 22.2, noteSpeed: 14 }],
+        "The Automotivo Infernal 1.0": [
+            { timestamp: 8.6, noteSpeed: 14 },
+            { timestamp: 13.825, noteSpeed: 8 },
+            { timestamp: 15.45, noteSpeed: 18, BPM: 140 * 2 },
+            { timestamp: 28.1, noteSpeed: 12, BPM: 140 },
+            { timestamp: 29.15, noteSpeed: 14 },
+            { timestamp: 34.35, noteSpeed: 12 },
+            { timestamp: 36, noteSpeed: 18, BPM: 140 * 2 },
+            { timestamp: 49.76, noteSpeed: 12, BPM: 140 },
+            { timestamp: 56.64, noteSpeed: 10 },
+            { timestamp: 61.81, noteSpeed: 12 },
+            { timestamp: 62.2, noteSpeed: 14 },
+            { timestamp: 62.6, noteSpeed: 16 },
+            { timestamp: 63, noteSpeed: 18 },
+            { timestamp: 63.51, noteSpeed: 20, BPM: 140 * 2 },
+            { timestamp: 75.49, noteSpeed: 12, BPM: 140 },
+            { timestamp: 77.18, noteSpeed: 20, BPM: 140 * 2 },
+            { timestamp: 89.17, noteSpeed: 14, BPM: 140 },
+            { timestamp: 90.9, noteSpeed: 12 },
+            { timestamp: 94.37, noteSpeed: 14 },
+            { timestamp: 94.73, noteSpeed: 16 },
+            { timestamp: 95.22, noteSpeed: 18 },
+            { timestamp: 95.6, noteSpeed: 20 },
+            { timestamp: 96.05, noteSpeed: 10 },
+            { timestamp: 97.75, noteSpeed: 22, BPM: 140 * 2 },
+            { timestamp: 111.51, noteSpeed: 22, endScreenDrawn: true },
+        ],
+        "The Automotivo Infernal 1.0 - Red": [
+            { timestamp: 8.6, noteSpeed: 14 },
+            { timestamp: 13.825, noteSpeed: 8 },
+            { timestamp: 15.45, noteSpeed: 18, BPM: 140 * 2 },
+            { timestamp: 28.1, noteSpeed: 12, BPM: 140 },
+            { timestamp: 29.15, noteSpeed: 14 },
+            { timestamp: 34.35, noteSpeed: 12 },
+            { timestamp: 36, noteSpeed: 18, BPM: 140 * 2 },
+            { timestamp: 49.76, noteSpeed: 12, BPM: 140 },
+            { timestamp: 56.64, noteSpeed: 10 },
+            { timestamp: 61.81, noteSpeed: 12 },
+            { timestamp: 62.2, noteSpeed: 14 },
+            { timestamp: 62.6, noteSpeed: 16 },
+            { timestamp: 63, noteSpeed: 18 },
+            { timestamp: 63.51, noteSpeed: 20, BPM: 140 * 2 },
+            { timestamp: 75.49, noteSpeed: 12, BPM: 140 },
+            { timestamp: 77.18, noteSpeed: 20, BPM: 140 * 2 },
+            { timestamp: 89.17, noteSpeed: 14, BPM: 140 },
+            { timestamp: 90.9, noteSpeed: 12 },
+            { timestamp: 94.37, noteSpeed: 14 },
+            { timestamp: 94.73, noteSpeed: 16 },
+            { timestamp: 95.22, noteSpeed: 18 },
+            { timestamp: 95.6, noteSpeed: 20 },
+            { timestamp: 96.05, noteSpeed: 10 },
+            { timestamp: 97.75, noteSpeed: 22, BPM: 140 * 2 },
+            { timestamp: 111.51, noteSpeed: 22, endScreenDrawn: true },
+        ],
+        "WAKE UP!": [
+            { timestamp: 15.32, noteSpeed: 16 },
+            { timestamp: 30.7, noteSpeed: 17, BPM: 125 * 2 },
+            { timestamp: 46, noteSpeed: 12, BPM: 125 },
+            { timestamp: 62.4, noteSpeed: 18, BPM: 125 * 2 },
+            { timestamp: 77.79, noteSpeed: 20, BPM: 125 * 3 },
+            { timestamp: 93, noteSpeed: 16, BPM: 125 },
+            { timestamp: 108.4, noteSpeed: 8 },
+            { timestamp: 109.9, noteSpeed: 16 },
+            { timestamp: 117.09, noteSpeed: 12 },
+            { timestamp: 117.6, noteSpeed: 22, BPM: 125 * 3 },
+            { timestamp: 132.8, noteSpeed: 22, BPM: 125, notes: [] },
+            { timestamp: 136.55, noteSpeed: 22, endScreenDrawn: true },
+        ],
     };
 
     let songTitle = getSongTitle(songSrc);
@@ -804,6 +927,8 @@ const songToAlbumMap = {
     "this is what space feels like": "this is what space feels like",
     "SICKO MODE": "ASTROWORLD",
     "THE SCOTTS": "THE SCOTTS",
+    "WAKE UP!": "WAKE UP!",
+    "Flashing Lights": "Graduation",
     "Finesse (feat. Cardi B)": "24K Magic",
     "WTF 2 - Slowed": "WTF 2 - Slowed",
     "WTF 2 - Sped Up": "WTF 2 - Sped Up",
@@ -811,6 +936,12 @@ const songToAlbumMap = {
     "Slide da Treme Melódica v2 - Ultra Slowed": "Slide da Treme Melódica v2 - Ultra Slowed",
     "Slide da Treme Melódica v2 - Sped Up": "Slide da Treme Melódica v2 - Sped Up",
     "Goosebumps (feat. 21 Savage)": "Birds in the Trap Sing McKnight",
+    "The Automotivo Infernal 1.0": "The Automotivo Infernal 1.0",
+    "The Automotivo Infernal 1.0 - Red": "The Automotivo Infernal 1.0",
+    "The Automotivo Infernal 1.0 - Slowed": "The Automotivo Infernal 1.0",
+    "The Automotivo Infernal 1.0 - Sped Up": "The Automotivo Infernal 1.0",
+    "The Automotivo Infernal 1.0 - Red - Slowed": "The Automotivo Infernal 1.0",
+    "The Automotivo Infernal 1.0 - Red - Sped Up": "The Automotivo Infernal 1.0",
 };
 
 // Function to preload images
@@ -882,11 +1013,13 @@ function preloadImages() {
         "Resources/Covers/ASTROWORLD.jpg",
         "Resources/Covers/THE SCOTTS.jpg",
         "Resources/Covers/ASTRONOMICAL.jpg",
+        "Resources/Covers/WAKE UP!.jpg",
         "Resources/Covers/WTF 2 - Slowed.jpg",
         "Resources/Covers/WTF 2 - Sped Up.jpg",
         "Resources/Covers/Slide da Treme Melódica v2 - Slowed.jpg",
         "Resources/Covers/Slide da Treme Melódica v2 - Ultra Slowed.jpg",
         "Resources/Covers/Slide da Treme Melódica v2 - Sped Up.jpg",
+        "Resources/Covers/The Automotivo Infernal 1.0.jpg",
     ];
 
     // Load album cover images
@@ -965,10 +1098,12 @@ function updateRecentSongButton() {
 function playRecentSong() {
     const recentSong = loadRecentSong();
     if (recentSong) {
-        const index = songList.findIndex(s => s === recentSong.path);
-        startGame(index);
-        songListModal.style.display = "none";
-        activateKeybinds();
+        var stringIndex = recentSong.index;
+        var index = Number(stringIndex) - 1;
+        var setIndex = index;
+        var recentSongPath = recentSong.path;
+        startGame(index, recentSongPath, setIndex);
+        closeSongList();
     } else {
         alert("No recent song found. Select one from the index!");
     }
@@ -1014,6 +1149,7 @@ function openSelectedSongModal(songPath, songTitle) {
                 let averageNoteSpeed = totalNoteSpeed / dynamicSpeeds.length;
                 songSpeedElement.textContent = `${averageNoteSpeed.toFixed(2)}`;
                 document.getElementById("speedTXT").innerHTML = `<strong>Average Note Speed:</strong>`;
+                console.log(`total speed: ${totalNoteSpeed} avrg note speed ${averageNoteSpeed}`);
             } else {
                 let noteSpeed = versionConfig.noteSpeed || "Note Speed not available";
                 songSpeedElement.textContent = `${noteSpeed}`;
@@ -1028,11 +1164,15 @@ function openSelectedSongModal(songPath, songTitle) {
         const defaultVersionPath = songList.find(s => s === songPath);
         const isDefaultVersion = songPath === defaultVersionPath;
 
+        // Reset version dropdown
+        versionDropdown.innerHTML = ""; // Clear existing options
+        versionDropdown.selectedIndex = -1; // Reset to no selection
+
         // Check for song versions
         if (songVersions[songTitle]) {
             versionDropdownContainer.style.display = "block";
             versionDropdownContainer.style.paddingBottom = "20px"; // Adjust this value to create space similar to <br><br>
-            versionDropdown.innerHTML = "";
+
             songVersions[songTitle].forEach((version, index) => {
                 const option = document.createElement("option");
                 option.value = version.path;
@@ -1097,6 +1237,9 @@ function filterSongs() {
     const noResultsTXT = document.getElementById("noResultsTXT");
     let resultsCount = 0;
 
+    // Find the last song index
+    const lastSongIndex = songList.length - 1;
+
     songButtons.forEach(button => {
         const songText = button.textContent.toLowerCase();
         const isKanye = songText.includes("kanye west");
@@ -1108,6 +1251,8 @@ function filterSongs() {
         const isTrash = songText.includes("playboi carti");
         const isBillie = songText.includes("billie eilish");
         const isZesty = songText.includes("drake");
+        const isMRL = songText.includes("mrl");
+        const isLastSong = songText.includes(lastSongIndex);
 
         if (searchInput === "ye" && isKanye) {
             button.style.display = "block";
@@ -1118,7 +1263,7 @@ function filterSongs() {
         } else if (searchInput === "em" && isEminem) {
             button.style.display = "block";
             resultsCount++;
-        } else if (searchInput === "goat" && (isKanye || isKendrick || isEminem || isCreo || isTravis || isLinkin)) {
+        } else if (searchInput === "goat" && (isKanye || isKendrick || isEminem || isCreo || isTravis || isLinkin || isMRL)) {
             button.style.display = "block";
             resultsCount++;
         } else if (searchInput === "got bit by a goat" && isEminem) {
@@ -1146,6 +1291,9 @@ function filterSongs() {
             button.style.display = "block";
             resultsCount++;
         } else if (searchInput === "bili" && isBillie) {
+            button.style.display = "block";
+            resultsCount++;
+        } else if (searchInput === "last" && isLastSong) {
             button.style.display = "block";
             resultsCount++;
         } else if (songText.includes(searchInput)) {
@@ -1202,6 +1350,11 @@ closeSSongModal.onclick = closeSelectedSongModal;
 closeSongListBTN.onclick = closeSongList;
 
 function nextSong() {
+    if (!songMetadataLoaded) {
+        console.log("Song metadata not loaded. Please wait before proceeding.");
+        return; // Exit the function if metadata isn't loaded
+    }
+
     if (currentSong) {
         currentSong.pause();
         currentSong.currentTime = 0; // Reset the song to the beginning
@@ -1214,9 +1367,19 @@ function nextSong() {
 
     // Start the game with the next song in the songList array
     startGame(currentSongIndex);
+
+    if (saveSongUsingControllers) {
+        saveRecentSong(currentSongPath, getSongTitle(currentSongPath), currentSongIndex + 1, getArtist(currentSongPath)); // Save the recent song
+        updateRecentSongButton(); // Update the button text
+    }
 }
 
 function restartSong() {
+    if (!songMetadataLoaded) {
+        console.log("Song metadata not loaded. Please wait before proceeding.");
+        return; // Exit the function if metadata isn't loaded
+    }
+
     if (currentSong) {
         currentSong.pause();
         currentSong.currentTime = 0; // Reset the song to the beginning
@@ -1233,7 +1396,6 @@ function restartSong() {
     for (const [songTitle, versions] of Object.entries(songVersions)) {
         console.log("Checking song title: " + songTitle);
         for (const version of versions) {
-            console.log("Checking version path: " + version.path);
             if (version.path === currentSongPath) {
                 versionPath = version.path;
                 break;
@@ -1254,6 +1416,11 @@ function restartSong() {
 }
 
 function legacyRestartSong() {
+    if (!songMetadataLoaded) {
+        console.log("Song metadata not loaded. Please wait before proceeding.");
+        return; // Exit the function if metadata isn't loaded
+    }
+
     if (currentSong) {
         currentSong.pause();
         currentSong.currentTime = 0; // Reset the song to the beginning
@@ -1266,6 +1433,11 @@ function legacyRestartSong() {
 }
 
 function previousSong() {
+    if (!songMetadataLoaded) {
+        console.log("Song metadata not loaded. Please wait before proceeding.");
+        return; // Exit the function if metadata isn't loaded
+    }
+
     if (currentSong) {
         currentSong.pause();
         currentSong.currentTime = 0; // Reset the song to the beginning
@@ -1278,6 +1450,11 @@ function previousSong() {
 
     // Start the game with the previous song in the songList array
     startGame(currentSongIndex);
+
+    if (saveSongUsingControllers) {
+        saveRecentSong(currentSongPath, getSongTitle(currentSongPath), currentSongIndex + 1, getArtist(currentSongPath)); // Save the recent song
+        updateRecentSongButton(); // Update the button text
+    }
 }
 
 function pickRandomSong() {
@@ -1289,6 +1466,11 @@ function pickRandomSongIndex() {
 }
 
 function randomizeSong() {
+    if (!songMetadataLoaded) {
+        console.log("Song metadata not loaded. Please wait before proceeding.");
+        return; // Exit the function if metadata isn't loaded
+    }
+
     if (currentSong) {
         currentSong.pause();
         currentSong.currentTime = 0; // Reset the song to the beginning
@@ -1303,6 +1485,11 @@ function randomizeSong() {
 
     // Start the game with the new random song
     startGame(currentSongIndex);
+
+    if (saveSongUsingControllers) {
+        saveRecentSong(currentSongPath, getSongTitle(currentSongPath), currentSongIndex + 1, getArtist(currentSongPath)); // Save the recent song
+        updateRecentSongButton(); // Update the button text
+    }
 }
 
 function resetSongVariables() {
@@ -1338,6 +1525,11 @@ function displaySongInfo(setIndex) {
     ctx.fillText(getArtist(currentSong.src), WIDTH - 10, 56);
     ctx.font = "22px Arial";
     ctx.fillText("BPM: " + BPM + " / Speed: " + noteSpeed, WIDTH - 10, 84);
+
+    if (speedChanges) {
+        ctx.font = "18px Arial";
+        ctx.fillText(nextSpeedChange, WIDTH - 10, 300);
+    }
 }
 
 function getSongTitle(songPath) {
@@ -1402,7 +1594,7 @@ function getArtist(songSrc) {
         "I Wonder": "Kanye West",
         Godzilla: "Eminem, Juice WRLD",
         "HIGHEST IN THE ROOM": "Travis Scott",
-        Runaway: "Kanye West",
+        Runaway: "Kanye West, Pusha T",
         "Rush E": "M.J. Kelly",
         "Vamp Anthem": "Playboi Carti",
         CARNIVAL: "¥$, Kanye West, Ty Dolla $ign, Rich The Kid, Playboi Carti",
@@ -1450,6 +1642,8 @@ function getArtist(songSrc) {
         "this is what space feels like": "JVKE",
         "SICKO MODE": "Travis Scott, Drake",
         "THE SCOTTS": "THE SCOTTS, Travis Scott, Kid Cudi",
+        "WAKE UP!": "MoonDeity",
+        "Flashing Lights": "Kanye West, Dwele",
         "Finesse (feat. Cardi B)": "Bruno Mars, Cardi B",
         "WTF 2 - Slowed": "Ugovhb, EF",
         "WTF 2 - Sped Up": "Ugovhb, EF",
@@ -1457,6 +1651,12 @@ function getArtist(songSrc) {
         "Slide da Treme Melódica v2 - Ultra Slowed": "DJ FNK, Polaris",
         "Slide da Treme Melódica v2 - Sped Up": "DJ FNK, Polaris",
         "Goosebumps (feat. 21 Savage)": "Travis Scott, Kendrick Lamar, 21 Savage",
+        "The Automotivo Infernal 1.0": "MRL, MC GW",
+        "The Automotivo Infernal 1.0 - Red": "MRL, MC GW",
+        "The Automotivo Infernal 1.0 - Slowed": "MRL, MC GW",
+        "The Automotivo Infernal 1.0 - Sped Up": "MRL, MC GW",
+        "The Automotivo Infernal 1.0 - Red - Slowed": "MRL, MC GW",
+        "The Automotivo Infernal 1.0 - Red - Sped Up": "MRL, MC GW",
     };
     let songTitle = getSongTitle(songSrc);
     return artists[songTitle] || "N/A";
@@ -1498,12 +1698,6 @@ function getCover(songPath, deltaTime) {
         } else {
             ctx.drawImage(noCover, centerX - radius, centerY - radius, radius * 2, radius * 2);
         }
-
-        ctx.fillStyle = "white";
-        ctx.font = "20px Arial";
-        ctx.textAlign = "right";
-        ctx.fillText("No cover found", WIDTH - 10, 294);
-        ctx.fillText("for " + getSongTitle(currentSong.src), WIDTH - 10, 318);
     }
 }
 
@@ -1522,11 +1716,6 @@ function rotateImage(ctx, coverImage, centerX, centerY, radius, rotationAngle) {
 
     ctx.restore();
 }
-
-// Initialize variables
-let rotationAngle = 0; // Initial rotation angle
-let vinylRotationEnabled = false; // Initial rotation state
-let circularImageEnabled = false; // Initial circular image state
 
 // Toggle vinyl rotation visibility
 function toggleVinylRotation() {
@@ -1667,6 +1856,8 @@ function togglePause() {
 }
 
 function startGame(index, versionPath, setIndex) {
+    songMetadataLoaded = false; // Reset flag to false at the start of the game
+
     if (versionPath) {
         currentSongPath = versionPath;
         currentSongIndex = setIndex >= 0 ? setIndex : songList.indexOf(currentSongPath);
@@ -1685,8 +1876,26 @@ function startGame(index, versionPath, setIndex) {
         }
     }
 
+    if (document.fullscreenElement) {
+        canvas.style.cursor = "none";
+        if (!backgroundIsDefault && document.fullscreenElement) {
+            canvas.style.background = "url('Resources/BackgroundHtml2.png')";
+            canvas.style.backgroundSize = "cover";
+            canvas.style.backgroundPosition = "center";
+        }
+    } else if (!backgroundIsDefault && !document.fullscreenElement) {
+        canvas.style.background = "transparent"; // If the background is transparent, when fullscreen is toggled off, make the canvas transparent again
+        canvas.style.cursor = "default";
+    }
+
     console.log(`Starting game with index: ${currentSongIndex}`);
     console.log(`Starting game with songPath: ${currentSongPath}`);
+
+    ctx.fillStyle = "white";
+    ctx.font = "60px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("Loading song...", WIDTH / 2, HEIGHT / 2 + 60);
+    ctx.fillText("This won't take long!", WIDTH / 2, HEIGHT / 2 - 20);
 
     // Check for default versions in the dropdown
     const versionDropdown = document.getElementById("versionDropdown");
@@ -1719,6 +1928,8 @@ function startGame(index, versionPath, setIndex) {
     currentSong.volume = currentSongVolume;
 
     currentSong.onloadedmetadata = function () {
+        songMetadataLoaded = true; // Set the flag to true when metadata is loaded
+
         console.log("Loaded selected song's metadata");
 
         var config = songConfigs[currentSongPath] || {
@@ -1737,9 +1948,6 @@ function startGame(index, versionPath, setIndex) {
             right: [],
         };
 
-        // Set notesGenerated to true once notes are generated
-        notesGenerated = true;
-
         const songTitle = getSongTitle(currentSongPath);
         const songConfig = getDynamicSpeed(currentSongPath);
 
@@ -1748,6 +1956,7 @@ function startGame(index, versionPath, setIndex) {
             dynamicSpeedInfo = songConfig.map(config => `Timestamp: ${config.timestamp}, Speed: ${config.noteSpeed}`).join(" | ");
             currentConfigIndex = 0; // Reset currentConfigIndex
             nextSpeedChange = ""; // Reset nextSpeedChange
+            speedChanges = true;
 
             speedUpdater = setInterval(() => {
                 if (currentSong && songConfig && currentConfigIndex < songConfig.length) {
@@ -1756,6 +1965,11 @@ function startGame(index, versionPath, setIndex) {
                     if (currentTime >= nextConfig.timestamp) {
                         noteSpeed = nextConfig.noteSpeed;
                         console.log(`Updated note speed to: ${noteSpeed} at timestamp: ${nextConfig.timestamp}`);
+                        if (nextConfig.BPM) {
+                            BPM = nextConfig.BPM;
+                            MILLISECONDS_PER_BEAT = 60000 / BPM;
+                            console.log(`Updated BPM to: ${BPM} at timestamp: ${nextConfig.timestamp}`);
+                        }
                         if (nextConfig.notes) {
                             notes = nextConfig.notes;
                             console.log(`Updated notes at timestamp: ${nextConfig.timestamp}`);
@@ -1768,12 +1982,19 @@ function startGame(index, versionPath, setIndex) {
                             savedNotes = nextConfig.savedNotes;
                             console.log(`Saved current notes for future use: ${nextConfig.timestamp}`);
                         }
+                        if (nextConfig.useNotes) {
+                            notes = nextConfig.savedNotes;
+                            console.log(`Updated current notes at timestamp: ${nextConfig.timestamp}`);
+                        }
                         currentConfigIndex++;
                     }
                     // Update next imminent speed change
                     if (currentConfigIndex < songConfig.length) {
-                        const upcomingConfig = songConfig[currentConfigIndex];
-                        nextSpeedChange = `Next speed change at: ${upcomingConfig.timestamp}s, Speed: ${upcomingConfig.noteSpeed}`;
+                        if (nextConfig.endScreenDrawn) {
+                            nextSpeedChange = "No more speed changes."; // Do not display anything for endScreenDrawn
+                        } else {
+                            nextSpeedChange = `Next speed change at: ${nextConfig.timestamp}s, Speed: ${nextConfig.noteSpeed}`;
+                        }
                     } else {
                         nextSpeedChange = "No more speed changes.";
                     }
@@ -1785,6 +2006,7 @@ function startGame(index, versionPath, setIndex) {
             console.log(`No dynamic speed configuration for "${songTitle}"`);
             dynamicSpeedInfo = "No dynamic speed configuration found.";
             nextSpeedChange = "No speed changes.";
+            speedChanges = false;
             currentConfigIndex = 0;
         }
 
@@ -1825,18 +2047,6 @@ function startGame(index, versionPath, setIndex) {
         document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 3.6!`;
 
         console.log(`indexToDisplay converted in startGame: ${indexToDisplay}`);
-
-        if (document.fullscreenElement) {
-            canvas.style.cursor = "none";
-            if (!backgroundIsDefault && document.fullscreenElement) {
-                canvas.style.background = "url('Resources/BackgroundHtml2.png')";
-                canvas.style.backgroundSize = "cover";
-                canvas.style.backgroundPosition = "center";
-            }
-        } else if (!backgroundIsDefault && !document.fullscreenElement) {
-            canvas.style.background = "transparent"; // If the background is transparent, when fullscreen is toggled off, make the canvas transparent again
-            canvas.style.cursor = "default";
-        }
     };
 }
 
@@ -2017,28 +2227,21 @@ console.log("Functions saveScore, getBestScore, displayBestScore, and onSongEnd 
 
 console.log("Ready to start Beatz.");
 
-let gamePaused = false;
-let pausedTextDrawn = false;
-let endScreenDrawn = false;
-
-// Initialize variables for time tracking
-let lastTime = 0;
-let timeDelta = 0;
-let lastFrameTime = 0;
-let fps = 0;
-let globalTimestamp;
-
-let debugInfoVisible = false;
-
 // Function to toggle debug info visibility
 function toggleDebugInfo() {
     debugInfoVisible = !debugInfoVisible;
 }
 
-let newestNoteType = "";
-let newestNoteTime = 0;
+function calculateFPS(deltaTime) {
+    // Calculate FPS
+    let currentFPS = 1 / deltaTime;
+    FPS = currentFPS.toFixed(1);
 
-var indexToDisplay;
+    ctx.font = "12px Arial";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    ctx.fillText(`Current FPS: ${FPS}`, WIDTH / 2, HEIGHT - 30);
+}
 
 function updateDebugInfo(deltaTime, timestamp) {
     if (debugInfoVisible) {
@@ -2049,10 +2252,6 @@ function updateDebugInfo(deltaTime, timestamp) {
         const down = parseFloat(noteYPositions.down);
         const right = parseFloat(noteYPositions.right);
 
-        // Calculate FPS
-        let currentFPS = 1 / deltaTime;
-        fps = currentFPS.toFixed(1);
-
         ctx.font = "11px Arial";
         ctx.fillStyle = "white";
         ctx.textAlign = "left";
@@ -2060,25 +2259,26 @@ function updateDebugInfo(deltaTime, timestamp) {
         ctx.fillText(`Device: ${userDevice}`, 10, startY + lineHeight);
         ctx.fillText(`Delta Time: ${deltaTime.toFixed(3)} seconds`, 10, startY + 2 * lineHeight);
         ctx.fillText(`Timestamp: ${timestamp} milliseconds`, 10, startY + 3 * lineHeight);
-        ctx.fillText(`Current FPS: ${fps}`, 10, startY + 4 * lineHeight);
-        ctx.fillText(`Current song path: ${currentSongPath}`, 10, startY + 5 * lineHeight);
-        ctx.fillText(`Current song source:`, 10, startY + 6 * lineHeight);
-        ctx.fillText(`${currentSong.src}`, 10, startY + 7 * lineHeight);
-        ctx.fillText(`Hit sound index: ${currentHitSoundIndex}`, 10, startY + 8 * lineHeight);
-        ctx.fillText(`Song start time: ${songStartTime}`, 10, startY + 9 * lineHeight);
-        ctx.fillText(`Song paused time: ${songPausedTime}`, 10, startY + 10 * lineHeight);
-        ctx.fillText(`Newest note: ${newestNoteType}, at timestamp: ${newestNoteTime.toFixed(3)}`, 10, startY + 11 * lineHeight);
-        ctx.fillText(`Note Y positions: ${left.toFixed(1)} | ${up.toFixed(1)} | ${down.toFixed(1)} | ${right.toFixed(1)}`, 10, startY + 12 * lineHeight);
-        ctx.fillText(`Last perfect note type: ${lastPerfectHitNoteType}`, 10, startY + 13 * lineHeight);
-        ctx.fillText(`Last early/late note type: ${lastEarlyLateNoteType}`, 10, startY + 14 * lineHeight);
-        ctx.fillText(`Last note type: ${lastNoteType}`, 10, startY + 15 * lineHeight);
-        ctx.fillText(`Total notes hit in this playthrough: ${notesHit}`, 10, startY + 16 * lineHeight);
-        ctx.fillText(`Auto hit disabled saving? ${autoHitDisableSaving}`, 10, startY + 17 * lineHeight);
-        ctx.fillText(`Dynamic speeds for ${getSongTitle(currentSongPath)}: ${dynamicSpeedInfo}`, 10, startY + 18 * lineHeight);
-        ctx.fillText(nextSpeedChange, 10, startY + 19 * lineHeight);
-        ctx.fillText(`Dynamic Speed index: ${currentConfigIndex}`, 10, startY + 20 * lineHeight);
+        ctx.fillText(`Current song path: ${currentSongPath}`, 10, startY + 4 * lineHeight);
+        ctx.fillText(`Current song source:`, 10, startY + 5 * lineHeight);
+        ctx.fillText(`${currentSong.src}`, 10, startY + 6 * lineHeight);
+        ctx.fillText(`Hit sound index: ${currentHitSoundIndex}`, 10, startY + 7 * lineHeight);
+        ctx.fillText(`Song start time: ${songStartTime}`, 10, startY + 8 * lineHeight);
+        ctx.fillText(`Song paused time: ${songPausedTime}`, 10, startY + 9 * lineHeight);
+        ctx.fillText(`Newest note: ${newestNoteType}, at timestamp: ${newestNoteTime.toFixed(3)}`, 10, startY + 10 * lineHeight);
+        ctx.fillText(`Note Y positions: ${left.toFixed(1)} | ${up.toFixed(1)} | ${down.toFixed(1)} | ${right.toFixed(1)}`, 10, startY + 11 * lineHeight);
+        ctx.fillText(`Last perfect note type: ${lastPerfectHitNoteType}`, 10, startY + 12 * lineHeight);
+        ctx.fillText(`Last early/late note type: ${lastEarlyLateNoteType}`, 10, startY + 13 * lineHeight);
+        ctx.fillText(`Last note type: ${lastNoteType}`, 10, startY + 14 * lineHeight);
+        ctx.fillText(`Total notes hit in this playthrough: ${notesHit}`, 10, startY + 15 * lineHeight);
+        ctx.fillText(`Auto hit disabled saving? ${autoHitDisableSaving}`, 10, startY + 16 * lineHeight);
+        ctx.fillText(`Dynamic speeds for ${getSongTitle(currentSongPath)}: ${dynamicSpeedInfo}`, 10, startY + 17 * lineHeight);
+        ctx.fillText(nextSpeedChange, 10, startY + 18 * lineHeight);
+        ctx.fillText(`Dynamic Speed index: ${currentConfigIndex}`, 10, startY + 19 * lineHeight);
+        ctx.fillText(`Milliseconds Per Beat (Calculated by BPM): ${MILLISECONDS_PER_BEAT}`, 10, startY + 20 * lineHeight);
         ctx.fillText(`Saved notes: ${savedNotes}`, 10, startY + 21 * lineHeight);
         ctx.fillText(`Index to Display: ${indexToDisplay + 1}`, 10, startY + 22 * lineHeight);
+        ctx.fillText(`FPS buffed hit ranges? ${fpsBuffedHitRanges}`, 10, startY + 23 * lineHeight);
 
         ctx.font = "14px Arial";
         ctx.textAlign = "right";
@@ -2087,7 +2287,20 @@ function updateDebugInfo(deltaTime, timestamp) {
     }
 }
 
-let backgroundIsDefault = true; // Default to true assuming default background
+// Assuming MILLISECONDS_PER_BEAT is defined
+let isFlashing = false; // To track the flashing state
+const FLASH_DURATION = 100; // Duration of the flash in milliseconds
+
+// Function to toggle flashing
+function toggleFlash() {
+    isFlashing = true;
+    setTimeout(() => {
+        isFlashing = false;
+    }, FLASH_DURATION);
+}
+
+// Set interval to trigger the flashing based on MILLISECONDS_PER_BEAT
+setInterval(toggleFlash, MILLISECONDS_PER_BEAT * 512);
 
 function updateCanvas(timestamp, setIndex) {
     if (!lastTime) {
@@ -2271,6 +2484,78 @@ function updateCanvas(timestamp, setIndex) {
         // Update debug info on the canvas
         updateDebugInfo(timeDelta, timestamp);
 
+        calculateFPS(timeDelta);
+
+        if (FPS <= 32) {
+            PERFECT_HIT_RANGE_MIN = 532;
+            PERFECT_HIT_RANGE_MAX = 578;
+            HIT_Y_RANGE_MIN = 485;
+            HIT_Y_RANGE_MAX = 615;
+            MISS_RANGE = 610;
+            fpsBuffedHitRanges = true;
+            console.warn(`EXTREMELY Low FPS! Hit ranges have been buffed greatly. FPS: ${FPS}`);
+        }
+
+        if (FPS > 32 && FPS <= 62) {
+            PERFECT_HIT_RANGE_MIN = 538;
+            PERFECT_HIT_RANGE_MAX = 572;
+            HIT_Y_RANGE_MIN = 490;
+            HIT_Y_RANGE_MAX = 610;
+            MISS_RANGE = 620;
+            fpsBuffedHitRanges = true;
+            console.warn(`Low FPS! Hit ranges have been buffed. FPS: ${FPS}`);
+        }
+
+        if (FPS > 63 && FPS <= 122) {
+            PERFECT_HIT_RANGE_MIN = 542;
+            PERFECT_HIT_RANGE_MAX = 568;
+            HIT_Y_RANGE_MIN = 500;
+            HIT_Y_RANGE_MAX = 600;
+            MISS_RANGE = 690;
+            fpsBuffedHitRanges = false;
+        }
+
+        if (FPS > 123 && FPS <= 167) {
+            PERFECT_HIT_RANGE_MIN = 542;
+            PERFECT_HIT_RANGE_MAX = 568;
+            HIT_Y_RANGE_MIN = 500;
+            HIT_Y_RANGE_MAX = 600;
+            MISS_RANGE = 695;
+            fpsBuffedHitRanges = false;
+        }
+
+        if (FPS > 168 && FPS <= 242) {
+            PERFECT_HIT_RANGE_MIN = 542;
+            PERFECT_HIT_RANGE_MAX = 568;
+            HIT_Y_RANGE_MIN = 500;
+            HIT_Y_RANGE_MAX = 600;
+            MISS_RANGE = 698;
+            fpsBuffedHitRanges = false;
+        }
+
+        // Calculate progress based on the current song time and duration
+        const currentSongTime = currentSong.currentTime;
+        const duration = currentSong.duration;
+        const progressWidth = (WIDTH * currentSongTime) / duration;
+
+        // Determine the color of the progress bar based on the flash state
+        ctx.fillStyle = isFlashing ? "white" : "red"; // Flash color or normal color
+
+        // Draw the progress bar at the top of the canvas
+        ctx.fillRect(0, 0, progressWidth, 5); // Change 5 to the height of your progress bar
+
+        // Display current time and duration below the progress bar
+        ctx.fillStyle = "#FFFFFF"; // Color of the text
+        ctx.font = "18px Arial"; // Font style and size for the text
+        ctx.textAlign = "center";
+
+        // Format the current time and duration as mm:ss
+        const formattedCurrentTime = formatTimeWithDecimal(currentSongTime);
+        const formattedDuration = formatTime(duration);
+
+        // Draw the current time and duration on the canvas
+        ctx.fillText(`${formattedCurrentTime} / ${formattedDuration}`, WIDTH / 2, 30); // Change 10, 20 to position the text
+
         // Display "Auto Hit: On" text if auto-hit is enabled
         if (autoHitEnabled) {
             drawAutoHitText();
@@ -2282,6 +2567,19 @@ function updateCanvas(timestamp, setIndex) {
         }
     }
     requestAnimationFrame(timestamp => updateCanvas(timestamp, setIndex));
+}
+
+function formatTimeWithDecimal(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    const fractionalSeconds = (seconds % 1).toFixed(2).substring(2); // Get two decimal places for fractional seconds
+    return `${minutes}:${secs < 10 ? "0" : ""}${secs}.${fractionalSeconds}`; // Formats time as mm:ss.xx
+}
+
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${minutes}:${secs < 10 ? "0" : ""}${secs}`; // Formats time as mm:ss
 }
 
 function updateNotes(timeDelta) {
@@ -2309,8 +2607,7 @@ function autoHitPerfectNotes() {
     for (let type in noteYPositions) {
         for (let i = 0; i < noteYPositions[type].length; i++) {
             let yPos = noteYPositions[type][i];
-            if (yPos >= Math.random() * (PERFECT_HIT_RANGE_MAX - PERFECT_HIT_RANGE_MIN) + PERFECT_HIT_RANGE_MIN - 2) {
-                // if (yPos >= PERFECT_HIT_RANGE_MIN + 9) {
+            if (yPos >= PERFECT_HIT_RANGE_MIN) {
                 triggerHit(type);
                 break;
             }
@@ -2454,10 +2751,10 @@ function drawHitboxes() {
     if (showHitboxes) {
         // Draw green hitboxes for stationary notes
         ctx.strokeStyle = "green";
-        ctx.strokeRect(noteXPositions.left - noteWidth / 2, HIT_Y_RANGE_MAX - 50, noteWidth, noteHeight);
-        ctx.strokeRect(noteXPositions.up - noteWidth / 2 + 15, HIT_Y_RANGE_MAX - 50, noteWidth, noteHeight);
-        ctx.strokeRect(noteXPositions.down - noteWidth / 2 - 15, HIT_Y_RANGE_MAX - 50, noteWidth, noteHeight);
-        ctx.strokeRect(noteXPositions.right - noteWidth / 2, HIT_Y_RANGE_MAX - 50, noteWidth, noteHeight);
+        ctx.strokeRect(noteXPositions.left - noteWidth / 2, HIT_Y_RANGE_MIN + 50, noteWidth, HIT_Y_RANGE_MAX - HIT_Y_RANGE_MIN);
+        ctx.strokeRect(noteXPositions.up - noteWidth / 2 + 15, HIT_Y_RANGE_MIN + 50, noteWidth, HIT_Y_RANGE_MAX - HIT_Y_RANGE_MIN);
+        ctx.strokeRect(noteXPositions.down - noteWidth / 2 - 15, HIT_Y_RANGE_MIN + 50, noteWidth, HIT_Y_RANGE_MAX - HIT_Y_RANGE_MIN);
+        ctx.strokeRect(noteXPositions.right - noteWidth / 2, HIT_Y_RANGE_MIN + 50, noteWidth, HIT_Y_RANGE_MAX - HIT_Y_RANGE_MIN);
 
         // Draw red rectangles for the perfect hit range
         ctx.strokeStyle = "red";
@@ -2465,6 +2762,12 @@ function drawHitboxes() {
         ctx.strokeRect(noteXPositions.up - noteWidth / 2 + 15, PERFECT_HIT_RANGE_MIN + 20, noteWidth, PERFECT_HIT_RANGE_MAX - PERFECT_HIT_RANGE_MIN);
         ctx.strokeRect(noteXPositions.down - noteWidth / 2 - 15, PERFECT_HIT_RANGE_MIN + 20, noteWidth, PERFECT_HIT_RANGE_MAX - PERFECT_HIT_RANGE_MIN);
         ctx.strokeRect(noteXPositions.right - noteWidth / 2, PERFECT_HIT_RANGE_MIN + 20, noteWidth, PERFECT_HIT_RANGE_MAX - PERFECT_HIT_RANGE_MIN);
+
+        // Draw a dark blue line at the first miss range and a bright blue line at the second miss range
+        ctx.strokeStyle = "blue";
+        ctx.strokeRect(WIDTH / 2 - 150, MISS_RANGE, 300, 2);
+        ctx.strokeStyle = "cyan";
+        ctx.strokeRect(WIDTH / 2 - 150, MISS_RANGE + noteHeight, 300, 2);
     }
 }
 
@@ -2527,7 +2830,7 @@ function checkMisses() {
     for (let type in noteYPositions) {
         for (let i = 0; i < noteYPositions[type].length; i++) {
             let yPos = noteYPositions[type][i];
-            if (yPos > HIT_Y_RANGE_MAX + 90) {
+            if (yPos > MISS_RANGE) {
                 noteYPositions[type].splice(i, 1);
                 totalMisses++; // Increment total misses when a note is missed
                 points--; // Decrease total points when a note is missed
@@ -2560,6 +2863,77 @@ function drawAutoHitText() {
     ctx.textAlign = "left";
     ctx.fillText("Auto Hit: On", 10, HEIGHT - 34);
     ctx.fillText("Points are disabled for this playthrough.", 10, HEIGHT - 10);
+}
+
+// Get the modal and buttons
+const customSongModal = document.getElementById("customSongModal");
+const openCustomSongModal = document.getElementById("openCustomSongModal");
+const closeCustomSong = document.getElementById("closeCustomSongModal");
+const createButton = document.getElementById("createCustomSong");
+
+// Open the modal
+openCustomSongModal.onclick = function () {
+    customSongModal.style.display = "block";
+    deactivateKeybinds();
+};
+
+// Close the modal
+closeCustomSong.onclick = function () {
+    customSongModal.style.display = "none";
+    activateKeybinds();
+};
+
+// Close the modal when clicking outside of it
+window.onclick = function (event) {
+    if (event.target === customSongModal) {
+        customSongModal.style.display = "none";
+    }
+};
+
+// Handle file input and note generation
+createButton.onclick = function () {
+    const fileInput = document.getElementById("songFile");
+    const titleInput = document.getElementById("customSongTitle").value;
+    const noteSpeed = parseInt(document.getElementById("noteSpeed").value);
+    const bpm = parseInt(document.getElementById("bpm").value);
+
+    if (fileInput.files.length === 0) {
+        alert("Please upload an MP3 file.");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    if (file.type !== "audio/mp3") {
+        alert("Please upload a valid MP3 file.");
+        return;
+    }
+
+    const audio = new Audio(URL.createObjectURL(file));
+    audio.onloadedmetadata = function () {
+        const duration = audio.duration * 1000; // Convert duration to milliseconds
+
+        // Generate notes
+        const notes = generateRandomNotes(duration);
+
+        // Apply note speed and BPM
+        applyNoteSpeedAndBPM(noteSpeed, bpm);
+
+        // Start the game with the custom song
+        startCustomGame(file, titleInput, notes);
+    };
+};
+
+// Function to apply note speed and BPM
+function applyNoteSpeedAndBPM(noteSpeed, bpm) {
+    // Implement your logic to apply note speed and BPM
+    console.log("Note Speed:", noteSpeed, "BPM:", bpm);
+}
+
+// Function to start the game with the custom song
+function startCustomGame(file, title, notes) {
+    // Implement your logic to start the game with the given song and notes
+    console.log("Starting custom game with title:", title);
+    console.log("Notes:", notes);
 }
 
 // Global variable to track if notes are generated

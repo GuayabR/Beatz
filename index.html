@@ -106,8 +106,11 @@
                     </select>
                     <br /><br />
 
-                    <label for="logKeys">Log Keys to Console</label>
-                    <input type="checkbox" id="logKeys" onclick="toggleKeyLogger()" /><br />
+                    <label for="logKeysCheck">Log Keys to Console</label>
+                    <input type="checkbox" id="logKeysCheck" onclick="toggleKeyLogger()" /><br />
+
+                    <label for="saveRecentSongs">Save ALL recent songs?</label>
+                    <input type="checkbox" id="saveRecentSongs" onclick="toggleSavingSongs()" /><br />
 
                     <label for="circularImage">Circular Cover Images?</label>
                     <input type="checkbox" id="circularImage" name="circularImage" onchange="toggleVinylRotation()" />
@@ -178,7 +181,7 @@
             <button id="contactbtn" onclick="email()"><i class="fa-solid fa-envelope"></i> Contact</button>
         </div>
 
-        <div id="publicToTestToggle"><button id="publicbtn" onclick="toVersion()">Open testing game</button><br /><br /></div>
+        <div id="publicToTestToggle"><button id="publicbtn" onclick="toVersion()">Open public game</button><br /><br /></div>
 
         <h2>
             Background image from:

@@ -127,19 +127,29 @@ canvas:-ms-fullscreen {
     background-color: rgba(0, 0, 0, 0);
 }
 
+#openSongListBTN {
+    font-size: 16px;
+    width: 175px;
+    height: 50px;
+}
+
+#openSongListBTN i {
+    margin-right: 2px;
+}
+
 #songListModal {
     max-height: 100vh;
-    overflow: hidden; /* Hide overflow of the entire modal */
+    overflow: hidden;
 }
 
 #songListModal .modal-content {
     max-height: 90vh;
-    overflow: hidden; /* Hide overflow within the modal content */
+    overflow: hidden;
 }
 
 #songListModal #songList {
-    max-height: 61vh;
-    overflow-y: auto; /* Ensure scrolling within #songList only if needed */
+    max-height: 60vh;
+    overflow-y: auto;
 }
 
 .most-recent-button {
