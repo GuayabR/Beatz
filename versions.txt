@@ -455,6 +455,8 @@ Reworked album cover logic!
 - Added a progress bar with timestamp and duration of the current song playing. Flashes depending on the song's BPM.
 - Recent songs now saves when pressing next, previous or randomize song.
 - If user is playing Beatz on a Chromebook device, the scale factor for the canvas is reduced to 0.8 so it fits on the user's screen.
+- Added 2 missing songs from older updates: That's What I Like (Bruno Mars), Brand New Dance (Eminem)
 ## Fixes
 - Fixed recent song randomizing the index instead of playing your recent song.
 - Fixed notes being inconsistently checked for misses in lower framerates.
+- Fixed setting presets not correctly applying new "Log Keys", "Default Hit Sound", and "Save Recent Songs" settings.

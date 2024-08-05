@@ -232,6 +232,9 @@ const Presets = {
             customBackgroundBlur: "10",
             customBackground: "",
             logKeys: false,
+            logKeys: false,
+            hitSound: "defaultHit",
+            saveSongUsingControllers: false,
         },
     },
     VERIDIAN: {
@@ -259,6 +262,8 @@ const Presets = {
             customBackgroundBlur: "0",
             customBackground: "",
             logKeys: false,
+            hitSound: "defaultHit",
+            saveSongUsingControllers: false,
         },
     },
 };
@@ -291,7 +296,9 @@ function applyPreset(presetName) {
     document.getElementById("circularImage").checked = miscellaneous.circularImage;
     document.getElementById("defaultBackground").value = miscellaneous.backgroundForCanvas;
     document.getElementById("backdropBlurInput").value = miscellaneous.customBackgroundBlur;
-    document.getElementById("logKeys").checked = miscellaneous.logKeys; // Update logKeys checkbox
+    document.getElementById("logKeysCheck").checked = miscellaneous.logKeys;
+    document.getElementById("defaultHitSound").value = miscellaneous.hitSound;
+    document.getElementById("saveRecentSongs").checked = miscellaneous.saveSongUsingControllers;
 
     if (miscellaneous.backgroundForCanvas === "customBG" && miscellaneous.customBackground) {
         document.getElementById("customBGLabel").style.display = "inline";
