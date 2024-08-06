@@ -62,7 +62,7 @@ function detectAndHandleDevice() {
         console.log("Mobile device detected. Game is not supported."); // Log a message indicating the game is not supported on mobile devices
     } else if (deviceType === "Chromebook") {
         // Check if the detected device is a Chromebook
-        canvas.style.scale = "0.8";
+        canvas.style.scale = "0.9";
         console.warn("Chromebook detected. Game might have reduced framerates."); // Log a warning about potential performance issues on Chromebooks
     } else {
         // For desktop devices
