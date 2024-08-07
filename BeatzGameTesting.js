@@ -2493,20 +2493,20 @@ function updateCanvas(timestamp, setIndex) {
             HIT_Y_RANGE_MAX = 615;
             MISS_RANGE = 610;
             fpsBuffedHitRanges = true;
-            console.warn(`EXTREMELY Low FPS! Hit ranges have been buffed greatly. FPS: ${FPS}`);
+            // console.warn(`EXTREMELY Low FPS! Hit ranges have been buffed greatly. FPS: ${FPS}`);
         }
 
-        if (FPS > 32 && FPS <= 62) {
+        if (FPS > 32 && FPS <= 61) {
             PERFECT_HIT_RANGE_MIN = 538;
             PERFECT_HIT_RANGE_MAX = 572;
             HIT_Y_RANGE_MIN = 490;
             HIT_Y_RANGE_MAX = 610;
             MISS_RANGE = 620;
             fpsBuffedHitRanges = true;
-            console.warn(`Low FPS! Hit ranges have been buffed. FPS: ${FPS}`);
+            // console.warn(`Low FPS! Hit ranges have been buffed. FPS: ${FPS}`);
         }
 
-        if (FPS > 63 && FPS <= 122) {
+        if (FPS > 62 && FPS <= 122) {
             PERFECT_HIT_RANGE_MIN = 542;
             PERFECT_HIT_RANGE_MAX = 568;
             HIT_Y_RANGE_MIN = 500;
