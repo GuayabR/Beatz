@@ -1908,8 +1908,8 @@ function startGame(index, versionPath, setIndex) {
     ctx.fillStyle = "white";
     ctx.font = "60px Arial";
     ctx.textAlign = "center";
-    ctx.fillText("Loading song...", WIDTH / 2, HEIGHT / 2 + 60);
-    ctx.fillText("This won't take long!", WIDTH / 2, HEIGHT / 2 - 20);
+    ctx.fillText("Loading song...", WIDTH / 2, HEIGHT / 2 - 60);
+    ctx.fillText("This won't take long!", WIDTH / 2, HEIGHT / 2 + 20);
 
     // Check for default versions in the dropdown
     const versionDropdown = document.getElementById("versionDropdown");
