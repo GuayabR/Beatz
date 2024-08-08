@@ -1907,14 +1907,16 @@ function startGame(index, versionPath, setIndex) {
     console.log(`Starting game with index: ${currentSongIndex}`);
     console.log(`Starting game with songPath: ${currentSongPath}`);
 
-    loadingInterval = setInterval(() => {
+    if (!songMetadataLoaded) {
+        loadingInterval = setInterval(() => {
         ctx.fillStyle = "white";
         ctx.font = "60px Arial";
         ctx.textAlign = "center";
         ctx.fillText("Loading song...", WIDTH / 2, HEIGHT / 2 - 60);
         ctx.fillText("This won't take long!", WIDTH / 2, HEIGHT / 2 + 20);
     }, 10); // 10 milliseconds interval
-
+    }
+    
     // Check for default versions in the dropdown
     const versionDropdown = document.getElementById("versionDropdown");
 
