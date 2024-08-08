@@ -2501,11 +2501,11 @@ function updateCanvas(timestamp, setIndex) {
         calculateFPS(timeDelta);
 
         if (FPS <= 32) {
-            PERFECT_HIT_RANGE_MIN = 532;
-            PERFECT_HIT_RANGE_MAX = 578;
+            PERFECT_HIT_RANGE_MIN = 534;
+            PERFECT_HIT_RANGE_MAX = 576;
             HIT_Y_RANGE_MIN = 485;
             HIT_Y_RANGE_MAX = 615;
-            MISS_RANGE = 630;
+            MISS_RANGE = 640;
             fpsBuffedHitRanges = true;
             // console.warn(`EXTREMELY Low FPS! Hit ranges have been buffed greatly. FPS: ${FPS}`);
         }
@@ -2513,8 +2513,8 @@ function updateCanvas(timestamp, setIndex) {
         if (FPS > 32 && FPS <= 61) {
             PERFECT_HIT_RANGE_MIN = 538;
             PERFECT_HIT_RANGE_MAX = 572;
-            HIT_Y_RANGE_MIN = 490;
-            HIT_Y_RANGE_MAX = 610;
+            HIT_Y_RANGE_MIN = 495;
+            HIT_Y_RANGE_MAX = 605;
             MISS_RANGE = 650;
             fpsBuffedHitRanges = true;
             // console.warn(`Low FPS! Hit ranges have been buffed. FPS: ${FPS}`);
