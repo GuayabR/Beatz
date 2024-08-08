@@ -1869,6 +1869,8 @@ function togglePause() {
     }
 }
 
+var loadingInterval;
+
 function startGame(index, versionPath, setIndex) {
     songMetadataLoaded = false; // Reset flag to false at the start of the game
 
@@ -1905,11 +1907,13 @@ function startGame(index, versionPath, setIndex) {
     console.log(`Starting game with index: ${currentSongIndex}`);
     console.log(`Starting game with songPath: ${currentSongPath}`);
 
-    ctx.fillStyle = "white";
-    ctx.font = "60px Arial";
-    ctx.textAlign = "center";
-    ctx.fillText("Loading song...", WIDTH / 2, HEIGHT / 2 - 60);
-    ctx.fillText("This won't take long!", WIDTH / 2, HEIGHT / 2 + 20);
+    loadingInterval = setInterval(() => {
+        ctx.fillStyle = "white";
+        ctx.font = "60px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("Loading song...", WIDTH / 2, HEIGHT / 2 - 60);
+        ctx.fillText("This won't take long!", WIDTH / 2, HEIGHT / 2 + 20);
+    }, 10); // 10 milliseconds interval
 
     // Check for default versions in the dropdown
     const versionDropdown = document.getElementById("versionDropdown");
@@ -2326,6 +2330,11 @@ function updateCanvas(timestamp, setIndex) {
     lastTime = timestamp;
 
     globalTimestamp = timestamp;
+
+    if (loadingInterval) {
+        clearInterval(loadingInterval);
+        loadingInterval = null; // Optionally reset loadingInterval to null
+    }
 
     if (gamePaused) {
         // Calculate the time difference between frames
