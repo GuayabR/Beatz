@@ -43,9 +43,8 @@ function detectDeviceType() {
 
 function detectAndHandleDevice() {
     // Function to detect the type of device and handle accordingly
-    const deviceType = detectDeviceType(); // Detect the type of device
 
-    if (deviceType === "Mobile" || deviceType === "iOS" || deviceType === "Android") {
+    if (userDevice === "Mobile" || userDevice === "iOS" || userDevice === "Android") {
         // Check if the detected device is Mobile, iOS, or Android
 
         document.querySelectorAll("button").forEach(button => (button.disabled = true)); // Disable all buttons on the page
@@ -60,7 +59,7 @@ function detectAndHandleDevice() {
         document.getElementById("unsupportedMessage").style.display = "block"; // Show the unsupported device message
 
         console.log("Mobile device detected. Game is not supported."); // Log a message indicating the game is not supported on mobile devices
-    } else if (deviceType === "Chromebook") {
+    } else if (userDevice === "Chromebook") {
         // Check if the detected device is a Chromebook
         canvas.style.scale = "0.9";
         console.warn("Chromebook detected. Game might have reduced framerates."); // Log a warning about potential performance issues on Chromebooks
@@ -112,9 +111,15 @@ function toggleFullScreen() {
             console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
         });
         console.log("Entered Fullscreen");
+        if (userDevice === "Chromebook") {
+            canvas.style.scale = "1";
+        }
     } else {
         document.exitFullscreen();
         console.log("Exited Fullscreen");
+        if (userDevice === "Chromebook") {
+            canvas.style.scale = "0.9";
+        }
     }
 }
 

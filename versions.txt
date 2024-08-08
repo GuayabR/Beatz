@@ -455,8 +455,15 @@ Reworked album cover logic!
 - Added a progress bar with timestamp and duration of the current song playing. Flashes depending on the song's BPM.
 - Recent songs now saves when pressing next, previous or randomize song.
 - If user is playing Beatz on a Chromebook device, the scale factor for the canvas is reduced to 0.8 so it fits on the user's screen.
+- Users with FPS lower than 60 will have their miss range up to Y = 620, while FPS lower than 30 will have their miss range up to Y = 610.
 - Added 2 missing songs from older updates: That's What I Like (Bruno Mars), Brand New Dance (Eminem)
 ## Fixes
 - Fixed recent song randomizing the index instead of playing your recent song.
 - Fixed notes being inconsistently checked for misses in lower framerates.
 - Fixed setting presets not correctly applying new "Log Keys", "Default Hit Sound", and "Save Recent Songs" settings.
+//
+
+3.7.1.2 (SONGv 3.7! 08/08/2024)
+- Added RUN! By VALORANT, Odetari, Lay Banks
+- Fixed chromebooks users having black bars around the screen while playing Beatz! on fullscreen.
+- Increased low FPS miss ranges. (60 FPS: 620 - 650 // 30 FPS: 610 - 640)

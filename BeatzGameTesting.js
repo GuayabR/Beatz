@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: SONGv 3.7.1.1 test (release.version.subversion.bugfix)
+ * Version: SONGv 3.7.1.2 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -426,6 +426,7 @@ function preloadSongs() {
         "Resources/Songs/The Automotivo Infernal 1.0.mp3",
         "Resources/Songs/WAKE UP!.mp3",
         "Resources/Songs/Flashing Lights.mp3",
+        "Resources/Songs/RUN!.mp3",
         "Resources/Songs/testingsong.mp3",
     ];
 
@@ -648,6 +649,7 @@ const songConfigs = {
     "Resources/Songs/THE SCOTTS.mp3": { BPM: 130, noteSpeed: 0 },
     "Resources/Songs/WAKE UP!.mp3": { BPM: 125, noteSpeed: 8 },
     "Resources/Songs/Flashing Lights.mp3": { BPM: 90, noteSpeed: 10.5 },
+    "Resources/Songs/RUN!.mp3": { BPM: 135, noteSpeed: 10 },
 
     // Song Versions
 
@@ -929,6 +931,10 @@ const songToAlbumMap = {
     "THE SCOTTS": "THE SCOTTS",
     "WAKE UP!": "WAKE UP!",
     "Flashing Lights": "Graduation",
+    "RUN!": "RUN!",
+
+    // Song Versions
+
     "Finesse (feat. Cardi B)": "24K Magic",
     "WTF 2 - Slowed": "WTF 2 - Slowed",
     "WTF 2 - Sped Up": "WTF 2 - Sped Up",
@@ -1014,6 +1020,10 @@ function preloadImages() {
         "Resources/Covers/THE SCOTTS.jpg",
         "Resources/Covers/ASTRONOMICAL.jpg",
         "Resources/Covers/WAKE UP!.jpg",
+        "Resources/Covers/RUN!.jpg",
+
+        // Song Versions
+
         "Resources/Covers/WTF 2 - Slowed.jpg",
         "Resources/Covers/WTF 2 - Sped Up.jpg",
         "Resources/Covers/Slide da Treme Melódica v2 - Slowed.jpg",
@@ -1238,7 +1248,7 @@ function filterSongs() {
     let resultsCount = 0;
 
     // Find the last song index
-    const lastSongIndex = songList.length - 1;
+    const lastSongIndex = songList.length;
 
     songButtons.forEach(button => {
         const songText = button.textContent.toLowerCase();
@@ -1644,6 +1654,10 @@ function getArtist(songSrc) {
         "THE SCOTTS": "THE SCOTTS, Travis Scott, Kid Cudi",
         "WAKE UP!": "MoonDeity",
         "Flashing Lights": "Kanye West, Dwele",
+        "RUN!": "VALORANT, Odetari, Lay Banks",
+
+        // Song Versions
+
         "Finesse (feat. Cardi B)": "Bruno Mars, Cardi B",
         "WTF 2 - Slowed": "Ugovhb, EF",
         "WTF 2 - Sped Up": "Ugovhb, EF",
@@ -2491,7 +2505,7 @@ function updateCanvas(timestamp, setIndex) {
             PERFECT_HIT_RANGE_MAX = 578;
             HIT_Y_RANGE_MIN = 485;
             HIT_Y_RANGE_MAX = 615;
-            MISS_RANGE = 610;
+            MISS_RANGE = 630;
             fpsBuffedHitRanges = true;
             // console.warn(`EXTREMELY Low FPS! Hit ranges have been buffed greatly. FPS: ${FPS}`);
         }
@@ -2501,7 +2515,7 @@ function updateCanvas(timestamp, setIndex) {
             PERFECT_HIT_RANGE_MAX = 572;
             HIT_Y_RANGE_MIN = 490;
             HIT_Y_RANGE_MAX = 610;
-            MISS_RANGE = 620;
+            MISS_RANGE = 650;
             fpsBuffedHitRanges = true;
             // console.warn(`Low FPS! Hit ranges have been buffed. FPS: ${FPS}`);
         }
