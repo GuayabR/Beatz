@@ -1907,15 +1907,11 @@ function startGame(index, versionPath, setIndex) {
     console.log(`Starting game with index: ${currentSongIndex}`);
     console.log(`Starting game with songPath: ${currentSongPath}`);
 
-    if (!songMetadataLoaded) {
-        loadingInterval = setInterval(() => {
         ctx.fillStyle = "white";
         ctx.font = "60px Arial";
         ctx.textAlign = "center";
         ctx.fillText("Loading song...", WIDTH / 2, HEIGHT / 2 - 60);
         ctx.fillText("This won't take long!", WIDTH / 2, HEIGHT / 2 + 20);
-    }, 10); // 10 milliseconds interval
-    }
     
     // Check for default versions in the dropdown
     const versionDropdown = document.getElementById("versionDropdown");
@@ -2333,11 +2329,6 @@ function updateCanvas(timestamp, setIndex) {
 
     globalTimestamp = timestamp;
 
-    if (loadingInterval) {
-        clearInterval(loadingInterval);
-        loadingInterval = null; // Optionally reset loadingInterval to null
-    }
-
     if (gamePaused) {
         // Calculate the time difference between frames
         let timeDelta = (timestamp - lastTime) / 1000; // timeDelta in seconds
@@ -2367,6 +2358,14 @@ function updateCanvas(timestamp, setIndex) {
     if (backgroundIsDefault) {
         // If the background selected is transparent or custom
         ctx.drawImage(BGbright, 0, 0, 1280, 720);
+    }
+
+    if (!songMetadataLoaded) {
+            ctx.fillStyle = "white";
+            ctx.font = "60px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("Loading song...", WIDTH / 2, HEIGHT / 2 - 60);
+            ctx.fillText("This won't take long!", WIDTH / 2, HEIGHT / 2 + 20);
     }
 
     ctx.drawImage(noteLeftIMG, noteXPositions.left - noteWidth / 2, 550, noteWidth, noteHeight);
