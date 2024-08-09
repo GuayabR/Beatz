@@ -2361,6 +2361,7 @@ function updateCanvas(timestamp, setIndex) {
     }
 
     if (!songMetadataLoaded) {
+        console.log('metadata not loaded burh')
             ctx.fillStyle = "white";
             ctx.font = "60px Arial";
             ctx.textAlign = "center";
