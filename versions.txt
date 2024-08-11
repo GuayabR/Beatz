@@ -467,3 +467,13 @@ Reworked album cover logic!
 - Added RUN! By VALORANT, Odetari, Lay Banks
 - Fixed chromebooks users having black bars around the screen while playing Beatz! on fullscreen.
 - Increased low FPS miss ranges. (60 FPS: 620 - 650 // 30 FPS: 610 - 640)
+//
+
+4.0! (MOBILE 4.0! 11/08/2024) // MOBILE UPDATE.
+Beatz! PORTED TO MOBILE DEVICES! https://guayabr.github.io/Beatz-Mobile
+
+Fixes or tweaks:
+- Nerfed hit ranges in high FPS (120+) to 600 - 500
+- Added THE DINER (Billie Eilish), Babooshka (Kate Bush), Your Girl (Lana Del Rey), Brand New City (Mitski) and 24 (Lana Del Rey).
+- Beatz OFFICIALLY passed 100 songs.
+//

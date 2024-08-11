@@ -41,8 +41,14 @@ function detectDeviceType() {
     return "Desktop";
 }
 
+function handleRedirect() {
+    if (confirm("You are using a mobile device. Do you want to be redirected to Beatz! Mobile?")) {
+        window.location.href = "Beatz-Mobile.html";
+    }
+}
+
 function detectAndHandleDevice() {
-    // Function to detect the type of device and handle accordingly
+    const userDevice = detectDeviceType(); // Detect the device type
 
     if (userDevice === "Mobile" || userDevice === "iOS" || userDevice === "Android") {
         // Check if the detected device is Mobile, iOS, or Android
@@ -50,18 +56,21 @@ function detectAndHandleDevice() {
         document.querySelectorAll("button").forEach(button => (button.disabled = true)); // Disable all buttons on the page
 
         const startButton = document.getElementById("startButton"); // Disable the start button specifically
-        startButton.disabled = true;
+        if (startButton) startButton.disabled = true;
 
         document.querySelectorAll("select").forEach(select => (select.disabled = true)); // Disable all select elements on the page
 
-        canvas.style.display = "none"; // Hide the canvas element
+        if (canvas) canvas.style.display = "none"; // Hide the canvas element
 
-        document.getElementById("unsupportedMessage").style.display = "block"; // Show the unsupported device message
+        const unsupportedMessage = document.getElementById("unsupportedMessage");
+        if (unsupportedMessage) unsupportedMessage.style.display = "block"; // Show the unsupported device message
 
-        console.log("Mobile device detected. Game is not supported."); // Log a message indicating the game is not supported on mobile devices
+        console.log("Mobile device detected. Redirecting to mobile version."); // Log a message indicating redirection
+
+        handleRedirect(); // Call the redirect function
     } else if (userDevice === "Chromebook") {
         // Check if the detected device is a Chromebook
-        canvas.style.scale = "0.9";
+        if (canvas) canvas.style.scale = "0.9";
         console.warn("Chromebook detected. Game might have reduced framerates."); // Log a warning about potential performance issues on Chromebooks
     } else {
         // For desktop devices
@@ -98,6 +107,11 @@ function toVersion() {
 
     // Switch to the target version
     window.location.href = targetHTMLFile;
+}
+
+function toMobile() {
+    // Go to the Mobile port for Beatz!
+    window.location.href = "https://guayabr.github.io/Beatz-Mobile/";
 }
 
 function toRepo() {
@@ -816,7 +830,7 @@ function handleFileUpload(file) {
 }
 
 function applyDefaultNoteStyle() {
-    const noteStyle = localStorage.getItem("noteStyle") || defaultKeybinds.noteStyle;
+    const noteStyle = localStorage.getItem("noteStyle") || defaultMiscellaneous.noteStyle;
     if (noteStyle === "circles") {
         switchToCircles();
     } else {

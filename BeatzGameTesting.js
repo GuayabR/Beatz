@@ -8,8 +8,8 @@
 
 // CONSTANTS
 
-const VERSION = "SONGv 3.7.1.1 (Codename.Release.Version.Subversion.Bugfix)";
-const PUBLICVERSION = "3.7! (GitHub Port)";
+const VERSION = "SONGv 3.7.1.2 (Codename.Release.Version.Subversion.Bugfix)";
+const PUBLICVERSION = "3.7! (Desktop Port)";
 console.log("Version: " + VERSION);
 
 const canvas = document.getElementById("myCanvas");
@@ -368,7 +368,9 @@ function preloadSongs() {
         "Resources/Songs/You Need Jesus.mp3",
         "Resources/Songs/Nautilus.mp3",
         "Resources/Songs/Levitating.mp3",
-        "Resources/Songs/MY EYES.mp3",
+
+        "Resources/Songs/THE SCOTTS.mp3",
+
         "Resources/Songs/Faint.mp3",
         "Resources/Songs/Breaking The Habit.mp3",
         "Resources/Songs/From The Inside.mp3",
@@ -422,11 +424,19 @@ function preloadSongs() {
         "Resources/Songs/Somebody Save Me.mp3",
         "Resources/Songs/this is what space feels like.mp3",
         "Resources/Songs/SICKO MODE.mp3",
-        "Resources/Songs/THE SCOTTS.mp3",
+
         "Resources/Songs/The Automotivo Infernal 1.0.mp3",
         "Resources/Songs/WAKE UP!.mp3",
         "Resources/Songs/Flashing Lights.mp3",
         "Resources/Songs/RUN!.mp3",
+        "Resources/Songs/THE DINER.mp3",
+        "Resources/Songs/Babooshka.mp3",
+        "Resources/Songs/Your Girl.mp3",
+        "Resources/Songs/Brand New City.mp3",
+
+        "Resources/Songs/24.mp3",
+        "Resources/Songs/MY EYES.mp3",
+
         "Resources/Songs/testingsong.mp3",
     ];
 
@@ -649,7 +659,12 @@ const songConfigs = {
     "Resources/Songs/THE SCOTTS.mp3": { BPM: 130, noteSpeed: 0 },
     "Resources/Songs/WAKE UP!.mp3": { BPM: 125, noteSpeed: 8 },
     "Resources/Songs/Flashing Lights.mp3": { BPM: 90, noteSpeed: 10.5 },
-    "Resources/Songs/RUN!.mp3": { BPM: 135, noteSpeed: 10 },
+    "Resources/Songs/RUN!.mp3": { BPM: 136, noteSpeed: 10 },
+    "Resources/Songs/THE DINER.mp3": { BPM: 125, noteSpeed: 14 },
+    "Resources/Songs/Babooshka.mp3": { BPM: 103, noteSpeed: 10 },
+    "Resources/Songs/Your Girl.mp3": { BPM: 120, noteSpeed: 8 },
+    "Resources/Songs/Brand New City.mp3": { BPM: 148, noteSpeed: 12 },
+    "Resources/Songs/24.mp3": { BPM: 98, noteSpeed: 8 },
 
     // Song Versions
 
@@ -825,6 +840,28 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 132.8, noteSpeed: 22, BPM: 125, notes: [] },
             { timestamp: 136.55, noteSpeed: 22, endScreenDrawn: true },
         ],
+        "RUN!": [
+            { timestamp: 7.215, noteSpeed: 14 },
+            { timestamp: 19.57, noteSpeed: 10 },
+            { timestamp: 21.3, noteSpeed: 14 },
+            { timestamp: 34.92, noteSpeed: 12 },
+            { timestamp: 35.9, noteSpeed: 14 },
+            { timestamp: 47.6, noteSpeed: 12 },
+            { timestamp: 49.59, noteSpeed: 14 },
+            { timestamp: 61.9, noteSpeed: 12 },
+            { timestamp: 62.7, noteSpeed: 14 },
+            { timestamp: 63.23, noteSpeed: 16 },
+            { timestamp: 63.71, noteSpeed: 10 },
+            { timestamp: 77.81, noteSpeed: 16 },
+            { timestamp: 90.1, noteSpeed: 12 },
+            { timestamp: 91.94, noteSpeed: 14 },
+            { timestamp: 106, noteSpeed: 10 },
+            { timestamp: 120.15, noteSpeed: 18 },
+            { timestamp: 132.48, noteSpeed: 14 },
+            { timestamp: 133.41, noteSpeed: 16, notes: [] },
+            { timestamp: 133.85, noteSpeed: 18 },
+            { timestamp: 134.26, noteSpeed: 18, endScreenDrawn: true },
+        ],
     };
 
     let songTitle = getSongTitle(songSrc);
@@ -863,7 +900,9 @@ const songToAlbumMap = {
     VISIONS: "VISIONS",
     "Stressed Out": "Blurryface",
     "Ticking Away": "Ticking Away",
-    "MY EYES": "UTOPIA",
+
+    "THE SCOTTS": "THE SCOTTS",
+
     "Can't Slow Me Down": "Can't Slow Me Down",
     LUNCH: "Hit Me Hard and Soft",
     "BUTTERFLY EFFECT": "BUTTERFLY EFFECT",
@@ -928,10 +967,18 @@ const songToAlbumMap = {
     "Somebody Save Me": "The Death of Slim Shady (Coup de Grâce)",
     "this is what space feels like": "this is what space feels like",
     "SICKO MODE": "ASTROWORLD",
-    "THE SCOTTS": "THE SCOTTS",
+
     "WAKE UP!": "WAKE UP!",
     "Flashing Lights": "Graduation",
     "RUN!": "RUN!",
+    "THE DINER": "Hit Me Hard and Soft",
+    Babooshka: "Never For Ever",
+    "Your Girl": "Unreleased",
+    "Brand New City": "Lush",
+
+    "MY EYES": "UTOPIA",
+
+    24: "Honeymoon",
 
     // Song Versions
 
@@ -1021,6 +1068,10 @@ function preloadImages() {
         "Resources/Covers/ASTRONOMICAL.jpg",
         "Resources/Covers/WAKE UP!.jpg",
         "Resources/Covers/RUN!.jpg",
+        "Resources/Covers/Never For Ever.jpg",
+        "Resources/Covers/Unreleased.jpg",
+        "Resources/Covers/Lush.jpg",
+        "Resources/Covers/Honeymoon.jpg",
 
         // Song Versions
 
@@ -1655,6 +1706,11 @@ function getArtist(songSrc) {
         "WAKE UP!": "MoonDeity",
         "Flashing Lights": "Kanye West, Dwele",
         "RUN!": "VALORANT, Odetari, Lay Banks",
+        "THE DINER": "Billie Eilish",
+        Babooshka: "Kate Bush",
+        "Your Girl": "Lana Del Rey",
+        "Brand New City": "Mitski",
+        24: "Lana Del Rey",
 
         // Song Versions
 
@@ -1869,7 +1925,18 @@ function togglePause() {
     }
 }
 
-var loadingInterval;
+function formatTimestampDS(seconds) {
+    if (seconds < 60) {
+        // Format as SS.ss for timestamps less than 60 seconds
+        const secs = seconds.toFixed(2); // Keep two decimal places
+        return `${secs.padStart(5, "0")}`; // Format as SS.ss
+    } else {
+        // Format as MM:SS.ss for timestamps 60 seconds or more
+        const minutes = Math.floor(seconds / 60);
+        const secs = (seconds % 60).toFixed(2); // Keep two decimal places
+        return `${minutes}:${secs.padStart(5, "0")}`; // Format as MM:SS.ss
+    }
+}
 
 function startGame(index, versionPath, setIndex) {
     songMetadataLoaded = false; // Reset flag to false at the start of the game
@@ -1907,12 +1974,12 @@ function startGame(index, versionPath, setIndex) {
     console.log(`Starting game with index: ${currentSongIndex}`);
     console.log(`Starting game with songPath: ${currentSongPath}`);
 
-        ctx.fillStyle = "white";
-        ctx.font = "60px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText("Loading song...", WIDTH / 2, HEIGHT / 2 - 60);
-        ctx.fillText("This won't take long!", WIDTH / 2, HEIGHT / 2 + 20);
-    
+    ctx.fillStyle = "white";
+    ctx.font = "60px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("Loading song...", WIDTH / 2, HEIGHT / 2 - 60);
+    ctx.fillText("This won't take long!", WIDTH / 2, HEIGHT / 2 + 20);
+
     // Check for default versions in the dropdown
     const versionDropdown = document.getElementById("versionDropdown");
 
@@ -1980,7 +2047,7 @@ function startGame(index, versionPath, setIndex) {
                     const nextConfig = songConfig[currentConfigIndex];
                     if (currentTime >= nextConfig.timestamp) {
                         noteSpeed = nextConfig.noteSpeed;
-                        console.log(`Updated note speed to: ${noteSpeed} at timestamp: ${nextConfig.timestamp}`);
+                        console.log(`Updated note speed to: ${noteSpeed} at timestamp: ${formatTimestampDS(nextConfig.timestamp)}`);
                         if (nextConfig.BPM) {
                             BPM = nextConfig.BPM;
                             MILLISECONDS_PER_BEAT = 60000 / BPM;
@@ -2007,9 +2074,9 @@ function startGame(index, versionPath, setIndex) {
                     // Update next imminent speed change
                     if (currentConfigIndex < songConfig.length) {
                         if (nextConfig.endScreenDrawn) {
-                            nextSpeedChange = "No more speed changes."; // Do not display anything for endScreenDrawn
+                            nextSpeedChange = "No more speed changes.";
                         } else {
-                            nextSpeedChange = `Next speed change at: ${nextConfig.timestamp}s, Speed: ${nextConfig.noteSpeed}`;
+                            nextSpeedChange = `Next speed change at: ${formatTimestampDS(nextConfig.timestamp)}, Speed: ${nextConfig.noteSpeed}`;
                         }
                     } else {
                         nextSpeedChange = "No more speed changes.";
@@ -2361,12 +2428,12 @@ function updateCanvas(timestamp, setIndex) {
     }
 
     if (!songMetadataLoaded) {
-        console.log('metadata not loaded burh')
-            ctx.fillStyle = "white";
-            ctx.font = "60px Arial";
-            ctx.textAlign = "center";
-            ctx.fillText("Loading song...", WIDTH / 2, HEIGHT / 2 - 60);
-            ctx.fillText("This won't take long!", WIDTH / 2, HEIGHT / 2 + 20);
+        console.log("metadata not loaded burh");
+        ctx.fillStyle = "white";
+        ctx.font = "60px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("Loading song...", WIDTH / 2, HEIGHT / 2 - 60);
+        ctx.fillText("This won't take long!", WIDTH / 2, HEIGHT / 2 + 20);
     }
 
     ctx.drawImage(noteLeftIMG, noteXPositions.left - noteWidth / 2, 550, noteWidth, noteHeight);
@@ -2516,7 +2583,7 @@ function updateCanvas(timestamp, setIndex) {
             PERFECT_HIT_RANGE_MAX = 576;
             HIT_Y_RANGE_MIN = 485;
             HIT_Y_RANGE_MAX = 615;
-            MISS_RANGE = 640;
+            MISS_RANGE = 650;
             fpsBuffedHitRanges = true;
             // console.warn(`EXTREMELY Low FPS! Hit ranges have been buffed greatly. FPS: ${FPS}`);
         }
@@ -2526,7 +2593,7 @@ function updateCanvas(timestamp, setIndex) {
             PERFECT_HIT_RANGE_MAX = 572;
             HIT_Y_RANGE_MIN = 495;
             HIT_Y_RANGE_MAX = 605;
-            MISS_RANGE = 650;
+            MISS_RANGE = 690;
             fpsBuffedHitRanges = true;
             // console.warn(`Low FPS! Hit ranges have been buffed. FPS: ${FPS}`);
         }
@@ -2536,7 +2603,7 @@ function updateCanvas(timestamp, setIndex) {
             PERFECT_HIT_RANGE_MAX = 568;
             HIT_Y_RANGE_MIN = 500;
             HIT_Y_RANGE_MAX = 600;
-            MISS_RANGE = 690;
+            MISS_RANGE = 700;
             fpsBuffedHitRanges = false;
         }
 
@@ -2545,7 +2612,7 @@ function updateCanvas(timestamp, setIndex) {
             PERFECT_HIT_RANGE_MAX = 568;
             HIT_Y_RANGE_MIN = 500;
             HIT_Y_RANGE_MAX = 600;
-            MISS_RANGE = 695;
+            MISS_RANGE = 712;
             fpsBuffedHitRanges = false;
         }
 
@@ -2554,7 +2621,7 @@ function updateCanvas(timestamp, setIndex) {
             PERFECT_HIT_RANGE_MAX = 568;
             HIT_Y_RANGE_MIN = 500;
             HIT_Y_RANGE_MAX = 600;
-            MISS_RANGE = 698;
+            MISS_RANGE = 715;
             fpsBuffedHitRanges = false;
         }
 
@@ -2776,10 +2843,10 @@ function drawHitboxes() {
     if (showHitboxes) {
         // Draw green hitboxes for stationary notes
         ctx.strokeStyle = "green";
-        ctx.strokeRect(noteXPositions.left - noteWidth / 2, HIT_Y_RANGE_MIN + 50, noteWidth, HIT_Y_RANGE_MAX - HIT_Y_RANGE_MIN);
-        ctx.strokeRect(noteXPositions.up - noteWidth / 2 + 15, HIT_Y_RANGE_MIN + 50, noteWidth, HIT_Y_RANGE_MAX - HIT_Y_RANGE_MIN);
-        ctx.strokeRect(noteXPositions.down - noteWidth / 2 - 15, HIT_Y_RANGE_MIN + 50, noteWidth, HIT_Y_RANGE_MAX - HIT_Y_RANGE_MIN);
-        ctx.strokeRect(noteXPositions.right - noteWidth / 2, HIT_Y_RANGE_MIN + 50, noteWidth, HIT_Y_RANGE_MAX - HIT_Y_RANGE_MIN);
+        ctx.strokeRect(noteXPositions.left - noteWidth / 2, HIT_Y_RANGE_MIN + 50, noteWidth, (HIT_Y_RANGE_MAX - HIT_Y_RANGE_MIN) / 2);
+        ctx.strokeRect(noteXPositions.up - noteWidth / 2 + 15, HIT_Y_RANGE_MIN + 50, noteWidth, (HIT_Y_RANGE_MAX - HIT_Y_RANGE_MIN) / 2);
+        ctx.strokeRect(noteXPositions.down - noteWidth / 2 - 15, HIT_Y_RANGE_MIN + 50, noteWidth, (HIT_Y_RANGE_MAX - HIT_Y_RANGE_MIN) / 2);
+        ctx.strokeRect(noteXPositions.right - noteWidth / 2, HIT_Y_RANGE_MIN + 50, noteWidth, (HIT_Y_RANGE_MAX - HIT_Y_RANGE_MIN) / 2);
 
         // Draw red rectangles for the perfect hit range
         ctx.strokeStyle = "red";
