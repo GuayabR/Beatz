@@ -2,26 +2,15 @@
  * Title: Beatz's Settings
  * Author: Victor//GuayabR
  * Date: 2/06/2024
- * Version: SONGv's Settings 3.7.0.1 test (release.version.subversion.bugfix)
+ * Version: MOBILE's Settings 4.1 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
-
-function toggleNoteStyleButtonDisplay() {
-    const toggleNoteStyleButton = document.getElementById("toggleNoteStyleButton");
-    const currentNoteStyle = localStorage.getItem("noteStyle") || "arrows";
-
-    if (currentNoteStyle === "arrows") {
-        toggleNoteStyleButton.innerHTML = '<i class="fa-solid fa-arrow-up" style="display: none;"></i> <i class="fa-solid fa-circle"></i>';
-    } else {
-        toggleNoteStyleButton.innerHTML = '<i class="fa-solid fa-arrow-up"></i> <i class="fa-solid fa-circle" style="display: none;"></i>';
-    }
-}
 
 document.addEventListener("keydown", keyDownFunction);
 document.addEventListener("keyup", keyUpFunction);
 
 function detectDeviceType() {
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    const userAgent = navigator.userAgent || window.opera;
 
     if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
         return "iOS";
@@ -41,45 +30,82 @@ function detectDeviceType() {
     return "Desktop";
 }
 
-function handleRedirect() {
-    if (confirm("You are using a mobile device. Do you want to be redirected to Beatz! Mobile?")) {
-        window.location.href = "Beatz-Mobile.html";
-    }
+function handleChange() {
+    // Call resizeCanvas and checkOrientation on window resize
+    window.addEventListener("resize", () => {
+        resizeCanvas();
+        checkOrientation();
+    });
+
+    // Initial call
+    resizeCanvas();
+    checkOrientation();
 }
 
 function detectAndHandleDevice() {
-    const userDevice = detectDeviceType(); // Detect the device type
-
+    const pauseButton = document.getElementById("togglePauseMBL");
+    const pauseMargin = document.getElementById("pauseMargin");
+    const pauseMargin2 = document.getElementById("pauseMargin2");
     if (userDevice === "Mobile" || userDevice === "iOS" || userDevice === "Android") {
-        // Check if the detected device is Mobile, iOS, or Android
-
-        document.querySelectorAll("button").forEach(button => (button.disabled = true)); // Disable all buttons on the page
-
-        const startButton = document.getElementById("startButton"); // Disable the start button specifically
-        if (startButton) startButton.disabled = true;
-
-        document.querySelectorAll("select").forEach(select => (select.disabled = true)); // Disable all select elements on the page
-
-        if (canvas) canvas.style.display = "none"; // Hide the canvas element
-
-        const unsupportedMessage = document.getElementById("unsupportedMessage");
-        if (unsupportedMessage) unsupportedMessage.style.display = "block"; // Show the unsupported device message
-
-        console.log("Mobile device detected. Redirecting to mobile version."); // Log a message indicating redirection
-
-        handleRedirect(); // Call the redirect function
+        isMobile = true;
+        console.log("Mobile mode is enabled from previous session.");
+        handleChange();
+        setupMobileEventListeners();
+        changeStylesheet("mobileStyles.css");
     } else if (userDevice === "Chromebook") {
-        // Check if the detected device is a Chromebook
-        if (canvas) canvas.style.scale = "0.9";
-        console.warn("Chromebook detected. Game might have reduced framerates."); // Log a warning about potential performance issues on Chromebooks
-    } else {
-        // For desktop devices
-        console.log("Desktop device is supported. Enjoy Beatz!"); // Log a message indicating the game is supported
+        console.warn("Chromebook detected. Game might have reduced framerates.");
+        isMobile = false;
+        document.getElementById("orientationMessage").style.display = "none";
+        if (pauseButton) {
+            pauseButton.remove();
+            pauseMargin.remove();
+            pauseMargin2.remove();
+        }
+    } else if (userDevice === "Desktop") {
+        console.log("Desktop device is supported. Enjoy Beatz!");
+        isMobile = false;
+        document.getElementById("orientationMessage").style.display = "none";
+        if (pauseButton) {
+            pauseButton.remove();
+            pauseMargin.remove();
+            pauseMargin2.remove();
+        }
     }
 }
 
-document.getElementById("undoKeybindsButton").addEventListener("click", undoKeybinds);
-document.getElementById("redoKeybindsButton").addEventListener("click", redoKeybinds);
+function changeStylesheet(sheetName) {
+    const link = document.getElementById("stylesheet");
+    if (link) {
+        link.href = sheetName;
+    } else {
+        // If no link element exists, create one
+        const newLink = document.createElement("link");
+        newLink.id = "stylesheet";
+        newLink.rel = "stylesheet";
+        newLink.href = sheetName;
+        document.head.appendChild(newLink);
+    }
+}
+
+function setupMobileEventListeners() {
+    canvas.addEventListener("touchstart", handleTouchStart, false);
+    canvas.addEventListener("touchend", handleTouchEnd, false);
+    canvas.addEventListener("touchcancel", handleTouchEnd, false);
+    canvas.removeEventListener("mousedown", handleMouseDown, false);
+    canvas.removeEventListener("mouseup", handleMouseUp, false);
+    canvas.removeEventListener("mouseleave", handleMouseUp, false);
+}
+
+function toggleNoteStyleButtonDisplay() {
+    const toggleNoteStyleButton = document.getElementById("toggleNoteStyleButton");
+    const currentNoteStyle = localStorage.getItem("noteStyle") || "arrows";
+
+    if (currentNoteStyle === "arrows") {
+        toggleNoteStyleButton.innerHTML = '<i class="fa-solid fa-arrow-up" style="display: none;"></i> <i class="fa-solid fa-circle"></i>';
+    } else {
+        toggleNoteStyleButton.innerHTML = '<i class="fa-solid fa-arrow-up"></i> <i class="fa-solid fa-circle" style="display: none;"></i>';
+    }
+}
 
 function NewTab() {
     // My YouTube
@@ -107,11 +133,6 @@ function toVersion() {
 
     // Switch to the target version
     window.location.href = targetHTMLFile;
-}
-
-function toMobile() {
-    // Go to the Mobile port for Beatz!
-    window.location.href = "https://guayabr.github.io/Beatz-Mobile/";
 }
 
 function toRepo() {

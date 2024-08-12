@@ -2,21 +2,21 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: SONGv 3.7.1.2 test (release.version.subversion.bugfix)
+ * Version: MOBILE 4.1! test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
 // CONSTANTS
 
-const VERSION = "SONGv 3.7.1.2 (Codename.Release.Version.Subversion.Bugfix)";
-const PUBLICVERSION = "3.7! (Desktop Port)";
+const userDevice = detectDeviceType();
+
+const VERSION = "MOBILE 4.1 (Codename.Release.Version.Subversion.Bugfix)";
+var PUBLICVERSION = `4.1! (${userDevice} Port)`;
 console.log("Version: " + VERSION);
 
 const canvas = document.getElementById("myCanvas");
 
 const ctx = canvas.getContext("2d");
-
-const userDevice = detectDeviceType();
 
 const WIDTH = 1280;
 
@@ -83,6 +83,8 @@ console.log("Constants loaded.");
 // VARIABLES
 
 var timer;
+
+let isMobile = false;
 
 var gameStarted = false;
 
@@ -368,9 +370,7 @@ function preloadSongs() {
         "Resources/Songs/You Need Jesus.mp3",
         "Resources/Songs/Nautilus.mp3",
         "Resources/Songs/Levitating.mp3",
-
-        "Resources/Songs/THE SCOTTS.mp3",
-
+        "Resources/Songs/MY EYES.mp3",
         "Resources/Songs/Faint.mp3",
         "Resources/Songs/Breaking The Habit.mp3",
         "Resources/Songs/From The Inside.mp3",
@@ -424,7 +424,7 @@ function preloadSongs() {
         "Resources/Songs/Somebody Save Me.mp3",
         "Resources/Songs/this is what space feels like.mp3",
         "Resources/Songs/SICKO MODE.mp3",
-
+        "Resources/Songs/THE SCOTTS.mp3",
         "Resources/Songs/The Automotivo Infernal 1.0.mp3",
         "Resources/Songs/WAKE UP!.mp3",
         "Resources/Songs/Flashing Lights.mp3",
@@ -433,9 +433,8 @@ function preloadSongs() {
         "Resources/Songs/Babooshka.mp3",
         "Resources/Songs/Your Girl.mp3",
         "Resources/Songs/Brand New City.mp3",
-
+        "Resources/Songs/Idols.mp3",
         "Resources/Songs/24.mp3",
-        "Resources/Songs/MY EYES.mp3",
 
         "Resources/Songs/testingsong.mp3",
     ];
@@ -664,6 +663,7 @@ const songConfigs = {
     "Resources/Songs/Babooshka.mp3": { BPM: 103, noteSpeed: 10 },
     "Resources/Songs/Your Girl.mp3": { BPM: 120, noteSpeed: 8 },
     "Resources/Songs/Brand New City.mp3": { BPM: 148, noteSpeed: 12 },
+    "Resources/Songs/Idols.mp3": { BPM: 130, noteSpeed: 2.65 },
     "Resources/Songs/24.mp3": { BPM: 98, noteSpeed: 8 },
 
     // Song Versions
@@ -862,6 +862,11 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 133.85, noteSpeed: 18 },
             { timestamp: 134.26, noteSpeed: 18, endScreenDrawn: true },
         ],
+        Idols: [
+            { timestamp: 3.6, noteSpeed: 10 },
+            { timestamp: 11.14, noteSpeed: 12 },
+            { timestamp: 18.6, noteSpeed: 18 },
+        ],
     };
 
     let songTitle = getSongTitle(songSrc);
@@ -900,9 +905,7 @@ const songToAlbumMap = {
     VISIONS: "VISIONS",
     "Stressed Out": "Blurryface",
     "Ticking Away": "Ticking Away",
-
-    "THE SCOTTS": "THE SCOTTS",
-
+    "MY EYES": "UTOPIA",
     "Can't Slow Me Down": "Can't Slow Me Down",
     LUNCH: "Hit Me Hard and Soft",
     "BUTTERFLY EFFECT": "BUTTERFLY EFFECT",
@@ -967,7 +970,7 @@ const songToAlbumMap = {
     "Somebody Save Me": "The Death of Slim Shady (Coup de Grâce)",
     "this is what space feels like": "this is what space feels like",
     "SICKO MODE": "ASTROWORLD",
-
+    "THE SCOTTS": "THE SCOTTS",
     "WAKE UP!": "WAKE UP!",
     "Flashing Lights": "Graduation",
     "RUN!": "RUN!",
@@ -975,9 +978,7 @@ const songToAlbumMap = {
     Babooshka: "Never For Ever",
     "Your Girl": "Unreleased",
     "Brand New City": "Lush",
-
-    "MY EYES": "UTOPIA",
-
+    Idols: "Idols",
     24: "Honeymoon",
 
     // Song Versions
@@ -1071,6 +1072,7 @@ function preloadImages() {
         "Resources/Covers/Never For Ever.jpg",
         "Resources/Covers/Unreleased.jpg",
         "Resources/Covers/Lush.jpg",
+        "Resources/Covers/Idols.jpg",
         "Resources/Covers/Honeymoon.jpg",
 
         // Song Versions
@@ -1711,6 +1713,7 @@ function getArtist(songSrc) {
         "Your Girl": "Lana Del Rey",
         "Brand New City": "Mitski",
         24: "Lana Del Rey",
+        Idols: "Virtual Riot",
 
         // Song Versions
 
@@ -1855,14 +1858,17 @@ document.addEventListener("DOMContentLoaded", function () {
     preloadSongs();
     preloadImages();
 
+    document.getElementById("undoKeybindsButton").addEventListener("click", undoKeybinds);
+    document.getElementById("redoKeybindsButton").addEventListener("click", redoKeybinds);
+
     // Settings
 
-    detectAndHandleDevice();
     loadSettings();
     applyDefaultNoteStyle();
     updateKeybindsFields();
     toggleNoteStyleButtonDisplay();
     toggleTimeoutInput();
+    detectAndHandleDevice();
 });
 
 // Function to simulate key press
@@ -2122,6 +2128,9 @@ function startGame(index, versionPath, setIndex) {
         document.getElementById("githubRepo").style.display = "inline";
         document.getElementById("songVol").style.display = "inline";
         document.getElementById("hitSoundVol").style.display = "inline";
+        if (userDevice === "Mobile" || userDevice === "iOS" || userDevice === "Android") {
+            document.getElementById("togglePauseMBL").style.display = "inline";
+        }
 
         document.getElementById("startButton").style.display = "none";
 
@@ -2385,6 +2394,56 @@ function toggleFlash() {
 // Set interval to trigger the flashing based on MILLISECONDS_PER_BEAT
 setInterval(toggleFlash, MILLISECONDS_PER_BEAT * 512);
 
+const buttonAreas = {
+    left: { x: 0, y: 0, width: WIDTH / 4, height: HEIGHT },
+    up: { x: WIDTH / 4, y: 0, width: WIDTH / 4, height: HEIGHT },
+    down: { x: WIDTH / 2, y: 0, width: WIDTH / 4, height: HEIGHT },
+    right: { x: 960, y: 0, width: WIDTH / 4, height: HEIGHT },
+};
+
+function resizeCanvas() {
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    const canvasAspectRatio = canvas.width / canvas.height;
+    const viewportAspectRatio = viewportWidth / viewportHeight;
+
+    let scaleFactor;
+    let canvasWidth, canvasHeight;
+
+    if (viewportAspectRatio > canvasAspectRatio) {
+        // Fit canvas height to viewport height
+        scaleFactor = viewportHeight / canvas.height;
+        canvasWidth = canvas.width * scaleFactor;
+        canvasHeight = viewportHeight;
+    } else {
+        // Fit canvas width to viewport width
+        scaleFactor = viewportWidth / canvas.width;
+        //canvasWidth = canvas.width * scaleFactor;
+        //canvasHeight = viewportHeight;
+        canvasWidth = viewportWidth;
+        canvasHeight = canvas.height * scaleFactor;
+    }
+
+    // Apply scaling transformation
+    canvas.style.transform = `scale(${scaleFactor * 1.45})`;
+    canvas.style.width = `${canvasWidth}px`;
+    canvas.style.height = `${canvasHeight}px`;
+    canvas.scaleFactor = scaleFactor; // Store the scale factor for use in touch/mouse handling
+}
+
+function checkOrientation() {
+    if (window.innerHeight > window.innerWidth) {
+        // Portrait mode
+        canvas.style.display = "none";
+        document.getElementById("orientationMessage").style.display = "block";
+    } else {
+        // Landscape mode
+        canvas.style.display = "block";
+        document.getElementById("orientationMessage").style.display = "none";
+    }
+}
+
 function updateCanvas(timestamp, setIndex) {
     if (!lastTime) {
         lastTime = timestamp;
@@ -2578,6 +2637,10 @@ function updateCanvas(timestamp, setIndex) {
 
         calculateFPS(timeDelta);
 
+        if (isMobile) {
+            drawTapBoxes();
+        }
+
         if (FPS <= 32) {
             PERFECT_HIT_RANGE_MIN = 534;
             PERFECT_HIT_RANGE_MAX = 576;
@@ -2659,6 +2722,105 @@ function updateCanvas(timestamp, setIndex) {
         }
     }
     requestAnimationFrame(timestamp => updateCanvas(timestamp, setIndex));
+}
+
+const activeTouches = new Map(); // To track active touch points
+
+function isWithinBounds(x, y, area) {
+    return x >= area.x && x <= area.x + area.width && y >= area.y && y <= area.y + area.height;
+}
+
+function handleTouchOrMouse(event) {
+    if (!isMobile) return; // Ignore if not in mobile mode
+
+    event.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const scaleFactor = canvas.scaleFactor;
+
+    let touches;
+    if (event.touches) {
+        touches = event.touches; // Handle multiple touch points
+    } else {
+        touches = [event]; // Handle single mouse event
+    }
+
+    for (let i = 0; i < touches.length; i++) {
+        const touch = touches[i];
+        const x = (touch.clientX - rect.left) / scaleFactor;
+        const y = (touch.clientY - rect.top) / scaleFactor;
+
+        console.log(`Tap/Click Coordinates: x=${x}, y=${y}`);
+
+        const isLeftPressed = isWithinBounds(x, y, buttonAreas.left);
+        const isUpPressed = isWithinBounds(x, y, buttonAreas.up);
+        const isDownPressed = isWithinBounds(x, y, buttonAreas.down);
+        const isRightPressed = isWithinBounds(x, y, buttonAreas.right);
+
+        if (event.touches) {
+            activeTouches.set(touch.identifier, { isLeftPressed, isUpPressed, isDownPressed, isRightPressed });
+        } else {
+            leftPressed = isLeftPressed;
+            upPressed = isUpPressed;
+            downPressed = isDownPressed;
+            rightPressed = isRightPressed;
+        }
+    }
+
+    updateGlobalState();
+}
+
+function handleTouchStart(e) {
+    handleTouchOrMouse(e);
+}
+
+function handleTouchEnd(e) {
+    e.preventDefault();
+    for (let i = 0; i < e.changedTouches.length; i++) {
+        const touch = e.changedTouches[i];
+        activeTouches.delete(touch.identifier);
+    }
+    updateGlobalState();
+}
+
+function handleMouseDown(e) {
+    handleTouchOrMouse(e);
+}
+
+function handleMouseUp(e) {
+    leftPressed = false;
+    upPressed = false;
+    downPressed = false;
+    rightPressed = false;
+}
+
+// Update the global state
+function updateGlobalState() {
+    // Check if any active touch or mouse events are set
+    leftPressed = Array.from(activeTouches.values()).some(state => state.isLeftPressed);
+    upPressed = Array.from(activeTouches.values()).some(state => state.isUpPressed);
+    downPressed = Array.from(activeTouches.values()).some(state => state.isDownPressed);
+    rightPressed = Array.from(activeTouches.values()).some(state => state.isRightPressed);
+}
+
+function drawTapBoxes() {
+    // Draw button areas
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 2;
+
+    // Left button area
+    ctx.strokeRect(buttonAreas.left.x, buttonAreas.left.y, buttonAreas.left.width, buttonAreas.left.height);
+
+    // Up button area
+    ctx.strokeStyle = "green";
+    ctx.strokeRect(buttonAreas.up.x, buttonAreas.up.y, buttonAreas.up.width, buttonAreas.up.height);
+
+    // Down button area
+    ctx.strokeStyle = "yellow";
+    ctx.strokeRect(buttonAreas.down.x, buttonAreas.down.y, buttonAreas.down.width, buttonAreas.down.height);
+
+    // Right button area
+    ctx.strokeStyle = "rgb(0, 204, 255)";
+    ctx.strokeRect(buttonAreas.right.x, buttonAreas.right.y, buttonAreas.right.width, buttonAreas.right.height);
 }
 
 function formatTimeWithDecimal(seconds) {
