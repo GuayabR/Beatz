@@ -2136,7 +2136,7 @@ function startGame(index, versionPath, setIndex) {
 
         // Update the page title
         indexToDisplay = setIndex >= 0 ? setIndex : currentSongIndex;
-        document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 3.6!`;
+        document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz 4.1!`;
 
         console.log(`indexToDisplay converted in startGame: ${indexToDisplay}`);
     };
