@@ -965,18 +965,20 @@ function resetSettings() {
 }
 
 function updateKeybindsFields() {
-    document.getElementById("up").value = keybinds.up.join(", ");
-    document.getElementById("left").value = keybinds.left.join(", ");
-    document.getElementById("down").value = keybinds.down.join(", ");
-    document.getElementById("right").value = keybinds.right.join(", ");
-    document.getElementById("pause").value = keybinds.pause.join(", ");
-    document.getElementById("autoHit").value = keybinds.autoHit.join(", ");
-    document.getElementById("previousInput").value = keybinds.previous.join(", ");
-    document.getElementById("restartInput").value = keybinds.restart.join(", ");
-    document.getElementById("nextInput").value = keybinds.next.join(", ");
-    document.getElementById("randomize").value = keybinds.randomize.join(", ");
-    document.getElementById("toggleNoteStyleInput").value = keybinds.toggleNoteStyle.join(", ");
-    document.getElementById("fullscreenInput").value = keybinds.fullscreen.join(", ");
+    if (userDevice === "Desktop" || userDevice === "Chromebook") {
+        document.getElementById("up").value = keybinds.up.join(", ");
+        document.getElementById("left").value = keybinds.left.join(", ");
+        document.getElementById("down").value = keybinds.down.join(", ");
+        document.getElementById("right").value = keybinds.right.join(", ");
+        document.getElementById("pause").value = keybinds.pause.join(", ");
+        document.getElementById("autoHit").value = keybinds.autoHit.join(", ");
+        document.getElementById("previousInput").value = keybinds.previous.join(", ");
+        document.getElementById("restartInput").value = keybinds.restart.join(", ");
+        document.getElementById("nextInput").value = keybinds.next.join(", ");
+        document.getElementById("randomize").value = keybinds.randomize.join(", ");
+        document.getElementById("toggleNoteStyleInput").value = keybinds.toggleNoteStyle.join(", ");
+        document.getElementById("fullscreenInput").value = keybinds.fullscreen.join(", ");
+    }
 
     document.getElementById("defaultNoteStyle").value = miscellaneous.noteStyle;
     document.getElementById("defaultHitSound").value = miscellaneous.hitSound;
@@ -987,9 +989,6 @@ function updateKeybindsFields() {
     document.getElementById("defaultBackground").value = miscellaneous.backgroundOption;
     document.getElementById("backdropBlurInput").value = miscellaneous.customBackgroundBlur;
     document.getElementById("logKeysCheck").checked = miscellaneous.logKeys;
-
-    // Ensure defaultHitSound is set correctly
-    document.getElementById("defaultHitSound").value = miscellaneous.hitSound;
 
     if (miscellaneous.backgroundOption === "customBG" && miscellaneous.customBackground) {
         document.getElementById("customBGLabel").style.display = "inline";
@@ -1068,54 +1067,56 @@ function redoKeybinds() {
 }
 
 function initializeEventListeners() {
-    document.getElementById("up").addEventListener("change", () => {
-        console.log("Change detected in 'up' input.");
-        saveToHistory();
-    });
-    document.getElementById("left").addEventListener("change", () => {
-        console.log("Change detected in 'left' input.");
-        saveToHistory();
-    });
-    document.getElementById("down").addEventListener("change", () => {
-        console.log("Change detected in 'down' input.");
-        saveToHistory();
-    });
-    document.getElementById("right").addEventListener("change", () => {
-        console.log("Change detected in 'right' input.");
-        saveToHistory();
-    });
-    document.getElementById("pause").addEventListener("change", () => {
-        console.log("Change detected in 'pause' input.");
-        saveToHistory();
-    });
-    document.getElementById("autoHit").addEventListener("change", () => {
-        console.log("Change detected in 'autoHit' input.");
-        saveToHistory();
-    });
-    document.getElementById("fullscreenInput").addEventListener("change", () => {
-        console.log("Change detected in 'fullscreenInput' input.");
-        saveToHistory();
-    });
-    document.getElementById("previousInput").addEventListener("change", () => {
-        console.log("Change detected in 'previousInput' input.");
-        saveToHistory();
-    });
-    document.getElementById("restartInput").addEventListener("change", () => {
-        console.log("Change detected in 'restartInput' input.");
-        saveToHistory();
-    });
-    document.getElementById("nextInput").addEventListener("change", () => {
-        console.log("Change detected in 'nextInput' input.");
-        saveToHistory();
-    });
-    document.getElementById("randomize").addEventListener("change", () => {
-        console.log("Change detected in 'randomize' input.");
-        saveToHistory();
-    });
-    document.getElementById("toggleNoteStyleInput").addEventListener("change", () => {
-        console.log("Change detected in 'toggleNoteStyleInput' input.");
-        saveToHistory();
-    });
+    if (userDevice === "Desktop" || userDevice === "Chromebook") {
+        document.getElementById("up").addEventListener("change", () => {
+            console.log("Change detected in 'up' input.");
+            saveToHistory();
+        });
+        document.getElementById("left").addEventListener("change", () => {
+            console.log("Change detected in 'left' input.");
+            saveToHistory();
+        });
+        document.getElementById("down").addEventListener("change", () => {
+            console.log("Change detected in 'down' input.");
+            saveToHistory();
+        });
+        document.getElementById("right").addEventListener("change", () => {
+            console.log("Change detected in 'right' input.");
+            saveToHistory();
+        });
+        document.getElementById("pause").addEventListener("change", () => {
+            console.log("Change detected in 'pause' input.");
+            saveToHistory();
+        });
+        document.getElementById("autoHit").addEventListener("change", () => {
+            console.log("Change detected in 'autoHit' input.");
+            saveToHistory();
+        });
+        document.getElementById("fullscreenInput").addEventListener("change", () => {
+            console.log("Change detected in 'fullscreenInput' input.");
+            saveToHistory();
+        });
+        document.getElementById("previousInput").addEventListener("change", () => {
+            console.log("Change detected in 'previousInput' input.");
+            saveToHistory();
+        });
+        document.getElementById("restartInput").addEventListener("change", () => {
+            console.log("Change detected in 'restartInput' input.");
+            saveToHistory();
+        });
+        document.getElementById("nextInput").addEventListener("change", () => {
+            console.log("Change detected in 'nextInput' input.");
+            saveToHistory();
+        });
+        document.getElementById("randomize").addEventListener("change", () => {
+            console.log("Change detected in 'randomize' input.");
+            saveToHistory();
+        });
+        document.getElementById("toggleNoteStyleInput").addEventListener("change", () => {
+            console.log("Change detected in 'toggleNoteStyleInput' input.");
+            saveToHistory();
+        });
+    }
     document.getElementById("defaultNoteStyle").addEventListener("change", () => {
         console.log("Change detected in 'defaultNoteStyle' select.");
         saveToHistory();
