@@ -1899,6 +1899,8 @@ window.onload = function () {
     document.getElementById("randomizeButton").addEventListener("click", randomizeSong);
     document.getElementById("githubRepo").addEventListener("click", toRepo);
 
+    initializeEventListeners();
+
     // Add event listener to the start button
     document.getElementById("startButton").onclick = () => {
         startGame();

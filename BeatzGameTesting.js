@@ -1899,6 +1899,8 @@ window.onload = function () {
     document.getElementById("randomizeButton").addEventListener("click", randomizeSong);
     document.getElementById("githubRepo").addEventListener("click", toRepo);
 
+    initializeEventListeners();
+
     // Add event listener to the start button
     document.getElementById("startButton").onclick = () => {
         startGame();
@@ -2136,7 +2138,7 @@ function startGame(index, versionPath, setIndex) {
 
         // Update the page title
         indexToDisplay = setIndex >= 0 ? setIndex : currentSongIndex;
-        document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 3.6!`;
+        document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 4.1!`;
 
         console.log(`indexToDisplay converted in startGame: ${indexToDisplay}`);
     };

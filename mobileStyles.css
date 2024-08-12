@@ -179,20 +179,20 @@ canvas {
 }
 
 #songListModal .modal-content {
-    max-height: 90vh;
+    max-height: 85vh;
     overflow: hidden;
 }
 
 #songListModal #songList {
-    max-height: 60vh;
+    max-height: 50vh;
     overflow-y: auto;
 }
 
 .most-recent-button {
     display: block;
     width: 60%;
-    padding: 15px 15px;
-    margin-bottom: 25px;
+    padding: 10px 15px;
+    margin-bottom: 20px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     background-color: rgba(255, 255, 255, 0.1);
     color: #fff;
@@ -215,16 +215,16 @@ canvas {
 .song-button {
     display: block;
     width: 90%;
-    padding: 15px 15px;
-    margin: 5px auto;
-    margin-bottom: 13px;
+    padding: 10px 12px;
+    margin: 4px auto;
+    margin-bottom: 12px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     background-color: rgba(255, 255, 255, 0.1);
     color: #fff;
     cursor: pointer;
     text-align: left;
-    font-size: 16px;
-    border-radius: 5px;
+    font-size: 14px;
+    border-radius: 10px;
     box-shadow: 0 0 10px rgba(114, 114, 114, 0.719);
     transition:
         box-shadow 0.3s ease,
@@ -244,7 +244,7 @@ canvas {
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 5px;
     padding: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     box-sizing: border-box;
     font-size: 20px;
     box-shadow: 0 0 10px rgba(114, 114, 114, 0.719);
@@ -282,12 +282,12 @@ canvas {
 }
 
 #songCoverImage {
-    width: 450px;
-    height: 450px;
+    width: 250px;
+    height: 250px;
 }
 
 #selectedSongModal .modal-content {
-    font-size: 20px;
+    font-size: 15px;
 }
 
 #noResultsTXT {
@@ -442,11 +442,11 @@ canvas {
     background-color: rgba(255, 255, 255, 0.1);
     color: #fff;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 5px;
-    padding: 8px;
+    border-radius: 6px;
+    padding: 6px;
     margin: 1px 10px;
     box-sizing: border-box;
-    font-size: 14px;
+    font-size: 12px;
     box-shadow: 0 0 10px rgba(114, 114, 114, 0.719);
     transition:
         box-shadow 0.3s ease,
@@ -480,10 +480,10 @@ canvas {
     color: #fff;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 5px;
-    padding: 8px;
+    padding: 6px;
     margin: 1px 10px;
     box-sizing: border-box;
-    font-size: 14px;
+    font-size: 12px;
     box-shadow: 0 0 10px rgba(114, 114, 114, 0.719);
     transition:
         box-shadow 0.3s ease,
@@ -506,7 +506,7 @@ canvas {
 
 #keybindsForm input[type="number"]:hover {
     box-shadow: 0 0 10px rgba(221, 221, 221, 0.623);
-    padding: 8px 12px;
+    padding: 6px 12px;
     transition:
         box-shadow 0.3s ease,
         padding ease 0.3s;
@@ -517,10 +517,10 @@ canvas {
     color: #fff;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 5px;
-    padding: 8px;
+    padding: 6px;
     margin: 1px 0;
     box-sizing: border-box;
-    font-size: 14px;
+    font-size: 12px;
     box-shadow: 0 0 10px rgba(114, 114, 114, 0.719);
     transition:
         box-shadow 0.3s ease,
@@ -547,7 +547,7 @@ canvas {
 
 #keybindsForm select:hover {
     box-shadow: 0 0 10px rgba(160, 160, 160, 0.719);
-    padding: 8px 12px;
+    padding: 6px 12px;
     transition:
         box-shadow 0.3s ease,
         padding ease 0.3s;

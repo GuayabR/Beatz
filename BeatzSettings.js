@@ -46,12 +46,47 @@ function detectAndHandleDevice() {
     const pauseButton = document.getElementById("togglePauseMBL");
     const pauseMargin = document.getElementById("pauseMargin");
     const pauseMargin2 = document.getElementById("pauseMargin2");
+
     if (userDevice === "Mobile" || userDevice === "iOS" || userDevice === "Android") {
         isMobile = true;
         console.log("Mobile mode is enabled from previous session.");
         handleChange();
         setupMobileEventListeners();
         changeStylesheet("mobileStyles.css");
+
+        // Remove <br> tags with class "marginKB"
+        const margins = document.getElementsByClassName("marginKB");
+        while (margins.length > 0) {
+            margins[0].remove(); // Remove the first element in the collection
+        }
+
+        // Remove specified elements if a mobile device is detected
+        const elementsToRemove = [
+            "left",
+            "up",
+            "down",
+            "right",
+            "pause",
+            "autoHit",
+            "fullscreenInput",
+            "previousInput",
+            "restartInput",
+            "nextInput",
+            "randomize",
+            "toggleNoteStyleInput",
+        ];
+
+        elementsToRemove.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.remove();
+                // Remove associated label
+                const label = document.querySelector(`label[for="${id}"]`);
+                if (label) {
+                    label.remove();
+                }
+            }
+        });
     } else if (userDevice === "Chromebook") {
         console.warn("Chromebook detected. Game might have reduced framerates.");
         isMobile = false;
@@ -312,20 +347,22 @@ const Presets = {
 function applyPreset(presetName) {
     const preset = Presets[presetName];
 
-    // Apply keybinds
-    keybinds = preset.keybinds;
-    document.getElementById("up").value = keybinds.up.join(", ");
-    document.getElementById("left").value = keybinds.left.join(", ");
-    document.getElementById("down").value = keybinds.down.join(", ");
-    document.getElementById("right").value = keybinds.right.join(", ");
-    document.getElementById("pause").value = keybinds.pause.join(", ");
-    document.getElementById("autoHit").value = keybinds.autoHit.join(", ");
-    document.getElementById("previousInput").value = keybinds.previous.join(", ");
-    document.getElementById("restartInput").value = keybinds.restart.join(", ");
-    document.getElementById("nextInput").value = keybinds.next.join(", ");
-    document.getElementById("randomize").value = keybinds.randomize.join(", ");
-    document.getElementById("toggleNoteStyleInput").value = keybinds.toggleNoteStyle.join(", ");
-    document.getElementById("fullscreenInput").value = keybinds.fullscreen.join(", ");
+    if (userDevice === "Desktop" || userDevice === "Chromebook") {
+        // Apply keybinds
+        keybinds = preset.keybinds;
+        document.getElementById("up").value = keybinds.up.join(", ");
+        document.getElementById("left").value = keybinds.left.join(", ");
+        document.getElementById("down").value = keybinds.down.join(", ");
+        document.getElementById("right").value = keybinds.right.join(", ");
+        document.getElementById("pause").value = keybinds.pause.join(", ");
+        document.getElementById("autoHit").value = keybinds.autoHit.join(", ");
+        document.getElementById("previousInput").value = keybinds.previous.join(", ");
+        document.getElementById("restartInput").value = keybinds.restart.join(", ");
+        document.getElementById("nextInput").value = keybinds.next.join(", ");
+        document.getElementById("randomize").value = keybinds.randomize.join(", ");
+        document.getElementById("toggleNoteStyleInput").value = keybinds.toggleNoteStyle.join(", ");
+        document.getElementById("fullscreenInput").value = keybinds.fullscreen.join(", ");
+    }
 
     // Apply miscellaneous settings
     miscellaneous = preset.miscellaneous;
@@ -547,10 +584,13 @@ let miscellaneousHistory = [];
 let keybindsIndex = -1;
 
 function loadSettings() {
-    const savedKeybinds = JSON.parse(localStorage.getItem("keybinds")) || {};
-    const savedMiscellaneous = JSON.parse(localStorage.getItem("miscellaneous")) || {};
+    const savedKeybinds = JSON.parse(localStorage.getItem("keybinds")) || defaultKeybinds;
+    const savedMiscellaneous = JSON.parse(localStorage.getItem("miscellaneous")) || defaultMiscellaneous;
 
-    keybinds = { ...savedKeybinds };
+    if (userDevice === "Desktop" || userDevice === "Chromebook") {
+        keybinds = { ...savedKeybinds };
+        updateKeybindsFields();
+    }
     miscellaneous = { ...savedMiscellaneous };
 
     document.getElementById("logKeysCheck").checked = miscellaneous.logKeys;
@@ -582,18 +622,6 @@ function loadSettings() {
     const savingSongs = document.getElementById("saveRecentSongs");
     savingSongs.value = miscellaneous.saveSongUsingControllers;
 
-    document.getElementById("up").value = keybinds.up.join(", ");
-    document.getElementById("left").value = keybinds.left.join(", ");
-    document.getElementById("down").value = keybinds.down.join(", ");
-    document.getElementById("right").value = keybinds.right.join(", ");
-    document.getElementById("pause").value = keybinds.pause.join(", ");
-    document.getElementById("autoHit").value = keybinds.autoHit.join(", ");
-    document.getElementById("previousInput").value = keybinds.previous.join(", ");
-    document.getElementById("restartInput").value = keybinds.restart.join(", ");
-    document.getElementById("nextInput").value = keybinds.next.join(", ");
-    document.getElementById("randomize").value = keybinds.randomize.join(", ");
-    document.getElementById("toggleNoteStyleInput").value = keybinds.toggleNoteStyle.join(", ");
-    document.getElementById("fullscreenInput").value = keybinds.fullscreen.join(", ");
     document.getElementById("songTimeoutAfterSongEndNum").value = miscellaneous.songTimeoutDelay;
 
     const savedBackgroundOption = savedMiscellaneous.backgroundOption || "defaultBG";
@@ -682,56 +710,72 @@ function getFileDataUrl(file, callback) {
 }
 
 function saveSettings() {
-    const newKeybinds = {
-        up: document
-            .getElementById("up")
-            .value.split(", ")
-            .map(key => key.trim()),
-        left: document
-            .getElementById("left")
-            .value.split(", ")
-            .map(key => key.trim()),
-        down: document
-            .getElementById("down")
-            .value.split(", ")
-            .map(key => key.trim()),
-        right: document
-            .getElementById("right")
-            .value.split(", ")
-            .map(key => key.trim()),
-        pause: document
-            .getElementById("pause")
-            .value.split(", ")
-            .map(key => key.trim()),
-        autoHit: document
-            .getElementById("autoHit")
-            .value.split(", ")
-            .map(key => key.trim()),
-        previous: document
-            .getElementById("previousInput")
-            .value.split(", ")
-            .map(key => key.trim()),
-        restart: document
-            .getElementById("restartInput")
-            .value.split(", ")
-            .map(key => key.trim()),
-        next: document
-            .getElementById("nextInput")
-            .value.split(", ")
-            .map(key => key.trim()),
-        randomize: document
-            .getElementById("randomize")
-            .value.split(", ")
-            .map(key => key.trim()),
-        toggleNoteStyle: document
-            .getElementById("toggleNoteStyleInput")
-            .value.split(", ")
-            .map(key => key.trim()),
-        fullscreen: document
-            .getElementById("fullscreenInput")
-            .value.split(", ")
-            .map(key => key.trim()),
-    };
+    let newKeybinds;
+
+    if (userDevice === "Desktop" || userDevice === "Chromebook") {
+        newKeybinds = {
+            up:
+                document
+                    .getElementById("up")
+                    ?.value.split(", ")
+                    .map(key => key.trim()) || [],
+            left:
+                document
+                    .getElementById("left")
+                    ?.value.split(", ")
+                    .map(key => key.trim()) || [],
+            down:
+                document
+                    .getElementById("down")
+                    ?.value.split(", ")
+                    .map(key => key.trim()) || [],
+            right:
+                document
+                    .getElementById("right")
+                    ?.value.split(", ")
+                    .map(key => key.trim()) || [],
+            pause:
+                document
+                    .getElementById("pause")
+                    ?.value.split(", ")
+                    .map(key => key.trim()) || [],
+            autoHit:
+                document
+                    .getElementById("autoHit")
+                    ?.value.split(", ")
+                    .map(key => key.trim()) || [],
+            previous:
+                document
+                    .getElementById("previousInput")
+                    ?.value.split(", ")
+                    .map(key => key.trim()) || [],
+            restart:
+                document
+                    .getElementById("restartInput")
+                    ?.value.split(", ")
+                    .map(key => key.trim()) || [],
+            next:
+                document
+                    .getElementById("nextInput")
+                    ?.value.split(", ")
+                    .map(key => key.trim()) || [],
+            randomize:
+                document
+                    .getElementById("randomize")
+                    ?.value.split(", ")
+                    .map(key => key.trim()) || [],
+            toggleNoteStyle:
+                document
+                    .getElementById("toggleNoteStyleInput")
+                    ?.value.split(", ")
+                    .map(key => key.trim()) || [],
+            fullscreen:
+                document
+                    .getElementById("fullscreenInput")
+                    ?.value.split(", ")
+                    .map(key => key.trim()) || [],
+        };
+    }
 
     const newMiscellaneous = {
         noteStyle: document.getElementById("defaultNoteStyle").value,
@@ -818,7 +862,9 @@ function saveSettings() {
             backgroundIsDefault = true;
     }
 
-    localStorage.setItem("keybinds", JSON.stringify(newKeybinds));
+    if (userDevice === "Desktop" || userDevice === "Chromebook") {
+        localStorage.setItem("keybinds", JSON.stringify(newKeybinds));
+    }
     localStorage.setItem("miscellaneous", JSON.stringify(newMiscellaneous));
 
     keybinds = { ...newKeybinds };
@@ -918,27 +964,6 @@ function resetSettings() {
     }
 }
 
-// Undo keybinds and miscellaneous settings
-function undoKeybinds() {
-    if (keybindsIndex > 0) {
-        keybindsIndex--;
-        keybinds = JSON.parse(keybindsHistory[keybindsIndex]);
-        miscellaneous = JSON.parse(miscellaneousHistory[keybindsIndex]);
-        updateKeybindsFields();
-    }
-}
-
-// Redo keybinds and miscellaneous settings
-function redoKeybinds() {
-    if (keybindsIndex < keybindsHistory.length - 1) {
-        keybindsIndex++;
-        keybinds = JSON.parse(keybindsHistory[keybindsIndex]);
-        miscellaneous = JSON.parse(miscellaneousHistory[keybindsIndex]);
-        updateKeybindsFields();
-    }
-}
-
-// Update the fields to reflect the current keybinds and miscellaneous settings
 function updateKeybindsFields() {
     document.getElementById("up").value = keybinds.up.join(", ");
     document.getElementById("left").value = keybinds.left.join(", ");
@@ -954,6 +979,7 @@ function updateKeybindsFields() {
     document.getElementById("fullscreenInput").value = keybinds.fullscreen.join(", ");
 
     document.getElementById("defaultNoteStyle").value = miscellaneous.noteStyle;
+    document.getElementById("defaultHitSound").value = miscellaneous.hitSound;
     document.getElementById("songTimeoutAfterSongEnd").checked = miscellaneous.songTimeoutAfterSongEnd;
     document.getElementById("songTimeoutAfterSongEndNum").value = miscellaneous.songTimeoutDelay;
     document.getElementById("vinylRotation").checked = miscellaneous.vinylRotation;
@@ -961,6 +987,9 @@ function updateKeybindsFields() {
     document.getElementById("defaultBackground").value = miscellaneous.backgroundOption;
     document.getElementById("backdropBlurInput").value = miscellaneous.customBackgroundBlur;
     document.getElementById("logKeysCheck").checked = miscellaneous.logKeys;
+
+    // Ensure defaultHitSound is set correctly
+    document.getElementById("defaultHitSound").value = miscellaneous.hitSound;
 
     if (miscellaneous.backgroundOption === "customBG" && miscellaneous.customBackground) {
         document.getElementById("customBGLabel").style.display = "inline";
@@ -980,11 +1009,158 @@ function updateKeybindsFields() {
 
 // Save the current keybinds and miscellaneous settings to history
 function saveToHistory() {
+    console.log("Saving to history...");
+
     keybindsHistory = keybindsHistory.slice(0, keybindsIndex + 1);
     miscellaneousHistory = miscellaneousHistory.slice(0, keybindsIndex + 1);
+
+    console.log("Current Keybinds:", keybinds);
+    console.log("Current Miscellaneous:", miscellaneous);
+
     keybindsHistory.push(JSON.stringify(keybinds));
     miscellaneousHistory.push(JSON.stringify(miscellaneous));
+
     keybindsIndex++;
+
+    console.log("History saved. Current keybinds history:");
+    console.log(keybindsHistory.map(item => JSON.parse(item))); // Parse JSON for readability
+    console.log("Current miscellaneous history:");
+    console.log(miscellaneousHistory.map(item => JSON.parse(item))); // Parse JSON for readability
+    console.log("Current history index:", keybindsIndex);
+}
+
+// Undo keybinds and miscellaneous settings
+function undoKeybinds() {
+    if (keybindsIndex > 0) {
+        console.log("Undoing changes...");
+
+        keybindsIndex--;
+        keybinds = JSON.parse(keybindsHistory[keybindsIndex]);
+        miscellaneous = JSON.parse(miscellaneousHistory[keybindsIndex]);
+
+        console.log("Restored Keybinds:", keybinds);
+        console.log("Restored Miscellaneous:", miscellaneous);
+
+        updateKeybindsFields();
+        console.log("Undo successful. Current history index:", keybindsIndex);
+    } else {
+        console.log("No more undo steps available. Index", keybindsIndex);
+    }
+}
+
+// Redo keybinds and miscellaneous settings
+function redoKeybinds() {
+    if (keybindsIndex < keybindsHistory.length - 1) {
+        console.log("Redoing changes...");
+
+        keybindsIndex++;
+        keybinds = JSON.parse(keybindsHistory[keybindsIndex]);
+        miscellaneous = JSON.parse(miscellaneousHistory[keybindsIndex]);
+
+        console.log("Restored Keybinds:", keybinds);
+        console.log("Restored Miscellaneous:", miscellaneous);
+
+        updateKeybindsFields();
+        console.log("Redo successful. Current history index:", keybindsIndex);
+    } else {
+        console.log("No more redo steps available. Index", keybindsIndex);
+    }
+}
+
+function initializeEventListeners() {
+    document.getElementById("up").addEventListener("change", () => {
+        console.log("Change detected in 'up' input.");
+        saveToHistory();
+    });
+    document.getElementById("left").addEventListener("change", () => {
+        console.log("Change detected in 'left' input.");
+        saveToHistory();
+    });
+    document.getElementById("down").addEventListener("change", () => {
+        console.log("Change detected in 'down' input.");
+        saveToHistory();
+    });
+    document.getElementById("right").addEventListener("change", () => {
+        console.log("Change detected in 'right' input.");
+        saveToHistory();
+    });
+    document.getElementById("pause").addEventListener("change", () => {
+        console.log("Change detected in 'pause' input.");
+        saveToHistory();
+    });
+    document.getElementById("autoHit").addEventListener("change", () => {
+        console.log("Change detected in 'autoHit' input.");
+        saveToHistory();
+    });
+    document.getElementById("fullscreenInput").addEventListener("change", () => {
+        console.log("Change detected in 'fullscreenInput' input.");
+        saveToHistory();
+    });
+    document.getElementById("previousInput").addEventListener("change", () => {
+        console.log("Change detected in 'previousInput' input.");
+        saveToHistory();
+    });
+    document.getElementById("restartInput").addEventListener("change", () => {
+        console.log("Change detected in 'restartInput' input.");
+        saveToHistory();
+    });
+    document.getElementById("nextInput").addEventListener("change", () => {
+        console.log("Change detected in 'nextInput' input.");
+        saveToHistory();
+    });
+    document.getElementById("randomize").addEventListener("change", () => {
+        console.log("Change detected in 'randomize' input.");
+        saveToHistory();
+    });
+    document.getElementById("toggleNoteStyleInput").addEventListener("change", () => {
+        console.log("Change detected in 'toggleNoteStyleInput' input.");
+        saveToHistory();
+    });
+    document.getElementById("defaultNoteStyle").addEventListener("change", () => {
+        console.log("Change detected in 'defaultNoteStyle' select.");
+        saveToHistory();
+    });
+    document.getElementById("defaultHitSound").addEventListener("change", function (event) {
+        console.log("Change detected in 'defaultHitSound' select.");
+        miscellaneous.hitSound = event.target.value; // Update the miscellaneous object
+        saveToHistory();
+    });
+    document.getElementById("logKeysCheck").addEventListener("change", () => {
+        console.log("Change detected in 'logKeysCheck' checkbox.");
+        saveToHistory();
+    });
+    document.getElementById("saveRecentSongs").addEventListener("change", () => {
+        console.log("Change detected in 'saveRecentSongs' checkbox.");
+        saveToHistory();
+    });
+    document.getElementById("songTimeoutAfterSongEnd").addEventListener("change", () => {
+        console.log("Change detected in 'songTimeoutAfterSongEnd' checkbox.");
+        saveToHistory();
+    });
+    document.getElementById("songTimeoutAfterSongEndNum").addEventListener("change", () => {
+        console.log("Change detected in 'songTimeoutAfterSongEndNum' input.");
+        saveToHistory();
+    });
+    document.getElementById("circularImage").addEventListener("change", () => {
+        console.log("Change detected in 'circularImage' checkbox.");
+        saveToHistory();
+    });
+    document.getElementById("vinylRotation").addEventListener("change", () => {
+        console.log("Change detected in 'vinylRotation' checkbox.");
+        saveToHistory();
+    });
+    document.getElementById("defaultBackground").addEventListener("change", () => {
+        console.log("Change detected in 'defaultBackground' select.");
+        saveToHistory();
+    });
+    document.getElementById("customBGInput").addEventListener("change", () => {
+        console.log("Change detected in 'customBGInput' file input.");
+        saveToHistory();
+    });
+    document.getElementById("backdropBlurInput").addEventListener("change", () => {
+        console.log("Change detected in 'backdropBlurInput' number input.");
+        saveToHistory();
+    });
 }
 
 function toggleTimeoutInput() {
