@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: MOBILE 4.1! test (release.version.subversion.bugfix)
+ * Version: MOBILE 4.1.1.3 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -1412,7 +1412,23 @@ closeSSongModal.onclick = closeSelectedSongModal;
 
 closeSongListBTN.onclick = closeSongList;
 
+// Global cooldown management
+let lastFunctionCallTime = 0;
+const COOLDOWN_PERIOD = 250; // Cooldown period in milliseconds (0.5 seconds)
+
+function canActivate() {
+    const currentTime = Date.now();
+    if (currentTime - lastFunctionCallTime < COOLDOWN_PERIOD) {
+        console.log("Cooldown in effect. Please wait before calling another function.");
+        return false;
+    }
+    lastFunctionCallTime = currentTime;
+    return true;
+}
+
 function nextSong() {
+    if (!canActivate()) return;
+
     if (!songMetadataLoaded) {
         console.log("Song metadata not loaded. Please wait before proceeding.");
         return; // Exit the function if metadata isn't loaded
@@ -1438,6 +1454,8 @@ function nextSong() {
 }
 
 function restartSong() {
+    if (!canActivate()) return;
+
     if (!songMetadataLoaded) {
         console.log("Song metadata not loaded. Please wait before proceeding.");
         return; // Exit the function if metadata isn't loaded
@@ -1452,7 +1470,6 @@ function restartSong() {
 
     console.log("Restarting song with currentSongIndex: " + currentSongIndex);
 
-    // Check if the current song path matches any of the version paths
     let versionPath = null;
     let indexSet = currentSongIndex;
 
@@ -1479,6 +1496,8 @@ function restartSong() {
 }
 
 function legacyRestartSong() {
+    if (!canActivate()) return;
+
     if (!songMetadataLoaded) {
         console.log("Song metadata not loaded. Please wait before proceeding.");
         return; // Exit the function if metadata isn't loaded
@@ -1496,6 +1515,8 @@ function legacyRestartSong() {
 }
 
 function previousSong() {
+    if (!canActivate()) return;
+
     if (!songMetadataLoaded) {
         console.log("Song metadata not loaded. Please wait before proceeding.");
         return; // Exit the function if metadata isn't loaded
@@ -1508,10 +1529,8 @@ function previousSong() {
 
     resetSongVariables();
 
-    // Decrement currentSongIndex and wrap around to the last song if it goes negative
     currentSongIndex = (currentSongIndex - 1 + songList.length) % songList.length;
 
-    // Start the game with the previous song in the songList array
     startGame(currentSongIndex);
 
     if (saveSongUsingControllers) {
@@ -1529,6 +1548,8 @@ function pickRandomSongIndex() {
 }
 
 function randomizeSong() {
+    if (!canActivate()) return;
+
     if (!songMetadataLoaded) {
         console.log("Song metadata not loaded. Please wait before proceeding.");
         return; // Exit the function if metadata isn't loaded
@@ -1541,12 +1562,10 @@ function randomizeSong() {
 
     resetSongVariables();
 
-    // Randomize song
     currentSongIndex = pickRandomSongIndex();
 
     console.log("Randomizing song to: " + currentSongIndex);
 
-    // Start the game with the new random song
     startGame(currentSongIndex);
 
     if (saveSongUsingControllers) {
@@ -2326,17 +2345,6 @@ function toggleDebugInfo() {
     debugInfoVisible = !debugInfoVisible;
 }
 
-function calculateFPS(deltaTime) {
-    // Calculate FPS
-    let currentFPS = 1 / deltaTime;
-    FPS = currentFPS.toFixed(1);
-
-    ctx.font = "12px Arial";
-    ctx.fillStyle = "white";
-    ctx.textAlign = "center";
-    ctx.fillText(`Current FPS: ${FPS}`, WIDTH / 2, HEIGHT - 30);
-}
-
 function updateDebugInfo(deltaTime, timestamp) {
     if (debugInfoVisible) {
         const lineHeight = 18;
@@ -2446,6 +2454,17 @@ function checkOrientation() {
     }
 }
 
+function calculateFPS(deltaTime) {
+    // Calculate FPS
+    let currentFPS = 1 / deltaTime;
+    FPS = currentFPS.toFixed(1);
+
+    ctx.font = "12px Arial";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    ctx.fillText(`Current FPS: ${FPS}`, WIDTH / 2, HEIGHT - 30);
+}
+
 function updateCanvas(timestamp, setIndex) {
     if (!lastTime) {
         lastTime = timestamp;
@@ -2489,7 +2508,6 @@ function updateCanvas(timestamp, setIndex) {
     }
 
     if (!songMetadataLoaded) {
-        console.log("metadata not loaded burh");
         ctx.fillStyle = "white";
         ctx.font = "60px Arial";
         ctx.textAlign = "center";
@@ -2657,7 +2675,7 @@ function updateCanvas(timestamp, setIndex) {
             PERFECT_HIT_RANGE_MIN = 538;
             PERFECT_HIT_RANGE_MAX = 572;
             HIT_Y_RANGE_MIN = 495;
-            HIT_Y_RANGE_MAX = 605;
+            HIT_Y_RANGE_MAX = 610;
             MISS_RANGE = 690;
             fpsBuffedHitRanges = true;
             // console.warn(`Low FPS! Hit ranges have been buffed. FPS: ${FPS}`);
@@ -2735,7 +2753,6 @@ function isWithinBounds(x, y, area) {
 function handleTouchOrMouse(event) {
     if (!isMobile) return; // Ignore if not in mobile mode
 
-    event.preventDefault();
     const rect = canvas.getBoundingClientRect();
     const scaleFactor = canvas.scaleFactor;
 
