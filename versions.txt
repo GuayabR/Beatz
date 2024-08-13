@@ -473,7 +473,7 @@ Reworked album cover logic!
 Beatz! PORTED TO MOBILE DEVICES! https://guayabr.github.io/Beatz-Mobile
 //
 
-4.1.1.1 (MOBILE 4.1! 12/08/2024)
+4.1! (MOBILE 4.1! 12/08/2024)
 # Beatz! Mobile has been integrated into the main game.
 ### Beatz! Mobile URL is now offline.
 - Beatz will now check at startup what device you're using, depending on your device, the game port will change and adapt to your device.
@@ -484,3 +484,7 @@ Fixes or tweaks:
 - Added THE DINER (Billie Eilish), Babooshka (Kate Bush), Your Girl (Lana Del Rey), Brand New City (Mitski), Idols (Virtual Riot), and 24 (Lana Del Rey)
 - Beatz OFFICIALLY passed 100 songs.
 - Song 100 being Idols by Virtual Riot.
+//
+
+4.1.1.3 (MOBILE 4.1! 13/08/2024)
+- Dynamic speed updater no longer overlap between songs.
