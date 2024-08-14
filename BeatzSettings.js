@@ -40,6 +40,8 @@ function handleChange() {
     // Initial call
     resizeCanvas();
     checkOrientation();
+
+    setTimeout(resizeCanvas, 500);
 }
 
 function detectAndHandleDevice() {

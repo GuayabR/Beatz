@@ -101,9 +101,9 @@ button:hover i {
 }
 
 canvas {
-    display: none; /* Hide canvas initially */
+    display: none;
     margin: 0 auto;
-    background-image: url("Resources/BeatzBanner.jpg");
+    background-image: url("Resources/BeatzBannerMBL.jpg");
     background-size: cover;
     background-position: center;
     border-radius: 10px;

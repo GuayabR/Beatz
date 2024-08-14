@@ -488,3 +488,14 @@ Fixes or tweaks:
 
 4.1.1.3 (MOBILE 4.1! 13/08/2024)
 - Dynamic speed updater no longer overlap between songs.
+//
+
+4.1.2.4 (MOBILE 4.1! 14/08/2024)
+# Beatz! Mobile FULL RELEASE!
+- Beatz! Mobile is completely polished and finished!
+- Thanks to everyone who sticked around since the beginning of Beatz!
+
+### Fixes and tweaks
+- Added a 100 millisecond cooldown between switching songs.
+- Fixed settings menu and song list's appearance to be familiar with a mobiles' small screen.
+
