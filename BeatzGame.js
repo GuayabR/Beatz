@@ -357,7 +357,7 @@ function preloadSongs() {
         "Resources/Songs/Stressed Out.mp3",
         "Resources/Songs/Ticking Away.mp3",
         "Resources/Songs/VISIONS.mp3",
-        "Resources/Songs/VVV.mp3",
+        "Resources/Songs/24.mp3",
         "Resources/Songs/WTF 2.mp3",
         "Resources/Songs/Somewhere I Belong.mp3",
         "Resources/Songs/Can't Slow Me Down.mp3",
@@ -378,7 +378,7 @@ function preloadSongs() {
         "Resources/Songs/Godzilla.mp3",
         "Resources/Songs/HIGHEST IN THE ROOM.mp3",
         "Resources/Songs/Runaway.mp3",
-        "Resources/Songs/Rush E.mp3",
+        "Resources/Songs/Fire Again.mp3",
         "Resources/Songs/Vamp Anthem.mp3",
         "Resources/Songs/CARNIVAL.mp3",
         "Resources/Songs/HUMBLE..mp3",
@@ -434,7 +434,8 @@ function preloadSongs() {
         "Resources/Songs/Your Girl.mp3",
         "Resources/Songs/Brand New City.mp3",
         "Resources/Songs/Idols.mp3",
-        "Resources/Songs/24.mp3",
+        "Resources/Songs/aruarian dance.mp3",
+        "Resources/Songs/VVV.mp3",
 
         "Resources/Songs/testingsong.mp3",
     ];
@@ -587,7 +588,7 @@ const songConfigs = {
     "Resources/Songs/Stressed Out.mp3": { BPM: 170, noteSpeed: 8 },
     "Resources/Songs/Ticking Away.mp3": { BPM: 95, noteSpeed: 10 },
     "Resources/Songs/VISIONS.mp3": { BPM: 157, noteSpeed: 8 },
-    "Resources/Songs/VVV.mp3": { BPM: 131, noteSpeed: 10 },
+    "Resources/Songs/24.mp3": { BPM: 98, noteSpeed: 8 },
     "Resources/Songs/WTF 2.mp3": { BPM: 116, noteSpeed: 14 },
     "Resources/Songs/MY EYES.mp3": { BPM: 132, noteSpeed: 12 },
     "Resources/Songs/Can't Slow Me Down.mp3": { BPM: 122, noteSpeed: 11 },
@@ -608,7 +609,7 @@ const songConfigs = {
     "Resources/Songs/Godzilla.mp3": { BPM: 166, noteSpeed: 13 },
     "Resources/Songs/HIGHEST IN THE ROOM.mp3": { BPM: 156, noteSpeed: 0 },
     "Resources/Songs/Runaway.mp3": { BPM: 85, noteSpeed: 10 },
-    "Resources/Songs/Rush E.mp3": { BPM: 500, noteSpeed: 20 },
+    "Resources/Songs/Fire Again.mp3": { BPM: 100, noteSpeed: 12 },
     "Resources/Songs/Vamp Anthem.mp3": { BPM: 164, noteSpeed: 12 },
     "Resources/Songs/CARNIVAL.mp3": { BPM: 148, noteSpeed: 12 },
     "Resources/Songs/HUMBLE..mp3": { BPM: 150, noteSpeed: 0 },
@@ -664,7 +665,8 @@ const songConfigs = {
     "Resources/Songs/Your Girl.mp3": { BPM: 120, noteSpeed: 8 },
     "Resources/Songs/Brand New City.mp3": { BPM: 148, noteSpeed: 12 },
     "Resources/Songs/Idols.mp3": { BPM: 130, noteSpeed: 2.65 },
-    "Resources/Songs/24.mp3": { BPM: 98, noteSpeed: 8 },
+    "Resources/Songs/aruarian dance.mp3": { BPM: 96, noteSpeed: 6 },
+    "Resources/Songs/VVV.mp3": { BPM: 131, noteSpeed: 10 },
 
     // Song Versions
 
@@ -924,7 +926,7 @@ const songToAlbumMap = {
     Godzilla: "Music to Be Murdered By",
     "HIGHEST IN THE ROOM": "HIGHEST IN THE ROOM",
     Runaway: "My Beautiful Dark Twisted Fantasy",
-    "Rush E": "Rush E",
+    "Fire Again": "Fire Again",
     "Vamp Anthem": "Whole Lotta Red",
     CARNIVAL: "VULTURES 1",
     "HUMBLE.": "DAMN.",
@@ -980,6 +982,7 @@ const songToAlbumMap = {
     "Brand New City": "Lush",
     Idols: "Idols",
     24: "Honeymoon",
+    "aruarian dance": "samurai champloo music record departure",
 
     // Song Versions
 
@@ -1039,7 +1042,7 @@ function preloadImages() {
         "Resources/Covers/Graduation.jpg",
         "Resources/Covers/Music to Be Murdered By.jpg",
         "Resources/Covers/My Beautiful Dark Twisted Fantasy.jpg",
-        "Resources/Covers/Rush E.jpg",
+        "Resources/Covers/Fire Again.jpg",
         "Resources/Covers/Whole Lotta Red.jpg",
         "Resources/Covers/VULTURES 1.jpg",
         "Resources/Covers/DAMN..jpg",
@@ -1074,6 +1077,7 @@ function preloadImages() {
         "Resources/Covers/Lush.jpg",
         "Resources/Covers/Idols.jpg",
         "Resources/Covers/Honeymoon.jpg",
+        "Resources/Covers/samurai champloo music record departure.jpg",
 
         // Song Versions
 
@@ -1414,7 +1418,7 @@ closeSongListBTN.onclick = closeSongList;
 
 // Global cooldown management
 let lastFunctionCallTime = 0;
-const COOLDOWN_PERIOD = 250; // Cooldown period in milliseconds (0.5 seconds)
+const COOLDOWN_PERIOD = 100; // Cooldown period in milliseconds
 
 function canActivate() {
     const currentTime = Date.now();
@@ -1652,7 +1656,7 @@ function getArtist(songSrc) {
         Numb: "Linkin Park",
         "sdp interlude": "Travis Scott",
         "Shiawase (VIP)": "Dion Timmer",
-        VVV: "mikeysmind, Sanikwave",
+        24: "Lana Del Rey",
         "Sleepwalker X Icewhxre": "akiaura, Lumi Athena",
         "WTF 2": "Ugovhb, EF",
         VISIONS: "VALORANT, eaJ, Safari Riot",
@@ -1677,7 +1681,7 @@ function getArtist(songSrc) {
         Godzilla: "Eminem, Juice WRLD",
         "HIGHEST IN THE ROOM": "Travis Scott",
         Runaway: "Kanye West, Pusha T",
-        "Rush E": "M.J. Kelly",
+        "Fire Again": "VALORANT, Ashnikko",
         "Vamp Anthem": "Playboi Carti",
         CARNIVAL: "¥$, Kanye West, Ty Dolla $ign, Rich The Kid, Playboi Carti",
         "HUMBLE.": "Kendrick Lamar",
@@ -1731,8 +1735,9 @@ function getArtist(songSrc) {
         Babooshka: "Kate Bush",
         "Your Girl": "Lana Del Rey",
         "Brand New City": "Mitski",
-        24: "Lana Del Rey",
         Idols: "Virtual Riot",
+        VVV: "mikeysmind, Sanikwave",
+        "aruarian dance": "nujabes",
 
         // Song Versions
 
@@ -1900,7 +1905,12 @@ function simulateKeyPress(key) {
 }
 
 window.onload = function () {
-    canvas.style.backgroundImage = "url('Resources/BeatzBanner.jpg')";
+    if (userDevice === "Desktop" || userDevice === "Chromebook") {
+        canvas.style.backgroundImage = "url('Resources/BeatzBanner.jpg')";
+    } else if (userDevice === "Mobile" || userDevice === "Android" || userDevice === "iOS") {
+        canvas.style.backgroundImage = "url('Resources/BeatzBannerMBL.jpg')";
+    }
+
     canvas.style.backgroundSize = "cover";
     canvas.style.backgroundPosition = "center";
 
@@ -3136,6 +3146,77 @@ function drawAutoHitText() {
     ctx.textAlign = "left";
     ctx.fillText("Auto Hit: On", 10, HEIGHT - 34);
     ctx.fillText("Points are disabled for this playthrough.", 10, HEIGHT - 10);
+}
+
+// Get the modal and buttons
+const customSongModal = document.getElementById("customSongModal");
+const openCustomSongModal = document.getElementById("openCustomSongModal");
+const closeCustomSong = document.getElementById("closeCustomSongModal");
+const createButton = document.getElementById("createCustomSong");
+
+// Open the modal
+openCustomSongModal.onclick = function () {
+    customSongModal.style.display = "block";
+    deactivateKeybinds();
+};
+
+// Close the modal
+closeCustomSong.onclick = function () {
+    customSongModal.style.display = "none";
+    activateKeybinds();
+};
+
+// Close the modal when clicking outside of it
+window.onclick = function (event) {
+    if (event.target === customSongModal) {
+        customSongModal.style.display = "none";
+    }
+};
+
+// Handle file input and note generation
+createButton.onclick = function () {
+    const fileInput = document.getElementById("songFile");
+    const titleInput = document.getElementById("customSongTitle").value;
+    const noteSpeed = parseInt(document.getElementById("noteSpeed").value);
+    const bpm = parseInt(document.getElementById("bpm").value);
+
+    if (fileInput.files.length === 0) {
+        alert("Please upload an MP3 file.");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    if (file.type !== "audio/mp3") {
+        alert("Please upload a valid MP3 file.");
+        return;
+    }
+
+    const audio = new Audio(URL.createObjectURL(file));
+    audio.onloadedmetadata = function () {
+        const duration = audio.duration * 1000; // Convert duration to milliseconds
+
+        // Generate notes
+        const notes = generateRandomNotes(duration);
+
+        // Apply note speed and BPM
+        applyNoteSpeedAndBPM(noteSpeed, bpm);
+
+        // Start the game with the custom song
+        startCustomGame(file, titleInput, notes);
+    };
+};
+
+// Function to apply note speed and BPM
+function applyNoteSpeedAndBPM(noteSpeed, bpm) {
+    // Implement your logic to apply note speed and BPM
+    console.log("Note Speed:", noteSpeed, "BPM:", bpm);
+}
+
+// Function to start the game with the custom song
+function startCustomGame(file, title, notes) {
+    // Implement your logic to start the game with the given song and notes
+    console.log("Starting custom game with title:", title);
+    console.log("Notes:", notes);
 }
 
 // Global variable to track if notes are generated
