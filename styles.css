@@ -17,6 +17,7 @@ html {
 }
 
 #errorLogging {
+    display: none;
     background-color: red;
     color: white;
     padding: 10px;

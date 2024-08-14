@@ -15,7 +15,14 @@ function logError(errorMessage) {
 
     const err = errorMessage || "Unspecified error.";
 
-    errorLoggingDiv.textContent = `Error: ${err}`;
+    if (errorLoggingDiv) {
+        errorLoggingDiv.textContent = `Error: ${err}`;
+        errorLoggingDiv.style.display = "block";
+
+        setTimeout(() => {
+            errorLoggingDiv.style.display = "none";
+        }, 2000);
+    }
 }
 
 document.addEventListener("keydown", keyDownFunction);

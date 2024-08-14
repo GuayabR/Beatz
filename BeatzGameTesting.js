@@ -336,7 +336,7 @@ console.log("Textures loaded.");
 // Function to preload songs
 function preloadSongs() {
     const songPaths = [
-        "https://guayabr.github.io/Beatz/Resources/Songs/Epilogue.mp3",
+        "https://guayabr.github.io/Beatz/Resources//Epilogue.mp3",
         "https://guayabr.github.io/Beatz/Resources/Songs/Exosphere.mp3",
         "https://guayabr.github.io/Beatz/Resources/Songs/Die For You.mp3",
         "https://guayabr.github.io/Beatz/Resources/Songs/Father Stretch My Hands.mp3",
