@@ -488,3 +488,14 @@ Fixes or tweaks:
 
 4.1.1.3 (MOBILE 4.1! 13/08/2024)
 - Dynamic speed updater no longer overlap between songs.
+//
+
+4.2.2.4 (MOBILE 4.2! 14/08/2024)
+# Beatz! Mobile is FULLY RELEASED!
+- Mobile port for Beatz has been fully polished and ready to play without skipping a note.
+- Thanks to everyone that sticked around since the beginning of Beatz!
+### Fixes and tweaks
+- Added a new banner for mobile users that indicate them to scroll down to start the game.
+- Added a cooldown of 100 milliseconds when using the song controllers.
+- Added Fire Again (VALORANT) and aruarian dance (nujabes)
+### Song files now fetch from "guayabr.github.io" since, on iOS local files trying to be fetched online is not permitted.

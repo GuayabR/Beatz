@@ -334,116 +334,114 @@ console.log("Textures loaded.");
 // Function to preload songs
 function preloadSongs() {
     const songPaths = [
-        "Resources/Songs/Epilogue.mp3",
-        "Resources/Songs/Exosphere.mp3",
-        "Resources/Songs/Die For You.mp3",
-        "Resources/Songs/Father Stretch My Hands.mp3",
-        "Resources/Songs/Betty (Get Money).mp3",
-        "Resources/Songs/BURN IT DOWN.mp3",
-        "Resources/Songs/Aleph 0.mp3",
-        "Resources/Songs/Better Days.mp3",
-        "Resources/Songs/kompa pasion.mp3",
-        "Resources/Songs/KOCMOC.mp3",
-        "Resources/Songs/Legends Never Die.mp3",
-        "Resources/Songs/Star Walkin.mp3",
-        "Resources/Songs/What I've Done.mp3",
-        "Resources/Songs/Biggest NCS Songs.mp3",
-        "Resources/Songs/Goosebumps.mp3",
-        "Resources/Songs/Sleepwalker X Icewhxre.mp3",
-        "Resources/Songs/Numb.mp3",
-        "Resources/Songs/sdp interlude.mp3",
-        "Resources/Songs/Shiawase (VIP).mp3",
-        "Resources/Songs/Master Of Puppets (Live).mp3",
-        "Resources/Songs/Stressed Out.mp3",
-        "Resources/Songs/Ticking Away.mp3",
-        "Resources/Songs/VISIONS.mp3",
-        "Resources/Songs/24.mp3",
-        "Resources/Songs/WTF 2.mp3",
-        "Resources/Songs/Somewhere I Belong.mp3",
-        "Resources/Songs/Can't Slow Me Down.mp3",
-        "Resources/Songs/LUNCH.mp3",
-        "Resources/Songs/BUTTERFLY EFFECT.mp3",
-        "Resources/Songs/SWIM.mp3",
-        "Resources/Songs/FE!N.mp3",
-        "Resources/Songs/Crazy.mp3",
-        "Resources/Songs/Despacito.mp3",
-        "Resources/Songs/You Need Jesus.mp3",
-        "Resources/Songs/Nautilus.mp3",
-        "Resources/Songs/Levitating.mp3",
-        "Resources/Songs/MY EYES.mp3",
-        "Resources/Songs/Faint.mp3",
-        "Resources/Songs/Breaking The Habit.mp3",
-        "Resources/Songs/From The Inside.mp3",
-        "Resources/Songs/I Wonder.mp3",
-        "Resources/Songs/Godzilla.mp3",
-        "Resources/Songs/HIGHEST IN THE ROOM.mp3",
-        "Resources/Songs/Runaway.mp3",
-        "Resources/Songs/Fire Again.mp3",
-        "Resources/Songs/Vamp Anthem.mp3",
-        "Resources/Songs/CARNIVAL.mp3",
-        "Resources/Songs/HUMBLE..mp3",
-        "Resources/Songs/Stop Breathing.mp3",
-        "Resources/Songs/CHEGOU 3.mp3",
-        "Resources/Songs/KRUSH ALERT.mp3",
-        "Resources/Songs/CUTE DEPRESSED.mp3",
-        "Resources/Songs/MOVE YO BODY.mp3",
-        "Resources/Songs/SLAY!.mp3",
-        "Resources/Songs/ROCK THAT SHIT!.mp3",
-        "Resources/Songs/BAIXO.mp3",
-        "Resources/Songs/LOOK DON'T TOUCH.mp3",
-        "Resources/Songs/YOU'RE TOO SLOW.mp3",
-        "Resources/Songs/BAND4BAND.mp3",
-        "Resources/Songs/Slide da Treme Melódica v2.mp3",
-        "Resources/Songs/fantasmas.mp3",
-        "Resources/Songs/BIKE.mp3",
-        "Resources/Songs/ARCÀNGEL.mp3",
-        "Resources/Songs/TELEKINESIS.mp3",
-        "Resources/Songs/Bleed it out.mp3",
-        "Resources/Songs/Grenade.mp3",
-        "Resources/Songs/24K Magic.mp3",
-        "Resources/Songs/Finesse.mp3",
-        "Resources/Songs/Not Like Us.mp3",
-        "Resources/Songs/Type Shit.mp3",
-        "Resources/Songs/Like That.mp3",
-        "Resources/Songs/That's What I Like.mp3",
-        "Resources/Songs/Renaissance.mp3",
-        "Resources/Songs/Habits.mp3",
-        "Resources/Songs/Trouble.mp3",
-        "Resources/Songs/Brand New Dance.mp3",
-        "Resources/Songs/Evil.mp3",
-        "Resources/Songs/Lucifer.mp3",
-        "Resources/Songs/Antichrist.mp3",
-        "Resources/Songs/Fuel.mp3",
-        "Resources/Songs/Road Rage.mp3",
-        "Resources/Songs/Houdini.mp3",
-        "Resources/Songs/Guilty Conscience 2.mp3",
-        "Resources/Songs/Head Honcho.mp3",
-        "Resources/Songs/Temporary.mp3",
-        "Resources/Songs/Bad One.mp3",
-        "Resources/Songs/Tobey.mp3",
-        "Resources/Songs/Somebody Save Me.mp3",
-        "Resources/Songs/this is what space feels like.mp3",
-        "Resources/Songs/SICKO MODE.mp3",
-        "Resources/Songs/THE SCOTTS.mp3",
-        "Resources/Songs/The Automotivo Infernal 1.0.mp3",
-        "Resources/Songs/WAKE UP!.mp3",
-        "Resources/Songs/Flashing Lights.mp3",
-        "Resources/Songs/RUN!.mp3",
-        "Resources/Songs/THE DINER.mp3",
-        "Resources/Songs/Babooshka.mp3",
-        "Resources/Songs/Your Girl.mp3",
-        "Resources/Songs/Brand New City.mp3",
-        "Resources/Songs/Idols.mp3",
-        "Resources/Songs/aruarian dance.mp3",
-        "Resources/Songs/VVV.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Epilogue.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Exosphere.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Die For You.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Father Stretch My Hands.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Betty (Get Money).mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/BURN IT DOWN.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Aleph 0.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Better Days.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/kompa pasion.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/KOCMOC.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Legends Never Die.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Star Walkin.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/What I've Done.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Biggest NCS Songs.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Goosebumps.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Sleepwalker X Icewhxre.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Numb.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/sdp interlude.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Shiawase (VIP).mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Master Of Puppets (Live).mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Stressed Out.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Ticking Away.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/VISIONS.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/24.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/WTF 2.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Somewhere I Belong.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Can't Slow Me Down.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/LUNCH.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/BUTTERFLY EFFECT.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/SWIM.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/FE!N.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Crazy.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Despacito.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/You Need Jesus.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Nautilus.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Levitating.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/MY EYES.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Faint.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Breaking The Habit.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/From The Inside.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/I Wonder.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Godzilla.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/HIGHEST IN THE ROOM.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Runaway.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Fire Again.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Vamp Anthem.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/CARNIVAL.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/HUMBLE..mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Stop Breathing.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/CHEGOU 3.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/KRUSH ALERT.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/CUTE DEPRESSED.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/MOVE YO BODY.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/SLAY!.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/ROCK THAT SHIT!.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/BAIXO.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/LOOK DON'T TOUCH.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/YOU'RE TOO SLOW.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/BAND4BAND.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Slide da Treme Melódica v2.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/fantasmas.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/BIKE.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/ARCÀNGEL.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/TELEKINESIS.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Bleed it out.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Grenade.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/24K Magic.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Finesse.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Not Like Us.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Type Shit.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Like That.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/That's What I Like.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Renaissance.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Habits.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Trouble.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Brand New Dance.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Evil.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Lucifer.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Antichrist.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Fuel.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Road Rage.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Houdini.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Guilty Conscience 2.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Head Honcho.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Temporary.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Bad One.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Tobey.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Somebody Save Me.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/this is what space feels like.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/SICKO MODE.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/THE SCOTTS.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/The Automotivo Infernal 1.0.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/WAKE UP!.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Flashing Lights.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/RUN!.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/THE DINER.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Babooshka.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Your Girl.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Brand New City.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/Idols.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/aruarian dance.mp3",
+        "https://guayabr.github.io/Beatz/Resources/Songs/VVV.mp3",
 
         "Resources/Songs/testingsong.mp3",
     ];
 
     let currentIndex = 0;
     const totalSongs = songPaths.length;
-
-    // Add counter text beside the header
     const counterText = document.createElement("span");
     counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
     const headerElement = document.querySelector("h1");
@@ -453,31 +451,52 @@ function preloadSongs() {
         if (currentIndex < totalSongs) {
             const songPath = songPaths[currentIndex];
             const songTitle = getSongTitle(songPath);
+            const songListContainer = document.getElementById("songList");
 
-            const audio = new Audio();
-            audio.src = songPath;
-            audio.oncanplaythrough = function () {
-                songList.push(songPath);
-                console.log("Loaded song:", songTitle);
-                songLoadCounter++; // Increment songLoadCounter when a song is successfully loaded
-                currentIndex++;
-                counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`; // Update the counter text
-                addSongToList(songPath, songTitle); // Add the song to the list
-                loadNextSong(); // Load the next song recursively
-                checkAllSongsLoaded(totalSongs); // Check if all songs are loaded
-            };
-            audio.onerror = function () {
-                console.log("Failed to load song:", songTitle);
-                currentIndex++;
-                songLoadCounter++;
-                counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`; // Update the counter text
-                loadNextSong(); // Load the next song recursively
-                checkAllSongsLoaded(totalSongs); // Check if all songs are loaded
-            };
+            fetch(songPath)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP Error ${response.status}: ${response.statusText}`);
+                    }
+                    return response.blob(); // Convert response to a blob
+                })
+                .then(blob => {
+                    const audio = new Audio(URL.createObjectURL(blob));
+                    audio.preload = "auto"; // Ensures the audio is preloaded
+                    audio.oncanplaythrough = function () {
+                        songList.push(songPath);
+                        console.log("Loaded song:", songTitle);
+                        songLoadCounter++;
+                        currentIndex++;
+                        counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
+                        addSongToList(songPath, songTitle);
+                        loadNextSong();
+                        checkAllSongsLoaded(totalSongs);
+                    };
+                })
+                .catch(error => {
+                    console.error(`Failed to load song: ${songTitle}, ${error}`);
+                    const errorElement = document.createElement("div");
+                    errorElement.textContent = `Error loading song: ${error.message}`;
+                    errorElement.style.color = "red";
+                    songListContainer.appendChild(errorElement);
+
+                    songLoadCounter++;
+                    counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded) Error: ${error.message}`;
+
+                    setTimeout(() => {
+                        if (counterText.textContent.includes(`Error: ${error.message}`)) {
+                            counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
+                        }
+                    }, 2500);
+
+                    currentIndex++;
+                    loadNextSong();
+                    checkAllSongsLoaded(totalSongs);
+                });
         }
     }
 
-    // Function to check if all songs are loaded
     function checkAllSongsLoaded(totalSongs) {
         if (songLoadCounter === 1) {
             const startButton = document.getElementById("startButton");
@@ -491,44 +510,39 @@ function preloadSongs() {
         }
     }
 
-    let listOfSongs = []; // Store song paths and titles for filtering
+    let listOfSongs = [];
 
     function addSongToList(songPath, songTitle) {
         const songListContainer = document.getElementById("songList");
 
         const songButton = document.createElement("button");
         songButton.className = "song-button";
-        const currentIndex = songListContainer.childElementCount + 1; // Get current count of child elements
+        const currentIndex = songListContainer.childElementCount + 1;
 
-        // Get album information if available
         let album = songToAlbumMap[songTitle] || "Unknown Album";
 
-        // If the album matches the song title, display "Single" instead of the album name
         if (album.toLowerCase() === songTitle.toLowerCase()) {
             album = "Single";
         }
 
-        // Check if the song title ends with a dot
         if (songTitle.endsWith(".")) {
             songButton.textContent = `${album} | Song ${currentIndex}: ${songTitle} by ${getArtist(songTitle)}.`;
         } else {
             songButton.textContent = `${album} | Song ${currentIndex}: ${songTitle}, by ${getArtist(songTitle)}.`;
         }
 
-        songButton.dataset.path = songPath; // Store song path as a data attribute
+        songButton.dataset.path = songPath;
         songListContainer.appendChild(songButton);
 
         songButton.onclick = function () {
             openSelectedSongModal(songPath, songTitle);
         };
 
-        // Store song path and title for filtering
         listOfSongs.push({ path: songPath, title: songTitle });
 
         console.log(`Song added to list: ${songTitle} - ${songPath}`);
     }
 
-    // Start loading the first song
     loadNextSong();
 }
 
@@ -3148,6 +3162,76 @@ function drawAutoHitText() {
     ctx.fillText("Points are disabled for this playthrough.", 10, HEIGHT - 10);
 }
 
+// Get the modal and buttons
+const customSongModal = document.getElementById("customSongModal");
+const openCustomSongModal = document.getElementById("openCustomSongModal");
+const closeCustomSong = document.getElementById("closeCustomSongModal");
+const createButton = document.getElementById("createCustomSong");
+
+// Open the modal
+openCustomSongModal.onclick = function () {
+    customSongModal.style.display = "block";
+    deactivateKeybinds();
+};
+
+// Close the modal
+closeCustomSong.onclick = function () {
+    customSongModal.style.display = "none";
+    activateKeybinds();
+};
+
+// Close the modal when clicking outside of it
+window.onclick = function (event) {
+    if (event.target === customSongModal) {
+        customSongModal.style.display = "none";
+    }
+};
+
+// Handle file input and note generation
+createButton.onclick = function () {
+    const fileInput = document.getElementById("songFile");
+    const titleInput = document.getElementById("customSongTitle").value;
+    const noteSpeed = parseInt(document.getElementById("noteSpeed").value);
+    const bpm = parseInt(document.getElementById("bpm").value);
+
+    if (fileInput.files.length === 0) {
+        alert("Please upload an MP3 file.");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    if (file.type !== "audio/mp3") {
+        alert("Please upload a valid MP3 file.");
+        return;
+    }
+
+    const audio = new Audio(URL.createObjectURL(file));
+    audio.onloadedmetadata = function () {
+        const duration = audio.duration * 1000; // Convert duration to milliseconds
+
+        // Generate notes
+        const notes = generateRandomNotes(duration);
+
+        // Apply note speed and BPM
+        applyNoteSpeedAndBPM(noteSpeed, bpm);
+
+        // Start the game with the custom song
+        startCustomGame(file, titleInput, notes);
+    };
+};
+
+// Function to apply note speed and BPM
+function applyNoteSpeedAndBPM(noteSpeed, bpm) {
+    // Implement your logic to apply note speed and BPM
+    console.log("Note Speed:", noteSpeed, "BPM:", bpm);
+}
+
+// Function to start the game with the custom song
+function startCustomGame(file, title, notes) {
+    // Implement your logic to start the game with the given song and notes
+    console.log("Starting custom game with title:", title);
+    console.log("Notes:", notes);
+}
 
 // Global variable to track if notes are generated
 let notesGenerated = false;
