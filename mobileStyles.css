@@ -27,6 +27,18 @@ body {
     box-sizing: border-box; /* Include padding and border in element's total width and height */
 }
 
+#errorLogging {
+    background-color: red;
+    color: white;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+}
+
 #registerForm,
 #loginForm {
     margin: 20px 0;

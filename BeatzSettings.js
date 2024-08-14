@@ -6,6 +6,18 @@
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
+// ERROR LOGGING
+
+document.addEventListener("error", logError);
+
+function logError(errorMessage) {
+    const errorLoggingDiv = document.getElementById("errorLogging");
+
+    const err = errorMessage || "Unspecified error.";
+
+    errorLoggingDiv.textContent = `Error: ${err}`;
+}
+
 document.addEventListener("keydown", keyDownFunction);
 document.addEventListener("keyup", keyUpFunction);
 

@@ -30,6 +30,8 @@ const MIN_NOTE_GAP = 775;
 
 const MAX_HIT_SOUNDS = 5;
 
+const baseURL = "https://guayabr.github.io/Beatz/";
+
 const textY = 670;
 
 const noteXPositions = {
@@ -451,46 +453,30 @@ function preloadSongs() {
         if (currentIndex < totalSongs) {
             const songPath = songPaths[currentIndex];
             const songTitle = getSongTitle(songPath);
-            const songListContainer = document.getElementById("songList");
 
             fetch(songPath)
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error(`HTTP Error ${response.status}: ${response.statusText}`);
+                        throw new Error(`Failed to load song: ${response.status} ${response.statusText}`);
                     }
-                    return response.blob(); // Convert response to a blob
+                    return response.blob();
                 })
                 .then(blob => {
-                    const audio = new Audio(URL.createObjectURL(blob));
-                    audio.preload = "auto"; // Ensures the audio is preloaded
-                    audio.oncanplaythrough = function () {
-                        songList.push(songPath);
-                        console.log("Loaded song:", songTitle);
-                        songLoadCounter++;
-                        currentIndex++;
-                        counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
-                        addSongToList(songPath, songTitle);
-                        loadNextSong();
-                        checkAllSongsLoaded(totalSongs);
-                    };
+                    // Handle successful response
+                    songList.push(songPath);
+                    console.log("Loaded song:", songTitle);
+                    songLoadCounter++;
+                    currentIndex++;
+                    counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
+                    addSongToList(songPath, songTitle);
+                    loadNextSong();
+                    checkAllSongsLoaded(totalSongs);
                 })
                 .catch(error => {
-                    console.error(`Failed to load song: ${songTitle}, ${error}`);
-                    const errorElement = document.createElement("div");
-                    errorElement.textContent = `Error loading song: ${error.message}`;
-                    errorElement.style.color = "red";
-                    songListContainer.appendChild(errorElement);
-
-                    songLoadCounter++;
-                    counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded) Error: ${error.message}`;
-
-                    setTimeout(() => {
-                        if (counterText.textContent.includes(`Error: ${error.message}`)) {
-                            counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
-                        }
-                    }, 2500);
-
+                    logError(`Failed to load song ${songTitle}: ${error.message}`);
                     currentIndex++;
+                    songLoadCounter++;
+                    counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
                     loadNextSong();
                     checkAllSongsLoaded(totalSongs);
                 });
@@ -548,155 +534,154 @@ function preloadSongs() {
 
 const songVersions = {
     Finesse: [
-        { path: "Resources/Songs/Finesse.mp3", title: "Finesse" },
-        { path: "Resources/Songs/Finesse (feat. Cardi B).mp3", title: "Finesse (feat. Cardi B)" }, // Other version, don't recognize this one
+        { path: [`${baseURL}Resources/Songs/Finesse.mp3`], title: "Finesse" },
+        { path: [`${baseURL}Resources/Songs/Finesse (feat. Cardi B).mp3`], title: "Finesse (feat. Cardi B)" },
     ],
     "WTF 2": [
-        { path: "Resources/Songs/WTF 2.mp3", title: "WTF 2" },
-        { path: "Resources/Songs/WTF 2 - Slowed.mp3", title: "WTF 2 - Slowed" }, // Other version, don't recognize this one
-        { path: "Resources/Songs/WTF 2 - Sped Up.mp3", title: "WTF 2 - Sped Up" }, // Other version, don't recognize this one
+        { path: [`${baseURL}Resources/Songs/WTF 2.mp3`], title: "WTF 2" },
+        { path: [`${baseURL}Resources/Songs/WTF 2 - Slowed.mp3`], title: "WTF 2 - Slowed" },
+        { path: [`${baseURL}Resources/Songs/WTF 2 - Sped Up.mp3`], title: "WTF 2 - Sped Up" },
     ],
     "Slide da Treme Melódica v2": [
-        { path: "Resources/Songs/Slide da Treme Melódica v2.mp3", title: "Slide da Treme Melódica v2" },
-        { path: "Resources/Songs/Slide da Treme Melódica v2 - Slowed.mp3", title: "Slide da Treme Melódica v2 - Slowed" }, // Other version, don't recognize this one
-        { path: "Resources/Songs/Slide da Treme Melódica v2 - Ultra Slowed.mp3", title: "Slide da Treme Melódica v2 - Ultra Slowed" }, // Other version, don't recognize this one
-        { path: "Resources/Songs/Slide da Treme Melódica v2 - Sped Up.mp3", title: "Slide da Treme Melódica v2 - Sped Up" }, // Other version, don't recognize this one
+        { path: [`${baseURL}Resources/Songs/Slide da Treme Melódica v2.mp3`], title: "Slide da Treme Melódica v2" },
+        { path: [`${baseURL}Resources/Songs/Slide da Treme Melódica v2 - Slowed.mp3`], title: "Slide da Treme Melódica v2 - Slowed" },
+        { path: [`${baseURL}Resources/Songs/Slide da Treme Melódica v2 - Ultra Slowed.mp3`], title: "Slide da Treme Melódica v2 - Ultra Slowed" },
+        { path: [`${baseURL}Resources/Songs/Slide da Treme Melódica v2 - Sped Up.mp3`], title: "Slide da Treme Melódica v2 - Sped Up" },
     ],
     Goosebumps: [
-        { path: "Resources/Songs/Goosebumps.mp3", title: "Goosebumps" },
-        { path: "Resources/Songs/Goosebumps (feat. 21 Savage).mp3", title: "Goosebumps (feat. 21 Savage)" }, // Other version, don't recognize this one
+        { path: [`${baseURL}Resources/Songs/Goosebumps.mp3`], title: "Goosebumps" },
+        { path: [`${baseURL}Resources/Songs/Goosebumps (feat. 21 Savage).mp3`], title: "Goosebumps (feat. 21 Savage)" },
     ],
     "The Automotivo Infernal 1.0": [
-        { path: "Resources/Songs/The Automotivo Infernal 1.0.mp3", title: "The Automotivo Infernal 1.0" },
-        { path: "Resources/Songs/The Automotivo Infernal 1.0 - Red.mp3", title: "The Automotivo Infernal 1.0 - Red" }, // Other version, don't recognize this one
-        { path: "Resources/Songs/The Automotivo Infernal 1.0 - Slowed.mp3", title: "The Automotivo Infernal 1.0 - Slowed" }, // Other version, don't recognize this one
-        { path: "Resources/Songs/The Automotivo Infernal 1.0 - Sped Up.mp3", title: "The Automotivo Infernal 1.0 - Sped Up" }, // Other version, don't recognize this one
-        { path: "Resources/Songs/The Automotivo Infernal 1.0 - Red - Slowed.mp3", title: "The Automotivo Infernal 1.0 - Red - Slowed" }, // Other version, don't recognize this one
-        { path: "Resources/Songs/The Automotivo Infernal 1.0 - Red - Sped Up.mp3", title: "The Automotivo Infernal 1.0 - Red - Sped Up" }, // Other version, don't recognize this one
+        { path: [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0.mp3`], title: "The Automotivo Infernal 1.0" },
+        { path: [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Red.mp3`], title: "The Automotivo Infernal 1.0 - Red" },
+        { path: [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Slowed.mp3`], title: "The Automotivo Infernal 1.0 - Slowed" },
+        { path: [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Sped Up.mp3`], title: "The Automotivo Infernal 1.0 - Sped Up" },
+        { path: [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Red - Slowed.mp3`], title: "The Automotivo Infernal 1.0 - Red - Slowed" },
+        { path: [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Red - Sped Up.mp3`], title: "The Automotivo Infernal 1.0 - Red - Sped Up" },
     ],
     // Add other songs and their versions here
 };
 
-// Song configurations
 const songConfigs = {
-    "Resources/Songs/Epilogue.mp3": { BPM: 160, noteSpeed: 10 },
-    "Resources/Songs/Exosphere.mp3": { BPM: 118, noteSpeed: 10 },
-    "Resources/Songs/Die For You.mp3": { BPM: 95, noteSpeed: 8 },
-    "Resources/Songs/Father Stretch My Hands.mp3": { BPM: 113, noteSpeed: 10 },
-    "Resources/Songs/Betty (Get Money).mp3": { BPM: 102, noteSpeed: 8 },
-    "Resources/Songs/BURN IT DOWN.mp3": { BPM: 110, noteSpeed: 8 },
-    "Resources/Songs/Aleph 0.mp3": { BPM: 125, noteSpeed: 8 },
-    "Resources/Songs/Better Days.mp3": { BPM: 132, noteSpeed: 6 },
-    "Resources/Songs/KOCMOC.mp3": { BPM: 190, noteSpeed: 12 },
-    "Resources/Songs/kompa pasion.mp3": { BPM: 98, noteSpeed: 7 },
-    "Resources/Songs/Legends Never Die.mp3": { BPM: 140, noteSpeed: 10 },
-    "Resources/Songs/Star Walkin.mp3": { BPM: 142, noteSpeed: 9 },
-    "Resources/Songs/What I've Done.mp3": { BPM: 120, noteSpeed: 8 },
-    "Resources/Songs/Biggest NCS Songs.mp3": { BPM: 110, noteSpeed: 8 },
-    "Resources/Songs/Goosebumps.mp3": { BPM: 130, noteSpeed: 8 },
-    "Resources/Songs/Master Of Puppets (Live).mp3": { BPM: 210, noteSpeed: 12 },
-    "Resources/Songs/Numb.mp3": { BPM: 110, noteSpeed: 10 },
-    "Resources/Songs/sdp interlude.mp3": { BPM: 108, noteSpeed: 8 },
-    "Resources/Songs/Shiawase (VIP).mp3": { BPM: 150, noteSpeed: 12.2 },
-    "Resources/Songs/Sleepwalker X Icewhxre.mp3": { BPM: 120, noteSpeed: 10 },
-    "Resources/Songs/Stressed Out.mp3": { BPM: 170, noteSpeed: 8 },
-    "Resources/Songs/Ticking Away.mp3": { BPM: 95, noteSpeed: 10 },
-    "Resources/Songs/VISIONS.mp3": { BPM: 157, noteSpeed: 8 },
-    "Resources/Songs/24.mp3": { BPM: 98, noteSpeed: 8 },
-    "Resources/Songs/WTF 2.mp3": { BPM: 116, noteSpeed: 14 },
-    "Resources/Songs/MY EYES.mp3": { BPM: 132, noteSpeed: 12 },
-    "Resources/Songs/Can't Slow Me Down.mp3": { BPM: 122, noteSpeed: 11 },
-    "Resources/Songs/LUNCH.mp3": { BPM: 125, noteSpeed: 14.6 },
-    "Resources/Songs/BUTTERFLY EFFECT.mp3": { BPM: 141, noteSpeed: 10 },
-    "Resources/Songs/SWIM.mp3": { BPM: 120, noteSpeed: 10 },
-    "Resources/Songs/You Need Jesus.mp3": { BPM: 110, noteSpeed: 11 },
-    "Resources/Songs/Crazy.mp3": { BPM: 120, noteSpeed: 10 },
-    "Resources/Songs/Despacito.mp3": { BPM: 89, noteSpeed: 10 },
-    "Resources/Songs/FE!N.mp3": { BPM: 148, noteSpeed: 12 },
-    "Resources/Songs/Nautilus.mp3": { BPM: 124, noteSpeed: 9 },
-    "Resources/Songs/Levitating.mp3": { BPM: 103, noteSpeed: 10 },
-    "Resources/Songs/Somewhere I Belong.mp3": { BPM: 162, noteSpeed: 10 },
-    "Resources/Songs/From The Inside.mp3": { BPM: 95, noteSpeed: 10.5 },
-    "Resources/Songs/Faint.mp3": { BPM: 135, noteSpeed: 11 },
-    "Resources/Songs/Breaking The Habit.mp3": { BPM: 100, noteSpeed: 10 },
-    "Resources/Songs/I Wonder.mp3": { BPM: 127, noteSpeed: 10 },
-    "Resources/Songs/Godzilla.mp3": { BPM: 166, noteSpeed: 13 },
-    "Resources/Songs/HIGHEST IN THE ROOM.mp3": { BPM: 156, noteSpeed: 0 },
-    "Resources/Songs/Runaway.mp3": { BPM: 85, noteSpeed: 10 },
-    "Resources/Songs/Fire Again.mp3": { BPM: 100, noteSpeed: 12 },
-    "Resources/Songs/Vamp Anthem.mp3": { BPM: 164, noteSpeed: 12 },
-    "Resources/Songs/CARNIVAL.mp3": { BPM: 148, noteSpeed: 12 },
-    "Resources/Songs/HUMBLE..mp3": { BPM: 150, noteSpeed: 0 },
-    "Resources/Songs/Stop Breathing.mp3": { BPM: 155, noteSpeed: 12 },
-    "Resources/Songs/CHEGOU 3.mp3": { BPM: 130, noteSpeed: 13.2 },
-    "Resources/Songs/KRUSH ALERT.mp3": { BPM: 117, noteSpeed: 12.5 },
-    "Resources/Songs/CUTE DEPRESSED.mp3": { BPM: 228, noteSpeed: 16 },
-    "Resources/Songs/MOVE YO BODY.mp3": { BPM: 133, noteSpeed: 12 },
-    "Resources/Songs/SLAY!.mp3": { BPM: 130, noteSpeed: 13 },
-    "Resources/Songs/ROCK THAT SHIT!.mp3": { BPM: 125, noteSpeed: 12 },
-    "Resources/Songs/BAIXO.mp3": { BPM: 133, noteSpeed: 12 },
-    "Resources/Songs/LOOK DON'T TOUCH.mp3": { BPM: 125, noteSpeed: 13 },
-    "Resources/Songs/MOVE YO BODY.mp3": { BPM: 133, noteSpeed: 12 },
-    "Resources/Songs/YOU'RE TOO SLOW.mp3": { BPM: 162, noteSpeed: 14.5 },
-    "Resources/Songs/BAND4BAND.mp3": { BPM: 140, noteSpeed: 14 },
-    "Resources/Songs/Slide da Treme Melódica v2.mp3": { BPM: 210, noteSpeed: 18 },
-    "Resources/Songs/fantasmas.mp3": { BPM: 164, noteSpeed: 10 },
-    "Resources/Songs/BIKE.mp3": { BPM: 105, noteSpeed: 14 },
-    "Resources/Songs/ARCÀNGEL.mp3": { BPM: 124, noteSpeed: 14 },
-    "Resources/Songs/TELEKINESIS.mp3": { BPM: 166, noteSpeed: 12 },
-    "Resources/Songs/Bleed it out.mp3": { BPM: 140, noteSpeed: 0 },
-    "Resources/Songs/Grenade.mp3": { BPM: 110, noteSpeed: 0 },
-    "Resources/Songs/24K Magic.mp3": { BPM: 107, noteSpeed: 15 },
-    "Resources/Songs/Finesse.mp3": { BPM: 105, noteSpeed: 22 },
-    "Resources/Songs/Not Like Us.mp3": { BPM: 101, noteSpeed: 0 },
-    "Resources/Songs/Type Shit.mp3": { BPM: 145, noteSpeed: 14 },
-    "Resources/Songs/Like That.mp3": { BPM: 162, noteSpeed: 16 },
-    "Resources/Songs/That's What I Like.mp3": { BPM: 134, noteSpeed: 14 },
-    "Resources/Songs/Renaissance.mp3": { BPM: 199, noteSpeed: 0 },
-    "Resources/Songs/Habits.mp3": { BPM: 100, noteSpeed: 10 },
-    "Resources/Songs/Trouble.mp3": { BPM: 83, noteSpeed: 8 },
-    "Resources/Songs/Brand New Dance.mp3": { BPM: 120, noteSpeed: 14 },
-    "Resources/Songs/Evil.mp3": { BPM: 81, noteSpeed: 10 },
-    "Resources/Songs/Lucifer.mp3": { BPM: 79, noteSpeed: 8 },
-    "Resources/Songs/Antichrist.mp3": { BPM: 99, noteSpeed: 10 },
-    "Resources/Songs/Fuel.mp3": { BPM: 138, noteSpeed: 12 },
-    "Resources/Songs/Road Rage.mp3": { BPM: 95, noteSpeed: 10 },
-    "Resources/Songs/Houdini.mp3": { BPM: 141, noteSpeed: 12 },
-    "Resources/Songs/Guilty Conscience 2.mp3": { BPM: 164, noteSpeed: 14 },
-    "Resources/Songs/Head Honcho.mp3": { BPM: 173, noteSpeed: 16 },
-    "Resources/Songs/Temporary.mp3": { BPM: 78, noteSpeed: 8 },
-    "Resources/Songs/Bad One.mp3": { BPM: 146, noteSpeed: 14 },
-    "Resources/Songs/Tobey.mp3": { BPM: 139, noteSpeed: 14 },
-    "Resources/Songs/Somebody Save Me.mp3": { BPM: 181, noteSpeed: 16 },
-    "Resources/Songs/this is what space feels like.mp3": { BPM: 146, noteSpeed: 11 },
-    "Resources/Songs/SICKO MODE.mp3": { BPM: 155, noteSpeed: 0 },
-    "Resources/Songs/THE SCOTTS.mp3": { BPM: 130, noteSpeed: 0 },
-    "Resources/Songs/WAKE UP!.mp3": { BPM: 125, noteSpeed: 8 },
-    "Resources/Songs/Flashing Lights.mp3": { BPM: 90, noteSpeed: 10.5 },
-    "Resources/Songs/RUN!.mp3": { BPM: 136, noteSpeed: 10 },
-    "Resources/Songs/THE DINER.mp3": { BPM: 125, noteSpeed: 14 },
-    "Resources/Songs/Babooshka.mp3": { BPM: 103, noteSpeed: 10 },
-    "Resources/Songs/Your Girl.mp3": { BPM: 120, noteSpeed: 8 },
-    "Resources/Songs/Brand New City.mp3": { BPM: 148, noteSpeed: 12 },
-    "Resources/Songs/Idols.mp3": { BPM: 130, noteSpeed: 2.65 },
-    "Resources/Songs/aruarian dance.mp3": { BPM: 96, noteSpeed: 6 },
-    "Resources/Songs/VVV.mp3": { BPM: 131, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/Epilogue.mp3`]: { BPM: 160, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/Exosphere.mp3`]: { BPM: 118, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/Die For You.mp3`]: { BPM: 95, noteSpeed: 8 },
+    [`${baseURL}Resources/Songs/Father Stretch My Hands.mp3`]: { BPM: 113, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/Betty (Get Money).mp3`]: { BPM: 102, noteSpeed: 8 },
+    [`${baseURL}Resources/Songs/BURN IT DOWN.mp3`]: { BPM: 110, noteSpeed: 8 },
+    [`${baseURL}Resources/Songs/Aleph 0.mp3`]: { BPM: 125, noteSpeed: 8 },
+    [`${baseURL}Resources/Songs/Better Days.mp3`]: { BPM: 132, noteSpeed: 6 },
+    [`${baseURL}Resources/Songs/KOCMOC.mp3`]: { BPM: 190, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/kompa pasion.mp3`]: { BPM: 98, noteSpeed: 7 },
+    [`${baseURL}Resources/Songs/Legends Never Die.mp3`]: { BPM: 140, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/Star Walkin.mp3`]: { BPM: 142, noteSpeed: 9 },
+    [`${baseURL}Resources/Songs/What I've Done.mp3`]: { BPM: 120, noteSpeed: 8 },
+    [`${baseURL}Resources/Songs/Biggest NCS Songs.mp3`]: { BPM: 110, noteSpeed: 8 },
+    [`${baseURL}Resources/Songs/Goosebumps.mp3`]: { BPM: 130, noteSpeed: 8 },
+    [`${baseURL}Resources/Songs/Master Of Puppets (Live).mp3`]: { BPM: 210, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/Numb.mp3`]: { BPM: 110, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/sdp interlude.mp3`]: { BPM: 108, noteSpeed: 8 },
+    [`${baseURL}Resources/Songs/Shiawase (VIP).mp3`]: { BPM: 150, noteSpeed: 12.2 },
+    [`${baseURL}Resources/Songs/Sleepwalker X Icewhxre.mp3`]: { BPM: 120, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/Stressed Out.mp3`]: { BPM: 170, noteSpeed: 8 },
+    [`${baseURL}Resources/Songs/Ticking Away.mp3`]: { BPM: 95, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/VISIONS.mp3`]: { BPM: 157, noteSpeed: 8 },
+    [`${baseURL}Resources/Songs/24.mp3`]: { BPM: 98, noteSpeed: 8 },
+    [`${baseURL}Resources/Songs/WTF 2.mp3`]: { BPM: 116, noteSpeed: 14 },
+    [`${baseURL}Resources/Songs/MY EYES.mp3`]: { BPM: 132, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/Can't Slow Me Down.mp3`]: { BPM: 122, noteSpeed: 11 },
+    [`${baseURL}Resources/Songs/LUNCH.mp3`]: { BPM: 125, noteSpeed: 14.6 },
+    [`${baseURL}Resources/Songs/BUTTERFLY EFFECT.mp3`]: { BPM: 141, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/SWIM.mp3`]: { BPM: 120, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/You Need Jesus.mp3`]: { BPM: 110, noteSpeed: 11 },
+    [`${baseURL}Resources/Songs/Crazy.mp3`]: { BPM: 120, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/Despacito.mp3`]: { BPM: 89, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/FE!N.mp3`]: { BPM: 148, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/Nautilus.mp3`]: { BPM: 124, noteSpeed: 9 },
+    [`${baseURL}Resources/Songs/Levitating.mp3`]: { BPM: 103, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/Somewhere I Belong.mp3`]: { BPM: 162, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/From The Inside.mp3`]: { BPM: 95, noteSpeed: 10.5 },
+    [`${baseURL}Resources/Songs/Faint.mp3`]: { BPM: 135, noteSpeed: 11 },
+    [`${baseURL}Resources/Songs/Breaking The Habit.mp3`]: { BPM: 100, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/I Wonder.mp3`]: { BPM: 127, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/Godzilla.mp3`]: { BPM: 166, noteSpeed: 13 },
+    [`${baseURL}Resources/Songs/HIGHEST IN THE ROOM.mp3`]: { BPM: 156, noteSpeed: 0 },
+    [`${baseURL}Resources/Songs/Runaway.mp3`]: { BPM: 85, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/Fire Again.mp3`]: { BPM: 100, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/Vamp Anthem.mp3`]: { BPM: 164, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/CARNIVAL.mp3`]: { BPM: 148, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/HUMBLE..mp3`]: { BPM: 150, noteSpeed: 0 },
+    [`${baseURL}Resources/Songs/Stop Breathing.mp3`]: { BPM: 155, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/CHEGOU 3.mp3`]: { BPM: 130, noteSpeed: 13.2 },
+    [`${baseURL}Resources/Songs/KRUSH ALERT.mp3`]: { BPM: 117, noteSpeed: 12.5 },
+    [`${baseURL}Resources/Songs/CUTE DEPRESSED.mp3`]: { BPM: 228, noteSpeed: 16 },
+    [`${baseURL}Resources/Songs/MOVE YO BODY.mp3`]: { BPM: 133, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/SLAY!.mp3`]: { BPM: 130, noteSpeed: 13 },
+    [`${baseURL}Resources/Songs/ROCK THAT SHIT!.mp3`]: { BPM: 125, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/BAIXO.mp3`]: { BPM: 133, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/LOOK DON'T TOUCH.mp3`]: { BPM: 125, noteSpeed: 13 },
+    [`${baseURL}Resources/Songs/MOVE YO BODY.mp3`]: { BPM: 133, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/YOU'RE TOO SLOW.mp3`]: { BPM: 162, noteSpeed: 14.5 },
+    [`${baseURL}Resources/Songs/BAND4BAND.mp3`]: { BPM: 140, noteSpeed: 14 },
+    [`${baseURL}Resources/Songs/Slide da Treme Melódica v2.mp3`]: { BPM: 210, noteSpeed: 18 },
+    [`${baseURL}Resources/Songs/fantasmas.mp3`]: { BPM: 164, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/BIKE.mp3`]: { BPM: 105, noteSpeed: 14 },
+    [`${baseURL}Resources/Songs/ARCÀNGEL.mp3`]: { BPM: 124, noteSpeed: 14 },
+    [`${baseURL}Resources/Songs/TELEKINESIS.mp3`]: { BPM: 166, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/Bleed it out.mp3`]: { BPM: 140, noteSpeed: 0 },
+    [`${baseURL}Resources/Songs/Grenade.mp3`]: { BPM: 110, noteSpeed: 0 },
+    [`${baseURL}Resources/Songs/24K Magic.mp3`]: { BPM: 107, noteSpeed: 15 },
+    [`${baseURL}Resources/Songs/Finesse.mp3`]: { BPM: 105, noteSpeed: 22 },
+    [`${baseURL}Resources/Songs/Not Like Us.mp3`]: { BPM: 101, noteSpeed: 0 },
+    [`${baseURL}Resources/Songs/Type Shit.mp3`]: { BPM: 145, noteSpeed: 14 },
+    [`${baseURL}Resources/Songs/Like That.mp3`]: { BPM: 162, noteSpeed: 16 },
+    [`${baseURL}Resources/Songs/That's What I Like.mp3`]: { BPM: 134, noteSpeed: 14 },
+    [`${baseURL}Resources/Songs/Renaissance.mp3`]: { BPM: 199, noteSpeed: 0 },
+    [`${baseURL}Resources/Songs/Habits.mp3`]: { BPM: 100, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/Trouble.mp3`]: { BPM: 83, noteSpeed: 8 },
+    [`${baseURL}Resources/Songs/Brand New Dance.mp3`]: { BPM: 120, noteSpeed: 14 },
+    [`${baseURL}Resources/Songs/Evil.mp3`]: { BPM: 81, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/Lucifer.mp3`]: { BPM: 79, noteSpeed: 8 },
+    [`${baseURL}Resources/Songs/Antichrist.mp3`]: { BPM: 99, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/Fuel.mp3`]: { BPM: 138, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/Road Rage.mp3`]: { BPM: 95, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/Houdini.mp3`]: { BPM: 141, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/Guilty Conscience 2.mp3`]: { BPM: 164, noteSpeed: 14 },
+    [`${baseURL}Resources/Songs/Head Honcho.mp3`]: { BPM: 173, noteSpeed: 16 },
+    [`${baseURL}Resources/Songs/Temporary.mp3`]: { BPM: 78, noteSpeed: 8 },
+    [`${baseURL}Resources/Songs/Bad One.mp3`]: { BPM: 146, noteSpeed: 14 },
+    [`${baseURL}Resources/Songs/Tobey.mp3`]: { BPM: 139, noteSpeed: 14 },
+    [`${baseURL}Resources/Songs/Somebody Save Me.mp3`]: { BPM: 181, noteSpeed: 16 },
+    [`${baseURL}Resources/Songs/this is what space feels like.mp3`]: { BPM: 146, noteSpeed: 11 },
+    [`${baseURL}Resources/Songs/SICKO MODE.mp3`]: { BPM: 155, noteSpeed: 0 },
+    [`${baseURL}Resources/Songs/THE SCOTTS.mp3`]: { BPM: 130, noteSpeed: 0 },
+    [`${baseURL}Resources/Songs/WAKE UP!.mp3`]: { BPM: 125, noteSpeed: 8 },
+    [`${baseURL}Resources/Songs/Flashing Lights.mp3`]: { BPM: 90, noteSpeed: 10.5 },
+    [`${baseURL}Resources/Songs/RUN!.mp3`]: { BPM: 136, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/THE DINER.mp3`]: { BPM: 125, noteSpeed: 14 },
+    [`${baseURL}Resources/Songs/Babooshka.mp3`]: { BPM: 103, noteSpeed: 10 },
+    [`${baseURL}Resources/Songs/Your Girl.mp3`]: { BPM: 120, noteSpeed: 8 },
+    [`${baseURL}Resources/Songs/Brand New City.mp3`]: { BPM: 148, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/Idols.mp3`]: { BPM: 130, noteSpeed: 2.65 },
+    [`${baseURL}Resources/Songs/aruarian dance.mp3`]: { BPM: 96, noteSpeed: 6 },
+    [`${baseURL}Resources/Songs/VVV.mp3`]: { BPM: 131, noteSpeed: 10 },
 
     // Song Versions
 
-    "Resources/Songs/Finesse (feat. Cardi B).mp3": { BPM: 105, noteSpeed: 22 },
-    "Resources/Songs/WTF 2 - Slowed.mp3": { BPM: 148, noteSpeed: 12 },
-    "Resources/Songs/WTF 2 - Sped Up.mp3": { BPM: 130, noteSpeed: 16 },
-    "Resources/Songs/Slide da Treme Melódica v2 - Slowed.mp3": { BPM: 125, noteSpeed: 16 },
-    "Resources/Songs/Slide da Treme Melódica v2 - Ultra Slowed.mp3": { BPM: 159, noteSpeed: 16 },
-    "Resources/Songs/Slide da Treme Melódica v2 - Sped Up.mp3": { BPM: 157, noteSpeed: 18 },
-    "Resources/Songs/Goosebumps (feat. 21 Savage).mp3": { BPM: 130, noteSpeed: 8 },
-    "Resources/Songs/The Automotivo Infernal 1.0.mp3": { BPM: 140, noteSpeed: 12 },
-    "Resources/Songs/The Automotivo Infernal 1.0 - Red.mp3": { BPM: 140, noteSpeed: 12 },
-    "Resources/Songs/The Automotivo Infernal 1.0 - Slowed.mp3": { BPM: 117, noteSpeed: 12 },
-    "Resources/Songs/The Automotivo Infernal 1.0 - Sped Up.mp3": { BPM: 140, noteSpeed: 12 },
-    "Resources/Songs/The Automotivo Infernal 1.0 - Red - Slowed.mp3": { BPM: 140, noteSpeed: 12 },
-    "Resources/Songs/The Automotivo Infernal 1.0 - Red - Sped Up.mp3": { BPM: 140, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/Finesse (feat. Cardi B).mp3`]: { BPM: 105, noteSpeed: 22 },
+    [`${baseURL}Resources/Songs/WTF 2 - Slowed.mp3`]: { BPM: 148, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/WTF 2 - Sped Up.mp3`]: { BPM: 130, noteSpeed: 16 },
+    [`${baseURL}Resources/Songs/Slide da Treme Melódica v2 - Slowed.mp3`]: { BPM: 125, noteSpeed: 16 },
+    [`${baseURL}Resources/Songs/Slide da Treme Melódica v2 - Ultra Slowed.mp3`]: { BPM: 159, noteSpeed: 16 },
+    [`${baseURL}Resources/Songs/Slide da Treme Melódica v2 - Sped Up.mp3`]: { BPM: 157, noteSpeed: 18 },
+    [`${baseURL}Resources/Songs/Goosebumps (feat. 21 Savage).mp3`]: { BPM: 130, noteSpeed: 8 },
+    [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0.mp3`]: { BPM: 140, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Red.mp3`]: { BPM: 140, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Slowed.mp3`]: { BPM: 117, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Sped Up.mp3`]: { BPM: 140, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Red - Slowed.mp3`]: { BPM: 140, noteSpeed: 12 },
+    [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Red - Sped Up.mp3`]: { BPM: 140, noteSpeed: 12 },
 };
 
 let savedNotes;
