@@ -750,6 +750,11 @@ function loadSettings() {
         }, 1000);
     }
 
+    if (userDevice === "iOS") {
+        var checkbox = document.getElementById("fetchSongsSite");
+        checkbox.disabled = true;
+    }
+
     document.getElementById("logKeysCheck").checked = miscellaneous.logKeys;
     logKeys = miscellaneous.logKeys;
 
