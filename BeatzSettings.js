@@ -35,6 +35,26 @@ function logError(message) {
 
     if (errorLoggingDiv) {
         errorLoggingDiv.textContent = `Error: ${err}`;
+        errorLoggingDiv.style.backgroundColor = "red";
+        errorLoggingDiv.style.display = "block";
+
+        setTimeout(() => {
+            errorLoggingDiv.style.display = "none";
+        }, 7500);
+    }
+}
+
+// Function to log errors to the errorLogging div and store in errorArray
+function logWarn(message) {
+    const errorLoggingDiv = document.getElementById("errorLogging");
+    const warn = message || "Unspecified warning.";
+
+    // Store the error in the errorArray
+    errorArray.push(warn);
+
+    if (errorLoggingDiv) {
+        errorLoggingDiv.textContent = `Warning: ${warn}`;
+        errorLoggingDiv.style.backgroundColor = "rgb(255, 153, 0)";
         errorLoggingDiv.style.display = "block";
 
         setTimeout(() => {
@@ -962,6 +982,7 @@ function saveSettings() {
     const blurValue = parseInt(blurInput, 10);
     if (isNaN(blurValue) || blurValue < 0 || blurValue >= 1000) {
         alert("Please enter a number between 0 and 1000 for the blur value.");
+        logWarn(`Input: ${blurInput}, Value: ${blurValue}`);
         blurInput = 0;
         return;
     }
