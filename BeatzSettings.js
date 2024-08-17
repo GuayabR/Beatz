@@ -958,10 +958,11 @@ function saveSettings() {
         return;
     }
 
-    const blurInput = newMiscellaneous.customBackgroundBlur;
+    var blurInput = newMiscellaneous.customBackgroundBlur;
     const blurValue = parseInt(blurInput, 10);
     if (isNaN(blurValue) || blurValue < 0 || blurValue >= 1000) {
         alert("Please enter a number between 0 and 1000 for the blur value.");
+        blurInput = 0;
         return;
     }
 
