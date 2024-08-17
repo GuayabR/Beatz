@@ -48,16 +48,16 @@ let tutorialStage = 0;
 let isNewPlayer = !localStorage.getItem("newPlayer");
 
 // Retrieve the keybinds object from localStorage and parse it
-var savedSettings = JSON.parse(localStorage.getItem("keybinds")) || {};
+var Settings = JSON.parse(localStorage.getItem("keybinds")) || {};
 
-var savedMiscellaneous = JSON.parse(localStorage.getItem("miscellaneous")) || {};
+var Miscellaneous = JSON.parse(localStorage.getItem("miscellaneous")) || {};
 
 const keybindsText = {
     initial: {
-        left: savedSettings.left ? savedSettings.left[0] : "A",
-        up: savedSettings.up ? savedSettings.up[0] : "W",
-        down: savedSettings.down ? savedSettings.down[0] : "S",
-        right: savedSettings.right ? savedSettings.right[0] : "D"
+        left: Settings.left ? Settings.left[0] : "A",
+        up: Settings.up ? Settings.up[0] : "W",
+        down: Settings.down ? Settings.down[0] : "S",
+        right: Settings.right ? Settings.right[0] : "D"
     },
     customizable: "Keybinds are customizable in the gear icon just below the canvas.",
     thankYou: "Thank you for playing Beatz! Enjoy!",
@@ -82,7 +82,7 @@ const notePressImages = {
     Right: noteRightPressIMG
 };
 
-const useFetch = savedMiscellaneous.fetchSongs;
+const useFetch = Miscellaneous.fetchSongs;
 
 const headerElement = document.querySelector("h1");
 

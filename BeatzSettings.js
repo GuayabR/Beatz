@@ -965,6 +965,11 @@ function saveSettings() {
         return;
     }
 
+    if (isNaN(blurValue)) {
+        alert("Please enter a valid number for the blur value.");
+        return;
+    }
+
     switch (newMiscellaneous.backgroundOption) {
         case "defaultBG":
             BGbright.src = "Resources/Background2.png";
