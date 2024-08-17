@@ -499,4 +499,10 @@ Fixes or tweaks:
 - Added a cooldown of 100 milliseconds when using the song controllers.
 - Added Fire Again (VALORANT) and aruarian dance (nujabes)
 ### Song files now fetch from "guayabr.github.io" since, on iOS local files trying to be fetched online is not permitted.
-- Added error logs to appear on screen for 2 seconds until they dissappear. This is for debugging purposes on iOS.
+- Added error logs to appear on screen for 7.5 seconds until they dissappear. This is for debugging purposes on iOS.
+//
+
+4.2.4.6 (MOBILE 4.2! 17/08/2024)
+- Added a tutorial stage for mobile users.
+- iOS Users will automatically fetch songs from guayabr.github.io, this can't be switched on iOS because of it's limitations.
+//

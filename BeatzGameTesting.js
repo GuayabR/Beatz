@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: MOBILE 4.1.1.3 test (release.version.subversion.bugfix)
+ * Version: MOBILE 4.2.4.6 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -10,8 +10,8 @@
 
 const userDevice = detectDeviceType();
 
-const VERSION = "MOBILE 4.1 (Codename.Release.Version.Subversion.Bugfix)";
-var PUBLICVERSION = `4.1! (${userDevice} Port)`;
+const VERSION = "MOBILE 4.2.4.6 (Codename.Release.Version.Subversion.Bugfix)";
+var PUBLICVERSION = `4.2! (${userDevice} Port)`;
 console.log("Version: " + VERSION);
 
 const canvas = document.getElementById("myCanvas");
@@ -32,8 +32,6 @@ const MAX_HIT_SOUNDS = 5;
 
 const baseURL = "https://guayabr.github.io/Beatz/";
 
-const textY = 670;
-
 const noteXPositions = {
     left: WIDTH / 2 - 110,
     up: WIDTH / 2 - 51,
@@ -52,7 +50,7 @@ var Settings = JSON.parse(localStorage.getItem("keybinds")) || {};
 
 var Miscellaneous = JSON.parse(localStorage.getItem("miscellaneous")) || {};
 
-const keybindsText = {
+const tutorialDesktop = {
     initial: {
         left: Settings.left ? Settings.left[0] : "A",
         up: Settings.up ? Settings.up[0] : "W",
@@ -62,9 +60,27 @@ const keybindsText = {
     customizable: "Keybinds are customizable in the gear icon just below the canvas.",
     thankYou: "Thank you for playing Beatz! Enjoy!",
     followMe: {
-        announce: "Follow me on my socials!",
+        announce: "Support me on my socials!",
         twitter: "Twitter: @GuayabR",
         yt: "Youtube: @GuayabR"
+    }
+};
+
+const tutorialMobile = {
+    initial: {
+        tap: "Tap the:",
+        left: "Red",
+        up: "Green",
+        down: "Yellow",
+        right: "Blue",
+        ofScreen: "side of the screen to hit the notes!"
+    },
+    customizable: "Cosmetic settings are customizable in the gear icon just below the canvas.",
+    thankYou: "Thank you for playing Beatz! Mobile. Enjoy!",
+    followMe: {
+        announce: "",
+        twitter: "",
+        yt: ""
     }
 };
 
@@ -86,15 +102,33 @@ const useFetch = Miscellaneous.fetchSongs;
 
 const headerElement = document.querySelector("h1");
 
+detectAndHandleDevice();
+
 console.log("Constants loaded.");
 
 // VARIABLES
 
 var timer;
 
+var gameStarted = false;
+
 let isMobile = false;
 
-var gameStarted = false;
+if (userDevice === "Android" || userDevice === "iOS" || userDevice === "Mobile") {
+    isMobile = true;
+} else {
+    isMobile = false;
+}
+
+var textY;
+
+if (isMobile && !isNewPlayer) {
+    textY = 670;
+} else if (!isMobile && isNewPlayer) {
+    textY = 670;
+} else {
+    textY = HEIGHT / 2;
+}
 
 let songPaths;
 
@@ -2097,7 +2131,6 @@ document.addEventListener("DOMContentLoaded", function () {
     updateKeybindsFields();
     toggleNoteStyleButtonDisplay();
     toggleTimeoutInput();
-    detectAndHandleDevice();
 });
 
 // Function to simulate key press
@@ -2382,7 +2415,7 @@ function startGame(index, versionPath, setIndex) {
 
         // Update the page title
         indexToDisplay = setIndex >= 0 ? setIndex : currentSongIndex;
-        document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 4.1!`;
+        document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 4.2!`;
 
         console.log(`indexToDisplay converted in startGame: ${indexToDisplay}`);
     };
@@ -2744,40 +2777,60 @@ function updateCanvas(timestamp, setIndex) {
     ctx.drawImage(noteDownIMG, noteXPositions.down - noteWidth / 2 - 15, 550, noteWidth, noteHeight);
     ctx.drawImage(noteRightIMG, noteXPositions.right - noteWidth / 2, 550, noteWidth, noteHeight);
 
+    let fontTuto = isMobile ? "26px Arial" : "22px Arial";
+
     if (isNewPlayer) {
         switch (tutorialStage) {
             case 0:
                 ctx.textAlign = "center";
-                ctx.font = "22px Arial";
-                ctx.fillText(keybindsText.initial.left, noteXPositions.left, 540);
-                ctx.fillText(keybindsText.initial.up, noteXPositions.up + 16, 540);
-                ctx.fillText(keybindsText.initial.down, noteXPositions.down - 16, 540);
-                ctx.fillText(keybindsText.initial.right, noteXPositions.right, 540);
+                ctx.font = fontTuto;
+                if (isMobile) {
+                    ctx.fillText(tutorialMobile.initial.tap, WIDTH / 2, 490);
+
+                    ctx.font = "22px Arial";
+                    ctx.fillText(tutorialMobile.initial.left, noteXPositions.left, 540);
+                    ctx.fillText(tutorialMobile.initial.up, noteXPositions.up + 16, 540);
+                    ctx.fillText(tutorialMobile.initial.down, noteXPositions.down - 16, 540);
+                    ctx.fillText(tutorialMobile.initial.right, noteXPositions.right, 540);
+
+                    ctx.font = fontTuto;
+                    ctx.fillText(tutorialMobile.initial.ofScreen, WIDTH / 2, 650);
+                } else {
+                    ctx.fillText(tutorialDesktop.initial.left, noteXPositions.left, 540);
+                    ctx.fillText(tutorialDesktop.initial.up, noteXPositions.up + 16, 540);
+                    ctx.fillText(tutorialDesktop.initial.down, noteXPositions.down - 16, 540);
+                    ctx.fillText(tutorialDesktop.initial.right, noteXPositions.right, 540);
+                }
                 break;
             case 1:
                 ctx.textAlign = "center";
-                ctx.font = "22px Arial";
-                ctx.fillText(keybindsText.customizable, WIDTH / 2, 510);
+                ctx.font = fontTuto;
+                ctx.fillText(tutorialDesktop.customizable, WIDTH / 2, 510);
                 break;
             case 2:
+                // If mobile, skip to case 5
+                if (isMobile) {
+                    tutorialStage = 5;
+                    break;
+                }
                 ctx.textAlign = "center";
-                ctx.font = "22px Arial";
-                ctx.fillText(keybindsText.followMe.announce, WIDTH / 2, 510);
+                ctx.font = fontTuto;
+                ctx.fillText(tutorialDesktop.followMe.announce, WIDTH / 2, 510);
                 break;
             case 3:
                 ctx.textAlign = "center";
-                ctx.font = "22px Arial";
-                ctx.fillText(keybindsText.followMe.twitter, WIDTH / 2, 510);
+                ctx.font = fontTuto;
+                ctx.fillText(tutorialDesktop.followMe.twitter, WIDTH / 2, 510);
                 break;
             case 4:
                 ctx.textAlign = "center";
-                ctx.font = "22px Arial";
-                ctx.fillText(keybindsText.followMe.yt, WIDTH / 2, 510);
+                ctx.font = fontTuto;
+                ctx.fillText(tutorialDesktop.followMe.yt, WIDTH / 2, 510);
                 break;
             case 5:
                 ctx.textAlign = "center";
-                ctx.font = "22px Arial";
-                ctx.fillText(keybindsText.thankYou, WIDTH / 2, 510);
+                ctx.font = fontTuto;
+                ctx.fillText(tutorialDesktop.thankYou, WIDTH / 2, 510);
                 break;
             case 6:
                 break;
@@ -3196,9 +3249,10 @@ function checkHit(noteType) {
                 maxStreak = currentStreak;
             }
 
-            notesHit++; // Used for tutorial stage, after 4 notes hit, cycle the stage
+            notesHit++;
             if (notesHit === 4) {
                 tutorialStage = 1;
+                textY = 670;
                 cycleTutorialStages();
             }
 
@@ -3226,7 +3280,7 @@ function cycleTutorialStages() {
         setTimeout(() => {
             tutorialStage = 0;
             isNewPlayer = false; // End the tutorial after the final message
-            localStorage.setItem("newPlayer", "true");
+            localStorage.setItem("newPlayer", "false");
         }, 5000);
     }
 }

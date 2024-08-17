@@ -114,7 +114,6 @@ function detectAndHandleDevice() {
     const pauseMargin2 = document.getElementById("pauseMargin2");
 
     if (userDevice === "Mobile" || userDevice === "iOS" || userDevice === "Android") {
-        isMobile = true;
         console.log("Mobile mode is enabled from previous session.");
         handleChange();
         setupMobileEventListeners();
@@ -155,7 +154,6 @@ function detectAndHandleDevice() {
         });
     } else if (userDevice === "Chromebook") {
         console.warn("Chromebook detected. Game might have reduced framerates.");
-        isMobile = false;
         document.getElementById("orientationMessage").style.display = "none";
         if (pauseButton) {
             pauseButton.remove();
@@ -164,7 +162,6 @@ function detectAndHandleDevice() {
         }
     } else if (userDevice === "Desktop") {
         console.log("Desktop device is supported. Enjoy Beatz!");
-        isMobile = false;
         document.getElementById("orientationMessage").style.display = "none";
         if (pauseButton) {
             pauseButton.remove();
@@ -482,6 +479,10 @@ function applyPreset(presetName) {
     document.getElementById("logKeysCheck").checked = miscellaneous.logKeys;
     document.getElementById("defaultHitSound").value = miscellaneous.hitSound;
     document.getElementById("saveRecentSongs").checked = miscellaneous.saveSongUsingControllers;
+
+    if (userDevice !== "iOS") {
+        document.getElementById("fetchSongsSite").checked = miscellaneous.fetchSongs;
+    }
 
     if (miscellaneous.backgroundForCanvas === "customBG" && miscellaneous.customBackground) {
         document.getElementById("customBGLabel").style.display = "inline";

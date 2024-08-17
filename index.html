@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Beatz 4.1!</title>
+        <title>Beatz 4.2!</title>
         <link rel="icon" type="image/x-icon" href="Resources/favicon.png" />
         <link rel="stylesheet" id="stylesheet" type="text/css" href="styles.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -54,22 +54,22 @@
                     <label for="up">Note Left:</label>
                     <input type="text" id="left" name="left" />
                     <label for="left">Note Up:</label>
-                    <input type="text" id="up" name="up" /><br /><br />
+                    <input type="text" id="up" name="up" /><br class="marginKB" /><br class="marginKB" />
 
                     <label for="down">Note Down:</label>
                     <input type="text" id="down" name="down" />
 
                     <label for="right">Note Right:</label>
-                    <input type="text" id="right" name="right" /><br /><br />
+                    <input type="text" id="right" name="right" /><br class="marginKB" /><br class="marginKB" />
 
                     <label for="pause">Pause Game:</label>
                     <input type="text" id="pause" name="pause" />
 
                     <label for="autoHit">Toggle Auto Hit:</label>
-                    <input type="text" id="autoHit" name="autoHit" /><br /><br />
+                    <input type="text" id="autoHit" name="autoHit" /><br class="marginKB" /><br class="marginKB" />
 
                     <label for="fullscreenInput">Fullscreen:</label>
-                    <input type="text" id="fullscreenInput" name="fullscreen" /><br /><br />
+                    <input type="text" id="fullscreenInput" name="fullscreen" /><br class="marginKB" /><br class="marginKB" />
 
                     <label for="previousInput">Previous Song:</label>
                     <input type="text" id="previousInput" name="previous" />
@@ -77,14 +77,14 @@
                     <label for="restartInput">Restart Song:</label>
                     <input type="text" id="restartInput" name="restart" />
 
-                    <label for="nextButton">Next Song:</label>
-                    <input type="text" id="nextInput" name="next" /><br /><br />
+                    <label for="nextInput">Next Song:</label>
+                    <input type="text" id="nextInput" name="next" /><br class="marginKB" /><br class="marginKB" />
 
                     <label for="randomize">Randomize Song:</label>
-                    <input type="text" id="randomize" name="randomize" /><br /><br />
+                    <input type="text" id="randomize" name="randomize" /><br class="marginKB" /><br class="marginKB" />
 
                     <label for="toggleNoteStyleInput">Toggle Note Style:</label>
-                    <input type="text" id="toggleNoteStyleInput" name="toggleNoteStyle" /><br /><br />
+                    <input type="text" id="toggleNoteStyleInput" name="toggleNoteStyle" /><br class="marginKB" /><br class="marginKB" />
 
                     <label for="defaultNoteStyle">Default Note Style:</label>
                     <select id="defaultNoteStyle" name="defaultNoteStyle">
@@ -114,7 +114,10 @@
                     <input type="text" id="songTimeoutAfterSongEndNum" placeholder="Value in milliseconds" name="songTimeoutSongEndNum" /><br />
 
                     <label for="circularImage">Circular Cover Images?</label>
-                    <input type="checkbox" id="circularImage" name="circularImage" onchange="toggleVinylRotation()" />
+                    <input type="checkbox" id="circularImage" name="circularImage" onchange="toggleVinylRotation()" /><br />
+
+                    <label for="fetchSongsSite">Fetch songs from guayabr.github.io? (Mainly for iOS)</label>
+                    <input type="checkbox" id="fetchSongsSite" name="fetchSongsSite" onchange="toggleFetchingSongs()" />
 
                     <div id="vinylRotationContainer" style="display: none">
                         <label for="vinylRotation">Enable Cover Image Rotation:</label>
@@ -159,6 +162,9 @@
                 <label for="presetVERIDIAN">Preset 2:</label>
                 <button id="presetVERIDIAN" class="presetBTN">VERIDIAN</button><br /><br />
 
+                <label for="presetOG">Preset 3:</label>
+                <button id="presetOG" class="presetBTN">OG</button><br /><br />
+
                 <span id="presetDescription" style="color: white; display: none"></span>
 
                 <h4><span id="presetSaved" style="color: white; display: none">Preset has been saved!</span></h4>
@@ -182,7 +188,7 @@
             <button id="contactbtn" onclick="email()"><i class="fa-solid fa-envelope"></i> Contact</button>
         </div>
 
-        <div id="publicToTestToggle"><button id="publicbtn" onclick="toVersion()">Open testing game</button><br /><br /></div>
+        <div id="publicToTestToggle"><button id="publicbtn" onclick="toVersion()">Open public game</button><br /><br /></div>
 
         <h2>
             Background image from:
@@ -203,10 +209,12 @@
                     <h1 class="modal-title">Song List</h1>
                 </div>
                 <label for="songSearchInput">Search songs by keyword, index, album, or artist.</label><br /><br />
+                <label for="songSearchInput">Press "Enter" to play first result.</label><br /><br />
                 <input type="text" id="songSearchInput" placeholder="Search..." oninput="filterSongs()" /><br /><br />
-                <label id="resultsForSearch" style="display: none">Results found</label>
+                <div id="resultsForSearch" style="display: none">Results found</div>
                 <button type="button" id="mostRecent" class="most-recent-button" style="display: none">Play most recent song</button>
-                <label id="noResultsTXT" style="display: none">No results found for your search.</label><br /><br />
+                <div id="noResultsTXT" style="display: none">No results found for your search.</div>
+                <br /><br />
                 <div class="modal-body" id="songList">
                     <!-- Song buttons will be dynamically inserted here -->
                 </div>
