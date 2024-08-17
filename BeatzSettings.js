@@ -8,12 +8,30 @@
 
 // ERROR LOGGING
 
-document.addEventListener("error", logError);
+// Array to store errors
+const errorArray = [];
 
-function logError(errorMessage) {
+// Global error handler
+window.addEventListener("error", function (event) {
+    let message = event.message || "Unknown error";
+    if (event.filename) {
+        message += ` at ${event.filename}:${event.lineno}:${event.colno}`;
+    }
+    logError(message);
+});
+
+// Global unhandled promise rejection handler
+window.addEventListener("unhandledrejection", function (event) {
+    logError(`Unhandled promise rejection: ${event.reason}`);
+});
+
+// Function to log errors to the errorLogging div and store in errorArray
+function logError(message) {
     const errorLoggingDiv = document.getElementById("errorLogging");
+    const err = message || "Unspecified error.";
 
-    const err = errorMessage || "Unspecified error.";
+    // Store the error in the errorArray
+    errorArray.push(err);
 
     if (errorLoggingDiv) {
         errorLoggingDiv.textContent = `Error: ${err}`;
@@ -21,8 +39,15 @@ function logError(errorMessage) {
 
         setTimeout(() => {
             errorLoggingDiv.style.display = "none";
-        }, 2000);
+        }, 7500);
     }
+}
+
+// Resource-specific error handling for audio and images
+function handleResourceError(element) {
+    element.addEventListener("error", function (event) {
+        logError(`Failed to load resource: ${event.target.src}`);
+    });
 }
 
 document.addEventListener("keydown", keyDownFunction);
@@ -94,10 +119,10 @@ function detectAndHandleDevice() {
             "restartInput",
             "nextInput",
             "randomize",
-            "toggleNoteStyleInput",
+            "toggleNoteStyleInput"
         ];
 
-        elementsToRemove.forEach(id => {
+        elementsToRemove.forEach((id) => {
             const element = document.getElementById(id);
             if (element) {
                 element.remove();
@@ -198,7 +223,7 @@ function toRepo() {
 
 function toggleFullScreen() {
     if (!document.fullscreenElement) {
-        canvas.requestFullscreen().catch(err => {
+        canvas.requestFullscreen().catch((err) => {
             console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
         });
         console.log("Entered Fullscreen");
@@ -284,6 +309,12 @@ document.getElementById("presetVERIDIAN").addEventListener("click", function () 
     selectedPreset = "VERIDIAN";
 });
 
+// Event listener for preset button click
+document.getElementById("presetOG").addEventListener("click", function () {
+    showPresetDescription("OG");
+    selectedPreset = "OG";
+});
+
 document.getElementById("applyPresetButton").addEventListener("click", function () {
     applyPreset(selectedPreset); // Apply the selected preset
     document.getElementById("presetSaved").style.display = "block"; // Show the saved message
@@ -298,6 +329,8 @@ function showPresetDescription(presetName) {
         document.getElementById("presetDescription").innerHTML = "A - S - K - L Keybinding layout.<br>Transparent BG - 10px blur.";
     } else if (presetName === "VERIDIAN") {
         document.getElementById("presetDescription").innerHTML = "D - F - J - K Keybinding layout.<br>Fullscreen: G<br>Default BG.";
+    } else if (presetName === "OG") {
+        document.getElementById("presetDescription").innerHTML = "A/Z - W/X - S/N - D/M Keybinding layout.<br>Default BG.";
     }
     document.getElementById("presetDescription").style.display = "block";
 }
@@ -316,7 +349,7 @@ const Presets = {
             next: ["E"],
             randomize: ["T"],
             toggleNoteStyle: ["C"],
-            fullscreen: ["F"],
+            fullscreen: ["F"]
         },
         miscellaneous: {
             defaultNoteStyle: "arrows",
@@ -331,7 +364,8 @@ const Presets = {
             logKeys: false,
             hitSound: "defaultHit",
             saveSongUsingControllers: false,
-        },
+            fetchSongs: false
+        }
     },
     VERIDIAN: {
         keybinds: {
@@ -346,7 +380,7 @@ const Presets = {
             next: ["E"],
             randomize: ["T"],
             toggleNoteStyle: ["C"],
-            fullscreen: ["G"],
+            fullscreen: ["G"]
         },
         miscellaneous: {
             defaultNoteStyle: "circles",
@@ -360,8 +394,39 @@ const Presets = {
             logKeys: false,
             hitSound: "defaultHit",
             saveSongUsingControllers: false,
-        },
+            fetchSongs: false
+        }
     },
+    OG: {
+        keybinds: {
+            left: ["A, Z"],
+            up: ["W, X"],
+            down: ["S, N"],
+            right: ["D, M"],
+            pause: ["ESCAPE"],
+            autoHit: ["1"],
+            previous: ["Q"],
+            restart: ["R"],
+            next: ["E"],
+            randomize: ["T"],
+            toggleNoteStyle: ["C"],
+            fullscreen: ["F"]
+        },
+        miscellaneous: {
+            defaultNoteStyle: "arrows",
+            songTimeoutAfterSongEnd: false,
+            songTimeoutAfterSongEndNum: 5000,
+            vinylRotation: false,
+            circularImage: false,
+            backgroundForCanvas: "defaultBG",
+            customBackgroundBlur: "0",
+            customBackground: "",
+            logKeys: false,
+            hitSound: "defaultHit",
+            saveSongUsingControllers: false,
+            fetchSongs: false
+        }
+    }
 };
 
 // Function to apply the preset based on the one you chose
@@ -507,27 +572,74 @@ document.addEventListener("keydown", function (event) {
     }
 
     // Check if no modals are currently open
-    const isModalOpen = isAnyModalOpen(); // Implement this function to check if any modal is open
+    const isSongsModalOpen = isSongModalOpen(); // Implement this function to check if any modal is open
 
     // If "P" key is pressed and no modals are open, open the modal
-    if ((event.key === "P" || event.key === "p") && !isModalOpen) {
+    if ((event.key === "P" || event.key === "p") && !isSongsModalOpen) {
         openModal();
         console.log("P key pressed. Modal opened.");
     }
 
     // If "O" key is pressed and no modals are open, open the song list
-    if ((event.key === "O" || event.key === "o") && !isModalOpen) {
+    if ((event.key === "O" || event.key === "o") && !isSongsModalOpen) {
         openSongList();
         console.log("O key pressed. Song list opened.");
     }
 });
 
 // Function to check if any modal is currently open
-function isAnyModalOpen() {
+function isSongModalOpen() {
     const selectedSongModal = document.getElementById("selectedSongModal");
     const songListModal = document.getElementById("songListModal");
 
     return selectedSongModal.style.display === "block" || songListModal.style.display === "block";
+}
+
+// Function to check which modal is currently open
+function isAnyModalOpened() {
+    const selectedSongModal = document.getElementById("selectedSongModal");
+    const songListModal = document.getElementById("songListModal");
+    const settingsModal = document.getElementById("keybindsModal");
+    const settingPresets = document.getElementById("presetModal");
+
+    if (selectedSongModal.style.display === "block") {
+        return "selectedSongModal";
+    }
+    if (songListModal.style.display === "block") {
+        return "songListModal";
+    }
+    if (settingsModal.style.display === "block") {
+        return "keybindsModal";
+    }
+    if (settingPresets.style.display === "block") {
+        return "presetModal";
+    }
+    return ""; // No modal is open
+}
+
+function filterKeys(event) {
+    const openedModal = isAnyModalOpened();
+
+    // If enter is pressed and the settings modal is open, save the settings
+    if (openedModal === "keybindsModal") {
+        if (event.key === "Enter" || event.keyCode === 13) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            saveSettings(); // Save settings
+            console.log("Enter key pressed. Settings saved.");
+        }
+    }
+
+    if (openedModal === "songListModal") {
+        if (event.key === "Enter" || event.keyCode === 13) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            playFirstResult();
+            console.log("Enter key pressed. First Result playing.");
+        }
+    }
 }
 
 function deactivateKeybinds() {
@@ -542,17 +654,6 @@ function activateKeybinds() {
     document.removeEventListener("keydown", filterKeys);
     document.addEventListener("keydown", keyDownFunction);
     document.addEventListener("keyup", keyUpFunction);
-}
-
-function filterKeys(event) {
-    // If enter is pressed inside the settings modal, save the settings
-    if (event.key === "Enter" || event.keyCode === 13) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        saveSettings(); // Save settings
-        console.log("Enter key pressed. Settings saved.");
-    }
 }
 
 function toggleKeyLogger() {
@@ -577,7 +678,7 @@ const defaultKeybinds = {
     next: ["E"],
     randomize: ["T"],
     toggleNoteStyle: ["C"],
-    fullscreen: ["F"],
+    fullscreen: ["F"]
 };
 
 const defaultMiscellaneous = {
@@ -591,11 +692,14 @@ const defaultMiscellaneous = {
     logKeys: false,
     hitSound: "defaultHit",
     saveSongUsingControllers: false,
+    fetchSongs: false
 };
 
 var saveSongUsingControllers = false;
 
 let logKeys = true;
+
+let fetchSongs = false; // Fetch songs from guayabr.github.io
 
 let keybinds = { ...defaultKeybinds };
 let miscellaneous = { ...defaultMiscellaneous };
@@ -612,10 +716,25 @@ function loadSettings() {
         keybinds = { ...savedKeybinds };
         updateKeybindsFields();
     }
+
     miscellaneous = { ...savedMiscellaneous };
+
+    // Automatically set fetchSongs to true if userDevice is iOS
+    if (userDevice === "iOS" && miscellaneous.fetchSongs === false) {
+        fetchSongs = true;
+        miscellaneous.fetchSongs = true;
+        console.log("iPhone detected. Fetching songs...");
+        setTimeout(() => {
+            saveSettings();
+            location.reload();
+        }, 1000);
+    }
 
     document.getElementById("logKeysCheck").checked = miscellaneous.logKeys;
     logKeys = miscellaneous.logKeys;
+
+    document.getElementById("fetchSongsSite").checked = miscellaneous.fetchSongs;
+    fetchSongs = miscellaneous.fetchSongs;
 
     document.getElementById("saveRecentSongs").checked = miscellaneous.saveSongUsingControllers;
     saveSongUsingControllers = miscellaneous.saveSongUsingControllers;
@@ -739,62 +858,62 @@ function saveSettings() {
                 document
                     .getElementById("up")
                     ?.value.split(", ")
-                    .map(key => key.trim()) || [],
+                    .map((key) => key.trim()) || [],
             left:
                 document
                     .getElementById("left")
                     ?.value.split(", ")
-                    .map(key => key.trim()) || [],
+                    .map((key) => key.trim()) || [],
             down:
                 document
                     .getElementById("down")
                     ?.value.split(", ")
-                    .map(key => key.trim()) || [],
+                    .map((key) => key.trim()) || [],
             right:
                 document
                     .getElementById("right")
                     ?.value.split(", ")
-                    .map(key => key.trim()) || [],
+                    .map((key) => key.trim()) || [],
             pause:
                 document
                     .getElementById("pause")
                     ?.value.split(", ")
-                    .map(key => key.trim()) || [],
+                    .map((key) => key.trim()) || [],
             autoHit:
                 document
                     .getElementById("autoHit")
                     ?.value.split(", ")
-                    .map(key => key.trim()) || [],
+                    .map((key) => key.trim()) || [],
             previous:
                 document
                     .getElementById("previousInput")
                     ?.value.split(", ")
-                    .map(key => key.trim()) || [],
+                    .map((key) => key.trim()) || [],
             restart:
                 document
                     .getElementById("restartInput")
                     ?.value.split(", ")
-                    .map(key => key.trim()) || [],
+                    .map((key) => key.trim()) || [],
             next:
                 document
                     .getElementById("nextInput")
                     ?.value.split(", ")
-                    .map(key => key.trim()) || [],
+                    .map((key) => key.trim()) || [],
             randomize:
                 document
                     .getElementById("randomize")
                     ?.value.split(", ")
-                    .map(key => key.trim()) || [],
+                    .map((key) => key.trim()) || [],
             toggleNoteStyle:
                 document
                     .getElementById("toggleNoteStyleInput")
                     ?.value.split(", ")
-                    .map(key => key.trim()) || [],
+                    .map((key) => key.trim()) || [],
             fullscreen:
                 document
                     .getElementById("fullscreenInput")
                     ?.value.split(", ")
-                    .map(key => key.trim()) || [],
+                    .map((key) => key.trim()) || []
         };
     }
 
@@ -809,6 +928,7 @@ function saveSettings() {
         logKeys: document.getElementById("logKeysCheck").checked,
         hitSound: document.getElementById("defaultHitSound").value,
         saveSongUsingControllers: document.getElementById("saveRecentSongs").checked,
+        fetchSongs: userDevice === "iOS" || document.getElementById("fetchSongsSite").checked // Automatically check if iOS
     };
 
     // Compare new settings with saved settings
@@ -915,6 +1035,12 @@ function handleFileUpload(file) {
     };
 
     reader.readAsDataURL(file);
+}
+
+// Function to toggle the fetchSongs variable based on checkbox state
+function toggleFetchingSongs() {
+    fetchSongs = !fetchSongs;
+    console.log(`fetchSongs is now ${fetchSongs}`);
 }
 
 function applyDefaultNoteStyle() {
@@ -1043,9 +1169,9 @@ function saveToHistory() {
     keybindsIndex++;
 
     console.log("History saved. Current keybinds history:");
-    console.log(keybindsHistory.map(item => JSON.parse(item))); // Parse JSON for readability
+    console.log(keybindsHistory.map((item) => JSON.parse(item))); // Parse JSON for readability
     console.log("Current miscellaneous history:");
-    console.log(miscellaneousHistory.map(item => JSON.parse(item))); // Parse JSON for readability
+    console.log(miscellaneousHistory.map((item) => JSON.parse(item))); // Parse JSON for readability
     console.log("Current history index:", keybindsIndex);
 }
 

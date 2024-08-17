@@ -38,7 +38,7 @@ const noteXPositions = {
     left: WIDTH / 2 - 110,
     up: WIDTH / 2 - 51,
     down: WIDTH / 2 + 51,
-    right: WIDTH / 2 + 110,
+    right: WIDTH / 2 + 110
 };
 
 const loadedImages = {};
@@ -48,37 +48,43 @@ let tutorialStage = 0;
 let isNewPlayer = !localStorage.getItem("newPlayer");
 
 // Retrieve the keybinds object from localStorage and parse it
-var storedKeybinds = JSON.parse(localStorage.getItem("keybinds")) || {};
+var savedSettings = JSON.parse(localStorage.getItem("keybinds")) || {};
+
+var savedMiscellaneous = JSON.parse(localStorage.getItem("miscellaneous")) || {};
 
 const keybindsText = {
     initial: {
-        left: storedKeybinds.left ? storedKeybinds.left[0] : "A",
-        up: storedKeybinds.up ? storedKeybinds.up[0] : "W",
-        down: storedKeybinds.down ? storedKeybinds.down[0] : "S",
-        right: storedKeybinds.right ? storedKeybinds.right[0] : "D",
+        left: savedSettings.left ? savedSettings.left[0] : "A",
+        up: savedSettings.up ? savedSettings.up[0] : "W",
+        down: savedSettings.down ? savedSettings.down[0] : "S",
+        right: savedSettings.right ? savedSettings.right[0] : "D"
     },
     customizable: "Keybinds are customizable in the gear icon just below the canvas.",
     thankYou: "Thank you for playing Beatz! Enjoy!",
     followMe: {
         announce: "Follow me on my socials!",
         twitter: "Twitter: @GuayabR",
-        yt: "Youtube: @GuayabR",
-    },
+        yt: "Youtube: @GuayabR"
+    }
 };
 
 const noteImages = {
     Left: noteLeftIMG,
     Down: noteDownIMG,
     Up: noteUpIMG,
-    Right: noteRightIMG,
+    Right: noteRightIMG
 };
 
 const notePressImages = {
     Left: noteLeftPressIMG,
     Down: noteDownPressIMG,
     Up: noteUpPressIMG,
-    Right: noteRightPressIMG,
+    Right: noteRightPressIMG
 };
+
+const useFetch = savedMiscellaneous.fetchSongs;
+
+const headerElement = document.querySelector("h1");
 
 console.log("Constants loaded.");
 
@@ -89,6 +95,8 @@ var timer;
 let isMobile = false;
 
 var gameStarted = false;
+
+let songPaths;
 
 let currentSong;
 
@@ -158,22 +166,22 @@ var noteYPositions = {
     left: [],
     down: [],
     up: [],
-    right: [],
+    right: []
 };
 
 var perfectText = {
     active: false,
-    timer: 0,
+    timer: 0
 };
 
 var earlyLateText = {
     active: false,
-    timer: 0,
+    timer: 0
 };
 
 var missText = {
     active: false,
-    timer: 0,
+    timer: 0
 };
 
 var lastPerfectHitNoteType = null;
@@ -273,7 +281,7 @@ function adjustSongVolume(volume) {
 
 // Function to adjust hit sound volume
 function adjustHitSoundVolume(volume) {
-    hitSounds.forEach(hitSound => {
+    hitSounds.forEach((hitSound) => {
         hitSound.volume = volume;
     });
 }
@@ -286,7 +294,7 @@ function initializeHitSounds(hitSoundType) {
         defaultHit: "Resources/SFX/hitSound.mp3",
         mcHit: "Resources/SFX/mcHitSound.mp3",
         hitMarker: "Resources/SFX/Hitmarker.m4a",
-        clickHit: "Resources/SFX/Mouse Click.mp3",
+        clickHit: "Resources/SFX/Mouse Click.mp3"
     };
 
     const hitSoundPath = hitSoundPathMap[hitSoundType];
@@ -333,224 +341,384 @@ var BG5 = new Image("Resources/Background5.jpg"); // Dark Blue Flow Background
 
 console.log("Textures loaded.");
 
+let currentIndex = 0;
+
+// Function to load songs from remote server
+function loadRemoteSong() {
+    if (currentIndex < totalSongs) {
+        const songPath = songPaths[currentIndex];
+        const songTitle = getSongTitle(songPath);
+
+        fetch(songPath)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch song: ${response.status} ${response.statusText}`);
+                }
+                return response.blob();
+            })
+            .then((blob) => {
+                // Handle successful response
+                songList.push(songPath);
+                console.log("Fetched song:", songTitle);
+                songLoadCounter++;
+                currentIndex++;
+                counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
+                addSongToList(songPath, songTitle);
+                loadNextSong();
+                checkAllSongsLoaded(totalSongs);
+            })
+            .catch((error) => {
+                logError(`Failed to fetch song ${songTitle}: ${error.message}`);
+                currentIndex++;
+                songLoadCounter++;
+                counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
+                loadNextSong();
+                checkAllSongsLoaded(totalSongs);
+            });
+    }
+}
+
+// Function to load songs from local resources
+function loadLocalSong() {
+    if (currentIndex < totalSongs) {
+        const songPath = songPaths[currentIndex];
+        const songTitle = getSongTitle(songPath);
+
+        const audio = new Audio();
+        audio.src = songPath;
+        audio.oncanplaythrough = function () {
+            songList.push(songPath);
+            console.log("Loaded song:", songTitle);
+            songLoadCounter++;
+            currentIndex++;
+            counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
+            addSongToList(songPath, songTitle);
+            loadNextSong();
+            checkAllSongsLoaded(totalSongs);
+        };
+        audio.onerror = function () {
+            logError(`Failed to load song ${songTitle}`);
+            currentIndex++;
+            songLoadCounter++;
+            counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
+            loadNextSong();
+            checkAllSongsLoaded(totalSongs);
+        };
+    }
+}
+
+function addSongToList(songPath, songTitle) {
+    const songListContainer = document.getElementById("songList");
+
+    const songButton = document.createElement("button");
+    songButton.className = "song-button";
+    const currentIndex = songListContainer.childElementCount; // Get current count of child elements
+
+    // Get album information if available
+    let album = songToAlbumMap[songTitle] || "Unknown Album";
+
+    // If the album matches the song title, display "Single" instead of the album name
+    if (album.toLowerCase() === songTitle.toLowerCase()) {
+        album = "Single";
+    }
+
+    // Check if the song title ends with a dot
+    if (songTitle.endsWith(".")) {
+        songButton.textContent = `${album} | Song ${currentIndex + 1}: ${songTitle} by ${getArtist(songTitle)}.`;
+    } else {
+        songButton.textContent = `${album} | Song ${currentIndex + 1}: ${songTitle}, by ${getArtist(songTitle)}.`;
+    }
+
+    songButton.dataset.path = songPath; // Store song path as a data attribute
+    songButton.dataset.index = currentIndex; // Store song index as a data attribute
+    songListContainer.appendChild(songButton);
+
+    songButton.onclick = function () {
+        openSelectedSongModal(songPath, songTitle);
+    };
+
+    // Store song path and title for filtering
+    listOfSongs.push({ path: songPath, title: songTitle });
+
+    console.log(`Song added to list: ${songTitle} - ${songPath}`);
+}
+
 // Function to preload songs
 function preloadSongs() {
-    const songPaths = [
-        "https://guayabr.github.io/Beatz/Resources//Epilogue.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Exosphere.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Die For You.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Father Stretch My Hands.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Betty (Get Money).mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/BURN IT DOWN.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Aleph 0.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Better Days.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/kompa pasion.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/KOCMOC.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Legends Never Die.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Star Walkin.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/What I've Done.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Biggest NCS Songs.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Goosebumps.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Sleepwalker X Icewhxre.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Numb.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/sdp interlude.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Shiawase (VIP).mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Master Of Puppets (Live).mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Stressed Out.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Ticking Away.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/VISIONS.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/24.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/WTF 2.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Somewhere I Belong.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Can't Slow Me Down.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/LUNCH.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/BUTTERFLY EFFECT.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/SWIM.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/FE!N.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Crazy.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Despacito.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/You Need Jesus.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Nautilus.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Levitating.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/MY EYES.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Faint.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Breaking The Habit.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/From The Inside.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/I Wonder.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Godzilla.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/HIGHEST IN THE ROOM.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Runaway.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Fire Again.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Vamp Anthem.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/CARNIVAL.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/HUMBLE..mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Stop Breathing.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/CHEGOU 3.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/KRUSH ALERT.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/CUTE DEPRESSED.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/MOVE YO BODY.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/SLAY!.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/ROCK THAT SHIT!.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/BAIXO.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/LOOK DON'T TOUCH.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/YOU'RE TOO SLOW.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/BAND4BAND.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Slide da Treme Melódica v2.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/fantasmas.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/BIKE.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/ARCÀNGEL.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/TELEKINESIS.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Bleed it out.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Grenade.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/24K Magic.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Finesse.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Not Like Us.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Type Shit.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Like That.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/That's What I Like.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Renaissance.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Habits.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Trouble.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Brand New Dance.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Evil.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Lucifer.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Antichrist.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Fuel.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Road Rage.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Houdini.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Guilty Conscience 2.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Head Honcho.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Temporary.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Bad One.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Tobey.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Somebody Save Me.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/this is what space feels like.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/SICKO MODE.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/THE SCOTTS.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/The Automotivo Infernal 1.0.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/WAKE UP!.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Flashing Lights.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/RUN!.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/THE DINER.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Babooshka.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Your Girl.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Brand New City.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/Idols.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/aruarian dance.mp3",
-        "https://guayabr.github.io/Beatz/Resources/Songs/VVV.mp3",
+    if (useFetch) {
+        console.warn(`Fetching songs from guayabr.github.io, fetching: ${useFetch}`);
+        songPaths = [
+            "https://guayabr.github.io/Beatz/Resources/Songs/Epilogue.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Exosphere.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Die For You.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Father Stretch My Hands.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Betty (Get Money).mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/BURN IT DOWN.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Aleph 0.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Better Days.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/kompa pasion.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/KOCMOC.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Legends Never Die.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Star Walkin.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/What I've Done.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Biggest NCS Songs.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Goosebumps.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Sleepwalker X Icewhxre.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Numb.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/sdp interlude.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Shiawase (VIP).mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Master Of Puppets (Live).mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Stressed Out.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Ticking Away.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/VISIONS.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/24.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/WTF 2.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Somewhere I Belong.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Can't Slow Me Down.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/LUNCH.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/BUTTERFLY EFFECT.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/SWIM.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/FE!N.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Crazy.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Despacito.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/You Need Jesus.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Nautilus.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Levitating.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/MY EYES.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Faint.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Breaking The Habit.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/From The Inside.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/I Wonder.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Godzilla.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/HIGHEST IN THE ROOM.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Runaway.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Fire Again.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Vamp Anthem.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/CARNIVAL.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/HUMBLE..mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Stop Breathing.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/CHEGOU 3.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/KRUSH ALERT.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/CUTE DEPRESSED.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/MOVE YO BODY.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/SLAY!.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/ROCK THAT SHIT!.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/BAIXO.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/LOOK DON'T TOUCH.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/YOU'RE TOO SLOW.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/BAND4BAND.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Slide da Treme Melódica v2.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/fantasmas.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/BIKE.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/ARCÀNGEL.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/TELEKINESIS.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Bleed it out.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Grenade.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/24K Magic.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Finesse.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Not Like Us.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Type Shit.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Like That.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/That's What I Like.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Renaissance.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Habits.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Trouble.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Brand New Dance.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Evil.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Lucifer.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Antichrist.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Fuel.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Road Rage.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Houdini.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Guilty Conscience 2.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Head Honcho.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Temporary.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Bad One.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Tobey.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Somebody Save Me.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/this is what space feels like.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/SICKO MODE.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/THE SCOTTS.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/The Automotivo Infernal 1.0.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/WAKE UP!.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Flashing Lights.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/RUN!.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/THE DINER.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Babooshka.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Your Girl.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Brand New City.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Vivir Mi Vida.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Idols.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/aruarian dance.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/VVV.mp3"
+        ];
+    } else {
+        console.warn(`Loading songs locally, fetching: ${useFetch}`);
 
-        "Resources/Songs/testingsong.mp3",
-    ];
+        songPaths = [
+            "Resources/Songs/Epilogue.mp3",
+            "Resources/Songs/Exosphere.mp3",
+            "Resources/Songs/Die For You.mp3",
+            "Resources/Songs/Father Stretch My Hands.mp3",
+            "Resources/Songs/Betty (Get Money).mp3",
+            "Resources/Songs/BURN IT DOWN.mp3",
+            "Resources/Songs/Aleph 0.mp3",
+            "Resources/Songs/Better Days.mp3",
+            "Resources/Songs/kompa pasion.mp3",
+            "Resources/Songs/KOCMOC.mp3",
+            "Resources/Songs/Legends Never Die.mp3",
+            "Resources/Songs/Star Walkin.mp3",
+            "Resources/Songs/What I've Done.mp3",
+            "Resources/Songs/Biggest NCS Songs.mp3",
+            "Resources/Songs/Goosebumps.mp3",
+            "Resources/Songs/Sleepwalker X Icewhxre.mp3",
+            "Resources/Songs/Numb.mp3",
+            "Resources/Songs/sdp interlude.mp3",
+            "Resources/Songs/Shiawase (VIP).mp3",
+            "Resources/Songs/Master Of Puppets (Live).mp3",
+            "Resources/Songs/Stressed Out.mp3",
+            "Resources/Songs/Ticking Away.mp3",
+            "Resources/Songs/VISIONS.mp3",
+            "Resources/Songs/24.mp3",
+            "Resources/Songs/WTF 2.mp3",
+            "Resources/Songs/Somewhere I Belong.mp3",
+            "Resources/Songs/Can't Slow Me Down.mp3",
+            "Resources/Songs/LUNCH.mp3",
+            "Resources/Songs/BUTTERFLY EFFECT.mp3",
+            "Resources/Songs/SWIM.mp3",
+            "Resources/Songs/FE!N.mp3",
+            "Resources/Songs/Crazy.mp3",
+            "Resources/Songs/Despacito.mp3",
+            "Resources/Songs/You Need Jesus.mp3",
+            "Resources/Songs/Nautilus.mp3",
+            "Resources/Songs/Levitating.mp3",
+            "Resources/Songs/MY EYES.mp3",
+            "Resources/Songs/Faint.mp3",
+            "Resources/Songs/Breaking The Habit.mp3",
+            "Resources/Songs/From The Inside.mp3",
+            "Resources/Songs/I Wonder.mp3",
+            "Resources/Songs/Godzilla.mp3",
+            "Resources/Songs/HIGHEST IN THE ROOM.mp3",
+            "Resources/Songs/Runaway.mp3",
+            "Resources/Songs/Fire Again.mp3",
+            "Resources/Songs/Vamp Anthem.mp3",
+            "Resources/Songs/CARNIVAL.mp3",
+            "Resources/Songs/HUMBLE..mp3",
+            "Resources/Songs/Stop Breathing.mp3",
+            "Resources/Songs/CHEGOU 3.mp3",
+            "Resources/Songs/KRUSH ALERT.mp3",
+            "Resources/Songs/CUTE DEPRESSED.mp3",
+            "Resources/Songs/MOVE YO BODY.mp3",
+            "Resources/Songs/SLAY!.mp3",
+            "Resources/Songs/ROCK THAT SHIT!.mp3",
+            "Resources/Songs/BAIXO.mp3",
+            "Resources/Songs/LOOK DON'T TOUCH.mp3",
+            "Resources/Songs/YOU'RE TOO SLOW.mp3",
+            "Resources/Songs/BAND4BAND.mp3",
+            "Resources/Songs/Slide da Treme Melódica v2.mp3",
+            "Resources/Songs/fantasmas.mp3",
+            "Resources/Songs/BIKE.mp3",
+            "Resources/Songs/ARCÀNGEL.mp3",
+            "Resources/Songs/TELEKINESIS.mp3",
+            "Resources/Songs/Bleed it out.mp3",
+            "Resources/Songs/Grenade.mp3",
+            "Resources/Songs/24K Magic.mp3",
+            "Resources/Songs/Finesse.mp3",
+            "Resources/Songs/Not Like Us.mp3",
+            "Resources/Songs/Type Shit.mp3",
+            "Resources/Songs/Like That.mp3",
+            "Resources/Songs/That's What I Like.mp3",
+            "Resources/Songs/Renaissance.mp3",
+            "Resources/Songs/Habits.mp3",
+            "Resources/Songs/Trouble.mp3",
+            "Resources/Songs/Brand New Dance.mp3",
+            "Resources/Songs/Evil.mp3",
+            "Resources/Songs/Lucifer.mp3",
+            "Resources/Songs/Antichrist.mp3",
+            "Resources/Songs/Fuel.mp3",
+            "Resources/Songs/Road Rage.mp3",
+            "Resources/Songs/Houdini.mp3",
+            "Resources/Songs/Guilty Conscience 2.mp3",
+            "Resources/Songs/Head Honcho.mp3",
+            "Resources/Songs/Temporary.mp3",
+            "Resources/Songs/Bad One.mp3",
+            "Resources/Songs/Tobey.mp3",
+            "Resources/Songs/Somebody Save Me.mp3",
+            "Resources/Songs/this is what space feels like.mp3",
+            "Resources/Songs/SICKO MODE.mp3",
+            "Resources/Songs/THE SCOTTS.mp3",
+            "Resources/Songs/The Automotivo Infernal 1.0.mp3",
+            "Resources/Songs/WAKE UP!.mp3",
+            "Resources/Songs/Flashing Lights.mp3",
+            "Resources/Songs/RUN!.mp3",
+            "Resources/Songs/THE DINER.mp3",
+            "Resources/Songs/Babooshka.mp3",
+            "Resources/Songs/Your Girl.mp3",
+            "Resources/Songs/Brand New City.mp3",
+            "Resources/Songs/Vivir Mi Vida.mp3",
+            "Resources/Songs/Idols.mp3",
+            "Resources/Songs/aruarian dance.mp3",
+            "Resources/Songs/VVV.mp3",
 
-    let currentIndex = 0;
-    const totalSongs = songPaths.length;
-    const counterText = document.createElement("span");
+            "Resources/Songs/testingsong.mp3"
+        ];
+    }
+
+    currentIndex = 0;
+    totalSongs = songPaths.length;
+
+    // Add counter text beside the header
+    counterText = document.createElement("span");
     counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
-    const headerElement = document.querySelector("h1");
     headerElement.appendChild(counterText);
 
-    function loadNextSong() {
-        if (currentIndex < totalSongs) {
-            const songPath = songPaths[currentIndex];
-            const songTitle = getSongTitle(songPath);
+    listOfSongs = []; // Initialize the list of songs
 
-            fetch(songPath)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Failed to load song: ${response.status} ${response.statusText}`);
-                    }
-                    return response.blob();
-                })
-                .then(blob => {
-                    // Handle successful response
-                    songList.push(songPath);
-                    console.log("Loaded song:", songTitle);
-                    songLoadCounter++;
-                    currentIndex++;
-                    counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
-                    addSongToList(songPath, songTitle);
-                    loadNextSong();
-                    checkAllSongsLoaded(totalSongs);
-                })
-                .catch(error => {
-                    logError(`Failed to load song ${songTitle}: ${error.message}`);
-                    currentIndex++;
-                    songLoadCounter++;
-                    counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
-                    loadNextSong();
-                    checkAllSongsLoaded(totalSongs);
-                });
-        }
-    }
-
-    function checkAllSongsLoaded(totalSongs) {
-        if (songLoadCounter === 1) {
-            const startButton = document.getElementById("startButton");
-            startButton.style.display = "inline";
-        } else if (songLoadCounter === totalSongs) {
-            setTimeout(() => {
-                if (headerElement.contains(counterText)) {
-                    headerElement.removeChild(counterText);
-                }
-            }, 2500);
-        }
-    }
-
-    let listOfSongs = [];
-
-    function addSongToList(songPath, songTitle) {
-        const songListContainer = document.getElementById("songList");
-
-        const songButton = document.createElement("button");
-        songButton.className = "song-button";
-        const currentIndex = songListContainer.childElementCount + 1;
-
-        let album = songToAlbumMap[songTitle] || "Unknown Album";
-
-        if (album.toLowerCase() === songTitle.toLowerCase()) {
-            album = "Single";
-        }
-
-        if (songTitle.endsWith(".")) {
-            songButton.textContent = `${album} | Song ${currentIndex}: ${songTitle} by ${getArtist(songTitle)}.`;
-        } else {
-            songButton.textContent = `${album} | Song ${currentIndex}: ${songTitle}, by ${getArtist(songTitle)}.`;
-        }
-
-        songButton.dataset.path = songPath;
-        songListContainer.appendChild(songButton);
-
-        songButton.onclick = function () {
-            openSelectedSongModal(songPath, songTitle);
-        };
-
-        listOfSongs.push({ path: songPath, title: songTitle });
-
-        console.log(`Song added to list: ${songTitle} - ${songPath}`);
-    }
-
+    // Start loading the first song
     loadNextSong();
+}
+
+function loadNextSong() {
+    if (useFetch) {
+        loadRemoteSong();
+    } else {
+        loadLocalSong();
+    }
+}
+
+// Function to check if all songs are loaded
+function checkAllSongsLoaded(totalSongs) {
+    if (songLoadCounter === 1) {
+        const startButton = document.getElementById("startButton");
+        startButton.style.display = "inline";
+    } else if (songLoadCounter === totalSongs) {
+        setTimeout(() => {
+            if (headerElement.contains(counterText)) {
+                headerElement.removeChild(counterText);
+            }
+        }, 2500);
+    }
 }
 
 const songVersions = {
     Finesse: [
         { path: [`${baseURL}Resources/Songs/Finesse.mp3`], title: "Finesse" },
-        { path: [`${baseURL}Resources/Songs/Finesse (feat. Cardi B).mp3`], title: "Finesse (feat. Cardi B)" },
+        { path: [`${baseURL}Resources/Songs/Finesse (feat. Cardi B).mp3`], title: "Finesse (feat. Cardi B)" }
     ],
     "WTF 2": [
         { path: [`${baseURL}Resources/Songs/WTF 2.mp3`], title: "WTF 2" },
         { path: [`${baseURL}Resources/Songs/WTF 2 - Slowed.mp3`], title: "WTF 2 - Slowed" },
-        { path: [`${baseURL}Resources/Songs/WTF 2 - Sped Up.mp3`], title: "WTF 2 - Sped Up" },
+        { path: [`${baseURL}Resources/Songs/WTF 2 - Sped Up.mp3`], title: "WTF 2 - Sped Up" }
     ],
     "Slide da Treme Melódica v2": [
         { path: [`${baseURL}Resources/Songs/Slide da Treme Melódica v2.mp3`], title: "Slide da Treme Melódica v2" },
         { path: [`${baseURL}Resources/Songs/Slide da Treme Melódica v2 - Slowed.mp3`], title: "Slide da Treme Melódica v2 - Slowed" },
         { path: [`${baseURL}Resources/Songs/Slide da Treme Melódica v2 - Ultra Slowed.mp3`], title: "Slide da Treme Melódica v2 - Ultra Slowed" },
-        { path: [`${baseURL}Resources/Songs/Slide da Treme Melódica v2 - Sped Up.mp3`], title: "Slide da Treme Melódica v2 - Sped Up" },
+        { path: [`${baseURL}Resources/Songs/Slide da Treme Melódica v2 - Sped Up.mp3`], title: "Slide da Treme Melódica v2 - Sped Up" }
     ],
     Goosebumps: [
         { path: [`${baseURL}Resources/Songs/Goosebumps.mp3`], title: "Goosebumps" },
-        { path: [`${baseURL}Resources/Songs/Goosebumps (feat. 21 Savage).mp3`], title: "Goosebumps (feat. 21 Savage)" },
+        { path: [`${baseURL}Resources/Songs/Goosebumps (feat. 21 Savage).mp3`], title: "Goosebumps (feat. 21 Savage)" }
     ],
     "The Automotivo Infernal 1.0": [
         { path: [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0.mp3`], title: "The Automotivo Infernal 1.0" },
@@ -558,130 +726,129 @@ const songVersions = {
         { path: [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Slowed.mp3`], title: "The Automotivo Infernal 1.0 - Slowed" },
         { path: [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Sped Up.mp3`], title: "The Automotivo Infernal 1.0 - Sped Up" },
         { path: [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Red - Slowed.mp3`], title: "The Automotivo Infernal 1.0 - Red - Slowed" },
-        { path: [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Red - Sped Up.mp3`], title: "The Automotivo Infernal 1.0 - Red - Sped Up" },
-    ],
+        { path: [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Red - Sped Up.mp3`], title: "The Automotivo Infernal 1.0 - Red - Sped Up" }
+    ]
     // Add other songs and their versions here
 };
 
 const songConfigs = {
-    [`${baseURL}Resources/Songs/Epilogue.mp3`]: { BPM: 160, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/Exosphere.mp3`]: { BPM: 118, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/Die For You.mp3`]: { BPM: 95, noteSpeed: 8 },
-    [`${baseURL}Resources/Songs/Father Stretch My Hands.mp3`]: { BPM: 113, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/Betty (Get Money).mp3`]: { BPM: 102, noteSpeed: 8 },
-    [`${baseURL}Resources/Songs/BURN IT DOWN.mp3`]: { BPM: 110, noteSpeed: 8 },
-    [`${baseURL}Resources/Songs/Aleph 0.mp3`]: { BPM: 125, noteSpeed: 8 },
-    [`${baseURL}Resources/Songs/Better Days.mp3`]: { BPM: 132, noteSpeed: 6 },
-    [`${baseURL}Resources/Songs/KOCMOC.mp3`]: { BPM: 190, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/kompa pasion.mp3`]: { BPM: 98, noteSpeed: 7 },
-    [`${baseURL}Resources/Songs/Legends Never Die.mp3`]: { BPM: 140, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/Star Walkin.mp3`]: { BPM: 142, noteSpeed: 9 },
-    [`${baseURL}Resources/Songs/What I've Done.mp3`]: { BPM: 120, noteSpeed: 8 },
-    [`${baseURL}Resources/Songs/Biggest NCS Songs.mp3`]: { BPM: 110, noteSpeed: 8 },
-    [`${baseURL}Resources/Songs/Goosebumps.mp3`]: { BPM: 130, noteSpeed: 8 },
-    [`${baseURL}Resources/Songs/Master Of Puppets (Live).mp3`]: { BPM: 210, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/Numb.mp3`]: { BPM: 110, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/sdp interlude.mp3`]: { BPM: 108, noteSpeed: 8 },
-    [`${baseURL}Resources/Songs/Shiawase (VIP).mp3`]: { BPM: 150, noteSpeed: 12.2 },
-    [`${baseURL}Resources/Songs/Sleepwalker X Icewhxre.mp3`]: { BPM: 120, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/Stressed Out.mp3`]: { BPM: 170, noteSpeed: 8 },
-    [`${baseURL}Resources/Songs/Ticking Away.mp3`]: { BPM: 95, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/VISIONS.mp3`]: { BPM: 157, noteSpeed: 8 },
-    [`${baseURL}Resources/Songs/24.mp3`]: { BPM: 98, noteSpeed: 8 },
-    [`${baseURL}Resources/Songs/WTF 2.mp3`]: { BPM: 116, noteSpeed: 14 },
-    [`${baseURL}Resources/Songs/MY EYES.mp3`]: { BPM: 132, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/Can't Slow Me Down.mp3`]: { BPM: 122, noteSpeed: 11 },
-    [`${baseURL}Resources/Songs/LUNCH.mp3`]: { BPM: 125, noteSpeed: 14.6 },
-    [`${baseURL}Resources/Songs/BUTTERFLY EFFECT.mp3`]: { BPM: 141, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/SWIM.mp3`]: { BPM: 120, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/You Need Jesus.mp3`]: { BPM: 110, noteSpeed: 11 },
-    [`${baseURL}Resources/Songs/Crazy.mp3`]: { BPM: 120, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/Despacito.mp3`]: { BPM: 89, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/FE!N.mp3`]: { BPM: 148, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/Nautilus.mp3`]: { BPM: 124, noteSpeed: 9 },
-    [`${baseURL}Resources/Songs/Levitating.mp3`]: { BPM: 103, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/Somewhere I Belong.mp3`]: { BPM: 162, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/From The Inside.mp3`]: { BPM: 95, noteSpeed: 10.5 },
-    [`${baseURL}Resources/Songs/Faint.mp3`]: { BPM: 135, noteSpeed: 11 },
-    [`${baseURL}Resources/Songs/Breaking The Habit.mp3`]: { BPM: 100, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/I Wonder.mp3`]: { BPM: 127, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/Godzilla.mp3`]: { BPM: 166, noteSpeed: 13 },
-    [`${baseURL}Resources/Songs/HIGHEST IN THE ROOM.mp3`]: { BPM: 156, noteSpeed: 0 },
-    [`${baseURL}Resources/Songs/Runaway.mp3`]: { BPM: 85, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/Fire Again.mp3`]: { BPM: 100, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/Vamp Anthem.mp3`]: { BPM: 164, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/CARNIVAL.mp3`]: { BPM: 148, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/HUMBLE..mp3`]: { BPM: 150, noteSpeed: 0 },
-    [`${baseURL}Resources/Songs/Stop Breathing.mp3`]: { BPM: 155, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/CHEGOU 3.mp3`]: { BPM: 130, noteSpeed: 13.2 },
-    [`${baseURL}Resources/Songs/KRUSH ALERT.mp3`]: { BPM: 117, noteSpeed: 12.5 },
-    [`${baseURL}Resources/Songs/CUTE DEPRESSED.mp3`]: { BPM: 228, noteSpeed: 16 },
-    [`${baseURL}Resources/Songs/MOVE YO BODY.mp3`]: { BPM: 133, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/SLAY!.mp3`]: { BPM: 130, noteSpeed: 13 },
-    [`${baseURL}Resources/Songs/ROCK THAT SHIT!.mp3`]: { BPM: 125, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/BAIXO.mp3`]: { BPM: 133, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/LOOK DON'T TOUCH.mp3`]: { BPM: 125, noteSpeed: 13 },
-    [`${baseURL}Resources/Songs/MOVE YO BODY.mp3`]: { BPM: 133, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/YOU'RE TOO SLOW.mp3`]: { BPM: 162, noteSpeed: 14.5 },
-    [`${baseURL}Resources/Songs/BAND4BAND.mp3`]: { BPM: 140, noteSpeed: 14 },
-    [`${baseURL}Resources/Songs/Slide da Treme Melódica v2.mp3`]: { BPM: 210, noteSpeed: 18 },
-    [`${baseURL}Resources/Songs/fantasmas.mp3`]: { BPM: 164, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/BIKE.mp3`]: { BPM: 105, noteSpeed: 14 },
-    [`${baseURL}Resources/Songs/ARCÀNGEL.mp3`]: { BPM: 124, noteSpeed: 14 },
-    [`${baseURL}Resources/Songs/TELEKINESIS.mp3`]: { BPM: 166, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/Bleed it out.mp3`]: { BPM: 140, noteSpeed: 0 },
-    [`${baseURL}Resources/Songs/Grenade.mp3`]: { BPM: 110, noteSpeed: 0 },
-    [`${baseURL}Resources/Songs/24K Magic.mp3`]: { BPM: 107, noteSpeed: 15 },
-    [`${baseURL}Resources/Songs/Finesse.mp3`]: { BPM: 105, noteSpeed: 22 },
-    [`${baseURL}Resources/Songs/Not Like Us.mp3`]: { BPM: 101, noteSpeed: 0 },
-    [`${baseURL}Resources/Songs/Type Shit.mp3`]: { BPM: 145, noteSpeed: 14 },
-    [`${baseURL}Resources/Songs/Like That.mp3`]: { BPM: 162, noteSpeed: 16 },
-    [`${baseURL}Resources/Songs/That's What I Like.mp3`]: { BPM: 134, noteSpeed: 14 },
-    [`${baseURL}Resources/Songs/Renaissance.mp3`]: { BPM: 199, noteSpeed: 0 },
-    [`${baseURL}Resources/Songs/Habits.mp3`]: { BPM: 100, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/Trouble.mp3`]: { BPM: 83, noteSpeed: 8 },
-    [`${baseURL}Resources/Songs/Brand New Dance.mp3`]: { BPM: 120, noteSpeed: 14 },
-    [`${baseURL}Resources/Songs/Evil.mp3`]: { BPM: 81, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/Lucifer.mp3`]: { BPM: 79, noteSpeed: 8 },
-    [`${baseURL}Resources/Songs/Antichrist.mp3`]: { BPM: 99, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/Fuel.mp3`]: { BPM: 138, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/Road Rage.mp3`]: { BPM: 95, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/Houdini.mp3`]: { BPM: 141, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/Guilty Conscience 2.mp3`]: { BPM: 164, noteSpeed: 14 },
-    [`${baseURL}Resources/Songs/Head Honcho.mp3`]: { BPM: 173, noteSpeed: 16 },
-    [`${baseURL}Resources/Songs/Temporary.mp3`]: { BPM: 78, noteSpeed: 8 },
-    [`${baseURL}Resources/Songs/Bad One.mp3`]: { BPM: 146, noteSpeed: 14 },
-    [`${baseURL}Resources/Songs/Tobey.mp3`]: { BPM: 139, noteSpeed: 14 },
-    [`${baseURL}Resources/Songs/Somebody Save Me.mp3`]: { BPM: 181, noteSpeed: 16 },
-    [`${baseURL}Resources/Songs/this is what space feels like.mp3`]: { BPM: 146, noteSpeed: 11 },
-    [`${baseURL}Resources/Songs/SICKO MODE.mp3`]: { BPM: 155, noteSpeed: 0 },
-    [`${baseURL}Resources/Songs/THE SCOTTS.mp3`]: { BPM: 130, noteSpeed: 0 },
-    [`${baseURL}Resources/Songs/WAKE UP!.mp3`]: { BPM: 125, noteSpeed: 8 },
-    [`${baseURL}Resources/Songs/Flashing Lights.mp3`]: { BPM: 90, noteSpeed: 10.5 },
-    [`${baseURL}Resources/Songs/RUN!.mp3`]: { BPM: 136, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/THE DINER.mp3`]: { BPM: 125, noteSpeed: 14 },
-    [`${baseURL}Resources/Songs/Babooshka.mp3`]: { BPM: 103, noteSpeed: 10 },
-    [`${baseURL}Resources/Songs/Your Girl.mp3`]: { BPM: 120, noteSpeed: 8 },
-    [`${baseURL}Resources/Songs/Brand New City.mp3`]: { BPM: 148, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/Idols.mp3`]: { BPM: 130, noteSpeed: 2.65 },
-    [`${baseURL}Resources/Songs/aruarian dance.mp3`]: { BPM: 96, noteSpeed: 6 },
-    [`${baseURL}Resources/Songs/VVV.mp3`]: { BPM: 131, noteSpeed: 10 },
+    Epilogue: { BPM: 160, noteSpeed: 10 },
+    Exosphere: { BPM: 118, noteSpeed: 10 },
+    "Die For You": { BPM: 95, noteSpeed: 8 },
+    "Father Stretch My Hands": { BPM: 113, noteSpeed: 10 },
+    "Betty (Get Money)": { BPM: 102, noteSpeed: 8 },
+    "BURN IT DOWN": { BPM: 110, noteSpeed: 8 },
+    "Aleph 0": { BPM: 125, noteSpeed: 8 },
+    "Better Days": { BPM: 132, noteSpeed: 6 },
+    KOCMOC: { BPM: 190, noteSpeed: 12 },
+    "kompa pasion": { BPM: 98, noteSpeed: 7 },
+    "Legends Never Die": { BPM: 140, noteSpeed: 10 },
+    "Star Walkin": { BPM: 142, noteSpeed: 9 },
+    "What I've Done": { BPM: 120, noteSpeed: 8 },
+    "Biggest NCS Songs": { BPM: 110, noteSpeed: 8 },
+    Goosebumps: { BPM: 130, noteSpeed: 8 },
+    "Master Of Puppets (Live)": { BPM: 210, noteSpeed: 12 },
+    Numb: { BPM: 110, noteSpeed: 10 },
+    "sdp interlude": { BPM: 108, noteSpeed: 8 },
+    "Shiawase (VIP)": { BPM: 150, noteSpeed: 12.2 },
+    "Sleepwalker X Icewhxre": { BPM: 120, noteSpeed: 10 },
+    "Stressed Out": { BPM: 170, noteSpeed: 8 },
+    "Ticking Away": { BPM: 95, noteSpeed: 10 },
+    VISIONS: { BPM: 157, noteSpeed: 8 },
+    24: { BPM: 98, noteSpeed: 8 },
+    "WTF 2": { BPM: 116, noteSpeed: 14 },
+    "MY EYES": { BPM: 132, noteSpeed: 12 },
+    "Can't Slow Me Down": { BPM: 122, noteSpeed: 11 },
+    LUNCH: { BPM: 125, noteSpeed: 14.6 },
+    "BUTTERFLY EFFECT": { BPM: 141, noteSpeed: 10 },
+    SWIM: { BPM: 120, noteSpeed: 10 },
+    "You Need Jesus": { BPM: 110, noteSpeed: 11 },
+    Crazy: { BPM: 120, noteSpeed: 10 },
+    Despacito: { BPM: 89, noteSpeed: 10 },
+    "FE!N": { BPM: 148, noteSpeed: 12 },
+    Nautilus: { BPM: 124, noteSpeed: 9 },
+    Levitating: { BPM: 103, noteSpeed: 10 },
+    "Somewhere I Belong": { BPM: 162, noteSpeed: 10 },
+    "From The Inside": { BPM: 95, noteSpeed: 10.5 },
+    Faint: { BPM: 135, noteSpeed: 11 },
+    "Breaking The Habit": { BPM: 100, noteSpeed: 10 },
+    "I Wonder": { BPM: 127, noteSpeed: 10 },
+    Godzilla: { BPM: 166, noteSpeed: 13 },
+    "HIGHEST IN THE ROOM": { BPM: 156, noteSpeed: 0 },
+    Runaway: { BPM: 85, noteSpeed: 10 },
+    "Fire Again": { BPM: 100, noteSpeed: 12 },
+    "Vamp Anthem": { BPM: 164, noteSpeed: 12 },
+    CARNIVAL: { BPM: 148, noteSpeed: 12 },
+    "HUMBLE.": { BPM: 150, noteSpeed: 0 },
+    "Stop Breathing": { BPM: 155, noteSpeed: 12 },
+    "CHEGOU 3": { BPM: 130, noteSpeed: 13.2 },
+    "KRUSH ALERT": { BPM: 117, noteSpeed: 12.5 },
+    "CUTE DEPRESSED": { BPM: 228, noteSpeed: 16 },
+    "MOVE YO BODY": { BPM: 133, noteSpeed: 12 },
+    "SLAY!": { BPM: 130, noteSpeed: 13 },
+    "ROCK THAT SHIT!": { BPM: 125, noteSpeed: 12 },
+    BAIXO: { BPM: 133, noteSpeed: 12 },
+    "LOOK DON'T TOUCH": { BPM: 125, noteSpeed: 13 },
+    "YOU'RE TOO SLOW": { BPM: 162, noteSpeed: 14.5 },
+    BAND4BAND: { BPM: 140, noteSpeed: 14 },
+    "Slide da Treme Melódica v2": { BPM: 210, noteSpeed: 18 },
+    fantasmas: { BPM: 164, noteSpeed: 10 },
+    BIKE: { BPM: 105, noteSpeed: 14 },
+    ARCÀNGEL: { BPM: 124, noteSpeed: 14 },
+    TELEKINESIS: { BPM: 166, noteSpeed: 12 },
+    "Bleed it out": { BPM: 140, noteSpeed: 0 },
+    Grenade: { BPM: 110, noteSpeed: 0 },
+    "24K Magic": { BPM: 107, noteSpeed: 15 },
+    Finesse: { BPM: 105, noteSpeed: 22 },
+    "Not Like Us": { BPM: 101, noteSpeed: 0 },
+    "Type Shit": { BPM: 145, noteSpeed: 14 },
+    "Like That": { BPM: 162, noteSpeed: 16 },
+    "That's What I Like": { BPM: 134, noteSpeed: 14 },
+    Renaissance: { BPM: 199, noteSpeed: 0 },
+    Habits: { BPM: 100, noteSpeed: 10 },
+    Trouble: { BPM: 83, noteSpeed: 8 },
+    "Brand New Dance": { BPM: 120, noteSpeed: 14 },
+    Evil: { BPM: 81, noteSpeed: 10 },
+    Lucifer: { BPM: 79, noteSpeed: 8 },
+    Antichrist: { BPM: 99, noteSpeed: 10 },
+    Fuel: { BPM: 138, noteSpeed: 12 },
+    "Road Rage": { BPM: 95, noteSpeed: 10 },
+    Houdini: { BPM: 141, noteSpeed: 12 },
+    "Guilty Conscience 2": { BPM: 164, noteSpeed: 14 },
+    "Head Honcho": { BPM: 173, noteSpeed: 16 },
+    Temporary: { BPM: 78, noteSpeed: 8 },
+    "Bad One": { BPM: 146, noteSpeed: 14 },
+    Tobey: { BPM: 139, noteSpeed: 14 },
+    "Somebody Save Me": { BPM: 181, noteSpeed: 16 },
+    "this is what space feels like": { BPM: 146, noteSpeed: 11 },
+    "SICKO MODE": { BPM: 155, noteSpeed: 0 },
+    "THE SCOTTS": { BPM: 130, noteSpeed: 0 },
+    "WAKE UP!": { BPM: 125, noteSpeed: 8 },
+    "Flashing Lights": { BPM: 90, noteSpeed: 8.5 },
+    "RUN!": { BPM: 136, noteSpeed: 10 },
+    "THE DINER": { BPM: 125, noteSpeed: 14 },
+    Babooshka: { BPM: 103, noteSpeed: 10 },
+    "Your Girl": { BPM: 120, noteSpeed: 8 },
+    "Brand New City": { BPM: 148, noteSpeed: 12 },
+    "Vivir Mi Vida": { BPM: 105, noteSpeed: 10 },
+    Idols: { BPM: 130, noteSpeed: 2.65 },
+    "aruarian dance": { BPM: 96, noteSpeed: 6 },
+    VVV: { BPM: 131, noteSpeed: 10 },
 
     // Song Versions
-
-    [`${baseURL}Resources/Songs/Finesse (feat. Cardi B).mp3`]: { BPM: 105, noteSpeed: 22 },
-    [`${baseURL}Resources/Songs/WTF 2 - Slowed.mp3`]: { BPM: 148, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/WTF 2 - Sped Up.mp3`]: { BPM: 130, noteSpeed: 16 },
-    [`${baseURL}Resources/Songs/Slide da Treme Melódica v2 - Slowed.mp3`]: { BPM: 125, noteSpeed: 16 },
-    [`${baseURL}Resources/Songs/Slide da Treme Melódica v2 - Ultra Slowed.mp3`]: { BPM: 159, noteSpeed: 16 },
-    [`${baseURL}Resources/Songs/Slide da Treme Melódica v2 - Sped Up.mp3`]: { BPM: 157, noteSpeed: 18 },
-    [`${baseURL}Resources/Songs/Goosebumps (feat. 21 Savage).mp3`]: { BPM: 130, noteSpeed: 8 },
-    [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0.mp3`]: { BPM: 140, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Red.mp3`]: { BPM: 140, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Slowed.mp3`]: { BPM: 117, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Sped Up.mp3`]: { BPM: 140, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Red - Slowed.mp3`]: { BPM: 140, noteSpeed: 12 },
-    [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Red - Sped Up.mp3`]: { BPM: 140, noteSpeed: 12 },
+    "Finesse (feat. Cardi B)": { BPM: 105, noteSpeed: 22 },
+    "WTF 2 - Slowed": { BPM: 148, noteSpeed: 12 },
+    "WTF 2 - Sped Up": { BPM: 130, noteSpeed: 16 },
+    "Slide da Treme Melódica v2 - Slowed.mp3": { BPM: 125, noteSpeed: 16 },
+    "Slide da Treme Melódica v2 - Ultra Slowed.mp3": { BPM: 159, noteSpeed: 16 },
+    "Slide da Treme Melódica v2 - Sped Up.mp3": { BPM: 157, noteSpeed: 18 },
+    "Goosebumps (feat. 21 Savage)": { BPM: 130, noteSpeed: 8 },
+    "The Automotivo Infernal 1.0": { BPM: 140, noteSpeed: 12 },
+    "The Automotivo Infernal 1.0 - Red": { BPM: 140, noteSpeed: 12 },
+    "The Automotivo Infernal 1.0 - Slowed": { BPM: 117, noteSpeed: 12 },
+    "The Automotivo Infernal 1.0 - Sped Up": { BPM: 140, noteSpeed: 12 },
+    "The Automotivo Infernal 1.0 - Red - Slowed": { BPM: 140, noteSpeed: 12 },
+    "The Automotivo Infernal 1.0 - Red - Sped Up": { BPM: 140, noteSpeed: 12 }
 };
 
 let savedNotes;
@@ -692,7 +859,7 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 12.9, noteSpeed: 25 }, // 0:12 (starting point)
             { timestamp: 13.35, noteSpeed: 12 }, // 0:13.35 (starting point 2)
             { timestamp: 25.9, noteSpeed: 14 }, // 0:26
-            { timestamp: 112.8, noteSpeed: 9 }, // 1:54.8
+            { timestamp: 112.8, noteSpeed: 9 } // 1:54.8
         ],
         "Shiawase (VIP)": [
             { timestamp: 25.6, noteSpeed: 14.2 },
@@ -708,7 +875,7 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 128.07, noteSpeed: 12.2 },
             { timestamp: 131.2, noteSpeed: 17.2 },
             { timestamp: 165.9, noteSpeed: 18.2, notes: [] }, // Notes end, last note is the ending note for the song
-            { timestamp: 169, noteSpeed: 18.2, endScreenDrawn: true }, // Endscreen is drawn before song ends in case song has a long ending without much beat
+            { timestamp: 169, noteSpeed: 18.2, endScreenDrawn: true } // Endscreen is drawn before song ends in case song has a long ending without much beat
         ],
         "Bleed it out": [
             { timestamp: 2.7, noteSpeed: 20 },
@@ -729,20 +896,20 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 140.25, noteSpeed: 17 },
             { timestamp: 143.7, noteSpeed: 18 },
             { timestamp: 157.4, noteSpeed: 18, notes: [] },
-            { timestamp: 163.25, noteSpeed: 18, endScreenDrawn: true },
+            { timestamp: 163.25, noteSpeed: 18, endScreenDrawn: true }
         ],
         Grenade: [
             { timestamp: 3.95, noteSpeed: 12 },
             { timestamp: 198.8, noteSpeed: 12, notes: [] },
-            { timestamp: 216.6, noteSpeed: 12, endScreenDrawn: true },
+            { timestamp: 216.6, noteSpeed: 12, endScreenDrawn: true }
         ],
         Finesse: [
             { timestamp: 4.85, noteSpeed: 14 },
-            { timestamp: 214.5, noteSpeed: 14, endScreenDrawn: true },
+            { timestamp: 214.5, noteSpeed: 14, endScreenDrawn: true }
         ],
         "Finesse (feat. Cardi B)": [
             { timestamp: 4.85, noteSpeed: 14 },
-            { timestamp: 214.5, noteSpeed: 14, endScreenDrawn: true },
+            { timestamp: 214.5, noteSpeed: 14, endScreenDrawn: true }
         ],
         "Not Like Us": [{ timestamp: 1.73, noteSpeed: 14 }],
         "Like That": [{ timestamp: 6.7, noteSpeed: 14 }],
@@ -757,12 +924,12 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 40.93, noteSpeed: 25 },
             { timestamp: 41.7, noteSpeed: 0 },
             { timestamp: 44.15, noteSpeed: 18 },
-            { timestamp: 63.94, noteSpeed: 14 },
+            { timestamp: 63.94, noteSpeed: 14 }
         ],
         Renaissance: [{ timestamp: 11, noteSpeed: 14 }],
         "HUMBLE.": [
             { timestamp: 6.78, noteSpeed: 12 },
-            { timestamp: 7.7, noteSpeed: 14 },
+            { timestamp: 7.7, noteSpeed: 14 }
         ],
         "SICKO MODE": [
             { timestamp: 27.6, noteSpeed: 12 }, // sun is down
@@ -770,7 +937,7 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 58.85, noteSpeed: 14, savedNotes: notes },
             { timestamp: 58.9, noteSpeed: 14, notes: [] },
             { timestamp: 64.3, noteSpeed: 14, notes: savedNotes },
-            { timestamp: 65, noteSpeed: 14 },
+            { timestamp: 65, noteSpeed: 14 }
         ],
         "THE SCOTTS": [{ timestamp: 22.2, noteSpeed: 14 }],
         "The Automotivo Infernal 1.0": [
@@ -798,7 +965,7 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 95.6, noteSpeed: 20 },
             { timestamp: 96.05, noteSpeed: 10 },
             { timestamp: 97.75, noteSpeed: 22, BPM: 140 * 2 },
-            { timestamp: 111.51, noteSpeed: 22, endScreenDrawn: true },
+            { timestamp: 111.51, noteSpeed: 22, endScreenDrawn: true }
         ],
         "The Automotivo Infernal 1.0 - Red": [
             { timestamp: 8.6, noteSpeed: 14 },
@@ -825,7 +992,11 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 95.6, noteSpeed: 20 },
             { timestamp: 96.05, noteSpeed: 10 },
             { timestamp: 97.75, noteSpeed: 22, BPM: 140 * 2 },
-            { timestamp: 111.51, noteSpeed: 22, endScreenDrawn: true },
+            { timestamp: 111.51, noteSpeed: 22, endScreenDrawn: true }
+        ],
+        "Flashing Lights": [
+            { timestamp: 21.15, noteSpeed: 10.5 },
+            { timestamp: 190.923, noteSpeed: 10, endScreenDrawn: true }
         ],
         "WAKE UP!": [
             { timestamp: 15.32, noteSpeed: 16 },
@@ -839,7 +1010,7 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 117.09, noteSpeed: 12 },
             { timestamp: 117.6, noteSpeed: 22, BPM: 125 * 3 },
             { timestamp: 132.8, noteSpeed: 22, BPM: 125, notes: [] },
-            { timestamp: 136.55, noteSpeed: 22, endScreenDrawn: true },
+            { timestamp: 136.55, noteSpeed: 22, endScreenDrawn: true }
         ],
         "RUN!": [
             { timestamp: 7.215, noteSpeed: 14 },
@@ -861,13 +1032,23 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 132.48, noteSpeed: 14 },
             { timestamp: 133.41, noteSpeed: 16, notes: [] },
             { timestamp: 133.85, noteSpeed: 18 },
-            { timestamp: 134.26, noteSpeed: 18, endScreenDrawn: true },
+            { timestamp: 134.26, noteSpeed: 18, endScreenDrawn: true }
+        ],
+        "Vivir Mi Vida": [
+            { timestamp: 246.7, noteSpeed: 10, notes: [] },
+            { timestamp: 249.65, noteSpeed: 10, endScreenDrawn: true }
         ],
         Idols: [
             { timestamp: 3.6, noteSpeed: 10 },
             { timestamp: 11.14, noteSpeed: 12 },
-            { timestamp: 18.6, noteSpeed: 18 },
+            { timestamp: 18.6, noteSpeed: 18 }
         ],
+        testingsong: [
+            { timestamp: 1, noteSpeed: 10 },
+            { timestamp: 2, noteSpeed: 10, BPM: BPM * 2 },
+            { timestamp: 3, noteSpeed: 10, notes: [] },
+            { timestamp: 4, noteSpeed: 10, endScreenDrawn: true }
+        ]
     };
 
     let songTitle = getSongTitle(songSrc);
@@ -979,6 +1160,7 @@ const songToAlbumMap = {
     Babooshka: "Never For Ever",
     "Your Girl": "Unreleased",
     "Brand New City": "Lush",
+    "Vivir Mi Vida": "Vivir Mi Vida",
     Idols: "Idols",
     24: "Honeymoon",
     "aruarian dance": "samurai champloo music record departure",
@@ -997,7 +1179,7 @@ const songToAlbumMap = {
     "The Automotivo Infernal 1.0 - Slowed": "The Automotivo Infernal 1.0",
     "The Automotivo Infernal 1.0 - Sped Up": "The Automotivo Infernal 1.0",
     "The Automotivo Infernal 1.0 - Red - Slowed": "The Automotivo Infernal 1.0",
-    "The Automotivo Infernal 1.0 - Red - Sped Up": "The Automotivo Infernal 1.0",
+    "The Automotivo Infernal 1.0 - Red - Sped Up": "The Automotivo Infernal 1.0"
 };
 
 // Function to preload images
@@ -1074,6 +1256,7 @@ function preloadImages() {
         "Resources/Covers/Never For Ever.jpg",
         "Resources/Covers/Unreleased.jpg",
         "Resources/Covers/Lush.jpg",
+        "Resources/Covers/Vivir Mi Vida.jpg",
         "Resources/Covers/Idols.jpg",
         "Resources/Covers/Honeymoon.jpg",
         "Resources/Covers/samurai champloo music record departure.jpg",
@@ -1085,7 +1268,7 @@ function preloadImages() {
         "Resources/Covers/Slide da Treme Melódica v2 - Slowed.jpg",
         "Resources/Covers/Slide da Treme Melódica v2 - Ultra Slowed.jpg",
         "Resources/Covers/Slide da Treme Melódica v2 - Sped Up.jpg",
-        "Resources/Covers/The Automotivo Infernal 1.0.jpg",
+        "Resources/Covers/The Automotivo Infernal 1.0.jpg"
     ];
 
     // Load album cover images
@@ -1137,7 +1320,7 @@ function loadRecentSong() {
             path: recentSongPath,
             title: recentSongTitle,
             index: recentSongIndex,
-            artist: recentSongArtist,
+            artist: recentSongArtist
         };
     }
     return null;
@@ -1182,7 +1365,7 @@ document.getElementById("mostRecent").addEventListener("click", playRecentSong);
 window.addEventListener("load", updateRecentSongButton);
 
 function openSelectedSongModal(songPath, songTitle) {
-    const song = songList.find(s => s === songPath);
+    const song = songList.find((s) => s === songPath);
     if (song) {
         const songArtist = getArtist(songTitle);
         const songTitleElement = document.getElementById("songTitle");
@@ -1194,7 +1377,7 @@ function openSelectedSongModal(songPath, songTitle) {
 
         // Function to update modal content
         function updateModalContent(versionPath, versionTitle) {
-            const versionConfig = songConfigs[versionPath] || {};
+            const versionConfig = songConfigs[versionTitle] || {};
             songTitleElement.textContent = versionTitle;
             songArtistElement.textContent = getArtist(versionTitle);
             songBPMElement.textContent = versionConfig.BPM || "BPM not available";
@@ -1227,7 +1410,7 @@ function openSelectedSongModal(songPath, songTitle) {
         updateModalContent(songPath, songTitle);
 
         // Determine default version path
-        const defaultVersionPath = songList.find(s => s === songPath);
+        const defaultVersionPath = songList.find((s) => s === songPath);
         const isDefaultVersion = songPath === defaultVersionPath;
 
         // Reset version dropdown
@@ -1274,11 +1457,11 @@ function openSelectedSongModal(songPath, songTitle) {
 
             if (selectedVersionPath === defaultVersionPath) {
                 // If the selected version is the default, use the index of the default version
-                index = songList.findIndex(s => s === selectedVersionPath); // Get the index of the selected version
+                index = songList.findIndex((s) => s === selectedVersionPath); // Get the index of the selected version
                 setIndex = index; // Set setIndex to the index of the normal song
             } else {
                 // If the selected version is not the default, use the index of the normal song
-                index = songList.findIndex(s => s === defaultVersionPath);
+                index = songList.findIndex((s) => s === defaultVersionPath);
                 setIndex = index; // Set setIndex to the index of the normal song
             }
 
@@ -1302,11 +1485,12 @@ function filterSongs() {
     const resultsForSearch = document.getElementById("resultsForSearch");
     const noResultsTXT = document.getElementById("noResultsTXT");
     let resultsCount = 0;
+    let firstVisibleButton = null; // To store the first visible song button
 
     // Find the last song index
     const lastSongIndex = songList.length;
 
-    songButtons.forEach(button => {
+    songButtons.forEach((button) => {
         const songText = button.textContent.toLowerCase();
         const isKanye = songText.includes("kanye west");
         const isKendrick = songText.includes("kendrick lamar");
@@ -1322,48 +1506,51 @@ function filterSongs() {
 
         if (searchInput === "ye" && isKanye) {
             button.style.display = "block";
+            if (!firstVisibleButton) firstVisibleButton = button;
             resultsCount++;
         } else if (searchInput === "kdot" && isKendrick) {
             button.style.display = "block";
+            if (!firstVisibleButton) firstVisibleButton = button;
             resultsCount++;
         } else if (searchInput === "em" && isEminem) {
             button.style.display = "block";
+            if (!firstVisibleButton) firstVisibleButton = button;
             resultsCount++;
         } else if (searchInput === "goat" && (isKanye || isKendrick || isEminem || isCreo || isTravis || isLinkin || isMRL)) {
             button.style.display = "block";
+            if (!firstVisibleButton) firstVisibleButton = button;
             resultsCount++;
         } else if (searchInput === "got bit by a goat" && isEminem) {
             button.style.display = "block";
+            if (!firstVisibleButton) firstVisibleButton = button;
             resultsCount++;
         } else if (searchInput === "marshall" && isEminem) {
             button.style.display = "block";
+            if (!firstVisibleButton) firstVisibleButton = button;
             resultsCount++;
         } else if (searchInput === "marshall mathers" && isEminem) {
             button.style.display = "block";
+            if (!firstVisibleButton) firstVisibleButton = button;
             resultsCount++;
         } else if (searchInput === "trash" && isTrash) {
             button.style.display = "block";
+            if (!firstVisibleButton) firstVisibleButton = button;
             resultsCount++;
         } else if (searchInput === "zesty" && isZesty) {
             button.style.display = "block";
-            resultsCount++;
-        } else if (searchInput === "zest" && isZesty) {
-            button.style.display = "block";
-            resultsCount++;
-        } else if (searchInput === "zes" && isZesty) {
-            button.style.display = "block";
-            resultsCount++;
-        } else if (searchInput === "ze" && isZesty) {
-            button.style.display = "block";
+            if (!firstVisibleButton) firstVisibleButton = button;
             resultsCount++;
         } else if (searchInput === "bili" && isBillie) {
             button.style.display = "block";
+            if (!firstVisibleButton) firstVisibleButton = button;
             resultsCount++;
         } else if (searchInput === "last" && isLastSong) {
             button.style.display = "block";
+            if (!firstVisibleButton) firstVisibleButton = button;
             resultsCount++;
         } else if (songText.includes(searchInput)) {
             button.style.display = "block";
+            if (!firstVisibleButton) firstVisibleButton = button;
             resultsCount++;
         } else {
             button.style.display = "none";
@@ -1384,6 +1571,24 @@ function filterSongs() {
     } else {
         resultsForSearch.style.display = "none";
         noResultsTXT.style.display = "none";
+    }
+
+    // Return the first visible button for use in playFirstResult
+    return firstVisibleButton;
+}
+
+function playFirstResult() {
+    const firstButton = filterSongs(); // Call filterSongs to get the first visible song button
+
+    if (firstButton) {
+        const songIndex = firstButton.dataset.index; // Get the stored index from the data attribute
+
+        if (songIndex !== undefined) {
+            startGame(parseInt(songIndex)); // Call startGame with the extracted song index
+            closeSongList(); // Close the song list
+        } else {
+            console.error("No index found on the first visible button.");
+        }
     }
 }
 
@@ -1734,6 +1939,7 @@ function getArtist(songSrc) {
         Babooshka: "Kate Bush",
         "Your Girl": "Lana Del Rey",
         "Brand New City": "Mitski",
+        "Vivir Mi Vida": "Marc Anthony",
         Idols: "Virtual Riot",
         VVV: "mikeysmind, Sanikwave",
         "aruarian dance": "nujabes",
@@ -1752,7 +1958,7 @@ function getArtist(songSrc) {
         "The Automotivo Infernal 1.0 - Slowed": "MRL, MC GW",
         "The Automotivo Infernal 1.0 - Sped Up": "MRL, MC GW",
         "The Automotivo Infernal 1.0 - Red - Slowed": "MRL, MC GW",
-        "The Automotivo Infernal 1.0 - Red - Sped Up": "MRL, MC GW",
+        "The Automotivo Infernal 1.0 - Red - Sped Up": "MRL, MC GW"
     };
     let songTitle = getSongTitle(songSrc);
     return artists[songTitle] || "N/A";
@@ -1878,7 +2084,7 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Loaded saved song volume");
     console.log("Loaded saved hit sound volume");
 
-    preloadSongs();
+    setTimeout(preloadSongs, 250);
     preloadImages();
 
     document.getElementById("undoKeybindsButton").addEventListener("click", undoKeybinds);
@@ -2051,9 +2257,9 @@ function startGame(index, versionPath, setIndex) {
 
         console.log("Loaded selected song's metadata");
 
-        var config = songConfigs[currentSongPath] || {
+        var config = songConfigs[getSongTitle(currentSongPath)] || {
             BPM: 120,
-            noteSpeed: 10,
+            noteSpeed: 10
         }; // Default values if song is not in the config
         BPM = config.BPM;
         MILLISECONDS_PER_BEAT = 60000 / BPM; // Calculate MILLISECONDS_PER_BEAT based on the BPM
@@ -2064,7 +2270,7 @@ function startGame(index, versionPath, setIndex) {
             left: [],
             down: [],
             up: [],
-            right: [],
+            right: []
         };
 
         const songTitle = getSongTitle(currentSongPath);
@@ -2072,7 +2278,7 @@ function startGame(index, versionPath, setIndex) {
 
         if (songConfig) {
             console.log(`Dynamic speed configuration found for "${songTitle}"`);
-            dynamicSpeedInfo = songConfig.map(config => `Timestamp: ${config.timestamp}, Speed: ${config.noteSpeed}`).join(" | ");
+            dynamicSpeedInfo = songConfig.map((config) => `Timestamp: ${config.timestamp}, Speed: ${config.noteSpeed}`).join(" | ");
             currentConfigIndex = 0; // Reset currentConfigIndex
             nextSpeedChange = ""; // Reset nextSpeedChange
             speedChanges = true;
@@ -2107,12 +2313,22 @@ function startGame(index, versionPath, setIndex) {
                         }
                         currentConfigIndex++;
                     }
-                    // Update next imminent speed change
+                    // Update next imminent speed change with more detail
                     if (currentConfigIndex < songConfig.length) {
+                        let details = [];
+                        if (nextConfig.noteSpeed) {
+                            details.push(`Speed: ${nextConfig.noteSpeed}`);
+                        }
+                        if (nextConfig.BPM) {
+                            details.push(`BPM: ${nextConfig.BPM}`);
+                        }
+                        if (nextConfig.notes) {
+                            details.push("Notes ending...");
+                        }
                         if (nextConfig.endScreenDrawn) {
-                            nextSpeedChange = "No more speed changes.";
+                            nextSpeedChange = "No more speed changes."; // Treat this as the final change
                         } else {
-                            nextSpeedChange = `Next speed change at: ${formatTimestampDS(nextConfig.timestamp)}, Speed: ${nextConfig.noteSpeed}`;
+                            nextSpeedChange = `Next change at: ${formatTimestampDS(nextConfig.timestamp)}, ${details.join(", ")}`;
                         }
                     } else {
                         nextSpeedChange = "No more speed changes.";
@@ -2186,7 +2402,7 @@ function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
         perfects,
         misses,
         earlylates,
-        maxstreak,
+        maxstreak
     });
 
     if (autoHitDisableSaving) {
@@ -2199,7 +2415,7 @@ function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
         perfects: perfects,
         misses: misses,
         earlylates: earlylates,
-        maxstreak: maxstreak,
+        maxstreak: maxstreak
     };
 
     try {
@@ -2398,7 +2614,6 @@ function updateDebugInfo(deltaTime, timestamp) {
     }
 }
 
-// Assuming MILLISECONDS_PER_BEAT is defined
 let isFlashing = false; // To track the flashing state
 const FLASH_DURATION = 100; // Duration of the flash in milliseconds
 
@@ -2417,7 +2632,7 @@ const buttonAreas = {
     left: { x: 0, y: 0, width: WIDTH / 4, height: HEIGHT },
     up: { x: WIDTH / 4, y: 0, width: WIDTH / 4, height: HEIGHT },
     down: { x: WIDTH / 2, y: 0, width: WIDTH / 4, height: HEIGHT },
-    right: { x: 960, y: 0, width: WIDTH / 4, height: HEIGHT },
+    right: { x: 960, y: 0, width: WIDTH / 4, height: HEIGHT }
 };
 
 function resizeCanvas() {
@@ -2750,7 +2965,7 @@ function updateCanvas(timestamp, setIndex) {
             return;
         }
     }
-    requestAnimationFrame(timestamp => updateCanvas(timestamp, setIndex));
+    requestAnimationFrame((timestamp) => updateCanvas(timestamp, setIndex));
 }
 
 const activeTouches = new Map(); // To track active touch points
@@ -2824,10 +3039,10 @@ function handleMouseUp(e) {
 // Update the global state
 function updateGlobalState() {
     // Check if any active touch or mouse events are set
-    leftPressed = Array.from(activeTouches.values()).some(state => state.isLeftPressed);
-    upPressed = Array.from(activeTouches.values()).some(state => state.isUpPressed);
-    downPressed = Array.from(activeTouches.values()).some(state => state.isDownPressed);
-    rightPressed = Array.from(activeTouches.values()).some(state => state.isRightPressed);
+    leftPressed = Array.from(activeTouches.values()).some((state) => state.isLeftPressed);
+    upPressed = Array.from(activeTouches.values()).some((state) => state.isUpPressed);
+    downPressed = Array.from(activeTouches.values()).some((state) => state.isDownPressed);
+    rightPressed = Array.from(activeTouches.values()).some((state) => state.isRightPressed);
 }
 
 function drawTapBoxes() {
@@ -2879,7 +3094,7 @@ function moveNotes(timeDelta) {
         for (let i = 0; i < noteYPositions[type].length; i++) {
             noteYPositions[type][i] += noteSpeed * timeDelta * 60; // Multiply by 60 to scale with the base frame rate
         }
-        noteYPositions[type] = noteYPositions[type].filter(yPos => yPos <= HEIGHT);
+        noteYPositions[type] = noteYPositions[type].filter((yPos) => yPos <= HEIGHT);
     }
     updateNotes(timeDelta);
 }

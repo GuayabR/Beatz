@@ -114,7 +114,10 @@
                     <input type="text" id="songTimeoutAfterSongEndNum" placeholder="Value in milliseconds" name="songTimeoutSongEndNum" /><br />
 
                     <label for="circularImage">Circular Cover Images?</label>
-                    <input type="checkbox" id="circularImage" name="circularImage" onchange="toggleVinylRotation()" />
+                    <input type="checkbox" id="circularImage" name="circularImage" onchange="toggleVinylRotation()" /><br />
+
+                    <label for="fetchSongsSite">Fetch songs from guayabr.github.io? (Mainly for iOS)</label>
+                    <input type="checkbox" id="fetchSongsSite" name="fetchSongsSite" onchange="toggleFetchingSongs()" />
 
                     <div id="vinylRotationContainer" style="display: none">
                         <label for="vinylRotation">Enable Cover Image Rotation:</label>
@@ -158,6 +161,9 @@
 
                 <label for="presetVERIDIAN">Preset 2:</label>
                 <button id="presetVERIDIAN" class="presetBTN">VERIDIAN</button><br /><br />
+
+                <label for="presetOG">Preset 3:</label>
+                <button id="presetOG" class="presetBTN">OG</button><br /><br />
 
                 <span id="presetDescription" style="color: white; display: none"></span>
 
@@ -227,10 +233,12 @@
                     <h1 class="modal-title">Song List</h1>
                 </div>
                 <label for="songSearchInput">Search songs by keyword, index, album, or artist.</label><br /><br />
+                <label for="songSearchInput">Press "Enter" to play first result.</label><br /><br />
                 <input type="text" id="songSearchInput" placeholder="Search..." oninput="filterSongs()" /><br /><br />
-                <label id="resultsForSearch" style="display: none">Results found</label>
+                <div id="resultsForSearch" style="display: none">Results found</div>
                 <button type="button" id="mostRecent" class="most-recent-button" style="display: none">Play most recent song</button>
-                <label id="noResultsTXT" style="display: none">No results found for your search.</label><br /><br />
+                <div id="noResultsTXT" style="display: none">No results found for your search.</div>
+                <br /><br />
                 <div class="modal-body" id="songList">
                     <!-- Song buttons will be dynamically inserted here -->
                 </div>
