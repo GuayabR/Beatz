@@ -980,15 +980,16 @@ function saveSettings() {
 
     var blurInput = newMiscellaneous.customBackgroundBlur;
     const blurValue = parseInt(blurInput, 10);
-    if (isNaN(blurValue) || blurValue < 0 || blurValue >= 1000) {
+    if (blurValue < 0 || blurValue >= 1000) {
         alert("Please enter a number between 0 and 1000 for the blur value.");
-        logWarn(`Input: ${blurInput}, Value: ${blurValue}`);
+        logWarn(`BlurMiss. Input: ${blurInput}, Value: ${blurValue}`);
         blurInput = 0;
     }
 
     if (isNaN(blurValue)) {
         alert("Please enter a valid number for the blur value.");
-        return;
+        logWarn(`BlurNaN. Input: ${blurInput}, Value: ${blurValue}`);
+        blurInput = 0;
     }
 
     switch (newMiscellaneous.backgroundOption) {
