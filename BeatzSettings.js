@@ -984,7 +984,6 @@ function saveSettings() {
         alert("Please enter a number between 0 and 1000 for the blur value.");
         logWarn(`Input: ${blurInput}, Value: ${blurValue}`);
         blurInput = 0;
-        return;
     }
 
     if (isNaN(blurValue)) {
