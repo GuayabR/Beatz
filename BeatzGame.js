@@ -2434,7 +2434,11 @@ function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
     if (autoHitDisableSaving) {
         logNotice(`Score for ${song} not saved because Auto Hit was enabled during gameplay. Don't cheat!`, "rgb(190, 50, 0)");
         return;
-    }
+    } else if (maxstreak === 0) {
+        logNotice(`You went AFK for the whole song. Score has not been saved.`);
+    } else if (points <= 10) {
+        logNotice(`At least 10 points needed to save score. Points: ${points}.`);
+    } 
 
     const score = {
         points: points,
@@ -2454,10 +2458,6 @@ function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
                 // Update localStorage with new score
                 localStorage.setItem(song, JSON.stringify(score));
                 logNotice(`New best score for ${song} with ${points} points. Amazing!`);
-            } else if (maxstreak === 0) {
-                logNotice(`You went AFK for the whole song. Score has not been saved.`);
-            } else if (points <= 10) {
-                logNotice(`At least 10 points needed to save score. Points: ${points}.`);
             } else {
                 logNotice(`Score for ${song} is not higher than existing best score, score has not been saved.`);
             }
