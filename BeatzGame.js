@@ -2436,8 +2436,10 @@ function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
         return;
     } else if (maxstreak === 0) {
         logNotice(`You went AFK for the whole song. Score has not been saved.`);
+        return;
     } else if (points <= 10) {
         logNotice(`At least 10 points needed to save score. Points: ${points}.`);
+        return;
     } 
 
     const score = {
