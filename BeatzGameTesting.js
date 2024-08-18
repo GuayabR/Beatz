@@ -124,10 +124,16 @@ var textY;
 
 if (isMobile && !isNewPlayer) {
     textY = 670;
+    console.log(`mobile but not new`);
 } else if (!isMobile && isNewPlayer) {
     textY = 670;
+    console.log(`new but not mobile`);
+} else if (!isMobile && !isNewPlayer) {
+    textY = 670;
+    console.log(`regular`);
 } else {
     textY = HEIGHT / 2;
+    console.log(`mobile and new`);
 }
 
 let songPaths;
@@ -584,7 +590,8 @@ function preloadSongs() {
             "https://guayabr.github.io/Beatz/Resources/Songs/Vivir Mi Vida.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/Idols.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/aruarian dance.mp3",
-            "https://guayabr.github.io/Beatz/Resources/Songs/VVV.mp3"
+            "https://guayabr.github.io/Beatz/Resources/Songs/VVV.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Magic Touch.mp3"
         ];
     } else {
         console.warn(`Loading songs locally, fetching: ${useFetch}`);
@@ -693,6 +700,7 @@ function preloadSongs() {
             "Resources/Songs/Idols.mp3",
             "Resources/Songs/aruarian dance.mp3",
             "Resources/Songs/VVV.mp3",
+            "Resources/Songs/Magic Touch.mp3",
 
             "Resources/Songs/testingsong.mp3"
         ];
@@ -868,6 +876,7 @@ const songConfigs = {
     Idols: { BPM: 130, noteSpeed: 2.65 },
     "aruarian dance": { BPM: 96, noteSpeed: 6 },
     VVV: { BPM: 131, noteSpeed: 10 },
+    "Magic Touch": { BPM: 127, noteSpeed: 12 },
 
     // Song Versions
     "Finesse (feat. Cardi B)": { BPM: 105, noteSpeed: 22 },
@@ -1198,6 +1207,7 @@ const songToAlbumMap = {
     Idols: "Idols",
     24: "Honeymoon",
     "aruarian dance": "samurai champloo music record departure",
+    "Magic Touch": "Magic Touch",
 
     // Song Versions
 
@@ -1294,6 +1304,7 @@ function preloadImages() {
         "Resources/Covers/Idols.jpg",
         "Resources/Covers/Honeymoon.jpg",
         "Resources/Covers/samurai champloo music record departure.jpg",
+        "Resources/Covers/Magic Touch.jpg",
 
         // Song Versions
 
@@ -1977,6 +1988,7 @@ function getArtist(songSrc) {
         Idols: "Virtual Riot",
         VVV: "mikeysmind, Sanikwave",
         "aruarian dance": "nujabes",
+        "Magic Touch": "Romos",
 
         // Song Versions
 
@@ -2234,18 +2246,6 @@ function startGame(index, versionPath, setIndex) {
         }
     }
 
-    if (document.fullscreenElement) {
-        canvas.style.cursor = "none";
-        if (!backgroundIsDefault && document.fullscreenElement) {
-            canvas.style.background = "url('Resources/BackgroundHtml2.png')";
-            canvas.style.backgroundSize = "cover";
-            canvas.style.backgroundPosition = "center";
-        }
-    } else if (!backgroundIsDefault && !document.fullscreenElement) {
-        canvas.style.background = "transparent"; // If the background is transparent, when fullscreen is toggled off, make the canvas transparent again
-        canvas.style.cursor = "default";
-    }
-
     console.log(`Starting game with index: ${currentSongIndex}`);
     console.log(`Starting game with songPath: ${currentSongPath}`);
 
@@ -2429,17 +2429,10 @@ function songEnd() {
 
 // Function to save the score to localStorage
 function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
-    console.log("saveScore called with:", {
-        song,
-        points,
-        perfects,
-        misses,
-        earlylates,
-        maxstreak
-    });
+    console.log("Saving:", song, points, perfects, misses, earlylates, maxstreak);
 
     if (autoHitDisableSaving) {
-        console.log(`Score for ${song} not saved because Auto Hit was enabled during gameplay. Don't cheat!`);
+        logNotice(`Score for ${song} not saved because Auto Hit was enabled during gameplay. Don't cheat!`, "rgb(190, 50, 0)");
         return;
     }
 
@@ -2460,21 +2453,22 @@ function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
             if (points > existingScore.points) {
                 // Update localStorage with new score
                 localStorage.setItem(song, JSON.stringify(score));
-                console.log(`New best score for ${song} saved to localStorage. Even better than before! Nice!`);
+                logNotice(`New best score for ${song} with ${points} points. Amazing!`);
             } else if (maxstreak === 0) {
-                console.log(`You went AFK for the entire ${song} duration, score has not been saved.`);
-            } else if (points === 0) {
-                console.log(`how do you manage to get 0 points`);
+                logNotice(`You went AFK for the whole song. Score has not been saved.`);
+            } else if (points <= 10) {
+                logNotice(`At least 10 points needed to save score. Points: ${points}.`);
             } else {
-                console.log(`Score for ${song} is not higher than existing best score, score has not been saved.`);
+                logNotice(`Score for ${song} is not higher than existing best score, score has not been saved.`);
             }
         } else {
             // If no existing score, save the new score
             localStorage.setItem(song, JSON.stringify(score));
-            console.log(`Score for ${song} saved to localStorage as the first best score. Nice!`);
+            logNotice(`Score for ${song} saved to localStorage as the first best score. Nice!`);
         }
-    } catch (e) {
-        console.error(`Error saving score for ${song} to localStorage:`, e);
+    } catch (error) {
+        console.error(`Error saving score for ${song} to localStorage:`, error);
+        logError(`Error saving best score. ${error} | ${error.message}`);
     }
 }
 
@@ -2520,6 +2514,7 @@ function onSongEnd() {
         saveScore(songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
     } catch (error) {
         console.error("Song ending error:", error);
+        logError(`Error calling saveScore(). ${error} | ${error.message}`);
     }
 
     if (restartSongTimeout) {
@@ -2528,8 +2523,6 @@ function onSongEnd() {
             restartSong();
         }, songTimeoutDelay); // Delay specified in settings
     }
-
-    console.log("Parameters to save:", songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
 
     drawEndScreen();
 }
@@ -2605,14 +2598,19 @@ function toggleDebugInfo() {
 
 function updateDebugInfo(deltaTime, timestamp) {
     if (debugInfoVisible) {
-        const lineHeight = 18;
+        var lineHeight = 18;
         const startY = HEIGHT / 2 - 180; // Starting y-coordinate for the first text
         const left = parseFloat(noteYPositions.left);
         const up = parseFloat(noteYPositions.up);
         const down = parseFloat(noteYPositions.down);
         const right = parseFloat(noteYPositions.right);
 
-        ctx.font = "11px Arial";
+        if (userDevice === "Mobile" || userDevice === "Android" || userDevice === "iOS") {
+            ctx.font = "16px Arial";
+            lineHeight = 20;
+        } else {
+            ctx.font = "11px Arial";
+        }
         ctx.fillStyle = "white";
         ctx.textAlign = "left";
         ctx.fillText(`Version: ${VERSION}`, 10, startY);
@@ -2639,6 +2637,8 @@ function updateDebugInfo(deltaTime, timestamp) {
         ctx.fillText(`Saved notes: ${savedNotes}`, 10, startY + 21 * lineHeight);
         ctx.fillText(`Index to Display: ${indexToDisplay + 1}`, 10, startY + 22 * lineHeight);
         ctx.fillText(`FPS buffed hit ranges? ${fpsBuffedHitRanges}`, 10, startY + 23 * lineHeight);
+        ctx.fillText(`Error array: ${errorArray}`, 10, startY + 24 * lineHeight);
+        ctx.fillText(`Notice array: ${noticeArray}`, 10, startY + 25 * lineHeight);
 
         ctx.font = "14px Arial";
         ctx.textAlign = "right";
@@ -2759,9 +2759,23 @@ function updateCanvas(timestamp, setIndex) {
     pausedTextDrawn = false;
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-    if (backgroundIsDefault) {
-        // If the background selected is transparent or custom
-        ctx.drawImage(BGbright, 0, 0, 1280, 720);
+    if (document.fullscreenElement) {
+        canvas.style.cursor = "none";
+        if (!backgroundIsDefault && document.fullscreenElement) {
+            canvas.style.background = "url('Resources/BackgroundHtml2.png')";
+            canvas.style.backgroundSize = "cover";
+            canvas.style.backgroundPosition = "center";
+        }
+    } else if (!backgroundIsDefault && !document.fullscreenElement) {
+        canvas.style.background = "transparent"; // If the background is transparent, when fullscreen is toggled off, make the canvas transparent again
+    } else if (backgroundIsDefault && !document.fullscreenElement) {
+        canvas.style.background = BGurl;
+        canvas.style.backgroundSize = "cover";
+        canvas.style.backgroundPosition = "center";
+    } else if (backgroundIsDefault && document.fullscreenElement) {
+        canvas.style.background = BGurl;
+        canvas.style.backgroundSize = "cover";
+        canvas.style.backgroundPosition = "center";
     }
 
     if (!songMetadataLoaded) {
@@ -3014,7 +3028,6 @@ function updateCanvas(timestamp, setIndex) {
         }
 
         if (!canvasUpdating) {
-            console.log("Canvas stopped updating.");
             return;
         }
     }
@@ -3287,13 +3300,16 @@ function cycleTutorialStages() {
 
 function toggleHitboxes() {
     showHitboxes = !showHitboxes;
+    logNotice(`Hitboxes ${showHitboxes ? "enabled" : "disabled"}`, "rgb(0, 50, 0)", 2000);
 }
 
 function toggleCanvasRefresh() {
     if (canvasUpdating) {
         canvasUpdating = false;
+        logNotice("Canvas stopped updating.", "rgb(0, 50, 0)");
     } else if (!canvasUpdating) {
         canvasUpdating = true;
+        logNotice("Resuming canvas refresh.", "rgb(0, 75, 0)");
         requestAnimationFrame(updateCanvas);
     }
 }

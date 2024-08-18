@@ -506,3 +506,7 @@ Fixes or tweaks:
 - Added a tutorial stage for mobile users.
 - iOS Users will automatically fetch songs from guayabr.github.io, this can't be switched on iOS because of it's limitations.
 //
+
+4.2.4.7 (MOBILE 4.2! 18/08/2024)
+Added logging notices and warnings and styled them.
+Fixed default backgrounds being fixed to the canvas' viewport, noticeable in fullscreen mode.

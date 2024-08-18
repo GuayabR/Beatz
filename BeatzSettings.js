@@ -9,7 +9,9 @@
 // ERROR LOGGING
 
 // Array to store errors
-const errorArray = [];
+const errorArray = ["No errors."];
+
+const noticeArray = ["No notices."];
 
 // Global error handler
 window.addEventListener("error", function (event) {
@@ -22,45 +24,83 @@ window.addEventListener("error", function (event) {
 
 // Global unhandled promise rejection handler
 window.addEventListener("unhandledrejection", function (event) {
-    logError(`Unhandled promise rejection: ${event.reason}`);
+    logError(`Unhandled promise rejection: ${event.reason} | ${event.message}`);
 });
 
-// Function to log errors to the errorLogging div and store in errorArray
-function logError(message) {
-    const errorLoggingDiv = document.getElementById("errorLogging");
-    const err = message || "Unspecified error.";
+// Function to dynamically create and display error log divs
+function logMessage(message, type = "error", color = "red", timeout = 7500) {
+    const errorContainer = document.getElementById("errorContainer");
+    const errorDiv = document.createElement("div");
+    errorDiv.className = "errorLogging";
 
-    // Store the error in the errorArray
-    errorArray.push(err);
-
-    if (errorLoggingDiv) {
-        errorLoggingDiv.textContent = `Error: ${err}`;
-        errorLoggingDiv.style.backgroundColor = "red";
-        errorLoggingDiv.style.display = "block";
-
-        setTimeout(() => {
-            errorLoggingDiv.style.display = "none";
-        }, 7500);
+    // Set the text and color based on the message type
+    switch (type) {
+        case "error":
+            errorDiv.textContent = `Error: ${message}`;
+            errorDiv.style.backgroundColor = "red";
+            errorArray.push(message);
+            // Check if 'No errors.' is in the array, if so, remove it
+            const noErrorsIndex = errorArray.indexOf("No errors.");
+            if (noErrorsIndex !== -1) {
+                errorArray.splice(noErrorsIndex, 1);
+            }
+            break;
+        case "warn":
+            errorDiv.textContent = `Warning: ${message}`;
+            errorDiv.style.backgroundColor = "rgb(255, 100, 0)";
+            errorArray.push(message);
+            // Check if 'No errors.' is in the array, if so, remove it
+            if (noErrorsIndex !== -1) {
+                errorArray.splice(noErrorsIndex, 1);
+            }
+            break;
+        case "notice":
+            errorDiv.textContent = `Notice: ${message}`;
+            errorDiv.style.backgroundColor = color;
+            // Check if 'No errors.' is in the array, if so, remove it
+            const noNoticesIndex = noticeArray.indexOf("No notices.");
+            if (noNoticesIndex !== -1) {
+                noticeArray.splice(noNoticesIndex, 1);
+            }
+            noticeArray.push(message);
+            break;
     }
+
+    // Append the new error div to the container
+    errorContainer.appendChild(errorDiv);
+
+    // Display the error div with fade-in animation
+    errorDiv.style.display = "block";
+
+    // Automatically trigger the fade-out animation, then remove the element
+    setTimeout(() => {
+        // Trigger the fade-out animation
+        errorDiv.style.animation = "fadeout 0.5s forwards";
+
+        // Wait for the animation to finish before removing the element
+        errorDiv.addEventListener("animationend", () => {
+            errorDiv.remove();
+        });
+    }, timeout);
 }
 
-// Function to log errors to the errorLogging div and store in errorArray
-function logWarn(message) {
-    const errorLoggingDiv = document.getElementById("errorLogging");
+// Log error function
+function logError(message, timeout) {
+    const err = message || "Unspecified error.";
+    logMessage(err, "error", "red", timeout);
+}
+
+// Log warning function
+function logWarn(message, timeout) {
     const warn = message || "Unspecified warning.";
+    logMessage(warn, "warn", "rgb(255, 100, 0)", timeout);
+}
 
-    // Store the error in the errorArray
-    errorArray.push(warn);
-
-    if (errorLoggingDiv) {
-        errorLoggingDiv.textContent = `Warning: ${warn}`;
-        errorLoggingDiv.style.backgroundColor = "rgb(255, 153, 0)";
-        errorLoggingDiv.style.display = "block";
-
-        setTimeout(() => {
-            errorLoggingDiv.style.display = "none";
-        }, 7500);
-    }
+// Log notice function
+function logNotice(message, color, timeout) {
+    const noti = message || "Unspecified notice.";
+    const BGcol = color || "rgb(49, 0, 128)";
+    logMessage(noti, "notice", BGcol, timeout);
 }
 
 // Resource-specific error handling for audio and images
@@ -114,10 +154,14 @@ function detectAndHandleDevice() {
     const pauseMargin2 = document.getElementById("pauseMargin2");
 
     if (userDevice === "Mobile" || userDevice === "iOS" || userDevice === "Android") {
-        console.log("Mobile mode is enabled from previous session.");
+        logNotice("Beatz! Mobile activated.", "", 3000);
         handleChange();
         setupMobileEventListeners();
         changeStylesheet("mobileStyles.css");
+
+        if (userDevice === "iOS") {
+            logNotice("You're using an iOS device, songs are being fetched from guayabr.github.io.", "orange", 3500);
+        }
 
         // Remove <br> tags with class "marginKB"
         const margins = document.getElementsByClassName("marginKB");
@@ -153,7 +197,7 @@ function detectAndHandleDevice() {
             }
         });
     } else if (userDevice === "Chromebook") {
-        console.warn("Chromebook detected. Game might have reduced framerates.");
+        logWarn("Chromebook detected. Game might have reduced framerates.");
         document.getElementById("orientationMessage").style.display = "none";
         if (pauseButton) {
             pauseButton.remove();
@@ -242,6 +286,7 @@ function toggleFullScreen() {
     if (!document.fullscreenElement) {
         canvas.requestFullscreen().catch((err) => {
             console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+            logError(`Error attempting to enable full-screen mode: ${err} | ${err.message} | ${err.name}`);
         });
         console.log("Entered Fullscreen");
         if (userDevice === "Chromebook") {
@@ -722,6 +767,8 @@ let logKeys = true;
 
 let fetchSongs = false; // Fetch songs from guayabr.github.io
 
+let BGurl = "url('Resources/Background2.png)";
+
 let keybinds = { ...defaultKeybinds };
 let miscellaneous = { ...defaultMiscellaneous };
 
@@ -749,6 +796,14 @@ function loadSettings() {
             saveSettings();
             location.reload();
         }, 1000);
+    } else if (userDevice === "Desktop" && miscellaneous.fetchSongs === true && document.location.href.includes(testingVerHTML)) {
+        fetchSongs = false;
+        miscellaneous.fetchSongs = false;
+        logNotice("Testing version detected. Loading songs locally...");
+        setTimeout(() => {
+            saveSettings();
+            location.reload();
+        }, 500);
     }
 
     if (userDevice === "iOS") {
@@ -797,7 +852,7 @@ function loadSettings() {
     if (savedBackgroundOption) {
         defaultBackground.value = savedBackgroundOption;
         if (savedBackgroundOption === "customBG" && savedCustomBG) {
-            BGbright.src = savedCustomBG;
+            BGurl = savedCustomBG;
         }
     }
 
@@ -827,23 +882,23 @@ function loadSettings() {
 
     switch (savedMiscellaneous.backgroundOption) {
         case "defaultBG":
-            BGbright.src = "Resources/Background2.png";
+            BGurl = `url("Resources/Background2.png")`;
             backgroundIsDefault = true;
             break;
         case "defaultBG2":
-            BGbright.src = "Resources/Background3.jpg";
+            BGurl = `url("Resources/Background3.jpg")`;
             backgroundIsDefault = true;
             break;
         case "defaultBG3":
-            BGbright.src = "Resources/Background4.png";
+            BGurl = `url("Resources/Background4.png")`;
             backgroundIsDefault = true;
             break;
         case "defaultBG4":
-            BGbright.src = "Resources/Background5.jpg";
+            BGurl = `url("Resources/Background5.jpg")`;
             backgroundIsDefault = true;
             break;
         case "htmlBG":
-            BGbright.src = "Resources/BackgroundHtml2.png";
+            BGurl = `url("Resources/BackgroundHtml2.png")`;
             backgroundIsDefault = true;
             break;
         case "transparentBG":
@@ -853,12 +908,12 @@ function loadSettings() {
             break;
         case "customBG":
             if (savedCustomBackground) {
-                BGbright.src = savedCustomBackground;
+                BGurl = `url("${savedCustomBackground}")`;
             }
             backgroundIsDefault = true;
             break;
         default:
-            BGbright.src = "Resources/Background2.png";
+            BGurl = `url("Resources/Background2.png")`;
             backgroundIsDefault = true;
     }
 
@@ -1000,23 +1055,23 @@ function saveSettings() {
 
     switch (newMiscellaneous.backgroundOption) {
         case "defaultBG":
-            BGbright.src = "Resources/Background2.png";
+            BGurl = `url("Resources/Background2.png")`;
             backgroundIsDefault = true;
             break;
         case "defaultBG2":
-            BGbright.src = "Resources/Background3.jpg";
+            BGurl = `url("Resources/Background3.jpg")`;
             backgroundIsDefault = true;
             break;
         case "defaultBG3":
-            BGbright.src = "Resources/Background4.png";
+            BGurl = `url("Resources/Background4.png")`;
             backgroundIsDefault = true;
             break;
         case "defaultBG4":
-            BGbright.src = "Resources/Background5.jpg";
+            BGurl = `url("Resources/Background5.jpg")`;
             backgroundIsDefault = true;
             break;
         case "htmlBG":
-            BGbright.src = "Resources/BackgroundHtml2.png";
+            BGurl = `url("Resources/BackgroundHtml2.png")`;
             backgroundIsDefault = true;
             break;
         case "transparentBG":
@@ -1032,7 +1087,7 @@ function saveSettings() {
             backgroundIsDefault = true;
             break;
         default:
-            BGbright.src = "Resources/Background2.png";
+            BGurl = `url("Resources/Background2.png")`;
             backgroundIsDefault = true;
     }
 
@@ -1064,7 +1119,7 @@ function handleFileUpload(file) {
         const imageData = e.target.result;
 
         localStorage.setItem("customBackground", imageData);
-        BGbright.src = e.target.result;
+        BGurl = `url("${imageData}")`;
     };
 
     reader.readAsDataURL(file);

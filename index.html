@@ -11,7 +11,7 @@
         <canvas id="myCanvas" width="1280" height="720"></canvas>
         <div id="orientationMessage">Please rotate your device to landscape mode.</div>
         <h1 id="titleGame">Beatz.io</h1>
-        <div id="errorLogging">d</div>
+        <div id="errorContainer" style="position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1000"></div>
 
         <button id="togglePauseMBL" title="Pause Game" onclick="togglePause()" style="display: none"><i class="fa-solid fa-circle"></i> Pause Game!</button
         ><br id="pauseMargin" /><br id="pauseMargin2" />
@@ -31,9 +31,9 @@
         <button id="randomizeButton" title="Randomize Song" style="display: none"><i class="fa-solid fa-shuffle"></i></button>
         <button id="toggleAutoHit" style="display: none">Toggle Auto Hit</button>
         <button id="fullscreen" title="Toggle Fullscreen" style="display: none" onclick="toggleFullScreen()"><i class="fa-solid fa-expand"></i></button>
-        <button id="keybindsButton" title="Game Settings" style="display: none"><i class="fa-solid fa-gear"></i></button><br /><br />
+        <button id="keybindsButton" title="Game Settings (P)" style="display: none"><i class="fa-solid fa-gear"></i></button><br /><br />
 
-        <button id="openSongListBTN"><i class="fa-solid fa-music"></i> Song list!</button>
+        <button id="openSongListBTN" title="Press O to open."><i class="fa-solid fa-music"></i> Song list!</button>
 
         <!-- The Modal -->
         <div id="keybindsModal" class="modal">
@@ -183,6 +183,30 @@
             <input type="range" id="hitSoundSlider" name="hitSoundSlider" min="0" max="100" value="50" />
         </div>
         <br /><br />
+
+        <!-- Button to Open the Modal -->
+        <button id="openCustomSongModal">Add your Custom Song!</button>
+
+        <!-- Modal Structure -->
+        <div id="customSongModal" class="modal">
+            <div class="modal-content">
+                <span id="closeCustomSongModal" class="close"><i class="fa-solid fa-xmark"></i></span>
+                <h1>Add Custom Song</h1>
+                <label for="customSongTitle">Title:</label>
+                <input type="text" id="customSongTitle" placeholder="Enter song title" /><br /><br />
+
+                <label for="songFile">Upload MP3:</label>
+                <input type="file" id="songFile" accept=".mp3" /><br /><br />
+
+                <label for="noteSpeed">Note Speed:</label>
+                <input type="number" id="noteSpeed" min="1" max="50" placeholder="Enter note speed" /><br /><br />
+
+                <label for="bpm">BPM:</label>
+                <input type="number" id="bpm" min="1" max="1000" placeholder="Enter BPM" /><br /><br />
+
+                <button id="createCustomSong">Create Custom Song!</button>
+            </div>
+        </div>
 
         <div id="contactBtn">
             <button id="contactbtn" onclick="email()"><i class="fa-solid fa-envelope"></i> Contact</button>
