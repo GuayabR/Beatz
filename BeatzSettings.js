@@ -33,6 +33,8 @@ function logMessage(message, type = "error", color = "red", timeout = 7500) {
     const errorDiv = document.createElement("div");
     errorDiv.className = "errorLogging";
 
+    const noErrorsIndex = errorArray.indexOf("No errors.");
+
     // Set the text and color based on the message type
     switch (type) {
         case "error":
@@ -40,7 +42,6 @@ function logMessage(message, type = "error", color = "red", timeout = 7500) {
             errorDiv.style.backgroundColor = "red";
             errorArray.push(message);
             // Check if 'No errors.' is in the array, if so, remove it
-            const noErrorsIndex = errorArray.indexOf("No errors.");
             if (noErrorsIndex !== -1) {
                 errorArray.splice(noErrorsIndex, 1);
             }
