@@ -2479,14 +2479,14 @@ function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
             if (points > existingScore.points) {
                 // Update localStorage with new score
                 localStorage.setItem(song, JSON.stringify(score));
-                logNotice(`New best score for ${song} with ${points} points. Amazing!`);
+                logNotice(`New best score for ${song} with ${points} points. Amazing!`, "rgb(0, 170, 15)");
             } else {
                 logNotice(`Score for ${song} is not higher than existing best score, score has not been saved.`);
             }
         } else if (!existingScoreStr) {
             // If no existing score, save the new score
             localStorage.setItem(song, JSON.stringify(score));
-            logNotice(`Score for ${song} saved to localStorage as your first new best score with ${points} points. Nice!`);
+            logNotice(`Score for ${song} saved to localStorage as your first new best score with ${points} points. Nice!`, "rgb(0, 175, 15)");
         }
     } catch (error) {
         console.error(`Error saving score for ${song} to localStorage:`, error);
