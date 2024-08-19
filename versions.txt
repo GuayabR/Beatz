@@ -510,3 +510,4 @@ Fixes or tweaks:
 4.2.4.7 (MOBILE 4.2! 18/08/2024)
 Added logging notices and warnings and styled them.
 Fixed default backgrounds being fixed to the canvas' viewport, noticeable in fullscreen mode.
+Added a localStorage cleanup system where every time you start up a new song, it checks for all saved song's scores and deletes all that are below 10 points.

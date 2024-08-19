@@ -2225,8 +2225,25 @@ function formatTimestampDS(seconds) {
     }
 }
 
+function removeLowPointSongs() {
+    songList.forEach((song) => {
+        let title = getSongTitle(song);
+        const songData = localStorage.getItem(title);
+        if (songData) {
+            const songStats = JSON.parse(songData);
+            if (songStats.points <= 10) {
+                localStorage.removeItem(title);
+                logWarn(`Removed "${title}" from localStorage due to insufficient points.`);
+            }
+        }
+    });
+}
+
 function startGame(index, versionPath, setIndex) {
     songMetadataLoaded = false; // Reset flag to false at the start of the game
+
+    // Check and remove songs with low points from localStorage
+    removeLowPointSongs();
 
     if (versionPath) {
         currentSongPath = versionPath;
@@ -2365,6 +2382,9 @@ function startGame(index, versionPath, setIndex) {
                         }
                     } else {
                         nextSpeedChange = "No more speed changes.";
+                        setTimeout(() => {
+                            nextSpeedChange = "";
+                        }, 5000);
                     }
                 } else {
                     clearInterval(speedUpdater);
@@ -2434,6 +2454,12 @@ function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
     if (autoHitDisableSaving) {
         logNotice(`Score for ${song} not saved because Auto Hit was enabled during gameplay. Don't cheat!`, "rgb(190, 50, 0)");
         return;
+    } else if (maxstreak === 0) {
+        logNotice(`You went AFK for the whole song. Score has not been saved.`);
+        return;
+    } else if (points <= 10) {
+        logNotice(`At least 10 points needed to save score. Points: ${points}.`);
+        return;
     }
 
     const score = {
@@ -2454,17 +2480,13 @@ function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
                 // Update localStorage with new score
                 localStorage.setItem(song, JSON.stringify(score));
                 logNotice(`New best score for ${song} with ${points} points. Amazing!`);
-            } else if (maxstreak === 0) {
-                logNotice(`You went AFK for the whole song. Score has not been saved.`);
-            } else if (points <= 10) {
-                logNotice(`At least 10 points needed to save score. Points: ${points}.`);
             } else {
                 logNotice(`Score for ${song} is not higher than existing best score, score has not been saved.`);
             }
-        } else {
+        } else if (!existingScoreStr) {
             // If no existing score, save the new score
             localStorage.setItem(song, JSON.stringify(score));
-            logNotice(`Score for ${song} saved to localStorage as the first best score. Nice!`);
+            logNotice(`Score for ${song} saved to localStorage as your first new best score with ${points} points. Nice!`);
         }
     } catch (error) {
         console.error(`Error saving score for ${song} to localStorage:`, error);
@@ -2548,6 +2570,16 @@ function drawEndScreen() {
         ctx.drawImage(BGbright, 0, 0, 1280, 720);
     }
 
+    noteYPositions.left = [];
+    noteYPositions.up = [];
+    noteYPositions.down = [];
+    noteYPositions.right = [];
+
+    console.log(noteYPositions.left);
+    console.log(noteYPositions.down);
+    console.log(noteYPositions.up);
+    console.log(noteYPositions.right);
+
     // Draw "Song completed!" text
     ctx.fillStyle = "white";
     ctx.font = "60px Arial";
@@ -2587,7 +2619,7 @@ function drawEndScreen() {
     ctx.fillText("Maximum streak: " + maxStreak, WIDTH / 2, HEIGHT / 2 + 200);
 }
 
-console.log("Functions saveScore, getBestScore, displayBestScore, and onSongEnd loaded.");
+console.log("Saving logic loaded.");
 
 console.log("Ready to start Beatz.");
 

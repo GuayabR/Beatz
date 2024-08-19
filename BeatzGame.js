@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: MOBILE 4.2.4.7 (release.version.subversion.bugfix)
+ * Version: MOBILE 4.2.4.6 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -10,7 +10,7 @@
 
 const userDevice = detectDeviceType();
 
-const VERSION = "MOBILE 4.2.4.7 (Codename.Release.Version.Subversion.Bugfix)";
+const VERSION = "MOBILE 4.2.4.6 (Codename.Release.Version.Subversion.Bugfix)";
 var PUBLICVERSION = `4.2! (${userDevice} Port)`;
 console.log("Version: " + VERSION);
 
@@ -2225,8 +2225,25 @@ function formatTimestampDS(seconds) {
     }
 }
 
+function removeLowPointSongs() {
+    songList.forEach((song) => {
+        let title = getSongTitle(song);
+        const songData = localStorage.getItem(title);
+        if (songData) {
+            const songStats = JSON.parse(songData);
+            if (songStats.points <= 10) {
+                localStorage.removeItem(title);
+                logWarn(`Removed "${title}" from localStorage due to insufficient points.`);
+            }
+        }
+    });
+}
+
 function startGame(index, versionPath, setIndex) {
     songMetadataLoaded = false; // Reset flag to false at the start of the game
+
+    // Check and remove songs with low points from localStorage
+    removeLowPointSongs();
 
     if (versionPath) {
         currentSongPath = versionPath;
@@ -2365,6 +2382,9 @@ function startGame(index, versionPath, setIndex) {
                         }
                     } else {
                         nextSpeedChange = "No more speed changes.";
+                        setTimeout(() => {
+                            nextSpeedChange = "";
+                        }, 5000);
                     }
                 } else {
                     clearInterval(speedUpdater);
@@ -2415,7 +2435,7 @@ function startGame(index, versionPath, setIndex) {
 
         // Update the page title
         indexToDisplay = setIndex >= 0 ? setIndex : currentSongIndex;
-        document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz 4.2!`;
+        document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 4.2!`;
 
         console.log(`indexToDisplay converted in startGame: ${indexToDisplay}`);
     };
@@ -2440,7 +2460,7 @@ function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
     } else if (points <= 10) {
         logNotice(`At least 10 points needed to save score. Points: ${points}.`);
         return;
-    } 
+    }
 
     const score = {
         points: points,
@@ -2463,10 +2483,10 @@ function saveScore(song, points, perfects, misses, earlylates, maxstreak) {
             } else {
                 logNotice(`Score for ${song} is not higher than existing best score, score has not been saved.`);
             }
-        } else {
+        } else if (!existingScoreStr) {
             // If no existing score, save the new score
             localStorage.setItem(song, JSON.stringify(score));
-            logNotice(`Score for ${song} saved to localStorage as the first best score. Nice!`);
+            logNotice(`Score for ${song} saved to localStorage as your first new best score with ${points} points. Nice!`);
         }
     } catch (error) {
         console.error(`Error saving score for ${song} to localStorage:`, error);
@@ -2550,6 +2570,16 @@ function drawEndScreen() {
         ctx.drawImage(BGbright, 0, 0, 1280, 720);
     }
 
+    noteYPositions.left = [];
+    noteYPositions.up = [];
+    noteYPositions.down = [];
+    noteYPositions.right = [];
+
+    console.log(noteYPositions.left);
+    console.log(noteYPositions.down);
+    console.log(noteYPositions.up);
+    console.log(noteYPositions.right);
+
     // Draw "Song completed!" text
     ctx.fillStyle = "white";
     ctx.font = "60px Arial";
@@ -2589,7 +2619,7 @@ function drawEndScreen() {
     ctx.fillText("Maximum streak: " + maxStreak, WIDTH / 2, HEIGHT / 2 + 200);
 }
 
-console.log("Functions saveScore, getBestScore, displayBestScore, and onSongEnd loaded.");
+console.log("Saving logic loaded.");
 
 console.log("Ready to start Beatz.");
 
