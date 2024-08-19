@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: MOBILE 4.2.4.6 test (release.version.subversion.bugfix)
+ * Version: MOBILE 4.2.4.7 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -3462,77 +3462,6 @@ function drawAutoHitText() {
     ctx.textAlign = "left";
     ctx.fillText("Auto Hit: On", 10, HEIGHT - 34);
     ctx.fillText("Points are disabled for this playthrough.", 10, HEIGHT - 10);
-}
-
-// Get the modal and buttons
-const customSongModal = document.getElementById("customSongModal");
-const openCustomSongModal = document.getElementById("openCustomSongModal");
-const closeCustomSong = document.getElementById("closeCustomSongModal");
-const createButton = document.getElementById("createCustomSong");
-
-// Open the modal
-openCustomSongModal.onclick = function () {
-    customSongModal.style.display = "block";
-    deactivateKeybinds();
-};
-
-// Close the modal
-closeCustomSong.onclick = function () {
-    customSongModal.style.display = "none";
-    activateKeybinds();
-};
-
-// Close the modal when clicking outside of it
-window.onclick = function (event) {
-    if (event.target === customSongModal) {
-        customSongModal.style.display = "none";
-    }
-};
-
-// Handle file input and note generation
-createButton.onclick = function () {
-    const fileInput = document.getElementById("songFile");
-    const titleInput = document.getElementById("customSongTitle").value;
-    const noteSpeed = parseInt(document.getElementById("noteSpeed").value);
-    const bpm = parseInt(document.getElementById("bpm").value);
-
-    if (fileInput.files.length === 0) {
-        alert("Please upload an MP3 file.");
-        return;
-    }
-
-    const file = fileInput.files[0];
-    if (file.type !== "audio/mp3") {
-        alert("Please upload a valid MP3 file.");
-        return;
-    }
-
-    const audio = new Audio(URL.createObjectURL(file));
-    audio.onloadedmetadata = function () {
-        const duration = audio.duration * 1000; // Convert duration to milliseconds
-
-        // Generate notes
-        const notes = generateRandomNotes(duration);
-
-        // Apply note speed and BPM
-        applyNoteSpeedAndBPM(noteSpeed, bpm);
-
-        // Start the game with the custom song
-        startCustomGame(file, titleInput, notes);
-    };
-};
-
-// Function to apply note speed and BPM
-function applyNoteSpeedAndBPM(noteSpeed, bpm) {
-    // Implement your logic to apply note speed and BPM
-    console.log("Note Speed:", noteSpeed, "BPM:", bpm);
-}
-
-// Function to start the game with the custom song
-function startCustomGame(file, title, notes) {
-    // Implement your logic to start the game with the given song and notes
-    console.log("Starting custom game with title:", title);
-    console.log("Notes:", notes);
 }
 
 // Global variable to track if notes are generated
