@@ -805,7 +805,7 @@ const songConfigs = {
     "BUTTERFLY EFFECT": { BPM: 141, noteSpeed: 10 },
     SWIM: { BPM: 120, noteSpeed: 10 },
     "You Need Jesus": { BPM: 110, noteSpeed: 11 },
-    Crazy: { BPM: 120, noteSpeed: 10 },
+    Crazy: { BPM: 120, noteSpeed: 9.85 },
     Despacito: { BPM: 89, noteSpeed: 10 },
     "FE!N": { BPM: 148, noteSpeed: 12 },
     Nautilus: { BPM: 124, noteSpeed: 9 },
@@ -1793,11 +1793,30 @@ function previousSong() {
 }
 
 function pickRandomSong() {
-    return songList[Math.floor(Math.random() * songList.length)];
+    const randomIndex = pickRandomSongIndex(); // Get the random index
+    return songList[randomIndex]; // Return the song at that index
 }
 
 function pickRandomSongIndex() {
-    return Math.floor(Math.random() * songList.length);
+    const maxIndex = songList.length - 1;
+    let randomIndex;
+
+    if (maxIndex <= 54) {
+        // If songList length is 55 or less, no need to skip
+        randomIndex = Math.floor(Math.random() * songList.length);
+    } else {
+        // Randomly pick between 0-53 or 55-maxIndex
+        const random = Math.random();
+        if (random < 54 / (maxIndex + 1)) {
+            // Pick an index between 0 and 53
+            randomIndex = Math.floor(random * 54);
+        } else {
+            // Pick an index between 55 and maxIndex
+            randomIndex = Math.floor(Math.random() * (maxIndex - 54)) + 55;
+        }
+    }
+
+    return randomIndex;
 }
 
 function randomizeSong() {
@@ -3533,6 +3552,56 @@ function startCustomGame(file, title, notes) {
     // Implement your logic to start the game with the given song and notes
     console.log("Starting custom game with title:", title);
     console.log("Notes:", notes);
+}
+
+canvas.addEventListener("dblclick", () => {
+    takeScreenshotWithBackground(canvas);
+});
+
+function takeScreenshotWithBackground(canvas, backgroundImagePath = "https://guayabr.github.io/Beatz/Resources/Background2.png") {
+    const tempCanvas = document.createElement("canvas");
+    const tempCtx = tempCanvas.getContext("2d");
+    const backgroundImage = new Image();
+
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+
+    // Load the background image
+    backgroundImage.src = backgroundImagePath;
+    backgroundImage.crossOrigin = "anonymous";
+
+    backgroundImage.onload = function () {
+        // Draw the background image onto the temporary canvas
+        tempCtx.drawImage(backgroundImage, 0, 0, tempCanvas.width, tempCanvas.height);
+
+        // Draw the original canvas on top of the background
+        tempCtx.drawImage(canvas, 0, 0);
+
+        try {
+            // Capture the screenshot
+            const screenshotDataURL = tempCanvas.toDataURL("image/png");
+
+            // Download the screenshot
+            downloadScreenshot(screenshotDataURL, "screenshot.png");
+        } catch (err) {
+            console.error("Failed to export the canvas:", err);
+            logError(`Failed to screenshot canvas. ${err}`);
+        }
+    };
+
+    backgroundImage.onerror = function () {
+        console.debug("Failed to load background image:", backgroundImagePath);
+    };
+}
+
+// Helper function to download the screenshot
+function downloadScreenshot(dataURL, filename) {
+    const a = document.createElement("a");
+    a.href = dataURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }
 
 // Global variable to track if notes are generated

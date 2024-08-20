@@ -511,3 +511,5 @@ Fixes or tweaks:
 Added logging notices and warnings and styled them.
 Fixed default backgrounds being fixed to the canvas' viewport, noticeable in fullscreen mode.
 Added a localStorage cleanup system where every time you start up a new song, it checks for all saved song's scores and deletes all that are below 10 points.
+
+idk im too tired to do the changelog

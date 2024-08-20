@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: MOBILE 4.2.4.7 test (release.version.subversion.bugfix)
+ * Version: MOBILE 4.2.4.6 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -805,7 +805,7 @@ const songConfigs = {
     "BUTTERFLY EFFECT": { BPM: 141, noteSpeed: 10 },
     SWIM: { BPM: 120, noteSpeed: 10 },
     "You Need Jesus": { BPM: 110, noteSpeed: 11 },
-    Crazy: { BPM: 120, noteSpeed: 10 },
+    Crazy: { BPM: 120, noteSpeed: 9.85 },
     Despacito: { BPM: 89, noteSpeed: 10 },
     "FE!N": { BPM: 148, noteSpeed: 12 },
     Nautilus: { BPM: 124, noteSpeed: 9 },
@@ -1793,11 +1793,30 @@ function previousSong() {
 }
 
 function pickRandomSong() {
-    return songList[Math.floor(Math.random() * songList.length)];
+    const randomIndex = pickRandomSongIndex(); // Get the random index
+    return songList[randomIndex]; // Return the song at that index
 }
 
 function pickRandomSongIndex() {
-    return Math.floor(Math.random() * songList.length);
+    const maxIndex = songList.length - 1;
+    let randomIndex;
+
+    if (maxIndex <= 54) {
+        // If songList length is 55 or less, no need to skip
+        randomIndex = Math.floor(Math.random() * songList.length);
+    } else {
+        // Randomly pick between 0-53 or 55-maxIndex
+        const random = Math.random();
+        if (random < 54 / (maxIndex + 1)) {
+            // Pick an index between 0 and 53
+            randomIndex = Math.floor(random * 54);
+        } else {
+            // Pick an index between 55 and maxIndex
+            randomIndex = Math.floor(Math.random() * (maxIndex - 54)) + 55;
+        }
+    }
+
+    return randomIndex;
 }
 
 function randomizeSong() {
