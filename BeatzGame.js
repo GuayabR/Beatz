@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: MOBILE 4.2.4.6 test (release.version.subversion.bugfix)
+ * Version: MOBILE 4.2.5.7 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -481,6 +481,9 @@ function addSongToList(songPath, songTitle) {
     listOfSongs.push({ path: songPath, title: songTitle });
 
     console.log(`Song added to list: ${songTitle} - ${songPath}`);
+
+    // Recheck all buttons for audio events
+    audios();
 }
 
 // Function to preload songs
@@ -739,6 +742,60 @@ function checkAllSongsLoaded(totalSongs) {
                 headerElement.removeChild(counterText);
             }
         }, 2500);
+    }
+}
+
+// Function to play a sound
+function playSoundEffect(audioPath, vol) {
+    if (!playSFX) {
+        return;
+    }
+    const audio = new Audio(audioPath);
+    audio.volume = vol;
+    audio.play().catch((error) => {
+        console.error("Audio playback failed:", error);
+    });
+}
+
+function audios() {
+    // Select all button and span elements
+    const elements = document.querySelectorAll("button, span, input, select");
+
+    if (elements.length === 0) {
+        console.error("No buttons or spans found.");
+        return;
+    } else {
+        console.log(`Found ${elements.length} element(s).`);
+    }
+
+    // Remove existing event listeners to prevent duplicates
+    elements.forEach((element) => {
+        element.removeEventListener("mouseenter", handleMouseEnter);
+        element.removeEventListener("click", handleClick);
+    });
+
+    // Attach event listeners to each element
+    elements.forEach((element) => {
+        // Add event listener for mouseenter (hover)
+        element.addEventListener("mouseenter", handleMouseEnter);
+
+        // Add event listener for click
+        element.addEventListener("click", handleClick);
+    });
+}
+
+// Event handler functions
+function handleMouseEnter() {
+    playSoundEffect("Resources/SFX/hoverBtn.mp3", 0.2);
+}
+
+function handleClick() {
+    if (this.classList.contains("close")) {
+        console.log("Close element clicked, playing clickBtn2.mp3");
+        playSoundEffect("Resources/SFX/clickBtn2.mp3", 0.7);
+    } else {
+        console.log("Regular element clicked, playing clickBtn.mp3");
+        playSoundEffect("Resources/SFX/clickBtn.mp3", 1);
     }
 }
 
@@ -1352,6 +1409,8 @@ function saveRecentSong(songPath, songTitle, songIndex, songArtist) {
     localStorage.setItem("recentSongTitle", songTitle);
     localStorage.setItem("recentSongIndex", songIndex);
     localStorage.setItem("recentSongArtist", songArtist);
+
+    updateRecentSongButton();
 }
 
 // Load the most recent song from localStorage
@@ -1618,22 +1677,30 @@ function filterSongs() {
         noResultsTXT.style.display = "none";
     }
 
+    playSoundEffect("Resources/SFX/hoverBtn.mp3", 0.1);
+
     // Return the first visible button for use in playFirstResult
     return firstVisibleButton;
 }
 
 function playFirstResult() {
-    const firstButton = filterSongs(); // Call filterSongs to get the first visible song button
+    const firstButton = filterSongs(); // Ensure this function returns the first visible song button
 
     if (firstButton) {
         const songIndex = firstButton.dataset.index; // Get the stored index from the data attribute
+        const songPath = firstButton.dataset.path; // Get the song path from the data attribute
+        const songTitle = getSongTitle(songPath); // Extract the song title from button text
+        const songArtist = getArtist(songPath); // Get the artist from the song path
 
-        if (songIndex !== undefined) {
+        if (songIndex !== undefined && songPath && songTitle && songArtist) {
             startGame(parseInt(songIndex)); // Call startGame with the extracted song index
             closeSongList(); // Close the song list
+            saveRecentSong(songPath, songTitle, parseInt(songIndex) + 1, songArtist); // Save the recent song
         } else {
-            console.error("No index found on the first visible button.");
+            logError("Unable to retrieve all necessary song details from the first visible button.");
         }
+    } else {
+        logError("No visible song button found.");
     }
 }
 

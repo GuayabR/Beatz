@@ -504,7 +504,7 @@ Fixes or tweaks:
 
 4.2.4.6 (MOBILE 4.2! 17/08/2024)
 - Added a tutorial stage for mobile users.
-- iOS Users will automatically fetch songs from guayabr.github.io, this can't be switched on iOS because of it's limitations.
+- iOS Users will automatically fetch songs from guayabr.github.io, this can't be toggled on iOS because of it's limitations.
 //
 
 4.2.4.7 (MOBILE 4.2! 18/08/2024)
@@ -512,4 +512,5 @@ Added logging notices and warnings and styled them.
 Fixed default backgrounds being fixed to the canvas' viewport, noticeable in fullscreen mode.
 Added a localStorage cleanup system where every time you start up a new song, it checks for all saved song's scores and deletes all that are below 10 points.
 
-idk im too tired to do the changelog
+4.2.5.7 (MOBILE 4.2! 21/08/2024)
+- Added SFX for hovering and clicking buttons, toggleable in settings.

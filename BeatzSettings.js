@@ -41,6 +41,7 @@ function logMessage(message, type = "error", color = "red", timeout = 7500) {
             errorDiv.textContent = `Error: ${message}`;
             errorDiv.style.backgroundColor = "red";
             errorArray.push(message);
+            console.error(message);
             // Check if 'No errors.' is in the array, if so, remove it
             if (noErrorsIndex !== -1) {
                 errorArray.splice(noErrorsIndex, 1);
@@ -50,6 +51,7 @@ function logMessage(message, type = "error", color = "red", timeout = 7500) {
             errorDiv.textContent = `Warning: ${message}`;
             errorDiv.style.backgroundColor = "rgb(255, 100, 0)";
             errorArray.push(message);
+            console.warn(message);
             // Check if 'No errors.' is in the array, if so, remove it
             if (noErrorsIndex !== -1) {
                 errorArray.splice(noErrorsIndex, 1);
@@ -64,6 +66,7 @@ function logMessage(message, type = "error", color = "red", timeout = 7500) {
                 noticeArray.splice(noNoticesIndex, 1);
             }
             noticeArray.push(message);
+            console.log(message);
             break;
     }
 
@@ -427,7 +430,8 @@ const Presets = {
             logKeys: false,
             hitSound: "defaultHit",
             saveSongUsingControllers: false,
-            fetchSongs: false
+            fetchSongs: false,
+            playSFX: true
         }
     },
     VERIDIAN: {
@@ -457,7 +461,8 @@ const Presets = {
             logKeys: false,
             hitSound: "defaultHit",
             saveSongUsingControllers: false,
-            fetchSongs: false
+            fetchSongs: false,
+            playSFX: true
         }
     },
     OG: {
@@ -487,7 +492,8 @@ const Presets = {
             logKeys: false,
             hitSound: "defaultHit",
             saveSongUsingControllers: false,
-            fetchSongs: false
+            fetchSongs: false,
+            playSFX: false
         }
     }
 };
@@ -525,6 +531,7 @@ function applyPreset(presetName) {
     document.getElementById("logKeysCheck").checked = miscellaneous.logKeys;
     document.getElementById("defaultHitSound").value = miscellaneous.hitSound;
     document.getElementById("saveRecentSongs").checked = miscellaneous.saveSongUsingControllers;
+    document.getElementById("playSFXcheck").checked = miscellaneous.playSFX;
 
     if (userDevice !== "iOS") {
         document.getElementById("fetchSongsSite").checked = miscellaneous.fetchSongs;
@@ -546,6 +553,7 @@ function applyPreset(presetName) {
     }
 
     saveSettings();
+    logNotice(`Applied preset: ${presetName}`);
 }
 
 function convertToUpperCase(inputElement) {
@@ -603,6 +611,7 @@ document.addEventListener("keydown", function (event) {
             console.log("P key pressed. Modal is already open, no action taken.");
         } else if (event.key === "Escape" || event.key === "escape") {
             closeModal();
+            playSoundEffect("Resources/SFX/clickBtn2.mp3", 0.7);
             console.log("Escape key pressed. Modal closed.");
         }
         return;
@@ -611,6 +620,7 @@ document.addEventListener("keydown", function (event) {
     if (presetsModal.style.display === "block") {
         if (event.key === "Escape" || event.key === "escape") {
             closePresets();
+            playSoundEffect("Resources/SFX/clickBtn2.mp3", 0.7);
             console.log("Escape key pressed. Setting presets closed.");
         }
         return;
@@ -624,6 +634,7 @@ document.addEventListener("keydown", function (event) {
                 console.log("Escape key pressed. Search input cleared.");
             } else {
                 closeSongList();
+                playSoundEffect("Resources/SFX/clickBtn2.mp3", 0.7);
                 console.log("Escape key pressed. Song list closed.");
             }
         }
@@ -633,6 +644,7 @@ document.addEventListener("keydown", function (event) {
     if (selectedSongModal.style.display === "block") {
         if (event.key === "Escape" || event.key === "escape") {
             closeSelectedSongModal();
+            playSoundEffect("Resources/SFX/clickBtn2.mp3", 0.7);
             console.log("Escape key pressed. Song modal closed.");
         }
         return;
@@ -644,12 +656,14 @@ document.addEventListener("keydown", function (event) {
     // If "P" key is pressed and no modals are open, open the modal
     if ((event.key === "P" || event.key === "p") && !isSongsModalOpen) {
         openModal();
+        playSoundEffect("Resources/SFX/clickBtn.mp3", 1);
         console.log("P key pressed. Modal opened.");
     }
 
     // If "O" key is pressed and no modals are open, open the song list
     if ((event.key === "O" || event.key === "o") && !isSongsModalOpen) {
         openSongList();
+        playSoundEffect("Resources/SFX/clickBtn.mp3", 1);
         console.log("O key pressed. Song list opened.");
     }
 });
@@ -733,6 +747,12 @@ function toggleSavingSongs() {
     console.log("Song saving is now", saveSongUsingControllers ? "enabled" : "disabled");
 }
 
+function togglePlaySFX() {
+    playSFX = document.getElementById("playSFXcheck").checked;
+    playSoundEffect("Resources/SFX/clickBtn2.mp3", 1);
+    console.log("Playing SFX is now", playSFX ? "enabled" : "disabled");
+}
+
 const defaultKeybinds = {
     up: ["W"],
     left: ["A"],
@@ -759,7 +779,8 @@ const defaultMiscellaneous = {
     logKeys: false,
     hitSound: "defaultHit",
     saveSongUsingControllers: false,
-    fetchSongs: false
+    fetchSongs: false,
+    playSFX: true
 };
 
 var saveSongUsingControllers = false;
@@ -768,7 +789,9 @@ let logKeys = true;
 
 let fetchSongs = false; // Fetch songs from guayabr.github.io
 
-let BGurl = "url('Resources/Background2.png)";
+let playSFX = true;
+
+let BGurl = "url('Resources/Background2.png";
 
 let keybinds = { ...defaultKeybinds };
 let miscellaneous = { ...defaultMiscellaneous };
@@ -817,6 +840,9 @@ function loadSettings() {
 
     document.getElementById("fetchSongsSite").checked = miscellaneous.fetchSongs;
     fetchSongs = miscellaneous.fetchSongs;
+
+    document.getElementById("playSFXcheck").checked = miscellaneous.playSFX;
+    playSFX = miscellaneous.playSFX;
 
     document.getElementById("saveRecentSongs").checked = miscellaneous.saveSongUsingControllers;
     saveSongUsingControllers = miscellaneous.saveSongUsingControllers;
@@ -1010,7 +1036,8 @@ function saveSettings() {
         logKeys: document.getElementById("logKeysCheck").checked,
         hitSound: document.getElementById("defaultHitSound").value,
         saveSongUsingControllers: document.getElementById("saveRecentSongs").checked,
-        fetchSongs: userDevice === "iOS" || document.getElementById("fetchSongsSite").checked // Automatically check if iOS
+        fetchSongs: userDevice === "iOS" || document.getElementById("fetchSongsSite").checked,
+        playSFX: document.getElementById("playSFXcheck").checked
     };
 
     // Compare new settings with saved settings
@@ -1028,6 +1055,7 @@ function saveSettings() {
     circularImageEnabled = newMiscellaneous.circularImage;
     logKeys = newMiscellaneous.logKeys;
     saveSongUsingControllers = newMiscellaneous.saveSongUsingControllers;
+    playSFX = newMiscellaneous.playSFX;
 
     const timeoutInputValue = newMiscellaneous.songTimeoutDelay;
 
