@@ -594,7 +594,8 @@ function preloadSongs() {
             "https://guayabr.github.io/Beatz/Resources/Songs/Idols.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/aruarian dance.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/VVV.mp3",
-            "https://guayabr.github.io/Beatz/Resources/Songs/Magic Touch.mp3"
+            "https://guayabr.github.io/Beatz/Resources/Songs/Magic Touch.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Uptown Funk.mp3",
         ];
     } else {
         console.warn(`Loading songs locally, fetching: ${useFetch}`);
@@ -704,6 +705,7 @@ function preloadSongs() {
             "Resources/Songs/aruarian dance.mp3",
             "Resources/Songs/VVV.mp3",
             "Resources/Songs/Magic Touch.mp3",
+            "Resources/Songs/Uptown Funk.mp3",
 
             "Resources/Songs/testingsong.mp3"
         ];
@@ -934,6 +936,7 @@ const songConfigs = {
     "aruarian dance": { BPM: 96, noteSpeed: 6 },
     VVV: { BPM: 131, noteSpeed: 10 },
     "Magic Touch": { BPM: 127, noteSpeed: 12 },
+    "Uptown Funk": { BPM: 115, noteSpeed: 12},
 
     // Song Versions
     "Finesse (feat. Cardi B)": { BPM: 105, noteSpeed: 22 },
@@ -1265,6 +1268,7 @@ const songToAlbumMap = {
     24: "Honeymoon",
     "aruarian dance": "samurai champloo music record departure",
     "Magic Touch": "Magic Touch",
+    "Uptown Funk": "Uptown Special",
 
     // Song Versions
 
@@ -1362,6 +1366,7 @@ function preloadImages() {
         "Resources/Covers/Honeymoon.jpg",
         "Resources/Covers/samurai champloo music record departure.jpg",
         "Resources/Covers/Magic Touch.jpg",
+        "Resources/Covers/Uptown Special.jpg",
 
         // Song Versions
 
@@ -2075,6 +2080,7 @@ function getArtist(songSrc) {
         VVV: "mikeysmind, Sanikwave",
         "aruarian dance": "nujabes",
         "Magic Touch": "Romos",
+        "Uptown Funk": "Mark Ronson, Bruno Mars",
 
         // Song Versions
 
