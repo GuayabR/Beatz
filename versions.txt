@@ -514,3 +514,15 @@ Added a localStorage cleanup system where every time you start up a new song, it
 
 4.2.5.7 (MOBILE 4.2! 21/08/2024)
 - Added SFX for hovering and clicking buttons, toggleable in settings.
+
+PRE-4.3.0 (MOBILE 4.2! 23/08/2024) 
+## Refactored settings
+- There are now to UI modals for setting customization.
+- One for only keybinds, another one for only miscellaneous settings.
+- Mobile port will only open miscellaneous settings.
+- Added opening and closing both song list and settings keybind customization.
+- Added Uptown Funk (Mark Ronson and Bruno Mars)
+
+- Pressing P inside any settings modal will open the presets modal
+- Pressing A or D will switch between the keybinds modal and the miscellaneous modal.
+

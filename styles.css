@@ -436,7 +436,32 @@ canvas:-ms-fullscreen {
     color: #fff;
 }
 
-#keybindsForm input[type="text"] {
+/* Common styling for switch buttons */
+.switch-modal {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+}
+
+/* Position the button on the left side for the keybinds modal */
+.switch-left {
+    left: 10px;
+}
+
+/* Position the button on the right side for the miscellaneous modal */
+.switch-right {
+    right: 10px;
+}
+
+/* Shared form styling */
+.shared-form input[type="text"],
+.shared-form input[type="number"],
+.shared-form select {
     background-color: rgba(255, 255, 255, 0.1);
     color: #fff;
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -451,11 +476,14 @@ canvas:-ms-fullscreen {
         padding ease 0.3s;
 }
 
-#keybindsForm input[type="text"]::placeholder {
+.shared-form input[type="text"]::placeholder,
+.shared-form input[type="number"]::placeholder {
     color: rgb(163, 163, 163);
 }
 
-#keybindsForm input[type="text"]:focus {
+.shared-form input[type="text"]:focus,
+.shared-form input[type="number"]:focus,
+.shared-form select:focus {
     outline: none;
     border-color: rgba(255, 255, 255, 0.4);
     background-color: rgba(255, 255, 255, 0.2);
@@ -465,7 +493,9 @@ canvas:-ms-fullscreen {
         padding ease 0.3s;
 }
 
-#keybindsForm input[type="text"]:hover {
+.shared-form input[type="text"]:hover,
+.shared-form input[type="number"]:hover,
+.shared-form select:hover {
     box-shadow: 0 0 10px rgba(221, 221, 221, 0.623);
     padding: 8px 12px;
     transition:
@@ -473,82 +503,17 @@ canvas:-ms-fullscreen {
         padding ease 0.3s;
 }
 
-#keybindsForm input[type="number"] {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 5px;
-    padding: 8px;
-    margin: 1px 10px;
-    box-sizing: border-box;
-    font-size: 14px;
-    box-shadow: 0 0 10px rgba(114, 114, 114, 0.719);
-    transition:
-        box-shadow 0.3s ease,
-        padding ease 0.3s;
-}
-
-#keybindsForm input[type="number"]::placeholder {
-    color: rgb(163, 163, 163);
-}
-
-#keybindsForm input[type="number"]:focus {
-    outline: none;
-    border-color: rgba(255, 255, 255, 0.4);
-    background-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 10px rgba(248, 248, 248, 0.623);
-    transition:
-        box-shadow 0.3s ease,
-        padding ease 0.3s;
-}
-
-#keybindsForm input[type="number"]:hover {
-    box-shadow: 0 0 10px rgba(221, 221, 221, 0.623);
-    padding: 8px 12px;
-    transition:
-        box-shadow 0.3s ease,
-        padding ease 0.3s;
-}
-
-#keybindsForm select {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 5px;
-    padding: 8px;
+.shared-form select {
     margin: 1px 0;
-    box-sizing: border-box;
-    font-size: 14px;
-    box-shadow: 0 0 10px rgba(114, 114, 114, 0.719);
-    transition:
-        box-shadow 0.3s ease,
-        padding ease 0.3s;
 }
 
-#keybindsForm select option {
+.shared-form select option {
     background-color: rgba(0, 0, 0, 0.9);
     color: #fff;
 }
 
-#keybindsForm select option:hover {
+.shared-form select option:hover {
     background-color: rgba(255, 255, 255, 0.2);
-}
-
-#keybindsForm select:focus {
-    border-color: rgba(255, 255, 255, 0.4);
-    background-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 10px rgba(185, 185, 185, 0.719);
-    transition:
-        box-shadow 0.3s ease,
-        padding ease 0.3s;
-}
-
-#keybindsForm select:hover {
-    box-shadow: 0 0 10px rgba(160, 160, 160, 0.719);
-    padding: 8px 12px;
-    transition:
-        box-shadow 0.3s ease,
-        padding ease 0.3s;
 }
 
 .volume-control {

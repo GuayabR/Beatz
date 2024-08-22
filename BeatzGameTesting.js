@@ -334,7 +334,8 @@ function initializeHitSounds(hitSoundType) {
         defaultHit: "Resources/SFX/hitSound.mp3",
         mcHit: "Resources/SFX/mcHitSound.mp3",
         hitMarker: "Resources/SFX/Hitmarker.m4a",
-        clickHit: "Resources/SFX/Mouse Click.mp3"
+        clickHit: "Resources/SFX/Mouse Click.mp3",
+        smallClick: "Resources/SFX/hoverBtn.mp3"
     };
 
     const hitSoundPath = hitSoundPathMap[hitSoundType];
@@ -594,7 +595,8 @@ function preloadSongs() {
             "https://guayabr.github.io/Beatz/Resources/Songs/Idols.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/aruarian dance.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/VVV.mp3",
-            "https://guayabr.github.io/Beatz/Resources/Songs/Magic Touch.mp3"
+            "https://guayabr.github.io/Beatz/Resources/Songs/Magic Touch.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Uptown Funk.mp3"
         ];
     } else {
         console.warn(`Loading songs locally, fetching: ${useFetch}`);
@@ -704,6 +706,7 @@ function preloadSongs() {
             "Resources/Songs/aruarian dance.mp3",
             "Resources/Songs/VVV.mp3",
             "Resources/Songs/Magic Touch.mp3",
+            "Resources/Songs/Uptown Funk.mp3",
 
             "Resources/Songs/testingsong.mp3"
         ];
@@ -753,7 +756,7 @@ function playSoundEffect(audioPath, vol) {
     const audio = new Audio(audioPath);
     audio.volume = vol;
     audio.play().catch((error) => {
-        console.error("Audio playback failed:", error);
+        logError("Audio playback failed:", error);
     });
 }
 
@@ -934,6 +937,7 @@ const songConfigs = {
     "aruarian dance": { BPM: 96, noteSpeed: 6 },
     VVV: { BPM: 131, noteSpeed: 10 },
     "Magic Touch": { BPM: 127, noteSpeed: 12 },
+    "Uptown Funk": { BPM: 115, noteSpeed: 12 },
 
     // Song Versions
     "Finesse (feat. Cardi B)": { BPM: 105, noteSpeed: 22 },
@@ -1265,6 +1269,7 @@ const songToAlbumMap = {
     24: "Honeymoon",
     "aruarian dance": "samurai champloo music record departure",
     "Magic Touch": "Magic Touch",
+    "Uptown Funk": "Uptown Special",
 
     // Song Versions
 
@@ -1362,6 +1367,7 @@ function preloadImages() {
         "Resources/Covers/Honeymoon.jpg",
         "Resources/Covers/samurai champloo music record departure.jpg",
         "Resources/Covers/Magic Touch.jpg",
+        "Resources/Covers/Uptown Special.jpg",
 
         // Song Versions
 
@@ -1400,9 +1406,6 @@ function getCoverImage(songTitle) {
     const albumTitle = songToAlbumMap[songTitle];
     return loadedImages[albumTitle];
 }
-
-const selectedSongModal = document.getElementById("selectedSongModal");
-const songListModal = document.getElementById("songListModal");
 
 function saveRecentSong(songPath, songTitle, songIndex, songArtist) {
     localStorage.setItem("recentSongPath", songPath);
@@ -2075,6 +2078,7 @@ function getArtist(songSrc) {
         VVV: "mikeysmind, Sanikwave",
         "aruarian dance": "nujabes",
         "Magic Touch": "Romos",
+        "Uptown Funk": "Mark Ronson, Bruno Mars",
 
         // Song Versions
 
@@ -2219,9 +2223,6 @@ document.addEventListener("DOMContentLoaded", function () {
     setTimeout(preloadSongs, 250);
     preloadImages();
 
-    document.getElementById("undoKeybindsButton").addEventListener("click", undoKeybinds);
-    document.getElementById("redoKeybindsButton").addEventListener("click", redoKeybinds);
-
     // Settings
 
     loadSettings();
@@ -2284,6 +2285,7 @@ function togglePause() {
         if (gamePaused) {
             songPausedTime = Date.now();
             currentSong.pause();
+            playSoundEffect("Resources/SFX/clickBtn2.mp3", 0.5);
             canvasUpdating = false;
             console.log("Game Paused");
         } else {
@@ -3701,7 +3703,7 @@ function generateRandomNotes(duration) {
     return notes; // Return the generated notes array to startGame()
 }
 
-// - .  .- -- ---  .- -. --. .  .--. . .-. ---  - ..-  -. ---  .-.. ---  ... .- -... . ...  -.--  -. ---  ... .  --.- ..- .  .... .- -.-. . .-.
+// - . / .- -- --- / .- -. --. .  /.--. . .-. --- / - ..- / -. --- / .-.. --- / ... .- -... . ... / -.-- / -. --- / ... . / --.- ..- . /.... .- -.-. . .-.
 
 // Thanks for playing Beatz!
 // - GuayabR.

@@ -595,7 +595,7 @@ function preloadSongs() {
             "https://guayabr.github.io/Beatz/Resources/Songs/aruarian dance.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/VVV.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/Magic Touch.mp3",
-            "https://guayabr.github.io/Beatz/Resources/Songs/Uptown Funk.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Uptown Funk.mp3"
         ];
     } else {
         console.warn(`Loading songs locally, fetching: ${useFetch}`);
@@ -936,7 +936,7 @@ const songConfigs = {
     "aruarian dance": { BPM: 96, noteSpeed: 6 },
     VVV: { BPM: 131, noteSpeed: 10 },
     "Magic Touch": { BPM: 127, noteSpeed: 12 },
-    "Uptown Funk": { BPM: 115, noteSpeed: 12},
+    "Uptown Funk": { BPM: 115, noteSpeed: 12 },
 
     // Song Versions
     "Finesse (feat. Cardi B)": { BPM: 105, noteSpeed: 22 },
