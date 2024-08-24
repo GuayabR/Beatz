@@ -60,6 +60,8 @@ function displayNewReleasePopup(releaseNotes, version) {
         popup.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.5)";
         popup.style.zIndex = "1000";
         popup.style.width = "50vh";
+        popup.style.maxHeight = "80vh"; // Limit the height of the popup
+        popup.style.overflow = "hidden"; // Hide overflow
         popup.style.transition = "transform 0.3s cubic-bezier(0.17, 0.71, 0.51, 0.94)"; // Custom cubic-bezier for scaling in
 
         // Create a title for the popup
@@ -68,10 +70,17 @@ function displayNewReleasePopup(releaseNotes, version) {
         popup.appendChild(title);
 
         // Create a content container for the release notes
+        const contentContainer = document.createElement("div");
+        contentContainer.style.maxHeight = "60vh"; // Limit the height of the content area
+        contentContainer.style.overflowY = "auto"; // Enable vertical scrolling
+        contentContainer.style.overflowX = "hidden"; // Prevent horizontal scrolling
+        contentContainer.style.overflowWrap = "break-word"; // Ensure long words break to avoid overflow
+
         const content = document.createElement("p");
         content.style.whiteSpace = "pre-wrap"; // To maintain newlines in release notes
         content.innerText = releaseNotes;
-        popup.appendChild(content);
+        contentContainer.appendChild(content);
+        popup.appendChild(contentContainer);
 
         // Create a button to close the popup
         const closeButton = document.createElement("button");
