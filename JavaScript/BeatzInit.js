@@ -133,21 +133,33 @@ function displayNewReleasePopup(releaseNotes, version) {
                     changelogContent.innerText = data;
                     changelogPopup.appendChild(changelogContent);
 
+                    // Create a fixed close button outside the changelog popup
                     const changelogCloseButton = document.createElement("button");
                     changelogCloseButton.innerText = "Close";
-                    changelogCloseButton.style.position = "absolute";
+                    changelogCloseButton.style.position = "fixed";
                     changelogCloseButton.style.bottom = "10px";
                     changelogCloseButton.style.left = "50%";
                     changelogCloseButton.style.transform = "translateX(-50%)";
+                    changelogCloseButton.style.zIndex = "1001"; // Ensure it is above other content
+                    changelogCloseButton.style.transition = "opacity 0.3s ease"; // Smooth transition for visibility
+
                     changelogCloseButton.onclick = () => {
                         // Animate scale back to 0 for closing
                         changelogPopup.style.transition = "transform 0.5s ease-in-out"; // Ease-in-out for scaling out
                         changelogPopup.style.transform = "translate(-50%, -50%) scale(0)";
 
-                        // Remove the popup after the animation duration
-                        setTimeout(() => document.body.removeChild(changelogPopup), 500);
+                        // Animate the close button fade out
+                        changelogCloseButton.style.opacity = "0";
+
+                        // Remove the popup and button after the animation duration
+                        setTimeout(() => {
+                            document.body.removeChild(changelogPopup);
+                            document.body.removeChild(changelogCloseButton);
+                        }, 500);
                     };
-                    changelogPopup.appendChild(changelogCloseButton);
+
+                    // Append the close button to the body
+                    document.body.appendChild(changelogCloseButton);
 
                     document.body.appendChild(changelogPopup);
 
