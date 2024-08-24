@@ -67,14 +67,12 @@ Aligned everything in the html to the middle so it looks more organized.
 Fixed bug where auto hit would not always hit perfectly and completely miss some notes. (skill issue)
 
 1.4.0 / 1.4.1 (28/05/2024)
-
 Bugfixes
 Added album covers. (Images don't flicker)
 
 took me 4 hours to fix album covers not being recognized.
 
 1.4.2 / 1.4.3 / 1.4.4 (29/05/2024)
-
 Added more songs, added a function to reroll the song.
 (many bugfixes later)
 /
@@ -82,7 +80,6 @@ Added keybinds to start the game and reroll the song.
 //
 
 1.4.5 / 1.4.6 / 1.4.7(30/05/2024)
-
 Made the canvas bigger, now 1280 by 720 pixels.
 /
 Songs now dont randomize, instead when you start the game, it starts from the first song, and when you reroll the song, it goes in the order that the songList is made in.
@@ -91,7 +88,6 @@ Added Streaks
 FE!N BEST SYNCRONIZED SONG SO FAR
 
 1.4.9 / 1.5.0 / 1.6.0 (31/05/2024)
-
 Organized the UI.
 /
 Added Toggle Note Style, changes the notes from arrows to circles.
@@ -101,14 +97,12 @@ Removed pulsing effect when hitting perfectly, looked ugly, might rework in furt
 //
 
 1.6.1 / 1.6.2 (1/06/2024)
-
 Fixed bug where pausing the game would only pause the song and notes would bug out
 /
 Re-added Song randomizer (B)
 //
 
-1.7.0 / 1.7.0 (Sub-update) (2/06/2024)
-
+1.7.0 (2/06/2024)
 PUBLISHED TO GITHUB SITES!
 Beatz.io is now accessible worldwide from "https://guayabr.github.io/Beatz"! (PC Only)
 
@@ -131,12 +125,10 @@ Small changes when saving.
 //
 
 1.7.1 (4/06/2024)
-
 Added endscreens
 //
 
 1.7.5 / 1.8.0 / 1.9.0 (5/06/2024)
-
 Songs now load before the game starts, eliminating wait time between switching songs.
 /
 Reworked file loading, files now auto-load on startup, drastically reducing lag.
@@ -146,12 +138,10 @@ Added device handling, since Beatz.io is only supported on PC, if you try to sta
 //
 
 1.9.1 (6/06/2024)
-
 When settings are opened, every key deactivates except the enter key, so now pressing the enter key while in the settings, settings will be saved.
 //
 
 2.0! (7/06/2024)
-
 BEATZ 2.0 IS OUT!
 
 REWORKED THE HTML!
@@ -515,14 +505,23 @@ Added a localStorage cleanup system where every time you start up a new song, it
 4.2.5.7 (MOBILE 4.2! 21/08/2024)
 - Added SFX for hovering and clicking buttons, toggleable in settings.
 
-PRE-4.3.0 (MOBILE 4.2! 23/08/2024) 
+4.3.2 (MOBILE 4.3! 25/08/2024) 
 ## Refactored settings
 - There are now to UI modals for setting customization.
 - One for only keybinds, another one for only miscellaneous settings.
 - Mobile port will only open miscellaneous settings.
 - Added opening and closing both song list and settings keybind customization.
-- Added Uptown Funk (Mark Ronson and Bruno Mars)
 
-- Pressing P inside any settings modal will open the presets modal
+## Added release notes in-game
+- Release notes will pop up everytime the game detects a new release!
+
+- Added Uptown Funk. (Mark Ronson and Bruno Mars)
+- Added Lunar Abyss. (Lchavasse)
+- Added dynamic speeds for Lunar Abyss.
+
+- Pressing P inside any settings modal will open the presets modal.
 - Pressing A or D will switch between the keybinds modal and the miscellaneous modal.
+
+- Game Title, song covers on selected song modal now pulse to the beat of the current song.
+- Changed the main font family to "Poppins" (https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap)
 

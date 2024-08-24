@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Beatz 4.2!</title>
+        <title>Beatz 4.3!</title>
         <link rel="icon" type="image/x-icon" href="Resources/favicon.png" />
         <link rel="stylesheet" id="stylesheet" type="text/css" href="styles.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -11,7 +11,7 @@
         <canvas id="myCanvas" width="1280" height="720"></canvas>
         <div id="orientationMessage">Please rotate your device to landscape mode.</div>
         <h1 id="titleGame">Beatz.io</h1>
-        <div id="errorContainer" style="position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1000"></div>
+        <div id="errorContainer" style="position: fixed; bottom: 0; left: 0; width: fit-content"></div>
 
         <button id="togglePauseMBL" title="Pause Game" onclick="togglePause()" style="display: none"><i class="fa-solid fa-circle"></i> Pause Game!</button
         ><br id="pauseMargin" /><br id="pauseMargin2" />
@@ -31,11 +31,11 @@
         <button id="randomizeButton" title="Randomize Song" style="display: none"><i class="fa-solid fa-shuffle"></i></button>
         <button id="toggleAutoHit" style="display: none">Toggle Auto Hit</button>
         <button id="fullscreen" title="Toggle Fullscreen" style="display: none" onclick="toggleFullScreen()"><i class="fa-solid fa-expand"></i></button>
-        <button id="keybindsButton" title="Game Settings (P)" style="display: none"><i class="fa-solid fa-gear"></i></button><br /><br />
+        <button id="keybindsButton" title="Game Settings" style="display: none"><i class="fa-solid fa-gear"></i></button><br /><br />
 
-        <button id="openSongListBTN" title="Press O to open."><i class="fa-solid fa-music"></i> Song list!</button>
+        <button id="openSongListBTN"><i class="fa-solid fa-music" id="bouncingIcon"></i> Song list!</button>
 
-        <!-- The Modal -->
+        <!-- Keybinds Modal -->
         <div id="keybindsModal" class="modal">
             <div class="modal-content">
                 <span id="closeSettings" class="close"><i class="fa-solid fa-xmark"></i></span>
@@ -48,12 +48,17 @@
 
                 <button id="presetSettingsButton" class="keybind-button preset-settings"><i class="fa-solid fa-screwdriver-wrench"></i></button>
 
-                <h1>Customize Settings!</h1>
+                <button id="switchToMiscSettings" class="switch-modal switch-right">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
 
-                <form id="keybindsForm">
-                    <label for="up">Note Left:</label>
+                <h1>Customize Keybinds!</h1>
+
+                <form id="keybindsForm" class="shared-form">
+                    <!-- KEYBINDS -->
+                    <label for="left">Note Left:</label>
                     <input type="text" id="left" name="left" />
-                    <label for="left">Note Up:</label>
+                    <label for="up">Note Up:</label>
                     <input type="text" id="up" name="up" /><br class="marginKB" /><br class="marginKB" />
 
                     <label for="down">Note Down:</label>
@@ -86,6 +91,39 @@
                     <label for="toggleNoteStyleInput">Toggle Note Style:</label>
                     <input type="text" id="toggleNoteStyleInput" name="toggleNoteStyle" /><br class="marginKB" /><br class="marginKB" />
 
+                    <label for="openSongL">Open Song List:</label>
+                    <input type="text" id="openSongL" name="openSongListKey" /><br class="marginKB" /><br class="marginKB" />
+
+                    <label for="openKeybindsKey">Open Settings:</label>
+                    <input type="text" id="openKeybindsKey" name="openKeybindsModal" /><br class="marginKB" /><br class="marginKB" />
+
+                    <span id="settingsSaved" style="color: white; display: none" class="settingsSavedMsg">Settings saved!</span>
+                    <button id="saveSettingsBtn" class="save-settings-btn" type="button">Save</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Miscellaneous Settings Modal -->
+        <div id="miscSettingsModal" class="modal">
+            <div class="modal-content">
+                <span id="closeMiscSettingsModal" class="close"><i class="fa-solid fa-xmark"></i></span>
+
+                <button id="resetKeybindsButton" class="keybind-button reset-keybinds"><i class="fa-solid fa-rotate"></i></button>
+
+                <button id="redoKeybindsButton" class="keybind-button redo-keybinds"><i class="fa-solid fa-rotate-right"></i></button>
+
+                <button id="undoKeybindsButton" class="keybind-button undo-keybinds"><i class="fa-solid fa-rotate-left"></i></button>
+
+                <button id="presetSettingsButton" class="keybind-button preset-settings"><i class="fa-solid fa-screwdriver-wrench"></i></button>
+
+                <button id="switchToKeybinds" class="switch-modal switch-left">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+
+                <h1>Miscellaneous Settings</h1>
+
+                <form id="miscSettingsForm" class="shared-form">
+                    <!-- MISCELLANEOUS -->
                     <label for="defaultNoteStyle">Default Note Style:</label>
                     <select id="defaultNoteStyle" name="defaultNoteStyle">
                         <option value="arrows">Arrows</option>
@@ -98,6 +136,7 @@
                         <option value="mcHit">Minecraft Hit Sound</option>
                         <option value="hitMarker">CoD Hitmarker Sound</option>
                         <option value="clickHit">Click Hit Sound</option>
+                        <option value="smallClick">Small Click Hit Sound</option>
                     </select>
                     <br /><br />
 
@@ -116,17 +155,20 @@
                     <label for="circularImage">Circular Cover Images?</label>
                     <input type="checkbox" id="circularImage" name="circularImage" onchange="toggleVinylRotation()" /><br />
 
-                    <label for="fetchSongsSite">Fetch songs from guayabr.github.io? (Mainly for iOS)</label>
-                    <input type="checkbox" id="fetchSongsSite" name="fetchSongsSite" onchange="toggleFetchingSongs()" /><br />
-
-                    <label for="playSFXcheck">Play button SFX?</label>
-                    <input type="checkbox" id="playSFXcheck" name="playSFXcheck" onchange="togglePlaySFX()" />
-
                     <div id="vinylRotationContainer" style="display: none">
                         <label for="vinylRotation">Enable Cover Image Rotation:</label>
                         <input type="checkbox" id="vinylRotation" name="vinylRotation" />
                     </div>
                     <br /><br />
+
+                    <label for="fetchSongsSite">Fetch songs from guayabr.github.io? (Mainly for iOS)</label>
+                    <input type="checkbox" id="fetchSongsSite" name="fetchSongsSite" onchange="toggleFetchingSongs()" /><br />
+
+                    <label for="playSFXcheck">Play button SFX?</label>
+                    <input type="checkbox" id="playSFXcheck" name="playSFXcheck" onchange="togglePlaySFX()" /><br />
+
+                    <label for="pulseOnBPMcheck">Elements pulse on BPM?</label>
+                    <input type="checkbox" id="pulseOnBPMcheck" name="pulseOnBPMcheck" onchange="togglePulseOnBPM()" /><br />
 
                     <label for="defaultBackground">Background image:</label>
                     <select id="defaultBackground" name="backgroundForCanvas">
@@ -145,8 +187,8 @@
                     <label id="customTransparentBGblur" for="backdropBlurInput" style="display: none">Background blur:</label>
                     <input type="number" id="backdropBlurInput" style="display: none" /><br /><br />
 
-                    <span id="settingsSaved" style="color: white; display: none">Settings saved!</span>
-                    <button id="saveSettingsBtn" type="button">Save</button>
+                    <span id="settingsSaved" style="color: white; display: none" class="settingsSavedMsg">Settings saved!</span>
+                    <button id="saveSettingsBtn" class="save-settings-btn" type="button">Save</button>
                 </form>
             </div>
         </div>
@@ -172,7 +214,9 @@
 
                 <h4><span id="presetSaved" style="color: white; display: none">Preset has been saved!</span></h4>
 
+                <button id="applyPresetKeysBTN" class="apply-preset" title="Only apply Keybinds"><i class="fa-regular fa-keyboard"></i></button>
                 <button id="applyPresetButton" class="apply-preset">Apply Preset</button>
+                <button id="applyPresetMiscBTN" class="apply-preset" title="Only apply Miscellaneous"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
             </div>
         </div>
 
@@ -187,11 +231,35 @@
         </div>
         <br /><br />
 
+        <!-- Button to Open the Modal -->
+        <button id="openCustomSongModal">Add your Custom Song!</button>
+
+        <!-- Modal Structure -->
+        <div id="customSongModal" class="modal">
+            <div class="modal-content">
+                <span id="closeCustomSongModal" class="close"><i class="fa-solid fa-xmark"></i></span>
+                <h1>Add Custom Song</h1>
+                <label for="customSongTitle">Title:</label>
+                <input type="text" id="customSongTitle" placeholder="Enter song title" /><br /><br />
+
+                <label for="songFile">Upload MP3:</label>
+                <input type="file" id="songFile" accept=".mp3" /><br /><br />
+
+                <label for="noteSpeed">Note Speed:</label>
+                <input type="number" id="noteSpeed" min="1" max="50" placeholder="Enter note speed" /><br /><br />
+
+                <label for="bpm">BPM:</label>
+                <input type="number" id="bpm" min="1" max="1000" placeholder="Enter BPM" /><br /><br />
+
+                <button id="createCustomSong">Create Custom Song!</button>
+            </div>
+        </div>
+
         <div id="contactBtn">
             <button id="contactbtn" onclick="email()"><i class="fa-solid fa-envelope"></i> Contact</button>
         </div>
 
-        <div id="publicToTestToggle"><button id="publicbtn" onclick="toVersion()">Open public game</button><br /><br /></div>
+        <div id="publicToTestToggle"><button id="publicbtn" onclick="toVersion()">Open testing game</button><br /><br /></div>
 
         <h2>
             Background image from:
@@ -208,11 +276,12 @@
         <div id="songListModal" class="modal">
             <div class="modal-content">
                 <span id="closeSongListModal" class="close"><i class="fa-solid fa-xmark"></i></span>
+                <span id="keywordListButton"><i class="fa-regular fa-circle-question"></i></span>
                 <div class="modal-header">
                     <h1 class="modal-title">Song List</h1>
                 </div>
                 <label for="songSearchInput">Search songs by keyword, index, album, or artist.</label><br /><br />
-                <label for="songSearchInput">Press "Enter" to play first result.</label><br /><br />
+                <label for="songSearchInput" id="pressEnter">Press "Enter" to play first result.</label><br /><br />
                 <input type="text" id="songSearchInput" placeholder="Search..." oninput="filterSongs()" /><br /><br />
                 <div id="resultsForSearch" style="display: none">Results found</div>
                 <button type="button" id="mostRecent" class="most-recent-button" style="display: none">Play most recent song</button>
@@ -220,6 +289,19 @@
                 <br /><br />
                 <div class="modal-body" id="songList">
                     <!-- Song buttons will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Keyword List Modal -->
+        <div id="keywordListModal" class="pop-up-modal">
+            <div class="modal-content">
+                <span id="closeKeywordListModal" class="close"><i class="fa-solid fa-xmark"></i></span>
+                <div class="modal-header">
+                    <h1 class="modal-title">Keyword List</h1>
+                </div>
+                <div class="modal-body" id="keywordDescriptions">
+                    <!-- Keyword descriptions will be dynamically inserted here -->
                 </div>
             </div>
         </div>
@@ -246,12 +328,13 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="playSongButton">Play song!</button>
+                    <button type="button" class="btn btn-primary" id="playSongButton" title="Press 'Enter' to play.">Play song!</button>
                 </div>
             </div>
         </div>
 
-        <script src="BeatzSettings.js"></script>
-        <script src="BeatzGame.js"></script>
+        <script src="JavaScript/BeatzInit.js"></script>
+        <script src="JavaScript/BeatzSettings.js"></script>
+        <script src="JavaScript/BeatzGame.js"></script>
     </body>
 </html>

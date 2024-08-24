@@ -11,7 +11,7 @@
         <canvas id="myCanvas" width="1280" height="720"></canvas>
         <div id="orientationMessage">Please rotate your device to landscape mode.</div>
         <h1 id="titleGame">Beatz.io</h1>
-        <div id="errorContainer" style="position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1000"></div>
+        <div id="errorContainer" style="position: fixed; bottom: 0; left: 0; width: fit-content"></div>
 
         <button id="togglePauseMBL" title="Pause Game" onclick="togglePause()" style="display: none"><i class="fa-solid fa-circle"></i> Pause Game!</button
         ><br id="pauseMargin" /><br id="pauseMargin2" />
@@ -31,9 +31,9 @@
         <button id="randomizeButton" title="Randomize Song" style="display: none"><i class="fa-solid fa-shuffle"></i></button>
         <button id="toggleAutoHit" style="display: none">Toggle Auto Hit</button>
         <button id="fullscreen" title="Toggle Fullscreen" style="display: none" onclick="toggleFullScreen()"><i class="fa-solid fa-expand"></i></button>
-        <button id="keybindsButton" title="Game Settings (P)" style="display: none"><i class="fa-solid fa-gear"></i></button><br /><br />
+        <button id="keybindsButton" title="Game Settings" style="display: none"><i class="fa-solid fa-gear"></i></button><br /><br />
 
-        <button id="openSongListBTN" title="Press O to open."><i class="fa-solid fa-music"></i> Song list!</button>
+        <button id="openSongListBTN"><i class="fa-solid fa-music" id="bouncingIcon"></i> Song list!</button>
 
         <!-- Keybinds Modal -->
         <div id="keybindsModal" class="modal">
@@ -97,8 +97,8 @@
                     <label for="openKeybindsKey">Open Settings:</label>
                     <input type="text" id="openKeybindsKey" name="openKeybindsModal" /><br class="marginKB" /><br class="marginKB" />
 
-                    <span id="settingsSaved" style="color: white; display: none">Settings saved!</span>
-                    <button id="saveSettingsBtn" type="button">Save</button>
+                    <span id="settingsSaved" style="color: white; display: none" class="settingsSavedMsg">Settings saved!</span>
+                    <button id="saveSettingsBtn" class="save-settings-btn" type="button">Save</button>
                 </form>
             </div>
         </div>
@@ -155,17 +155,20 @@
                     <label for="circularImage">Circular Cover Images?</label>
                     <input type="checkbox" id="circularImage" name="circularImage" onchange="toggleVinylRotation()" /><br />
 
-                    <label for="fetchSongsSite">Fetch songs from guayabr.github.io? (Mainly for iOS)</label>
-                    <input type="checkbox" id="fetchSongsSite" name="fetchSongsSite" onchange="toggleFetchingSongs()" /><br />
-
-                    <label for="playSFXcheck">Play button SFX?</label>
-                    <input type="checkbox" id="playSFXcheck" name="playSFXcheck" onchange="togglePlaySFX()" />
-
                     <div id="vinylRotationContainer" style="display: none">
                         <label for="vinylRotation">Enable Cover Image Rotation:</label>
                         <input type="checkbox" id="vinylRotation" name="vinylRotation" />
                     </div>
                     <br /><br />
+
+                    <label for="fetchSongsSite">Fetch songs from guayabr.github.io? (Mainly for iOS)</label>
+                    <input type="checkbox" id="fetchSongsSite" name="fetchSongsSite" onchange="toggleFetchingSongs()" /><br />
+
+                    <label for="playSFXcheck">Play button SFX?</label>
+                    <input type="checkbox" id="playSFXcheck" name="playSFXcheck" onchange="togglePlaySFX()" /><br />
+
+                    <label for="pulseOnBPMcheck">Elements pulse on BPM?</label>
+                    <input type="checkbox" id="pulseOnBPMcheck" name="pulseOnBPMcheck" onchange="togglePulseOnBPM()" /><br />
 
                     <label for="defaultBackground">Background image:</label>
                     <select id="defaultBackground" name="backgroundForCanvas">
@@ -184,8 +187,8 @@
                     <label id="customTransparentBGblur" for="backdropBlurInput" style="display: none">Background blur:</label>
                     <input type="number" id="backdropBlurInput" style="display: none" /><br /><br />
 
-                    <span id="settingsSaved" style="color: white; display: none">Settings saved!</span>
-                    <button id="saveSettingsBtn" type="button">Save</button>
+                    <span id="settingsSaved" style="color: white; display: none" class="settingsSavedMsg">Settings saved!</span>
+                    <button id="saveSettingsBtn" class="save-settings-btn" type="button">Save</button>
                 </form>
             </div>
         </div>
@@ -211,7 +214,9 @@
 
                 <h4><span id="presetSaved" style="color: white; display: none">Preset has been saved!</span></h4>
 
+                <button id="applyPresetKeysBTN" class="apply-preset" title="Only apply Keybinds"><i class="fa-regular fa-keyboard"></i></button>
                 <button id="applyPresetButton" class="apply-preset">Apply Preset</button>
+                <button id="applyPresetMiscBTN" class="apply-preset" title="Only apply Miscellaneous"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
             </div>
         </div>
 
@@ -271,11 +276,12 @@
         <div id="songListModal" class="modal">
             <div class="modal-content">
                 <span id="closeSongListModal" class="close"><i class="fa-solid fa-xmark"></i></span>
+                <span id="keywordListButton"><i class="fa-regular fa-circle-question"></i></span>
                 <div class="modal-header">
                     <h1 class="modal-title">Song List</h1>
                 </div>
                 <label for="songSearchInput">Search songs by keyword, index, album, or artist.</label><br /><br />
-                <label for="songSearchInput">Press "Enter" to play first result.</label><br /><br />
+                <label for="songSearchInput" id="pressEnter">Press "Enter" to play first result.</label><br /><br />
                 <input type="text" id="songSearchInput" placeholder="Search..." oninput="filterSongs()" /><br /><br />
                 <div id="resultsForSearch" style="display: none">Results found</div>
                 <button type="button" id="mostRecent" class="most-recent-button" style="display: none">Play most recent song</button>
@@ -283,6 +289,19 @@
                 <br /><br />
                 <div class="modal-body" id="songList">
                     <!-- Song buttons will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Keyword List Modal -->
+        <div id="keywordListModal" class="pop-up-modal">
+            <div class="modal-content">
+                <span id="closeKeywordListModal" class="close"><i class="fa-solid fa-xmark"></i></span>
+                <div class="modal-header">
+                    <h1 class="modal-title">Keyword List</h1>
+                </div>
+                <div class="modal-body" id="keywordDescriptions">
+                    <!-- Keyword descriptions will be dynamically inserted here -->
                 </div>
             </div>
         </div>
@@ -309,12 +328,13 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="playSongButton">Play song!</button>
+                    <button type="button" class="btn btn-primary" id="playSongButton" title="Press 'Enter' to play.">Play song!</button>
                 </div>
             </div>
         </div>
 
-        <script src="BeatzSettingsTesting.js"></script>
-        <script src="BeatzGameTesting.js"></script>
+        <script src="JavaScript/BeatzInit.js"></script>
+        <script src="JavaScript/BeatzSettingsTesting.js"></script>
+        <script src="JavaScript/BeatzGameTesting.js"></script>
     </body>
 </html>
