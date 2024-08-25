@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: MOBILE 4.3.2 test (release.version.subversion.bugfix)
+ * Version: MOBILE 4.3.3.3 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -10,7 +10,7 @@
 
 const userDevice = detectDeviceType();
 
-const VERSION = "MOBILE 4.3.2";
+const VERSION = "MOBILE 4.3.3.3";
 var PUBLICVERSION = `4.3! (${userDevice} Port)`;
 console.log("Version: " + VERSION);
 
@@ -31,6 +31,12 @@ const MIN_NOTE_GAP = 775;
 const MAX_HIT_SOUNDS = 5;
 
 const baseURL = "https://guayabr.github.io/Beatz/";
+
+const testingVerHTML = "BeatzGameTesting.html";
+const publicVerHTML = "index.html";
+
+const testingVerJS = "BeatzGameTesting.js";
+const publicVerJS = "BeatzGame.js";
 
 const title = document.getElementById("titleGame");
 
@@ -1211,7 +1217,7 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 186.61, noteSpeed: 8 },
             { timestamp: 187.705, noteSpeed: 1 },
             { timestamp: 187.93, noteSpeed: 12 },
-            { timestamp: 193.23, noteSpeed: 2 },
+            { timestamp: 193.18, noteSpeed: 2 },
             { timestamp: 194.895, noteSpeed: 12 },
             { timestamp: 208.87, noteSpeed: 10 },
             { timestamp: 215.78, noteSpeed: 8 },
@@ -1815,7 +1821,7 @@ closeSSongModal.onclick = closeSelectedSongModal;
 closeSongListBTN.onclick = closeSongList;
 
 // Define keyword descriptions
-const keywordDescriptions = {
+var keywordDescriptions = {
     ye: "Only results from Kanye West",
     kdot: "Only results from Kendrick Lamar",
     em: "Only results from Eminem",
@@ -1830,6 +1836,22 @@ const keywordDescriptions = {
     odecore: "Only results from Odetari"
 };
 
+if (isMobile) {
+    keywordDescriptions = {
+        ye: "Only results from Kanye West",
+        kdot: "Only results from Kendrick Lamar",
+        em: "Only results from Eminem",
+        goat: "Only results from The Goats",
+        "got bit by a goat": "Only results from Eminem",
+        marshall: "Only results from Eminem",
+        trash: "Only results from Playboi Carti",
+        zesty: "Only results from Drake",
+        bili: "Only results from Billie Eilish",
+        last: "Refers to the last song in the list",
+        odecore: "Only results from Odetari"
+    };
+}
+
 // Function to open the keyword list modal
 document.getElementById("keywordListButton").onclick = function () {
     const keywordListModal = document.getElementById("keywordListModal");
@@ -1840,9 +1862,15 @@ document.getElementById("keywordListButton").onclick = function () {
 
     // Populate modal with keyword descriptions
     for (const [keyword, description] of Object.entries(keywordDescriptions)) {
-        const p = document.createElement("p");
-        p.textContent = `${keyword}: ${description}`;
-        keywordDescriptionsDiv.appendChild(p);
+        let element;
+        if (isMobile) {
+            element = document.createElement("span");
+            element.className = "keyword-description";
+        } else {
+            element = document.createElement("p");
+        }
+        element.textContent = `${keyword}: ${description}`;
+        keywordDescriptionsDiv.appendChild(element);
     }
 
     keywordListModal.style.display = "block";
@@ -2329,16 +2357,24 @@ function rotateImage(ctx, coverImage, centerX, centerY, radius, rotationAngle) {
     ctx.restore();
 }
 
-// Toggle vinyl rotation visibility
+// Toggle vinyl rotation visibility based on circular image checkbox
 function toggleVinylRotation() {
     const circularImageCheckbox = document.getElementById("circularImage");
-    const vinylRotationContainer = document.getElementById("vinylRotationContainer");
+    const vinylRotationLabel = document.getElementById("vinylRotationLabel");
+    const vinylRotation = document.getElementById("vinylRotation");
+    const margin = document.getElementById("marginRotation");
+
     if (circularImageCheckbox.checked) {
-        vinylRotationContainer.style.display = "block";
+        vinylRotationLabel.style.display = "inline-block";
+        vinylRotation.style.display = "inline-block";
+        margin.style.display = "inline-block";
     } else {
-        vinylRotationContainer.style.display = "none";
-        document.getElementById("vinylRotation").checked = false;
-        vinylRotationEnabled = false;
+        vinylRotationLabel.style.display = "none";
+        vinylRotation.style.display = "none";
+        margin.style.display = "none";
+
+        // Additional state reset
+        vinylRotationEnabled = false; // Reset any other state variables
         rotationAngle = 0; // Reset rotation angle when disabled
     }
 }
@@ -2765,7 +2801,7 @@ function startGame(index, versionPath, setIndex) {
 
         // Update the page title
         indexToDisplay = setIndex >= 0 ? setIndex : currentSongIndex;
-        document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 4.2!`;
+        document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 4.3!`;
 
         console.log(`indexToDisplay converted in startGame: ${indexToDisplay}`);
     };
@@ -3932,7 +3968,7 @@ function generateRandomNotes(duration) {
     return notes; // Return the generated notes array to startGame()
 }
 
-// - . / .- -- --- / .- -. --. .  /.--. . .-. --- / - ..- / -. --- / .-.. --- / ... .- -... . ... / -.-- / -. --- / ... . / --.- ..- . /.... .- -.-. . .-.
+// - . / .- -- --- / .- -. --. .  /.--. . .-. --- / - ..- / -. --- / .-.. --- / ... .- -... . ... / -.-- / -. --- / ... . / --.- ..- . / .... .- -.-. . .-.
 
 // Thanks for playing Beatz!
 // - GuayabR.

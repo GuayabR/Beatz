@@ -155,11 +155,8 @@
                     <label for="circularImage">Circular Cover Images?</label>
                     <input type="checkbox" id="circularImage" name="circularImage" onchange="toggleVinylRotation()" /><br />
 
-                    <div id="vinylRotationContainer" style="display: none">
-                        <label for="vinylRotation">Enable Cover Image Rotation:</label>
-                        <input type="checkbox" id="vinylRotation" name="vinylRotation" />
-                    </div>
-                    <br /><br />
+                    <label for="vinylRotation" id="vinylRotationLabel" style="display: none">Enable Cover Image Rotation:</label>
+                    <input type="checkbox" id="vinylRotation" name="vinylRotation" style="display: none" /><br id="marginRotation" />
 
                     <label for="fetchSongsSite">Fetch songs from guayabr.github.io? (Mainly for iOS)</label>
                     <input type="checkbox" id="fetchSongsSite" name="fetchSongsSite" onchange="toggleFetchingSongs()" /><br />
@@ -168,7 +165,7 @@
                     <input type="checkbox" id="playSFXcheck" name="playSFXcheck" onchange="togglePlaySFX()" /><br />
 
                     <label for="pulseOnBPMcheck">Elements pulse on BPM?</label>
-                    <input type="checkbox" id="pulseOnBPMcheck" name="pulseOnBPMcheck" onchange="togglePulseOnBPM()" /><br />
+                    <input type="checkbox" id="pulseOnBPMcheck" name="pulseOnBPMcheck" onchange="togglePulseOnBPM()" /><br /><br />
 
                     <label for="defaultBackground">Background image:</label>
                     <select id="defaultBackground" name="backgroundForCanvas">
@@ -179,13 +176,13 @@
                         <option value="htmlBG">Copy HTML</option>
                         <option value="transparentBG">Transparent</option>
                         <option value="customBG">Custom background!</option></select
-                    ><br /><br />
+                    ><br id="marginSelect" /><br id="marginSelect2" />
 
                     <label id="customBGLabel" for="customBGInput" style="display: none">Custom background image:</label>
-                    <input type="file" id="customBGInput" accept="image/*" style="display: none" /><br /><br />
+                    <input type="file" id="customBGInput" accept="image/*" style="display: none" /><br id="marginCustomBG" /><br id="marginCustomBG2" />
 
                     <label id="customTransparentBGblur" for="backdropBlurInput" style="display: none">Background blur:</label>
-                    <input type="number" id="backdropBlurInput" style="display: none" /><br /><br />
+                    <input type="number" id="backdropBlurInput" style="display: none" /><br id="marginBlurBG" /><br id="marginBlurBG2" />
 
                     <span id="settingsSaved" style="color: white; display: none" class="settingsSavedMsg">Settings saved!</span>
                     <button id="saveSettingsBtn" class="save-settings-btn" type="button">Save</button>
@@ -230,30 +227,6 @@
             <input type="range" id="hitSoundSlider" name="hitSoundSlider" min="0" max="100" value="50" />
         </div>
         <br /><br />
-
-        <!-- Button to Open the Modal -->
-        <button id="openCustomSongModal">Add your Custom Song!</button>
-
-        <!-- Modal Structure -->
-        <div id="customSongModal" class="modal">
-            <div class="modal-content">
-                <span id="closeCustomSongModal" class="close"><i class="fa-solid fa-xmark"></i></span>
-                <h1>Add Custom Song</h1>
-                <label for="customSongTitle">Title:</label>
-                <input type="text" id="customSongTitle" placeholder="Enter song title" /><br /><br />
-
-                <label for="songFile">Upload MP3:</label>
-                <input type="file" id="songFile" accept=".mp3" /><br /><br />
-
-                <label for="noteSpeed">Note Speed:</label>
-                <input type="number" id="noteSpeed" min="1" max="50" placeholder="Enter note speed" /><br /><br />
-
-                <label for="bpm">BPM:</label>
-                <input type="number" id="bpm" min="1" max="1000" placeholder="Enter BPM" /><br /><br />
-
-                <button id="createCustomSong">Create Custom Song!</button>
-            </div>
-        </div>
 
         <div id="contactBtn">
             <button id="contactbtn" onclick="email()"><i class="fa-solid fa-envelope"></i> Contact</button>

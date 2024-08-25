@@ -2,7 +2,7 @@
  * Title: Beatz's Settings
  * Author: Victor//GuayabR
  * Date: 2/06/2024
- * Version: MOBILE's Settings 4.3 test (release.version.subversion.bugfix)
+ * Version: MOBILE's Settings 4.3.3.3 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -29,12 +29,6 @@ function email() {
     // Contact
     window.open("mailto:antonviloriavictorgabriel@gmail.com");
 }
-
-const testingVerHTML = "BeatzGameTesting.html";
-const publicVerHTML = "index.html";
-
-const testingVerJS = "BeatzGameTesting.js";
-const publicVerJS = "BeatzGame.js";
 
 function toVersion() {
     // Get the current document's URL
@@ -588,6 +582,15 @@ const Presets = {
     }
 };
 
+const marginCustomBG = document.getElementById("marginCustomBG");
+const marginCustomBG2 = document.getElementById("marginCustomBG2");
+
+const marginBlur = document.getElementById("marginBlurBG");
+const marginBlur2 = document.getElementById("marginBlurBG2");
+
+const marginSelect = document.getElementById("marginSelect");
+const marginSelect2 = document.getElementById("marginSelect2");
+
 // Function to apply the preset based on the one you chose
 function applyPreset(presetName) {
     const preset = Presets[presetName];
@@ -634,14 +637,30 @@ function applyPreset(presetName) {
         document.getElementById("customBGInput").style.display = "inline";
         document.getElementById("customTransparentBGblur").style.display = "inline";
         document.getElementById("backdropBlurInput").style.display = "inline";
+        marginSelect.style.display = "inline";
+        marginSelect2.style.display = "inline";
+        marginCustomBG.style.display = "inline";
+        marginCustomBG2.style.display = "inline";
+        marginBlur.style.display = "inline";
+        marginBlur2.style.display = "inline";
     } else if (miscellaneous.backgroundForCanvas === "transparentBG") {
         document.getElementById("customTransparentBGblur").style.display = "inline";
         document.getElementById("backdropBlurInput").style.display = "inline";
+        marginSelect.style.display = "inline";
+        marginSelect2.style.display = "inline";
+        marginBlur.style.display = "inline";
+        marginBlur2.style.display = "inline";
     } else {
         document.getElementById("customBGLabel").style.display = "none";
         document.getElementById("customBGInput").style.display = "none";
         document.getElementById("customTransparentBGblur").style.display = "none";
         document.getElementById("backdropBlurInput").style.display = "none";
+        marginSelect.style.display = "none";
+        marginSelect2.style.display = "none";
+        marginCustomBG.style.display = "none";
+        marginCustomBG2.style.display = "none";
+        marginBlur.style.display = "none";
+        marginBlur2.style.display = "none";
     }
 
     saveSettings();
@@ -695,19 +714,44 @@ function applyPresetMisc(presetName) {
         document.getElementById("fetchSongsSite").checked = miscellaneous.fetchSongs;
     }
 
+    const marginCustomBG = document.getElementById("marginCustomBG");
+    const marginCustomBG2 = document.getElementById("marginCustomBG2");
+
+    const marginBlur = document.getElementById("marginBlurBG");
+    const marginBlur2 = document.getElementById("marginBlurBG2");
+
+    const marginSelect = document.getElementById("marginSelect");
+    const marginSelect2 = document.getElementById("marginSelect2");
+
     if (miscellaneous.backgroundForCanvas === "customBG" && miscellaneous.customBackground) {
         document.getElementById("customBGLabel").style.display = "inline";
         document.getElementById("customBGInput").style.display = "inline";
         document.getElementById("customTransparentBGblur").style.display = "inline";
         document.getElementById("backdropBlurInput").style.display = "inline";
+        marginSelect.style.display = "inline";
+        marginSelect2.style.display = "inline";
+        marginCustomBG.style.display = "inline";
+        marginCustomBG2.style.display = "inline";
+        marginBlur.style.display = "inline";
+        marginBlur2.style.display = "inline";
     } else if (miscellaneous.backgroundForCanvas === "transparentBG") {
         document.getElementById("customTransparentBGblur").style.display = "inline";
         document.getElementById("backdropBlurInput").style.display = "inline";
+        marginSelect.style.display = "inline";
+        marginSelect2.style.display = "inline";
+        marginBlur.style.display = "inline";
+        marginBlur2.style.display = "inline";
     } else {
         document.getElementById("customBGLabel").style.display = "none";
         document.getElementById("customBGInput").style.display = "none";
         document.getElementById("customTransparentBGblur").style.display = "none";
         document.getElementById("backdropBlurInput").style.display = "none";
+        marginSelect.style.display = "none";
+        marginSelect2.style.display = "none";
+        marginCustomBG.style.display = "none";
+        marginCustomBG2.style.display = "none";
+        marginBlur.style.display = "none";
+        marginBlur2.style.display = "none";
     }
 
     saveSettings();
@@ -894,14 +938,31 @@ function loadSettings() {
             customBGInput.style.display = "inline";
             customTransparentBGblur.style.display = "inline";
             backdropBlurInput.style.display = "inline";
+
+            marginSelect.style.display = "inline";
+            marginSelect2.style.display = "inline";
+            marginCustomBG.style.display = "inline";
+            marginCustomBG2.style.display = "inline";
+            marginBlur.style.display = "inline";
+            marginBlur2.style.display = "inline";
         } else if (selectedOption === "transparentBG") {
             customTransparentBGblur.style.display = "inline";
             backdropBlurInput.style.display = "inline";
+            marginSelect.style.display = "inline";
+            marginSelect2.style.display = "inline";
+            marginBlur.style.display = "inline";
+            marginBlur2.style.display = "inline";
         } else {
             customBGLabel.style.display = "none";
             customBGInput.style.display = "none";
             customTransparentBGblur.style.display = "none";
             backdropBlurInput.style.display = "none";
+            marginSelect.style.display = "inline";
+            marginSelect2.style.display = "inline";
+            marginCustomBG.style.display = "none";
+            marginCustomBG2.style.display = "none";
+            marginBlur.style.display = "none";
+            marginBlur2.style.display = "none";
         }
     });
 
@@ -911,37 +972,85 @@ function loadSettings() {
         case "defaultBG":
             BGurl = `url("Resources/Background2.png")`;
             backgroundIsDefault = true;
+            marginSelect.style.display = "inline";
+            marginSelect2.style.display = "inline";
+            marginCustomBG.style.display = "none";
+            marginCustomBG2.style.display = "none";
+            marginBlur.style.display = "none";
+            marginBlur2.style.display = "none";
             break;
         case "defaultBG2":
             BGurl = `url("Resources/Background3.jpg")`;
             backgroundIsDefault = true;
+            marginSelect.style.display = "inline";
+            marginSelect2.style.display = "inline";
+            marginCustomBG.style.display = "none";
+            marginCustomBG2.style.display = "none";
+            marginBlur.style.display = "none";
+            marginBlur2.style.display = "none";
             break;
         case "defaultBG3":
             BGurl = `url("Resources/Background4.png")`;
             backgroundIsDefault = true;
+            marginSelect.style.display = "inline";
+            marginSelect2.style.display = "inline";
+            marginCustomBG.style.display = "none";
+            marginCustomBG2.style.display = "none";
+            marginBlur.style.display = "none";
+            marginBlur2.style.display = "none";
             break;
         case "defaultBG4":
             BGurl = `url("Resources/Background5.jpg")`;
             backgroundIsDefault = true;
+            marginSelect.style.display = "inline";
+            marginSelect2.style.display = "inline";
+            marginCustomBG.style.display = "none";
+            marginCustomBG2.style.display = "none";
+            marginBlur.style.display = "none";
+            marginBlur2.style.display = "none";
             break;
         case "htmlBG":
             BGurl = `url("Resources/BackgroundHtml2.png")`;
             backgroundIsDefault = true;
+            marginSelect.style.display = "inline";
+            marginSelect2.style.display = "inline";
+            marginCustomBG.style.display = "none";
+            marginCustomBG2.style.display = "none";
+            marginBlur.style.display = "none";
+            marginBlur2.style.display = "none";
             break;
         case "transparentBG":
             canvas.style.background = "transparent";
             canvas.style.backdropFilter = `blur(${savedCustomBackgroundBlur}px)`;
             backgroundIsDefault = false;
+            marginSelect.style.display = "inline";
+            marginSelect2.style.display = "inline";
+            marginCustomBG.style.display = "none";
+            marginCustomBG2.style.display = "none";
+            marginBlur.style.display = "inline";
+            marginBlur2.style.display = "inline";
             break;
         case "customBG":
             if (savedCustomBackground) {
                 BGurl = `url("${savedCustomBackground}")`;
             }
+            marginSelect.style.display = "inline";
+            marginSelect2.style.display = "inline";
+            marginCustomBG.style.display = "inline";
+            marginCustomBG2.style.display = "inline";
+            marginBlur.style.display = "inline";
+            marginBlur2.style.display = "inline";
             backgroundIsDefault = true;
             break;
         default:
             BGurl = `url("Resources/Background2.png")`;
             backgroundIsDefault = true;
+            marginSelect.style.display = "inline";
+            marginSelect2.style.display = "inline";
+            marginCustomBG.style.display = "none";
+            marginCustomBG2.style.display = "none";
+            marginBlur.style.display = "none";
+            marginBlur2.style.display = "none";
     }
 
     initializeHitSounds(miscellaneous.hitSound);
@@ -1477,7 +1586,6 @@ function keyDownFunction(keyboardEvent) {
             document.getElementById("startButton").click();
             gameStarted = true;
         }
-        return;
     }
 
     if (gameStarted && keyDown === "ENTER") {
@@ -1534,46 +1642,48 @@ function keyDownFunction(keyboardEvent) {
         return; // Prevent further actions
     }
 
-    // Handle directional keys and other game controls
-    if (keybinds.up.includes(keyDown)) {
-        upPressed = true;
-    }
-    if (keybinds.left.includes(keyDown)) {
-        leftPressed = true;
-    }
-    if (keybinds.down.includes(keyDown)) {
-        downPressed = true;
-    }
-    if (keybinds.right.includes(keyDown)) {
-        rightPressed = true;
-    }
-    if (keybinds.pause.includes(keyDown)) {
-        togglePause();
-    }
-    if (keybinds.autoHit.includes(keyDown)) {
-        toggleAutoHit();
-    }
-    if (keybinds.fullscreen.includes(keyDown)) {
-        toggleFullScreen();
-    }
-    if (keyboardEvent.shiftKey && keybinds.previous.includes(keyDown)) {
-        skipToFirstSong();
-    } else if (keybinds.previous.includes(keyDown)) {
-        previousSong();
-    }
-    if (keybinds.restart.includes(keyDown)) {
-        restartSong();
-    }
-    if (keyboardEvent.shiftKey && keybinds.next.includes(keyDown)) {
-        skipToLastSong();
-    } else if (keybinds.next.includes(keyDown)) {
-        nextSong();
-    }
-    if (keybinds.randomize.includes(keyDown)) {
-        randomizeSong();
-    }
-    if (keybinds.toggleNoteStyle.includes(keyDown)) {
-        toggleNoteStyle();
+    if (gameStarted) {
+        // Handle directional keys and other game controls after game has started
+        if (keybinds.up.includes(keyDown)) {
+            upPressed = true;
+        }
+        if (keybinds.left.includes(keyDown)) {
+            leftPressed = true;
+        }
+        if (keybinds.down.includes(keyDown)) {
+            downPressed = true;
+        }
+        if (keybinds.right.includes(keyDown)) {
+            rightPressed = true;
+        }
+        if (keybinds.pause.includes(keyDown)) {
+            togglePause();
+        }
+        if (keybinds.autoHit.includes(keyDown)) {
+            toggleAutoHit();
+        }
+        if (keybinds.fullscreen.includes(keyDown)) {
+            toggleFullScreen();
+        }
+        if (keyboardEvent.shiftKey && keybinds.previous.includes(keyDown)) {
+            skipToFirstSong();
+        } else if (keybinds.previous.includes(keyDown)) {
+            previousSong();
+        }
+        if (keybinds.restart.includes(keyDown)) {
+            restartSong();
+        }
+        if (keyboardEvent.shiftKey && keybinds.next.includes(keyDown)) {
+            skipToLastSong();
+        } else if (keybinds.next.includes(keyDown)) {
+            nextSong();
+        }
+        if (keybinds.randomize.includes(keyDown)) {
+            randomizeSong();
+        }
+        if (keybinds.toggleNoteStyle.includes(keyDown)) {
+            toggleNoteStyle();
+        }
     }
 
     // Debug and developer shortcuts
@@ -1616,7 +1726,7 @@ function keyUpFunction(keyboardEvent) {
     }
 }
 
-// - . / .- -- --- / .- -. --. .  /.--. . .-. --- / - ..- / -. --- / .-.. --- / ... .- -... . ... / -.-- / -. --- / ... . / --.- ..- . /.... .- -.-. . .-.
+// - . / .- -- --- / .- -. --. .  /.--. . .-. --- / - ..- / -. --- / .-.. --- / ... .- -... . ... / -.-- / -. --- / ... . / --.- ..- . / .... .- -.-. . .-.
 
 // Thanks for playing Beatz!
 // - GuayabR.

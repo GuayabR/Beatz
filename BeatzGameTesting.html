@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Beatz 4.2!</title>
+        <title>Beatz 4.3!</title>
         <link rel="icon" type="image/x-icon" href="Resources/favicon.png" />
         <link rel="stylesheet" id="stylesheet" type="text/css" href="styles.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -155,11 +155,8 @@
                     <label for="circularImage">Circular Cover Images?</label>
                     <input type="checkbox" id="circularImage" name="circularImage" onchange="toggleVinylRotation()" /><br />
 
-                    <div id="vinylRotationContainer" style="display: none">
-                        <label for="vinylRotation">Enable Cover Image Rotation:</label>
-                        <input type="checkbox" id="vinylRotation" name="vinylRotation" />
-                    </div>
-                    <br /><br />
+                    <label for="vinylRotation" id="vinylRotationLabel" style="display: none">Enable Cover Image Rotation:</label>
+                    <input type="checkbox" id="vinylRotation" name="vinylRotation" style="display: none" /><br id="marginRotation" />
 
                     <label for="fetchSongsSite">Fetch songs from guayabr.github.io? (Mainly for iOS)</label>
                     <input type="checkbox" id="fetchSongsSite" name="fetchSongsSite" onchange="toggleFetchingSongs()" /><br />
@@ -168,7 +165,7 @@
                     <input type="checkbox" id="playSFXcheck" name="playSFXcheck" onchange="togglePlaySFX()" /><br />
 
                     <label for="pulseOnBPMcheck">Elements pulse on BPM?</label>
-                    <input type="checkbox" id="pulseOnBPMcheck" name="pulseOnBPMcheck" onchange="togglePulseOnBPM()" /><br />
+                    <input type="checkbox" id="pulseOnBPMcheck" name="pulseOnBPMcheck" onchange="togglePulseOnBPM()" /><br /><br />
 
                     <label for="defaultBackground">Background image:</label>
                     <select id="defaultBackground" name="backgroundForCanvas">
@@ -179,13 +176,13 @@
                         <option value="htmlBG">Copy HTML</option>
                         <option value="transparentBG">Transparent</option>
                         <option value="customBG">Custom background!</option></select
-                    ><br /><br />
+                    ><br id="marginSelect" /><br id="marginSelect2" />
 
                     <label id="customBGLabel" for="customBGInput" style="display: none">Custom background image:</label>
-                    <input type="file" id="customBGInput" accept="image/*" style="display: none" /><br /><br />
+                    <input type="file" id="customBGInput" accept="image/*" style="display: none" /><br id="marginCustomBG" /><br id="marginCustomBG2" />
 
                     <label id="customTransparentBGblur" for="backdropBlurInput" style="display: none">Background blur:</label>
-                    <input type="number" id="backdropBlurInput" style="display: none" /><br /><br />
+                    <input type="number" id="backdropBlurInput" style="display: none" /><br id="marginBlurBG" /><br id="marginBlurBG2" />
 
                     <span id="settingsSaved" style="color: white; display: none" class="settingsSavedMsg">Settings saved!</span>
                     <button id="saveSettingsBtn" class="save-settings-btn" type="button">Save</button>

@@ -1,3 +1,15 @@
+/**
+ * Title: Beatz's Initialization
+ * Author: Victor//GuayabR
+ * Date: 25/08/2024
+ * Version: MOBILE 4.3.3 test (release.version.subversion.bugfix)
+ * GitHub Repository: https://github.com/GuayabR/Beatz
+ **/
+
+// RELEASE NOTES
+
+let popupDisplayed;
+
 async function checkForNewRelease(currentVersion) {
     const repoOwner = "GuayabR";
     const repoName = "Beatz";
@@ -6,12 +18,12 @@ async function checkForNewRelease(currentVersion) {
     try {
         const response = await fetch(apiUrl);
         const release = await response.json();
-        const latestVersion = release.tag_name; // Assuming version is stored in tag_name
+        const latestVersion = release.tag_name;
         const releaseNotes = release.body; // Release notes
 
         if (latestVersion !== currentVersion) {
             // A new release is detected
-            displayNewReleasePopup(releaseNotes, latestVersion);
+            displayNewReleasePopup(releaseNotes, latestVersion, true);
         }
     } catch (error) {
         logError("Error fetching release information:", error);
@@ -36,13 +48,15 @@ async function fetchVersionNotes(version) {
     }
 }
 
-function displayNewReleasePopup(releaseNotes, version) {
+function displayNewReleasePopup(releaseNotes, version, saveVer) {
+    console.log("Displaying release popup with version:", version, "Save to localStorage:", saveVer);
+
     // Get values from localStorage
     const newPlayer = localStorage.getItem("isNewPlayer");
     const storedVersion = localStorage.getItem("popUpDisplayed");
 
     // Check conditions to display popup
-    if (!newPlayer && (storedVersion === null || storedVersion !== version)) {
+    if (!saveVer || (!newPlayer && (storedVersion === null || storedVersion !== version))) {
         popupDisplayed = true;
 
         // Create a popup container
@@ -59,13 +73,26 @@ function displayNewReleasePopup(releaseNotes, version) {
         popup.style.border = "2px solid #fff";
         popup.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.5)";
         popup.style.zIndex = "1000";
-        popup.style.width = "50vh";
-        popup.style.maxHeight = "80vh"; // Limit the height of the popup
+
+        if (!isMobile) {
+            popup.style.maxHeight = "80vh"; // Limit the height of the popup
+            popup.style.width = "50vh";
+        } else {
+            popup.style.maxHeight = "60vh"; // Limit the height of the popup
+            popup.style.width = "60%";
+        }
         popup.style.overflow = "hidden"; // Hide overflow
         popup.style.transition = "transform 0.3s cubic-bezier(0.17, 0.71, 0.51, 0.94)"; // Custom cubic-bezier for scaling in
 
+        var title;
+
         // Create a title for the popup
-        const title = document.createElement("h2");
+        if (!isMobile) {
+            title = document.createElement("h2");
+        } else {
+            title = document.createElement("h3");
+        }
+
         title.innerHTML = `New Version Available!<br>${version}`;
         popup.appendChild(title);
 
@@ -79,21 +106,50 @@ function displayNewReleasePopup(releaseNotes, version) {
         const content = document.createElement("p");
         content.style.whiteSpace = "pre-wrap"; // To maintain newlines in release notes
         content.innerText = releaseNotes;
+
+        if (isMobile) {
+            content.style.fontSize = "13px";
+        }
+
         contentContainer.appendChild(content);
         popup.appendChild(contentContainer);
 
         // Create a button to close the popup
         const closeButton = document.createElement("button");
         closeButton.innerText = "Close";
+
+        if (isMobile) {
+            closeButton.style.opacity = "0";
+            closeButton.style.transition = "opacity 0.4s ease-in";
+            closeButton.style.padding = "5px 10px";
+        }
+
         closeButton.onclick = () => {
             // Animate scale back to 0 for closing
             popup.style.transition = "transform 0.2s ease-in-out"; // Ease-in-out for scaling out
             popup.style.transform = "translate(-50%, -50%) scale(0)";
 
+            if (isMobile) {
+                // Fade out buttons after closing pop up, only on mobile devices
+                setTimeout(() => {
+                    closeButton.style.opacity = "0";
+                    changelogButton.style.opacity = "0";
+                }, 10);
+            }
+
             // Remove the popup after the animation duration
             setTimeout(() => {
                 document.body.removeChild(popup);
                 popupDisplayed = false;
+
+                if (isMobile) {
+                    if (document.body.contains(closeButton)) {
+                        document.body.removeChild(closeButton);
+                    }
+                    if (document.body.contains(changelogButton)) {
+                        document.body.removeChild(changelogButton);
+                    }
+                }
             }, 500);
         };
         popup.appendChild(closeButton);
@@ -101,10 +157,44 @@ function displayNewReleasePopup(releaseNotes, version) {
         // Create a button to show the full changelog
         const changelogButton = document.createElement("button");
         changelogButton.innerText = "View Full Changelog";
+
+        if (isMobile) {
+            changelogButton.style.opacity = "0";
+            changelogButton.style.transition = "opacity 0.4s ease-in";
+            changelogButton.style.padding = "5px 10px";
+
+            // Fade in buttons after adding them back
+            setTimeout(() => {
+                closeButton.style.opacity = "1";
+                changelogButton.style.opacity = "1";
+            }, 10);
+        }
+
         changelogButton.onclick = () => {
+            // Change button text to "Loading..."
+            changelogButton.innerText = "Loading...";
+
             fetch("https://guayabr.github.io/Beatz/versions.txt")
                 .then((response) => response.text())
                 .then((data) => {
+                    // Fade out buttons if on mobile
+                    if (isMobile) {
+                        closeButton.style.transition = "opacity 0.5s ease-out";
+                        changelogButton.style.transition = "opacity 0.5s ease-out";
+                        closeButton.style.opacity = "0";
+                        changelogButton.style.opacity = "0";
+
+                        // Remove buttons after fade out
+                        setTimeout(() => {
+                            if (popup.contains(closeButton)) {
+                                popup.removeChild(closeButton);
+                            }
+                            if (popup.contains(changelogButton)) {
+                                popup.removeChild(changelogButton);
+                            }
+                        }, 500);
+                    }
+
                     // Display the full changelog in a new popup
                     const changelogPopup = document.createElement("div");
                     changelogPopup.style.position = "fixed";
@@ -119,7 +209,14 @@ function displayNewReleasePopup(releaseNotes, version) {
                     changelogPopup.style.border = "2px solid #fff";
                     changelogPopup.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.5)";
                     changelogPopup.style.zIndex = "1000";
-                    changelogPopup.style.width = "60vh";
+
+                    if (isMobile) {
+                        changelogPopup.style.width = "60%";
+                        changelogPopup.style.fontSize = "13px";
+                    } else {
+                        changelogPopup.style.width = "60vh";
+                    }
+
                     changelogPopup.style.height = "80vh";
                     changelogPopup.style.overflowY = "auto"; // Enable vertical scrolling
                     changelogPopup.style.transition = "transform 0.3s cubic-bezier(0.17, 0.71, 0.51, 0.94)"; // Custom cubic-bezier for scaling in
@@ -141,7 +238,17 @@ function displayNewReleasePopup(releaseNotes, version) {
                     changelogCloseButton.style.left = "50%";
                     changelogCloseButton.style.transform = "translateX(-50%)";
                     changelogCloseButton.style.zIndex = "1001"; // Ensure it is above other content
+                    changelogCloseButton.style.opacity = "0";
                     changelogCloseButton.style.transition = "opacity 0.3s ease"; // Smooth transition for visibility
+
+                    // Fade in buttons after adding them back
+                    setTimeout(() => {
+                        changelogCloseButton.style.opacity = "1";
+                    }, 10);
+
+                    if (isMobile) {
+                        changelogCloseButton.style.padding = "5px 12px";
+                    }
 
                     changelogCloseButton.onclick = () => {
                         // Animate scale back to 0 for closing
@@ -155,6 +262,22 @@ function displayNewReleasePopup(releaseNotes, version) {
                         setTimeout(() => {
                             document.body.removeChild(changelogPopup);
                             document.body.removeChild(changelogCloseButton);
+
+                            // Fade in buttons and re-append after changelog popup is closed
+                            if (isMobile) {
+                                closeButton.style.opacity = "0";
+                                changelogButton.style.opacity = "0";
+                                document.body.appendChild(closeButton);
+                                document.body.appendChild(changelogButton);
+
+                                // Fade in buttons after adding them back
+                                setTimeout(() => {
+                                    closeButton.style.transition = "opacity 0.5s ease-in";
+                                    changelogButton.style.transition = "opacity 0.5s ease-in";
+                                    closeButton.style.opacity = "1";
+                                    changelogButton.style.opacity = "1";
+                                }, 10);
+                            }
                         }, 500);
                     };
 
@@ -167,9 +290,19 @@ function displayNewReleasePopup(releaseNotes, version) {
                     setTimeout(() => {
                         changelogPopup.style.transform = "translate(-50%, -50%) scale(1)";
                     }, 10);
+                    // Reset button text after loading
+                    changelogButton.innerText = "View Full Changelog";
                 })
                 .catch((error) => {
-                    console.error("Error fetching changelog:", error);
+                    logError("Error fetching changelog:", error.message);
+
+                    // Set button text to indicate error
+                    changelogButton.innerText = "Error: failed to fetch changelog";
+
+                    // Optionally, reset the button text after a few seconds
+                    setTimeout(() => {
+                        changelogButton.innerText = "View Full Changelog";
+                    }, 3000); // Reset after 3 seconds
                 });
         };
         popup.appendChild(changelogButton);
@@ -177,13 +310,73 @@ function displayNewReleasePopup(releaseNotes, version) {
         // Append the popup to the body
         document.body.appendChild(popup);
 
+        // Append buttons based on device type
+        if (isMobile) {
+            // Append buttons to the document body and style them as fixed below the popup
+            document.body.appendChild(closeButton);
+            document.body.appendChild(changelogButton);
+
+            // Style for the close button
+            closeButton.style.position = "fixed";
+            closeButton.style.bottom = "5px"; // Distance from the bottom of the viewport
+            closeButton.style.left = "50%"; // Center horizontally
+            closeButton.style.transform = "translateX(-50%)"; // Center the button horizontally
+            closeButton.style.zIndex = "1001"; // Ensure it's above the popup
+
+            // Style for the changelog button
+            changelogButton.style.position = "fixed";
+            changelogButton.style.bottom = "45px"; // Distance from the bottom of the viewport
+            changelogButton.style.left = "50%"; // Center horizontally
+            changelogButton.style.transform = "translateX(-50%)"; // Center the button horizontally
+            changelogButton.style.zIndex = "1001"; // Ensure it's above the popup
+        } else {
+            // Append buttons to the popup for non-mobile devices
+            popup.appendChild(closeButton);
+            popup.appendChild(changelogButton);
+        }
+
         // Trigger the scaling in animation after appending to the body
         setTimeout(() => {
             popup.style.transform = "translate(-50%, -50%) scale(1)"; // Scale up to full size
         }, 10); // Small timeout to allow the DOM to recognize the initial scale(0) state
 
-        // Store the displayed version in localStorage
-        localStorage.setItem("popUpDisplayed", version);
+        if (saveVer) {
+            localStorage.setItem("popUpDisplayed", version);
+            console.log("Version saved to localStorage.");
+        } else {
+            logNotice("Debug: Release notes pop-up displayed without saving version to localStorage.");
+        }
+    } else {
+        console.log("Conditions not met, popup not displayed.");
+    }
+}
+
+// Add the event listener for debug keybinds
+document.addEventListener("keydown", async (event) => {
+    if (event.ctrlKey && event.key === ",") {
+        if (popupDisplayed) {
+            return;
+        }
+        console.log("Debug mode activated: Ctrl + , key pressed.");
+        await debugCheckForNewRelease(VERSION);
+    }
+});
+
+async function debugCheckForNewRelease(currentVersion) {
+    const repoOwner = "GuayabR";
+    const repoName = "Beatz";
+    const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/releases/latest`;
+
+    try {
+        const response = await fetch(apiUrl);
+        const release = await response.json();
+        const latestVersion = release.tag_name;
+        const releaseNotes = release.body; // Release notes
+
+        // Force display the popup for debugging purposes
+        displayNewReleasePopup(releaseNotes, latestVersion, false); // 'false' to prevent saving to localStorage
+    } catch (error) {
+        logError("Error fetching release information:", error);
     }
 }
 
@@ -385,3 +578,8 @@ function setupMobileEventListeners() {
     canvas.removeEventListener("mouseup", handleMouseUp, false);
     canvas.removeEventListener("mouseleave", handleMouseUp, false);
 }
+
+// - . / .- -- --- / .- -. --. .  /.--. . .-. --- / - ..- / -. --- / .-.. --- / ... .- -... . ... / -.-- / -. --- / ... . / --.- ..- . / .... .- -.-. . .-.
+
+// Thanks for playing Beatz!
+// - GuayabR.

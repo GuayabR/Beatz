@@ -203,6 +203,26 @@ canvas {
     background-color: rgba(0, 0, 0, 0);
 }
 
+.pop-up-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 100px;
+    top: 5vh;
+    width: 40%;
+    max-height: 90vh;
+    overflow: auto;
+    font-size: 7px;
+    background-color: rgb(255, 255, 255);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+/* Ensure spans appear on separate lines on mobile devices */
+.keyword-description {
+    display: block; /* Makes span behave like block element */
+    margin-bottom: 3px; /* Adds space between items */
+}
+
 #openSongListBTN {
     font-size: 16px;
     width: 175px;
@@ -428,6 +448,31 @@ canvas {
 
 .close:hover {
     color: rgb(255, 86, 86);
+    text-decoration: none;
+    cursor: pointer;
+    transform: scale(1.25);
+    transition:
+        color 0.2s ease,
+        transform 0.3s ease;
+}
+
+#keywordListButton {
+    float: left;
+    color: #ffffff;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    background: none;
+    box-shadow: 0 0px #dfdfdf3a;
+    transition:
+        color 0.3s ease,
+        transform 0.3s ease;
+}
+
+#keywordListButton:hover {
+    color: rgb(86, 255, 123);
     text-decoration: none;
     cursor: pointer;
     transform: scale(1.25);

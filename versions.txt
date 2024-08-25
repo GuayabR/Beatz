@@ -524,4 +524,13 @@ Added a localStorage cleanup system where every time you start up a new song, it
 
 - Game Title, song covers on selected song modal now pulse to the beat of the current song.
 - Changed the main font family to "Poppins" (https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap)
+//
+
+4.3.3.3 (MOBILE 4.3! 25/08/2024)
+- Fixed release notes pop up overflowing.
+- Added a debug keybind to show a pop up.
+- Fixed release notes pop up being to large in mobile devices, same with full changelog pop up.
+- Separated the close button and changelog button in the new version pop up for mobile devices.
+- Removed random space in the middle of the checkboxes in miscellaneous settings.
+- Removed big space after background selection inside miscellaneous settings.
 
