@@ -26,12 +26,17 @@ To run Beatz! locally:
 
 3. Open the `index.html` file in your web browser.
 
-## Usage
+## 🛠️ Technologies
 
-- **Desktop**: Open `index.html` in any modern web browser.
-- **Mobile**: Access the game via your mobile browser.
+- HTML: Structure and content
+- CSS: Styling and layout
+- JavaScript: Game logic and interactivity
 
-## Contributing
+## 📱 Usage
+
+**Beatz!** is designed to work seamlessly on mobile devices. For the best experience, use the latest version of Chrome, Firefox, or Safari.
+
+## 🤝 Contributing
 
 If you would like to contribute to Beatz!, please follow these steps:
 
@@ -41,19 +46,18 @@ If you would like to contribute to Beatz!, please follow these steps:
 4. Push to the branch (`git push origin feature-branch`).
 5. Create a new Pull Request.
 
-## License
+## ❤️ Acknowledgements
 
-Beatz! is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
-## Acknowledgements
-
-- **[Your Favorite Libraries/Tools]**: Mention any tools or libraries that you used.
-- **Special Thanks**: Acknowledge anyone who helped or contributed.
+- **Special Thanks**
+VERIDIAN: Helped recommending songs, suggesting features and bug fixing.
+BWJ: Helped out a ton on coding, he's mainly the sole reason this game is what it is right now. Thanks!
+Developed with love by GuayabR.
 
 ## Contact
 
-For any questions or feedback, feel free to reach out to GuayabR at [your-email@example.com].
+For any questions or feedback, feel free to reach out to GuayabR at [antonviloriavictorgabriel@gmail.com].
 
-Thanks for playing!
+# 🚀 Thanks for playing!
+I hope you enjoy Beatz! If you have any feedback or encounter any issues, please let me know via contact or social media. Happy playing!
 
 
