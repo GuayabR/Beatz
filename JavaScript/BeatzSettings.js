@@ -53,16 +53,9 @@ function toggleFullScreen() {
             console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
             logError(`Error attempting to enable full-screen mode: ${err} | ${err.message} | ${err.name}`);
         });
-        console.log("Entered Fullscreen");
-        if (userDevice === "Chromebook") {
-            canvas.style.scale = "1";
-        }
     } else {
         document.exitFullscreen();
         console.log("Exited Fullscreen");
-        if (userDevice === "Chromebook") {
-            canvas.style.scale = "0.9";
-        }
     }
 }
 
