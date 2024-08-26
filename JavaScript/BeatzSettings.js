@@ -2,7 +2,7 @@
  * Title: Beatz's Settings
  * Author: Victor//GuayabR
  * Date: 2/06/2024
- * Version: MOBILE's Settings 4.3.3.3 test (release.version.subversion.bugfix)
+ * Version: MOBILE's Settings 4.3.5.5 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 

@@ -8,7 +8,9 @@
 
 // RELEASE NOTES
 
-let popupDisplayed;
+let popupDisplayed = false;
+
+let changelogPopupDisplayed = false;
 
 async function checkForNewRelease(currentVersion) {
     const repoOwner = "GuayabR";
@@ -171,139 +173,149 @@ function displayNewReleasePopup(releaseNotes, version, saveVer) {
         }
 
         changelogButton.onclick = () => {
-            // Change button text to "Loading..."
             changelogButton.innerText = "Loading...";
 
-            fetch("https://guayabr.github.io/Beatz/versions.txt")
-                .then((response) => response.text())
-                .then((data) => {
-                    // Fade out buttons if on mobile
-                    if (isMobile) {
-                        closeButton.style.transition = "opacity 0.5s ease-out";
-                        changelogButton.style.transition = "opacity 0.5s ease-out";
-                        closeButton.style.opacity = "0";
-                        changelogButton.style.opacity = "0";
+            if (changelogPopupDisplayed) {
+                changelogButton.innerText = "View Full Changelog";
+                console.log("Changelog pop up is already displayed.");
+            }
 
-                        // Remove buttons after fade out
-                        setTimeout(() => {
-                            if (popup.contains(closeButton)) {
-                                popup.removeChild(closeButton);
-                            }
-                            if (popup.contains(changelogButton)) {
-                                popup.removeChild(changelogButton);
-                            }
-                        }, 500);
-                    }
+            if (!changelogPopupDisplayed) {
+                fetch("https://guayabr.github.io/Beatz/versions.txt")
+                    .then((response) => response.text())
+                    .then((data) => {
+                        changelogPopupDisplayed = true;
 
-                    // Display the full changelog in a new popup
-                    const changelogPopup = document.createElement("div");
-                    changelogPopup.style.position = "fixed";
-                    changelogPopup.style.top = "50%";
-                    changelogPopup.style.left = "50%";
-                    changelogPopup.style.transform = "translate(-50%, -50%) scale(0)"; // Start with scale(0) for the animation
-                    changelogPopup.style.padding = "20px";
-                    changelogPopup.style.background = "transparent";
-                    changelogPopup.style.backgroundColor = "rgba(0, 0, 0, 0.8)"; // Darker background for better readability
-                    changelogPopup.style.backdropFilter = "blur(10px)";
-                    changelogPopup.style.borderRadius = "10px";
-                    changelogPopup.style.border = "2px solid #fff";
-                    changelogPopup.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.5)";
-                    changelogPopup.style.zIndex = "1000";
+                        // Fade out buttons if on mobile
+                        if (isMobile) {
+                            closeButton.style.transition = "opacity 0.5s ease-out";
+                            changelogButton.style.transition = "opacity 0.5s ease-out";
+                            closeButton.style.opacity = "0";
+                            changelogButton.style.opacity = "0";
 
-                    if (isMobile) {
-                        changelogPopup.style.width = "60%";
-                        changelogPopup.style.fontSize = "13px";
-                    } else {
-                        changelogPopup.style.width = "60vh";
-                    }
+                            // Remove buttons after fade out
+                            setTimeout(() => {
+                                if (popup.contains(closeButton)) {
+                                    popup.removeChild(closeButton);
+                                }
+                                if (popup.contains(changelogButton)) {
+                                    popup.removeChild(changelogButton);
+                                }
+                            }, 500);
+                        }
 
-                    changelogPopup.style.height = "80vh";
-                    changelogPopup.style.overflowY = "auto"; // Enable vertical scrolling
-                    changelogPopup.style.transition = "transform 0.3s cubic-bezier(0.17, 0.71, 0.51, 0.94)"; // Custom cubic-bezier for scaling in
+                        // Display the full changelog in a new popup
+                        const changelogPopup = document.createElement("div");
+                        changelogPopup.style.position = "fixed";
+                        changelogPopup.style.top = "50%";
+                        changelogPopup.style.left = "50%";
+                        changelogPopup.style.transform = "translate(-50%, -50%) scale(0)"; // Start with scale(0) for the animation
+                        changelogPopup.style.padding = "20px";
+                        changelogPopup.style.background = "transparent";
+                        changelogPopup.style.backgroundColor = "rgba(0, 0, 0, 0.8)"; // Darker background for better readability
+                        changelogPopup.style.backdropFilter = "blur(10px)";
+                        changelogPopup.style.borderRadius = "10px";
+                        changelogPopup.style.border = "2px solid #fff";
+                        changelogPopup.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.5)";
+                        changelogPopup.style.zIndex = "1000";
 
-                    const changelogTitle = document.createElement("h2");
-                    changelogTitle.innerText = "Full Changelog";
-                    changelogPopup.appendChild(changelogTitle);
+                        if (isMobile) {
+                            changelogPopup.style.width = "60%";
+                            changelogPopup.style.fontSize = "13px";
+                        } else {
+                            changelogPopup.style.width = "60vh";
+                        }
 
-                    const changelogContent = document.createElement("p");
-                    changelogContent.style.whiteSpace = "pre-wrap"; // To maintain newlines in changelog
-                    changelogContent.innerText = data;
-                    changelogPopup.appendChild(changelogContent);
+                        changelogPopup.style.height = "80vh";
+                        changelogPopup.style.overflowY = "auto"; // Enable vertical scrolling
+                        changelogPopup.style.transition = "transform 0.3s cubic-bezier(0.17, 0.71, 0.51, 0.94)"; // Custom cubic-bezier for scaling in
 
-                    // Create a fixed close button outside the changelog popup
-                    const changelogCloseButton = document.createElement("button");
-                    changelogCloseButton.innerText = "Close";
-                    changelogCloseButton.style.position = "fixed";
-                    changelogCloseButton.style.bottom = "10px";
-                    changelogCloseButton.style.left = "50%";
-                    changelogCloseButton.style.transform = "translateX(-50%)";
-                    changelogCloseButton.style.zIndex = "1001"; // Ensure it is above other content
-                    changelogCloseButton.style.opacity = "0";
-                    changelogCloseButton.style.transition = "opacity 0.3s ease"; // Smooth transition for visibility
+                        const changelogTitle = document.createElement("h2");
+                        changelogTitle.innerText = "Full Changelog";
+                        changelogPopup.appendChild(changelogTitle);
 
-                    // Fade in buttons after adding them back
-                    setTimeout(() => {
-                        changelogCloseButton.style.opacity = "1";
-                    }, 10);
+                        const changelogContent = document.createElement("p");
+                        changelogContent.style.whiteSpace = "pre-wrap"; // To maintain newlines in changelog
+                        changelogContent.innerText = data;
+                        changelogPopup.appendChild(changelogContent);
 
-                    if (isMobile) {
-                        changelogCloseButton.style.padding = "5px 12px";
-                    }
-
-                    changelogCloseButton.onclick = () => {
-                        // Animate scale back to 0 for closing
-                        changelogPopup.style.transition = "transform 0.5s ease-in-out"; // Ease-in-out for scaling out
-                        changelogPopup.style.transform = "translate(-50%, -50%) scale(0)";
-
-                        // Animate the close button fade out
+                        // Create a fixed close button outside the changelog popup
+                        const changelogCloseButton = document.createElement("button");
+                        changelogCloseButton.innerText = "Close";
+                        changelogCloseButton.style.position = "fixed";
+                        changelogCloseButton.style.bottom = "10px";
+                        changelogCloseButton.style.left = "50%";
+                        changelogCloseButton.style.transform = "translateX(-50%)";
+                        changelogCloseButton.style.zIndex = "1001"; // Ensure it is above other content
                         changelogCloseButton.style.opacity = "0";
+                        changelogCloseButton.style.transition = "opacity 0.3s ease"; // Smooth transition for visibility
 
-                        // Remove the popup and button after the animation duration
+                        // Fade in buttons after adding them back
                         setTimeout(() => {
-                            document.body.removeChild(changelogPopup);
-                            document.body.removeChild(changelogCloseButton);
+                            changelogCloseButton.style.opacity = "1";
+                        }, 10);
 
-                            // Fade in buttons and re-append after changelog popup is closed
-                            if (isMobile) {
-                                closeButton.style.opacity = "0";
-                                changelogButton.style.opacity = "0";
-                                document.body.appendChild(closeButton);
-                                document.body.appendChild(changelogButton);
+                        if (isMobile) {
+                            changelogCloseButton.style.padding = "5px 12px";
+                        }
 
-                                // Fade in buttons after adding them back
-                                setTimeout(() => {
-                                    closeButton.style.transition = "opacity 0.5s ease-in";
-                                    changelogButton.style.transition = "opacity 0.5s ease-in";
-                                    closeButton.style.opacity = "1";
-                                    changelogButton.style.opacity = "1";
-                                }, 10);
-                            }
-                        }, 500);
-                    };
+                        changelogCloseButton.onclick = () => {
+                            // Animate scale back to 0 for closing
+                            changelogPopup.style.transition = "transform 0.5s ease-in-out"; // Ease-in-out for scaling out
+                            changelogPopup.style.transform = "translate(-50%, -50%) scale(0)";
 
-                    // Append the close button to the body
-                    document.body.appendChild(changelogCloseButton);
+                            // Animate the close button fade out
+                            changelogCloseButton.style.opacity = "0";
 
-                    document.body.appendChild(changelogPopup);
+                            // Remove the popup and button after the animation duration
+                            setTimeout(() => {
+                                document.body.removeChild(changelogPopup);
+                                document.body.removeChild(changelogCloseButton);
 
-                    // Trigger the scaling in animation for changelog popup
-                    setTimeout(() => {
-                        changelogPopup.style.transform = "translate(-50%, -50%) scale(1)";
-                    }, 10);
-                    // Reset button text after loading
-                    changelogButton.innerText = "View Full Changelog";
-                })
-                .catch((error) => {
-                    logError("Error fetching changelog:", error.message);
+                                changelogPopupDisplayed = false;
 
-                    // Set button text to indicate error
-                    changelogButton.innerText = "Error: failed to fetch changelog";
+                                // Fade in buttons and re-append after changelog popup is closed
+                                if (isMobile) {
+                                    closeButton.style.opacity = "0";
+                                    changelogButton.style.opacity = "0";
+                                    document.body.appendChild(closeButton);
+                                    document.body.appendChild(changelogButton);
 
-                    // Optionally, reset the button text after a few seconds
-                    setTimeout(() => {
+                                    // Fade in buttons after adding them back
+                                    setTimeout(() => {
+                                        closeButton.style.transition = "opacity 0.5s ease-in";
+                                        changelogButton.style.transition = "opacity 0.5s ease-in";
+                                        closeButton.style.opacity = "1";
+                                        changelogButton.style.opacity = "1";
+                                    }, 10);
+                                }
+                            }, 500);
+                        };
+
+                        // Append the close button to the body
+                        document.body.appendChild(changelogCloseButton);
+
+                        document.body.appendChild(changelogPopup);
+
+                        // Trigger the scaling in animation for changelog popup
+                        setTimeout(() => {
+                            changelogPopup.style.transform = "translate(-50%, -50%) scale(1)";
+                        }, 10);
+                        // Reset button text after loading
                         changelogButton.innerText = "View Full Changelog";
-                    }, 3000); // Reset after 3 seconds
-                });
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching changelog:", error.message);
+
+                        // Set button text to indicate error
+                        changelogButton.innerText = "Error: failed to fetch changelog";
+
+                        // Optionally, reset the button text after a few seconds
+                        setTimeout(() => {
+                            changelogButton.innerText = "View Full Changelog";
+                        }, 3000); // Reset after 3 seconds
+                    });
+            }
         };
         popup.appendChild(changelogButton);
 
@@ -358,11 +370,11 @@ document.addEventListener("keydown", async (event) => {
             return;
         }
         console.log("Debug mode activated: Ctrl + , key pressed.");
-        await debugCheckForNewRelease(VERSION);
+        await debugCheckForNewRelease();
     }
 });
 
-async function debugCheckForNewRelease(currentVersion) {
+async function debugCheckForNewRelease() {
     const repoOwner = "GuayabR";
     const repoName = "Beatz";
     const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/releases/latest`;
@@ -401,38 +413,47 @@ window.addEventListener("unhandledrejection", function (event) {
     logError(`Unhandled promise rejection: ${event.reason} | ${event.message}`);
 });
 
-// Function to dynamically create and display error log divs
+// Function to dynamically create and display log messages as clickable links if URLs are present
 function logMessage(message, type = "error", color = "red", timeout = 7500) {
     const errorContainer = document.getElementById("errorContainer");
     const errorDiv = document.createElement("div");
     errorDiv.className = "errorLogging";
+
+    // Function to convert URLs in text to clickable links
+    const convertUrlsToLinks = (text) => {
+        const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+        return text.replace(urlPattern, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+    };
+
+    // Convert message text to include clickable links
+    const formattedMessage = convertUrlsToLinks(message);
 
     const noErrorsIndex = errorArray.indexOf("No errors.");
 
     // Set the text and color based on the message type
     switch (type) {
         case "error":
-            errorDiv.textContent = `Error: ${message}`;
+            errorDiv.innerHTML = `Error: ${formattedMessage}`; // Use innerHTML to allow clickable links
             errorDiv.style.backgroundColor = "red";
+            // Check if 'No errors.' is in the array, if so, remove it
+            if (noErrorsIndex !== -1) {
+                errorArray.splice(noErrorsIndex, 1);
+            }
             errorArray.push(message);
             console.error(message);
-            // Check if 'No errors.' is in the array, if so, remove it
-            if (noErrorsIndex !== -1) {
-                errorArray.splice(noErrorsIndex, 1);
-            }
             break;
         case "warn":
-            errorDiv.textContent = `Warning: ${message}`;
+            errorDiv.innerHTML = `Warning: ${formattedMessage}`; // Use innerHTML to allow clickable links
             errorDiv.style.backgroundColor = "rgb(255, 100, 0)";
-            errorArray.push(message);
-            console.warn(message);
             // Check if 'No errors.' is in the array, if so, remove it
             if (noErrorsIndex !== -1) {
                 errorArray.splice(noErrorsIndex, 1);
             }
+            errorArray.push(message);
+            console.warn(message);
             break;
         case "notice":
-            errorDiv.textContent = `Notice: ${message}`;
+            errorDiv.innerHTML = `Notice: ${formattedMessage}`; // Use innerHTML to allow clickable links
             errorDiv.style.backgroundColor = color;
             // Check if 'No errors.' is in the array, if so, remove it
             const noNoticesIndex = noticeArray.indexOf("No notices.");
@@ -529,7 +550,7 @@ function detectAndHandleDevice() {
     const pauseMargin2 = document.getElementById("pauseMargin2");
 
     if (userDevice === "Mobile" || userDevice === "iOS" || userDevice === "Android") {
-        logNotice("Beatz! Mobile activated.", "", 3000);
+        logNotice("Beatz! Mobile activated.", "", 2000);
         handleChange();
         setupMobileEventListeners();
         changeStylesheet("mobileStyles.css");
@@ -545,6 +566,10 @@ function detectAndHandleDevice() {
             pauseMargin.remove();
             pauseMargin2.remove();
         }
+
+        // Set zoom level to 75% for Chromebooks
+        document.body.style.transform = "scale(0.75)"; // Scale down to 75%
+        document.body.style.transformOrigin = "center"; // Ensure scaling starts from the top-left corner
     } else if (userDevice === "Desktop") {
         console.log("Desktop device is supported. Enjoy Beatz!");
         document.getElementById("orientationMessage").style.display = "none";

@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: MOBILE 4.3.3.3 test (release.version.subversion.bugfix)
+ * Version: MOBILE 4.3.5.5 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -10,7 +10,7 @@
 
 const userDevice = detectDeviceType();
 
-const VERSION = "MOBILE 4.3.3.3";
+const VERSION = "MOBILE 4.3.5.5";
 var PUBLICVERSION = `4.3! (${userDevice} Port)`;
 console.log("Version: " + VERSION);
 
@@ -609,7 +609,8 @@ function preloadSongs() {
             "https://guayabr.github.io/Beatz/Resources/Songs/VVV.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/Magic Touch.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/Uptown Funk.mp3",
-            "https://guayabr.github.io/Beatz/Resources/Songs/Lunar Abyss.mp3"
+            "https://guayabr.github.io/Beatz/Resources/Songs/Lunar Abyss.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/Lost.mp3"
         ];
     } else {
         console.log(`Loading songs locally, fetching: ${useFetch}`);
@@ -721,6 +722,7 @@ function preloadSongs() {
             "Resources/Songs/Magic Touch.mp3",
             "Resources/Songs/Uptown Funk.mp3",
             "Resources/Songs/Lunar Abyss.mp3",
+            "Resources/Songs/Lost.mp3",
 
             "Resources/Songs/testingsong.mp3"
         ];
@@ -953,6 +955,7 @@ const songConfigs = {
     "Magic Touch": { BPM: 127, noteSpeed: 12 },
     "Uptown Funk": { BPM: 115, noteSpeed: 12 },
     "Lunar Abyss": { BPM: 138, noteSpeed: 10 },
+    Lost: { BPM: 105, noteSpeed: 12 },
 
     // Song Versions
     "Finesse (feat. Cardi B)": { BPM: 105, noteSpeed: 22 },
@@ -1224,6 +1227,7 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 222, noteSpeed: 8, notes: [] },
             { timestamp: 222.72, noteSpeed: 8, endScreenDrawn: true }
         ],
+        Lost: [{ timestamp: 187.545, noteSpeed: 12, endScreenDrawn: true }],
         testingsong: [
             { timestamp: 1, noteSpeed: 10 },
             { timestamp: 2, noteSpeed: 10, BPM: BPM * 2 },
@@ -1348,6 +1352,7 @@ const songToAlbumMap = {
     "Magic Touch": "Magic Touch",
     "Uptown Funk": "Uptown Special",
     "Lunar Abyss": "Lunar Abyss",
+    Lost: "Meteora 20'",
 
     // Song Versions
 
@@ -1447,6 +1452,7 @@ function preloadImages() {
         "Resources/Covers/Magic Touch.jpg",
         "Resources/Covers/Uptown Special.jpg",
         "Resources/Covers/Lunar Abyss.jpg",
+        "Resources/Covers/Meteora 20'.jpg",
 
         // Song Versions
 
@@ -1673,8 +1679,16 @@ function filterSongs() {
     let resultsCount = 0;
     let firstVisibleButton = null; // To store the first visible song button
 
-    // Find the last song index
-    const lastSongIndex = songList.length;
+    // Check if the last song in the songList is "Resources/Songs/testingsong.mp3"
+    let lastSongIndex;
+
+    // If the last song is "Resources/Songs/testingsong.mp3", set lastSongIndex to songList.length - 1
+    if (songList[songList.length - 1] === "Resources/Songs/testingsong.mp3") {
+        lastSongIndex = songList.length - 1;
+    } else {
+        // Otherwise, set lastSongIndex to songList.length
+        lastSongIndex = songList.length;
+    }
 
     songButtons.forEach((button) => {
         const songText = button.textContent.toLowerCase();
@@ -1883,12 +1897,12 @@ document.getElementById("closeKeywordListModal").onclick = function () {
 
 // Global cooldown management
 let lastFunctionCallTime = 0;
-const COOLDOWN_PERIOD = 100; // Cooldown period in milliseconds
+const COOLDOWN_PERIOD = 150; // Cooldown period in milliseconds
 
 function canActivate() {
     const currentTime = Date.now();
     if (currentTime - lastFunctionCallTime < COOLDOWN_PERIOD) {
-        console.log("Cooldown in effect. Please wait before calling another function.");
+        logNotice("Cooldown in effect. Please wait before calling another function.", "", 2250);
         return false;
     }
     lastFunctionCallTime = currentTime;
@@ -2281,6 +2295,7 @@ function getArtist(songSrc) {
         "Magic Touch": "Romos",
         "Uptown Funk": "Mark Ronson, Bruno Mars",
         "Lunar Abyss": "Lchavasse",
+        Lost: "Linkin Park",
 
         // Song Versions
 
@@ -2491,6 +2506,8 @@ window.onload = function () {
     });
 };
 
+let canvasScalingInterval;
+
 function togglePause() {
     if (!endScreenDrawn) {
         gamePaused = !gamePaused;
@@ -2499,6 +2516,7 @@ function togglePause() {
             currentSong.pause();
             playSoundEffect("Resources/SFX/clickBtn2.mp3", 0.5);
             canvasUpdating = false;
+            clearInterval(canvasScalingInterval);
             console.log("Game Paused");
         } else {
             let pauseDuration = Date.now() - songPausedTime;
@@ -2507,8 +2525,74 @@ function togglePause() {
             lastTime += pauseDuration; // Adjust lastTime to prevent jump in timeDelta
             canvasUpdating = true;
             updateCanvas(globalTimestamp);
+
+            manageCanvasScalingInterval(true); // Start interval when game is unpaused
+
             console.log("Game Unpaused");
         }
+    }
+}
+
+function fallbackPause() {
+    if (!endScreenDrawn) {
+        currentSong.pause();
+        playSoundEffect("Resources/SFX/hoverBtn.mp3", 0.5);
+        canvasUpdating = false;
+        clearInterval(canvasScalingInterval);
+    }
+}
+
+function manageCanvasScalingInterval(startInterval) {
+    clearInterval(canvasScalingInterval); // Clear any existing interval
+
+    if (startInterval && pulseOnBPM) {
+        let scaleUpDuration, scaleDownDuration, waitTime;
+
+        // Determine animation durations based on BPM
+        if (BPM < 200) {
+            scaleUpDuration = 0.11; // Scaling up duration for BPM < 200
+            scaleDownDuration = 0.18; // Scaling down duration for BPM < 200
+            waitTime = 4.2;
+        } else if (BPM >= 200 && BPM < 250) {
+            scaleUpDuration = 0.15; // Scaling up duration for 200 <= BPM < 250
+            scaleDownDuration = 0.2; // Scaling down duration for 200 <= BPM < 250
+            waitTime = 2.2;
+        } else if (BPM >= 250) {
+            scaleUpDuration = 0.1; // Scaling up duration for BPM >= 250
+            scaleDownDuration = 0.15; // Scaling down duration for BPM >= 250
+            waitTime = 3;
+        }
+
+        const img = document.getElementById("songCoverImage");
+        const musicIco = document.getElementById("bouncingIcon");
+
+        // Create a new interval for scaling the canvas and pulsing the title color
+        canvasScalingInterval = setInterval(() => {
+            // Apply cubic-bezier easing for scaling up
+            title.style.transition = `transform ${scaleUpDuration}s cubic-bezier(0.17, 0.71, 0.51, 0.94), color ${MILLISECONDS_PER_BEAT / 25000}s`;
+            title.style.transform = "scale(1.03)";
+            title.style.color = getRandomColor(); // Change to a random color
+
+            img.style.transition = `transform ${scaleUpDuration}s cubic-bezier(0.17, 0.71, 0.51, 0.94)`;
+            img.style.transform = "scale(1.025)";
+
+            musicIco.style.transition = `transform ${scaleUpDuration}s cubic-bezier(0.17, 0.71, 0.51, 0.94)`;
+            musicIco.style.transform = "scale(1.4)";
+
+            // Set a timeout to scale back down after the up animation
+            setTimeout(() => {
+                // Apply ease-in easing for scaling down
+                title.style.transition = `transform ${scaleDownDuration}s ease-in, color ${MILLISECONDS_PER_BEAT / 1000}s`;
+                title.style.transform = "scale(1)";
+                title.style.color = "white";
+
+                img.style.transition = `transform ${scaleDownDuration}s ease-in`;
+                img.style.transform = "scale(1)";
+
+                musicIco.style.transition = `transform ${scaleDownDuration}s ease-in`;
+                musicIco.style.transform = "scale(1)";
+            }, MILLISECONDS_PER_BEAT / waitTime); // Wait to scale down
+        }, MILLISECONDS_PER_BEAT);
     }
 }
 
@@ -2630,64 +2714,7 @@ function startGame(index, versionPath, setIndex) {
             right: []
         };
 
-        let scaleUp = true; // Variable to track scaling direction
-
-        // Clear any existing interval if there is one
-        if (typeof canvasScalingInterval !== "undefined") {
-            clearInterval(canvasScalingInterval);
-        }
-
-        // Only proceed if pulseOnBPM is true
-        if (pulseOnBPM) {
-            // Determine animation durations based on BPM
-            let scaleUpDuration, scaleDownDuration, waitTime;
-            if (BPM < 200) {
-                scaleUpDuration = 0.11; // Scaling up duration for BPM < 200
-                scaleDownDuration = 0.18; // Scaling down duration for BPM < 200
-                waitTime = 4.2;
-            } else if (BPM >= 200 && BPM < 250) {
-                scaleUpDuration = 0.15; // Scaling up duration for 200 <= BPM < 250
-                scaleDownDuration = 0.2; // Scaling down duration for 200 <= BPM < 250
-                waitTime = 2.2;
-            } else if (BPM >= 250) {
-                scaleUpDuration = 0.1; // Scaling up duration for BPM >= 250
-                scaleDownDuration = 0.15; // Scaling down duration for BPM >= 250
-                waitTime = 3;
-            }
-
-            const img = document.getElementById("songCoverImage");
-            const musicIco = document.getElementById("bouncingIcon");
-
-            // Create a new interval for scaling the canvas and pulsing the title color
-            canvasScalingInterval = setInterval(() => {
-                if (scaleUp) {
-                    // Apply cubic-bezier easing for scaling up
-                    title.style.transition = `transform ${scaleUpDuration}s cubic-bezier(0.17, 0.71, 0.51, 0.94), color ${MILLISECONDS_PER_BEAT / 25000}s`;
-                    title.style.transform = "scale(1.03)";
-                    title.style.color = getRandomColor(); // Change to a random color
-
-                    img.style.transition = `transform ${scaleUpDuration}s cubic-bezier(0.17, 0.71, 0.51, 0.94)`;
-                    img.style.transform = "scale(1.025)";
-
-                    musicIco.style.transition = `transform ${scaleUpDuration}s cubic-bezier(0.17, 0.71, 0.51, 0.94)`;
-                    musicIco.style.transform = "scale(1.4)";
-
-                    // Set a timeout to scale back down after the up animation
-                    setTimeout(() => {
-                        // Apply ease-in easing for scaling down
-                        title.style.transition = `transform ${scaleDownDuration}s ease-in, color ${MILLISECONDS_PER_BEAT / 1000}s`;
-                        title.style.transform = "scale(1)";
-                        title.style.color = "white";
-
-                        img.style.transition = `transform ${scaleDownDuration}s ease-in`;
-                        img.style.transform = "scale(1)";
-
-                        musicIco.style.transition = `transform ${scaleDownDuration}s ease-in`;
-                        musicIco.style.transform = "scale(1)";
-                    }, MILLISECONDS_PER_BEAT / waitTime); // Wait to scale down
-                }
-            }, MILLISECONDS_PER_BEAT);
-        }
+        manageCanvasScalingInterval(true);
 
         const songTitle = getSongTitle(currentSongPath);
         const songConfig = getDynamicSpeed(currentSongPath);
@@ -2801,7 +2828,7 @@ function startGame(index, versionPath, setIndex) {
 
         // Update the page title
         indexToDisplay = setIndex >= 0 ? setIndex : currentSongIndex;
-        document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 4.3!`;
+        document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz 4.3!`;
 
         console.log(`indexToDisplay converted in startGame: ${indexToDisplay}`);
     };
@@ -3120,7 +3147,6 @@ function updateCanvas(timestamp, setIndex) {
 
     if (gamePaused) {
         // Calculate the time difference between frames
-        let timeDelta = (timestamp - lastTime) / 1000; // timeDelta in seconds
         lastTime = timestamp;
 
         if (!pausedTextDrawn) {
@@ -3335,6 +3361,40 @@ function updateCanvas(timestamp, setIndex) {
 
         if (isMobile) {
             drawTapBoxes();
+        }
+
+        if (getDynamicSpeed(currentSongPath) === null && nextSpeedChange !== "No speed changes.") {
+            // Fallback for overlapping dynamic speeds with no dynamic speed data.
+            clearInterval(speedUpdater);
+            console.log(`Dynamic speeds encountered an "Overlap//Null" error. Speed updater cleared.`);
+            logError(`Overlap//Null, Speed updater cleared.`);
+        } else {
+            const dynamicSpeedsForSong = getDynamicSpeed(currentSongPath);
+
+            if (dynamicSpeedsForSong !== null && nextSpeedChange === "No speed changes.") {
+                // If dynamic speeds are found for this song but next speed change is not recognized
+                const nextSpeedExistsInDynamicSpeeds = dynamicSpeedsForSong.some((speedObj) => speedObj.noteSpeed === nextSpeedChange);
+
+                if (!nextSpeedExistsInDynamicSpeeds) {
+                    // Mismatch in dynamic speeds detected
+                    clearInterval(speedUpdater);
+                    console.log(`Dynamic speeds encountered a "Mismatch//FoundNotCorrect" error. Pausing updates.`);
+                    logError("Mismatch//FoundNotCorrect, Pausing updates and restarting song.", 10000);
+                    logNotice("Please notify @GuayabR on twitter for this error. https://x.com/@GuayabR ", "", 10000);
+                    logNotice("Please specify what song you were playing and if this happened at the start of the song or at a specific timestamp.", "", 10000);
+                    logNotice(`Song: ${getSongTitle(currentSongPath)}, Index: ${currentSongIndex}`, "", 10000);
+                    logNotice(`Dynamic speeds for ${getSongTitle(currentSongPath)}: ${dynamicSpeedInfo}`, "", 10000);
+                    logNotice("Would be greatly appreciated! Thanks for playing Beatz!", "", 10000);
+
+                    // Stop canvas updates for 1 second
+                    setTimeout(() => {
+                        // Restart the song after 1 second
+                        restartSong();
+                    }, 1000);
+
+                    fallbackPause(); // Exit to avoid further canvas updates
+                }
+            }
         }
 
         if (FPS <= 32) {

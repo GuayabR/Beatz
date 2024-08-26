@@ -523,7 +523,7 @@ Added a localStorage cleanup system where every time you start up a new song, it
 - Pressing A or D will switch between the keybinds modal and the miscellaneous modal.
 
 - Game Title, song covers on selected song modal now pulse to the beat of the current song.
-- Changed the main font family to "Poppins"
+- Changed the main font family to "Poppins" (https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap)
 //
 
 4.3.3.3 (MOBILE 4.3! 25/08/2024)
@@ -533,4 +533,13 @@ Added a localStorage cleanup system where every time you start up a new song, it
 - Separated the close button and changelog button in the new version pop up for mobile devices.
 - Removed random space in the middle of the checkboxes in miscellaneous settings.
 - Removed big space after background selection inside miscellaneous settings.
+
+4.3.5.5 (MOBILE 4.3! 26/08/2024)
+- Added Lost by Linkin Park (Meteora 20')
+- Fixed elements pulsing on BPM keeping on pulsing after pausing
+- Fixed changelog pop up being able to appear multiple times, this causing annoying bugs on mobile devices.
+- Added the ability to add links to logMessage()'s functions
+- Added a fallback for a mismatch in dynamic speeds or an overlap//null in dynamic speeds.
+(Mismatch: Dynamic speeds found for song but a mismatch between two arrays happened.)
+(Overlap//Null: Dynamic speeds not found for song but speedUpdater is still updating another song's dynamic speeds.)
 

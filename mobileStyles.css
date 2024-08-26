@@ -49,6 +49,17 @@ body {
     animation: fadein 0.5s forwards;
 }
 
+/* Styles for log messages to have brighter blue links */
+#errorContainer .errorLogging a {
+    color: #00bfff; /* Brighter blue color */
+    text-decoration: underline; /* Underline the link */
+}
+
+#errorContainer .errorLogging a:hover {
+    color: #9adaff; /* Slightly darker blue on hover */
+    text-decoration: underline; /* Keep underline on hover */
+}
+
 @keyframes fadein {
     from {
         opacity: 0;
