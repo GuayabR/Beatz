@@ -2,7 +2,7 @@
 
 ![BeatzBanner](https://github.com/GuayabR/Beatz/blob/main/Resources/BeatzBanner.jpg)
 
-Beatz! is a singleplayer osu! mania style game featuring a diverse collection of songs from your favorite artists! Available for both desktop and mobile devices. Developed using HTML, CSS, and JavaScript by GuayabR.
+Beatz! is a singleplayer osu! mania style game featuring a diverse collection of songs from your favorite artists!
 
 ## Features
 
