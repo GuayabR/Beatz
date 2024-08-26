@@ -27,6 +27,8 @@ To run Beatz! locally:
 
 3. Open the `index.html` file in your web browser.
 
+4. Or just download the latest release!
+
 ## 🛠️ Technologies
 
 - HTML: Structure and content
