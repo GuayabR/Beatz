@@ -523,7 +523,7 @@ Added a localStorage cleanup system where every time you start up a new song, it
 - Pressing A or D will switch between the keybinds modal and the miscellaneous modal.
 
 - Game Title, song covers on selected song modal now pulse to the beat of the current song.
-- Changed the main font family to "Poppins" (https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap)
+- Changed the main font family to "Poppins"
 //
 
 4.3.3.3 (MOBILE 4.3! 25/08/2024)
