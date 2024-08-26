@@ -566,10 +566,6 @@ function detectAndHandleDevice() {
             pauseMargin.remove();
             pauseMargin2.remove();
         }
-
-        // Set zoom level to 75% for Chromebooks
-        document.body.style.transform = "scale(0.85)"; // Scale down to 75%
-        document.body.style.transformOrigin = "center"; // Ensure scaling starts from the top-left corner
     } else if (userDevice === "Desktop") {
         console.log("Desktop device is supported. Enjoy Beatz!");
         document.getElementById("orientationMessage").style.display = "none";
