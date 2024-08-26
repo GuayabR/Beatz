@@ -1,4 +1,5 @@
-# ![favicon](https://github.com/GuayabR/Beatz/blob/main/Resources/favicon.png) Beatz!
+# Beatz!
+![favicon](https://github.com/GuayabR/Beatz/blob/main/Resources/favicon.png) 
 
 ![BeatzBanner](https://github.com/GuayabR/Beatz/blob/main/Resources/BeatzBanner.jpg)
 
