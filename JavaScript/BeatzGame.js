@@ -550,7 +550,8 @@ function preloadSongs() {
             "https://guayabr.github.io/Beatz/Resources/Songs/Uptown Funk.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/Lunar Abyss.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/Lost.mp3",
-            "https://guayabr.github.io/Beatz/Resources/Songs/La Gozadera.mp3"
+            "https://guayabr.github.io/Beatz/Resources/Songs/La Gozadera.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/testingsong.mp3"
         ];
     } else {
         console.log(`Loading songs locally, fetching: ${useFetch}`);
@@ -2608,12 +2609,12 @@ function fetchSongWithProgress(url) {
             if (xhr.status === 200) {
                 resolve(xhr.response);
             } else {
-                reject(new Error(`Failed to fetch song: ${xhr.status} ${xhr.statusText}`));
+                reject(new Error(xhr.status));
             }
         };
 
         xhr.onerror = function () {
-            reject(new Error("Network error"));
+            reject(new Error("Network error, Check your internet connection."));
         };
 
         xhr.send();
@@ -2818,7 +2819,7 @@ function startGame(index, versionPath, setIndex) {
 
         // Update the page title
         indexToDisplay = setIndex >= 0 ? setIndex : currentSongIndex;
-        document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz 5.0!`;
+        document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 5.0!`;
 
         console.log(`indexToDisplay converted in startGame: ${indexToDisplay}`);
         hideLoadingBar();
@@ -2832,8 +2833,9 @@ function startGame(index, versionPath, setIndex) {
             .then((blob) => {
                 currentSong.addEventListener("loadedmetadata", handleSongMetadata);
                 currentSong.addEventListener("error", (ev) => {
-                    logError(`Failed to load metadata for song: ${getSongTitle(currentSongPath)} Randomizing song. | ${ev}`);
+                    logError(`Failed to load metadata for song: ${getSongTitle(currentSongPath)} Randomizing song. | ${ev.message}`);
                     hideLoadingBar(); // Hide loading bar if an error occurs
+                    songMetadataLoaded = true;
                     setTimeout(() => {
                         randomizeSong();
                     }, 1000);
@@ -2872,8 +2874,9 @@ function startGame(index, versionPath, setIndex) {
                             });
                     }, 2500);
                 } else {
-                    logError(`Failed to fetch song ${getSongTitle(currentSongPath)}: ${error.message} | ${error}`);
+                    logError(`Failed to fetch song ${getSongTitle(currentSongPath)}: ${error}`);
                     hideLoadingBar(); // Hide loading bar if an error occurs
+                    songMetadataLoaded = true;
                     setTimeout(() => {
                         randomizeSong();
                     }, 1000);
