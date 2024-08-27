@@ -2557,7 +2557,7 @@ function showLoadingBar() {
     const loadingBarCont = document.getElementById("loadingBarContainer");
 
     loadingBarCont.style.position = "fixed";
-    loadingBarCont.style.bottom = "10px"; // Distance from bottom
+    loadingBarCont.style.bottom = "40px"; // Distance from bottom
     loadingBarCont.style.left = "50%"; // Center horizontally
     loadingBarCont.style.transform = "translateX(-50%)"; // Center horizontally
 
