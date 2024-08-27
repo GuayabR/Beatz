@@ -610,7 +610,8 @@ function preloadSongs() {
             "https://guayabr.github.io/Beatz/Resources/Songs/Magic Touch.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/Uptown Funk.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/Lunar Abyss.mp3",
-            "https://guayabr.github.io/Beatz/Resources/Songs/Lost.mp3"
+            "https://guayabr.github.io/Beatz/Resources/Songs/Lost.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/La Gozadera.mp3"
         ];
     } else {
         console.log(`Loading songs locally, fetching: ${useFetch}`);
@@ -723,6 +724,7 @@ function preloadSongs() {
             "Resources/Songs/Uptown Funk.mp3",
             "Resources/Songs/Lunar Abyss.mp3",
             "Resources/Songs/Lost.mp3",
+            "Resources/Songs/La Gozadera.mp3",
 
             "Resources/Songs/testingsong.mp3"
         ];
@@ -956,6 +958,7 @@ const songConfigs = {
     "Uptown Funk": { BPM: 115, noteSpeed: 12 },
     "Lunar Abyss": { BPM: 138, noteSpeed: 10 },
     Lost: { BPM: 105, noteSpeed: 12 },
+    "La Gozadera": { BPM: 95, noteSpeed: 10 },
 
     // Song Versions
     "Finesse (feat. Cardi B)": { BPM: 105, noteSpeed: 22 },
@@ -1353,6 +1356,7 @@ const songToAlbumMap = {
     "Uptown Funk": "Uptown Special",
     "Lunar Abyss": "Lunar Abyss",
     Lost: "Meteora 20'",
+    "La Gozadera": "Visualizate",
 
     // Song Versions
 
@@ -1453,6 +1457,7 @@ function preloadImages() {
         "Resources/Covers/Uptown Special.jpg",
         "Resources/Covers/Lunar Abyss.jpg",
         "Resources/Covers/Meteora 20'.jpg",
+        "Resources/Covers/Visualizate.jpg",
 
         // Song Versions
 
@@ -2296,6 +2301,7 @@ function getArtist(songSrc) {
         "Uptown Funk": "Mark Ronson, Bruno Mars",
         "Lunar Abyss": "Lchavasse",
         Lost: "Linkin Park",
+        "La Gozadera": "Gente De Zona, Marc Anthony",
 
         // Song Versions
 
