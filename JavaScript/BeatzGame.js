@@ -2628,7 +2628,7 @@ function fetchSongWithProgress(url) {
     });
 }
 
-async function fetchSongWithTimeout(url, timeout = 7500) {
+async function fetchSongWithTimeout(url, timeout = 15000) {
     const startTime = Date.now(); // Record the start time
 
     // Create a timeout promise
@@ -2827,7 +2827,7 @@ async function startGame(index, versionPath, setIndex) {
             requestAnimationFrame(updateCanvas);
         }
 
-        console.log("Song selected: " + getSongTitle(currentSongPath), "by: " + getArtist(currentSong.src));
+        console.log("Song selected: " + getSongTitle(currentSongPath), "by: " + getArtist(currentSongPath));
         console.log("Current song path:", currentSongPath);
         console.log("Beatz.io loaded and playing. Have Fun!");
 
@@ -2864,7 +2864,7 @@ async function startGame(index, versionPath, setIndex) {
         // Attempt to fetch the song with a timeout
         showLoadingBar();
         try {
-            const blob = await fetchSongWithTimeout(currentSongPath, 12500);
+            const blob = await fetchSongWithTimeout(currentSongPath, 15000);
 
             // Create a URL for the fetched blob and assign it to the audio element
             const blobUrl = URL.createObjectURL(blob);
