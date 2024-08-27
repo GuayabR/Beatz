@@ -2864,7 +2864,7 @@ async function startGame(index, versionPath, setIndex) {
         // Attempt to fetch the song with a timeout
         showLoadingBar();
         try {
-            const blob = await fetchSongWithTimeout(currentSongPath, 7500);
+            const blob = await fetchSongWithTimeout(currentSongPath, 12500);
 
             // Create a URL for the fetched blob and assign it to the audio element
             const blobUrl = URL.createObjectURL(blob);
@@ -2889,7 +2889,7 @@ async function startGame(index, versionPath, setIndex) {
                 hideLoadingBar();
                 songMetadataLoaded = true;
                 setTimeout(() => {
-                    randomizeSong();
+                    restartSong();
                 }, 1000);
             } else if (error.message.includes("503")) {
                 logError(`HTTP 503 (Service Unavailable) Attempting fallback. | ${error}`);
