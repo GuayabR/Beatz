@@ -10,11 +10,11 @@ html {
     color: white;
     justify-content: center;
     align-items: center;
-    overflow-x: hidden; /* Hide horizontal overflow */
-    margin: 0; /* Remove default margin */
-    padding: 0; /* Remove default padding */
-    width: 100%; /* Ensure the html element doesn't exceed the viewport width */
-    box-sizing: border-box; /* Include padding and border in element's total width and height */
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 body {
@@ -25,12 +25,72 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center bottom;
-    position: relative; /* Ensure the body position doesn't cause horizontal overflow */
-    overflow-x: hidden; /* Hide horizontal overflow */
-    margin: 0; /* Remove default margin */
-    padding: 0; /* Remove default padding */
-    width: 100%; /* Ensure the body doesn't exceed the viewport width */
-    box-sizing: border-box; /* Include padding and border in element's total width and height */
+    position: relative;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#loadingBarContainer {
+    display: none;
+    height: 0px;
+    width: 50%;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    margin-top: 10px;
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    transition:
+        height 0.25s ease-out,
+        opacity 0.5s ease-in-out;
+    text-align: center;
+    overflow: hidden;
+}
+
+#loadingText {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #000;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 20px;
+}
+
+#loadingBar {
+    width: 0%;
+    height: 20px;
+    background-color: #006904;
+    text-align: center;
+    line-height: 20px;
+    color: white;
+    font-weight: bold;
+    transition:
+        width 0.05s linear,
+        height 0.25s ease-out;
+    position: relative;
+}
+
+@media (max-width: 768px) {
+    #loadingBarContainer {
+        width: 50%;
+        left: 5%;
+        transform: none;
+    }
+}
+
+@media (min-width: 769px) {
+    #loadingBarContainer {
+        width: 75%;
+        left: 0;
+        transform: none;
+    }
 }
 
 .errorLogging {
@@ -49,15 +109,14 @@ body {
     animation: fadein 0.5s forwards;
 }
 
-/* Styles for log messages to have brighter blue links */
 #errorContainer .errorLogging a {
-    color: #00bfff; /* Brighter blue color */
-    text-decoration: underline; /* Underline the link */
+    color: #00bfff;
+    text-decoration: underline;
 }
 
 #errorContainer .errorLogging a:hover {
-    color: #9adaff; /* Slightly darker blue on hover */
-    text-decoration: underline; /* Keep underline on hover */
+    color: #9adaff;
+    text-decoration: underline;
 }
 
 @keyframes fadein {
@@ -167,8 +226,8 @@ canvas {
 #orientationMessage {
     display: none;
     position: absolute;
-    top: 25%; /* Cover 50% of the viewport height */
-    left: 50%; /* Center horizontally */
+    top: 25%;
+    left: 50%;
     width: 50%;
     height: 50%;
     background: rgba(0, 0, 0, 0.7);
@@ -177,7 +236,7 @@ canvas {
     border-radius: 10px;
     text-align: center;
     font-size: 22px;
-    box-sizing: border-box; /* Include padding and border in width/height */
+    box-sizing: border-box;
     transform: translate(-50%, -50%);
 }
 
@@ -228,10 +287,9 @@ canvas {
     background-color: rgba(0, 0, 0, 0);
 }
 
-/* Ensure spans appear on separate lines on mobile devices */
 .keyword-description {
-    display: block; /* Makes span behave like block element */
-    margin-bottom: 3px; /* Adds space between items */
+    display: block;
+    margin-bottom: 3px;
 }
 
 #openSongListBTN {

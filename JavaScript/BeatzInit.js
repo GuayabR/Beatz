@@ -2,7 +2,7 @@
  * Title: Beatz's Initialization
  * Author: Victor//GuayabR
  * Date: 25/08/2024
- * Version: MOBILE 4.3.3 test (release.version.subversion.bugfix)
+ * Version: LOAD//FETCH 5.0 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 

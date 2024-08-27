@@ -2,7 +2,7 @@
  * Title: Beatz's Settings
  * Author: Victor//GuayabR
  * Date: 2/06/2024
- * Version: MOBILE's Settings 4.3.5.5 test (release.version.subversion.bugfix)
+ * Version: LOAD//FETCH's Settings 5.0 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -861,10 +861,10 @@ function loadSettings() {
             saveSettings();
             location.reload();
         }, 1000);
-    } else if (userDevice === "Desktop" && miscellaneous.fetchSongs === true && document.location.href.includes(testingVerHTML)) {
+    } else if (userDevice === "Desktop" && miscellaneous.fetchSongs === true && window.location.href.includes(testingVerHTML)) {
         fetchSongs = false;
         miscellaneous.fetchSongs = false;
-        logNotice("Testing version detected. Loading songs locally...");
+        logNotice("Testing version detected. Reloading...");
         setTimeout(() => {
             saveSettings();
             location.reload();

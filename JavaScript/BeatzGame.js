@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: MOBILE 4.3.5.5 test (release.version.subversion.bugfix)
+ * Version: LOAD//FETCH 5.0 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -10,8 +10,8 @@
 
 const userDevice = detectDeviceType();
 
-const VERSION = "MOBILE 4.3.5.5";
-var PUBLICVERSION = `4.3! (${userDevice} Port)`;
+const VERSION = "LOAD//FETCH 5.0!";
+var PUBLICVERSION = `5.0! (${userDevice} Port)`;
 console.log("Version: " + VERSION);
 
 const canvas = document.getElementById("myCanvas");
@@ -392,70 +392,6 @@ console.log("Textures loaded.");
 
 let currentIndex = 0;
 
-// Function to load songs from remote server
-function loadRemoteSong() {
-    if (currentIndex < totalSongs) {
-        const songPath = songPaths[currentIndex];
-        const songTitle = getSongTitle(songPath);
-
-        fetch(songPath)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch song: ${response.status} ${response.statusText}`);
-                }
-                return response.blob();
-            })
-            .then((blob) => {
-                // Handle successful response
-                songList.push(songPath);
-                console.log("Fetched song:", songTitle);
-                songLoadCounter++;
-                currentIndex++;
-                counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
-                addSongToList(songPath, songTitle);
-                loadNextSong();
-                checkAllSongsLoaded(totalSongs);
-            })
-            .catch((error) => {
-                logError(`Failed to fetch song ${songTitle}: ${error.message}`);
-                currentIndex++;
-                songLoadCounter++;
-                counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
-                loadNextSong();
-                checkAllSongsLoaded(totalSongs);
-            });
-    }
-}
-
-// Function to load songs from local resources
-function loadLocalSong() {
-    if (currentIndex < totalSongs) {
-        const songPath = songPaths[currentIndex];
-        const songTitle = getSongTitle(songPath);
-
-        const audio = new Audio();
-        audio.src = songPath;
-        audio.oncanplaythrough = function () {
-            songList.push(songPath);
-            console.log("Loaded song:", songTitle);
-            songLoadCounter++;
-            currentIndex++;
-            counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
-            addSongToList(songPath, songTitle);
-            loadNextSong();
-            checkAllSongsLoaded(totalSongs);
-        };
-        audio.onerror = function () {
-            logError(`Failed to load song ${songTitle}`);
-            currentIndex++;
-            songLoadCounter++;
-            counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
-            loadNextSong();
-            checkAllSongsLoaded(totalSongs);
-        };
-    }
-}
-
 function addSongToList(songPath, songTitle) {
     const songListContainer = document.getElementById("songList");
 
@@ -486,8 +422,11 @@ function addSongToList(songPath, songTitle) {
     songButton.dataset.index = currentIndex; // Store song index as a data attribute
     songListContainer.appendChild(songButton);
 
+    // On click, load and play the song
     songButton.onclick = function () {
-        openSelectedSongModal(songPath, songTitle);
+        console.log(songPath, songTitle);
+
+        openSelectedSongModal(songPath, songTitle); // Optional: keep this if a modal is shown
     };
 
     // Store song path and title for filtering
@@ -733,37 +672,14 @@ function preloadSongs() {
     currentIndex = 0;
     totalSongs = songPaths.length;
 
-    // Add counter text beside the header
-    counterText = document.createElement("span");
-    counterText.textContent = ` (${songLoadCounter}/${totalSongs} songs loaded)`;
-    headerElement.appendChild(counterText);
-
     listOfSongs = []; // Initialize the list of songs
 
-    // Start loading the first song
-    loadNextSong();
-}
-
-function loadNextSong() {
-    if (useFetch) {
-        loadRemoteSong();
-    } else {
-        loadLocalSong();
-    }
-}
-
-// Function to check if all songs are loaded
-function checkAllSongsLoaded(totalSongs) {
-    if (songLoadCounter === 1) {
-        const startButton = document.getElementById("startButton");
-        startButton.style.display = "inline";
-    } else if (songLoadCounter === totalSongs) {
-        setTimeout(() => {
-            if (headerElement.contains(counterText)) {
-                headerElement.removeChild(counterText);
-            }
-        }, 2500);
-    }
+    // Populate the song list with buttons but don't load the songs
+    songPaths.forEach((songPath) => {
+        const songTitle = getSongTitle(songPath);
+        songList.push(songPath);
+        addSongToList(songPath, songTitle);
+    });
 }
 
 // Function to play a sound
@@ -2637,6 +2553,73 @@ function getRandomColor() {
     return `rgb(${r}, ${g}, ${b})`;
 }
 
+function showLoadingBar() {
+    const loadingBar = document.getElementById("loadingBar");
+    const loadingBarCont = document.getElementById("loadingBarContainer");
+
+    loadingBarCont.style.position = "fixed";
+    loadingBarCont.style.bottom = "10px"; // Distance from bottom
+    loadingBarCont.style.left = "50%"; // Center horizontally
+    loadingBarCont.style.transform = "translateX(-50%)"; // Center horizontally
+
+    loadingBarCont.style.opacity = "1"; // Ensure the container is visible
+    loadingBarCont.style.height = "20px"; // Set a fixed height for the loading bar container
+    loadingBarCont.style.display = "block"; // Make sure the container is displayed
+    loadingBar.style.height = "20px"; // Set the height for the loading bar
+    loadingBarCont.style.transition = "height 0.25s ease-out"; // Smooth height transition
+    loadingBar.style.transition = "width 0.05s linear, height 0.25s ease-out"; // Quick width animation
+
+    // Start the width animation for the loading bar
+    loadingBar.style.width = "0%"; // Reset width to start from zero
+    loadingBar.style.opacity = "1"; // Ensure the loading bar is visible
+}
+
+function hideLoadingBar() {
+    const loadingBarCont = document.getElementById("loadingBarContainer");
+    const loadingBar = document.getElementById("loadingBar");
+
+    loadingBarCont.style.height = "0px"; // Smoothly reduce height to zero
+    loadingBar.style.height = "0px"; // Smoothly reduce height to zero
+    loadingBarCont.style.opacity = "0"; // Fade out the container
+    loadingBarCont.style.transition = "opacity 0.5s ease-in-out, height 0.5s ease-in-out"; // Smooth height and opacity transition
+    loadingBar.style.transition = "height 0.5s ease-in-out"; // Smooth height transition
+}
+
+function updateLoadingBar(percentage) {
+    const loadingBar = document.getElementById("loadingBar");
+    loadingBar.style.width = percentage + "%";
+    loadingBar.textContent = percentage.toFixed(0) + "%"; // Optional: show percentage text
+}
+
+function fetchSongWithProgress(url) {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.responseType = "blob";
+
+        xhr.onprogress = function (event) {
+            if (event.lengthComputable) {
+                const percentComplete = (event.loaded / event.total) * 100;
+                updateLoadingBar(percentComplete);
+            }
+        };
+
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                resolve(xhr.response);
+            } else {
+                reject(new Error(`Failed to fetch song: ${xhr.status} ${xhr.statusText}`));
+            }
+        };
+
+        xhr.onerror = function () {
+            reject(new Error("Network error"));
+        };
+
+        xhr.send();
+    });
+}
+
 function startGame(index, versionPath, setIndex) {
     songMetadataLoaded = false; // Reset flag to false at the start of the game
 
@@ -2696,10 +2679,11 @@ function startGame(index, versionPath, setIndex) {
         currentSong.currentTime = 0; // Reset the song to the beginning
     }
 
-    currentSong = new Audio(currentSongPath);
+    currentSong = new Audio();
     currentSong.volume = currentSongVolume;
 
-    currentSong.onloadedmetadata = function () {
+    // Define the function to handle song metadata
+    function handleSongMetadata() {
         songMetadataLoaded = true; // Set the flag to true when metadata is loaded
 
         console.log("Loaded selected song's metadata");
@@ -2834,10 +2818,80 @@ function startGame(index, versionPath, setIndex) {
 
         // Update the page title
         indexToDisplay = setIndex >= 0 ? setIndex : currentSongIndex;
-        document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz 4.3!`;
+        document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz 5.0!`;
 
         console.log(`indexToDisplay converted in startGame: ${indexToDisplay}`);
-    };
+        hideLoadingBar();
+    }
+
+    // Check if the song path starts with the specified URL
+    if (currentSongPath.startsWith("https://guayabr.github.io")) {
+        // Attempt to fetch the song with progress
+        showLoadingBar();
+        fetchSongWithProgress(currentSongPath)
+            .then((blob) => {
+                currentSong.src = currentSongPath;
+                currentSong.addEventListener("loadedmetadata", handleSongMetadata);
+                currentSong.addEventListener("error", (ev) => {
+                    logError(`Failed to load metadata for song: ${getSongTitle(currentSongPath)} Randomizing song. | ${ev}`);
+                    hideLoadingBar(); // Hide loading bar if an error occurs
+                    setTimeout(() => {
+                        randomizeSong();
+                    }, 1000);
+                });
+            })
+            .catch((error) => {
+                if (error.message.includes("503")) {
+                    logError(`HTTP 503 (Service Unavailable) Attempting fallback. | ${error}`);
+                    hideLoadingBar(); // Hide loading bar if an error occurs
+                    setTimeout(() => {
+                        // Attempt to play the first song in the songList
+                        currentSongPath = songList[0];
+                        fetchSongWithProgress(currentSongPath)
+                            .then((blob) => {
+                                currentSong.src = currentSongPath;
+                                currentSong.addEventListener("loadedmetadata", handleSongMetadata);
+                                currentSong.addEventListener("error", (ev) => {
+                                    logError(`Failed to load metadata for fallback song: ${getSongTitle(currentSongPath)}. Error: ${ev}`);
+                                    hideLoadingBar(); // Hide loading bar if an error occurs
+                                    setTimeout(() => {
+                                        logError("Unable to load any songs. Please try again later as GitHub's servers might be down.");
+                                        logNotice("https://www.githubstatus.com/");
+                                        const buttons = document.querySelectorAll("button, a"); // Select all buttons and links
+                                        buttons.forEach((button) => (button.disabled = true));
+                                    }, 1000);
+                                });
+                            })
+                            .catch((fallbackError) => {
+                                logError(`Failed to fetch fallback song ${getSongTitle(currentSongPath)}: ${fallbackError.message} | ${fallbackError}`);
+                                hideLoadingBar(); // Hide loading bar if an error occurs
+                                setTimeout(() => {
+                                    logError("Unable to load any songs. Please try again later as GitHub's servers might be down.");
+                                    logNotice("https://www.githubstatus.com/");
+                                    const buttons = document.querySelectorAll("button, a"); // Select all buttons and links
+                                    buttons.forEach((button) => (button.disabled = true));
+                                }, 500);
+                            });
+                    }, 2500);
+                } else {
+                    logError(`Failed to fetch song ${getSongTitle(currentSongPath)}: ${error.message} | ${error}`);
+                    hideLoadingBar(); // Hide loading bar if an error occurs
+                    setTimeout(() => {
+                        randomizeSong();
+                    }, 1000);
+                }
+            });
+    } else {
+        // Use the old method
+        currentSong.src = currentSongPath;
+        currentSong.addEventListener("error", (ev) => {
+            logError(`Failed to load metadata for song: ${getSongTitle(currentSongPath)} Randomizing song. | ${ev}`);
+            setTimeout(() => {
+                randomizeSong();
+            }, 1000);
+        });
+        currentSong.addEventListener("loadedmetadata", handleSongMetadata);
+    }
 }
 
 function songEnd() {
@@ -3369,36 +3423,42 @@ function updateCanvas(timestamp, setIndex) {
             drawTapBoxes();
         }
 
-        if (getDynamicSpeed(currentSongPath) === null && nextSpeedChange !== "No speed changes.") {
-            // Fallback for overlapping dynamic speeds with no dynamic speed data.
-            clearInterval(speedUpdater);
-            console.log(`Dynamic speeds encountered an "Overlap//Null" error. Speed updater cleared.`);
-            logError(`Overlap//Null, Speed updater cleared.`);
-        } else {
-            const dynamicSpeedsForSong = getDynamicSpeed(currentSongPath);
+        if (getDynamicSpeed(currentSongPath) !== null) {
+            if (getDynamicSpeed(currentSongPath) === null && nextSpeedChange !== "No speed changes.") {
+                // Fallback for overlapping dynamic speeds with no dynamic speed data.
+                clearInterval(speedUpdater);
+                console.log(`Dynamic speeds encountered an "Overlap//Null" error. Speed updater cleared.`);
+                logError(`Overlap//Null, Speed updater cleared.`);
+            } else {
+                const dynamicSpeedsForSong = getDynamicSpeed(currentSongPath);
 
-            if (dynamicSpeedsForSong !== null && nextSpeedChange === "No speed changes.") {
-                // If dynamic speeds are found for this song but next speed change is not recognized
-                const nextSpeedExistsInDynamicSpeeds = dynamicSpeedsForSong.some((speedObj) => speedObj.noteSpeed === nextSpeedChange);
+                if (dynamicSpeedsForSong !== null && nextSpeedChange === "No speed changes.") {
+                    // If dynamic speeds are found for this song but next speed change is not recognized
+                    const nextSpeedExistsInDynamicSpeeds = dynamicSpeedsForSong.some((speedObj) => speedObj.noteSpeed === nextSpeedChange);
 
-                if (!nextSpeedExistsInDynamicSpeeds) {
-                    // Mismatch in dynamic speeds detected
-                    clearInterval(speedUpdater);
-                    console.log(`Dynamic speeds encountered a "Mismatch//FoundNotCorrect" error. Pausing updates.`);
-                    logError("Mismatch//FoundNotCorrect, Pausing updates and restarting song.", 10000);
-                    logNotice("Please notify @GuayabR on twitter for this error. https://x.com/@GuayabR ", "", 10000);
-                    logNotice("Please specify what song you were playing and if this happened at the start of the song or at a specific timestamp.", "", 10000);
-                    logNotice(`Song: ${getSongTitle(currentSongPath)}, Index: ${currentSongIndex}`, "", 10000);
-                    logNotice(`Dynamic speeds for ${getSongTitle(currentSongPath)}: ${dynamicSpeedInfo}`, "", 10000);
-                    logNotice("Would be greatly appreciated! Thanks for playing Beatz!", "", 10000);
+                    if (!nextSpeedExistsInDynamicSpeeds) {
+                        // Mismatch in dynamic speeds detected
+                        clearInterval(speedUpdater);
+                        console.log(`Dynamic speeds encountered a "Mismatch//FoundNotCorrect" error. Pausing updates.`);
+                        logError("Mismatch//FoundNotCorrect, Pausing updates and restarting song.", 10000);
+                        logNotice("Please notify @GuayabR on twitter for this error. https://x.com/@GuayabR ", "", 10000);
+                        logNotice(
+                            "Please specify what song you were playing and if this happened at the start of the song or at a specific timestamp.",
+                            "",
+                            10000
+                        );
+                        logNotice(`Song: ${getSongTitle(currentSongPath)}, Index: ${currentSongIndex}`, "", 10000);
+                        logNotice(`Dynamic speeds for ${getSongTitle(currentSongPath)}: ${dynamicSpeedInfo}`, "", 10000);
+                        logNotice("Would be greatly appreciated! Thanks for playing Beatz!", "", 10000);
 
-                    // Stop canvas updates for 1 second
-                    setTimeout(() => {
-                        // Restart the song after 1 second
-                        restartSong();
-                    }, 1000);
+                        // Stop canvas updates for 1 second
+                        setTimeout(() => {
+                            // Restart the song after 1 second
+                            restartSong();
+                        }, 1000);
 
-                    fallbackPause(); // Exit to avoid further canvas updates
+                        fallbackPause(); // Exit to avoid further canvas updates
+                    }
                 }
             }
         }

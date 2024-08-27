@@ -2,13 +2,17 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Beatz 4.3!</title>
+        <title>Beatz 5.0!</title>
         <link rel="icon" type="image/x-icon" href="Resources/favicon.png" />
         <link rel="stylesheet" id="stylesheet" type="text/css" href="styles.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     </head>
     <body>
         <canvas id="myCanvas" width="1280" height="720"></canvas>
+        <div id="loadingBarContainer">
+            <div id="loadingText">Loading...</div>
+            <div id="loadingBar"></div>
+        </div>
         <div id="orientationMessage">Please rotate your device to landscape mode.</div>
         <h1 id="titleGame">Beatz.io</h1>
         <div id="errorContainer" style="position: fixed; bottom: 0; left: 0; width: fit-content"></div>
@@ -16,7 +20,7 @@
         <button id="togglePauseMBL" title="Pause Game" onclick="togglePause()" style="display: none"><i class="fa-solid fa-circle"></i> Pause Game!</button
         ><br id="pauseMargin" /><br id="pauseMargin2" />
 
-        <button id="startButton" style="display: none">Play! <i class="fa-solid fa-play"></i></button>
+        <button id="startButton">Play! <i class="fa-solid fa-play"></i></button>
         <button id="myYoutube" title="My YouTube! (@GuayabR)" style="display: none" onclick="NewTab()"><i class="fa-brands fa-youtube"></i></button>
         <button id="githubRepo" title="GitHub Repository for Beatz! Where you can download the game for offline use!" style="display: none">
             <i class="fa-brands fa-github"></i>

@@ -542,4 +542,19 @@ Added a localStorage cleanup system where every time you start up a new song, it
 - Added a fallback for a mismatch in dynamic speeds or an overlap//null in dynamic speeds.
 (Mismatch: Dynamic speeds found for song but a mismatch between two arrays happened.)
 (Overlap//Null: Dynamic speeds not found for song but speedUpdater is still updating another song's dynamic speeds.)
+//
+
+5.0! (LOAD//FETCH 5.0! 27/08/2024)
+## Songs now do not preload!
+Since Beatz! has grew to over 100 songs, waiting for at least 70 to play your favourite song is really boring.
+So now you can play any song at any given time! Just press play and let your internet do its magic!
+/
+- Deleted loading songs logic
+- Updated startGame() to properly handle loading errors and added a fallback for crashed servers.
+- Added a loading progress bar for loading songs.
+- Added an extra check for dynamic speeds fallback actions.
+- Added fallbacks for HTTPS Error 503 (Service Unavailable).
+Fallback 1: Attempt to play song #1: Epilogue.
+Fallback 2: In case Epilogue is unable to load due to the same error, prompt the user to try again later as servers might be down.
+- Added "La Gozadera" by Gente De Zona, and Marc Anthony. (Visualizate)
 

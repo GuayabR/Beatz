@@ -22,6 +22,84 @@ html {
     align-items: center;
 }
 
+#loadingBarContainer {
+    display: none;
+    height: 0px;
+    width: 50%;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    margin-top: 10px;
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    transition:
+        height 0.25s ease-out,
+        opacity 0.5s ease-in-out;
+    text-align: center;
+    overflow: hidden;
+}
+
+#loadingText {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #000;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 20px;
+}
+
+#loadingBar {
+    width: 0%;
+    height: 20px;
+    background-color: #006904;
+    text-align: center;
+    line-height: 20px;
+    color: white;
+    font-weight: bold;
+    transition:
+        width 0.05s linear,
+        height 0.25s ease-out;
+    position: relative;
+}
+
+@media (min-width: 769px) {
+    #loadingBarContainer {
+        width: 80%;
+        bottom: 20px;
+        left: 10%;
+        transform: none;
+    }
+
+    #loadingText {
+        font-size: 20px;
+    }
+
+    #loadingBar {
+        height: 25px;
+    }
+}
+
+@media (max-width: 768px) {
+    #loadingBarContainer {
+        width: 90%;
+        bottom: 10px;
+        left: 5%;
+        transform: none;
+    }
+
+    #loadingText {
+        font-size: 16px;
+    }
+
+    #loadingBar {
+        height: 20px;
+    }
+}
+
 .errorLogging {
     display: none;
     color: white;
@@ -38,15 +116,14 @@ html {
     animation: fadein 0.5s forwards;
 }
 
-/* Styles for log messages to have brighter blue links */
 #errorContainer .errorLogging a {
-    color: #00bfff; /* Brighter blue color */
-    text-decoration: underline; /* Underline the link */
+    color: #00bfff;
+    text-decoration: underline;
 }
 
 #errorContainer .errorLogging a:hover {
-    color: #9adaff; /* Slightly darker blue on hover */
-    text-decoration: underline; /* Keep underline on hover */
+    color: #9adaff;
+    text-decoration: underline;
 }
 
 @keyframes fadein {
@@ -136,7 +213,7 @@ canvas {
     backdrop-filter: blur(0px);
     transition:
         backdrop-filter ease 0.75s,
-        transform 0.25s ease-in; /* Default to ease-in */
+        transform 0.25s ease-in;
 }
 
 canvas:-moz-full-screen,
