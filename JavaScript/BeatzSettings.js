@@ -2,7 +2,7 @@
  * Title: Beatz's Settings
  * Author: Victor//GuayabR
  * Date: 2/06/2024
- * Version: LOAD//FETCH's Settings 5.0 test (release.version.subversion.bugfix)
+ * Version: LOAD//FETCH's Settings 5.1.0.1 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -509,7 +509,8 @@ const Presets = {
             saveSongUsingControllers: false,
             fetchSongs: false,
             playSFX: true,
-            pulseOnBPM: true
+            pulseOnBPM: true,
+            extraLog: true
         }
     },
     VERIDIAN: {
@@ -543,7 +544,8 @@ const Presets = {
             saveSongUsingControllers: false,
             fetchSongs: false,
             playSFX: true,
-            pulseOnBPM: true
+            pulseOnBPM: true,
+            extraLog: false
         }
     },
     OG: {
@@ -577,7 +579,8 @@ const Presets = {
             saveSongUsingControllers: false,
             fetchSongs: false,
             playSFX: false,
-            pulseOnBPM: false
+            pulseOnBPM: false,
+            extraLog: false
         }
     }
 };
@@ -627,6 +630,8 @@ function applyPreset(presetName) {
     document.getElementById("defaultHitSound").value = miscellaneous.hitSound;
     document.getElementById("saveRecentSongs").checked = miscellaneous.saveSongUsingControllers;
     document.getElementById("playSFXcheck").checked = miscellaneous.playSFX;
+    document.getElementById("pulseOnBPMcheck").checked = miscellaneous.pulseOnBPM;
+    document.getElementById("extraLogCheck").checked = miscellaneous.extraLog;
 
     if (userDevice !== "iOS") {
         document.getElementById("fetchSongsSite").checked = miscellaneous.fetchSongs;
@@ -709,6 +714,8 @@ function applyPresetMisc(presetName) {
     document.getElementById("defaultHitSound").value = miscellaneous.hitSound;
     document.getElementById("saveRecentSongs").checked = miscellaneous.saveSongUsingControllers;
     document.getElementById("playSFXcheck").checked = miscellaneous.playSFX;
+    document.getElementById("pulseOnBPMcheck").checked = miscellaneous.pulseOnBPM;
+    document.getElementById("extraLogCheck").checked = miscellaneous.extraLog;
 
     if (userDevice !== "iOS") {
         document.getElementById("fetchSongsSite").checked = miscellaneous.fetchSongs;
@@ -779,6 +786,11 @@ function toggleFetchingSongs() {
     console.log("fetchSongs is now", fetchSongs ? "enabled" : "disabled");
 }
 
+function toggleExtraLogs() {
+    extraLog = !extraLog;
+    console.log("Extra notices are now", extraLog ? "enabled" : "disabled");
+}
+
 function togglePulseOnBPM() {
     pulseOnBPM = !pulseOnBPM;
     console.log("pulseOnBPM is now", pulseOnBPM ? "enabled" : "disabled");
@@ -819,7 +831,8 @@ const defaultMiscellaneous = {
     saveSongUsingControllers: false,
     fetchSongs: false,
     playSFX: true,
-    pulseOnBPM: true
+    pulseOnBPM: true,
+    extraLog: false
 };
 
 var saveSongUsingControllers = false;
@@ -841,16 +854,18 @@ let keybindsHistory = [];
 let miscellaneousHistory = [];
 let keybindsIndex = -1;
 
+let extraLog = false;
+
 function loadSettings() {
     const savedKeybinds = JSON.parse(localStorage.getItem("keybinds")) || defaultKeybinds;
     const savedMiscellaneous = JSON.parse(localStorage.getItem("miscellaneous")) || defaultMiscellaneous;
 
     if (userDevice === "Desktop" || userDevice === "Chromebook") {
-        keybinds = { ...savedKeybinds };
+        keybinds = { ...defaultKeybinds, ...savedKeybinds };
         updateKeybindsFields();
     }
 
-    miscellaneous = { ...savedMiscellaneous };
+    miscellaneous = { ...defaultMiscellaneous, ...savedMiscellaneous };
 
     // Automatically set fetchSongs to true if userDevice is iOS
     if (userDevice === "iOS" && miscellaneous.fetchSongs === false) {
@@ -861,14 +876,6 @@ function loadSettings() {
             saveSettings();
             location.reload();
         }, 1000);
-    } else if (userDevice === "Desktop" && miscellaneous.fetchSongs === true && window.location.href.includes(testingVerHTML)) {
-        fetchSongs = false;
-        miscellaneous.fetchSongs = false;
-        logNotice("Testing version detected. Reloading...");
-        setTimeout(() => {
-            saveSettings();
-            location.reload();
-        }, 500);
     }
 
     if (userDevice === "iOS") {
@@ -887,6 +894,9 @@ function loadSettings() {
 
     document.getElementById("pulseOnBPMcheck").checked = miscellaneous.pulseOnBPM;
     pulseOnBPM = miscellaneous.pulseOnBPM;
+
+    document.getElementById("extraLogCheck").checked = miscellaneous.extraLog;
+    extraLog = miscellaneous.extraLog;
 
     document.getElementById("saveRecentSongs").checked = miscellaneous.saveSongUsingControllers;
     saveSongUsingControllers = miscellaneous.saveSongUsingControllers;
@@ -1157,7 +1167,8 @@ function saveSettings() {
         saveSongUsingControllers: document.getElementById("saveRecentSongs").checked,
         fetchSongs: userDevice === "iOS" || document.getElementById("fetchSongsSite").checked,
         playSFX: document.getElementById("playSFXcheck").checked,
-        pulseOnBPM: document.getElementById("pulseOnBPMcheck").checked
+        pulseOnBPM: document.getElementById("pulseOnBPMcheck").checked,
+        extraLog: document.getElementById("extraLogCheck").checked
     };
 
     // Compare new settings with saved settings
@@ -1177,6 +1188,7 @@ function saveSettings() {
     saveSongUsingControllers = newMiscellaneous.saveSongUsingControllers;
     playSFX = newMiscellaneous.playSFX;
     pulseOnBPM = newMiscellaneous.pulseOnBPM;
+    extraLog = newMiscellaneous.extraLog;
 
     const timeoutInputValue = newMiscellaneous.songTimeoutDelay;
 
@@ -1192,13 +1204,13 @@ function saveSettings() {
     var blurInput = newMiscellaneous.customBackgroundBlur;
     const blurValue = parseInt(blurInput, 10);
     if (blurValue < 0 || blurValue >= 1000) {
-        alert("Please enter a number between 0 and 1000 for the blur value.");
+        alert("Please enter a number between 0 and 1000 for the blur value. Defaulted to 0.");
         logWarn(`BlurMiss. Input: ${blurInput}, Value: ${blurValue}`);
         blurInput = 0;
     }
 
     if (isNaN(blurValue)) {
-        alert("Please enter a valid number for the blur value.");
+        alert("Please enter a valid number for the blur value. Defaulted to 0.");
         logWarn(`BlurNaN. Input: ${blurInput}, Value: ${blurValue}`);
         blurInput = 0;
     }

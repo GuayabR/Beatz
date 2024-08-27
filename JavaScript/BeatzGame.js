@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: LOAD//FETCH 5.0.1 test (release.version.subversion.bugfix)
+ * Version: LOAD//FETCH 5.1.0.1 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -10,7 +10,7 @@
 
 const userDevice = detectDeviceType();
 
-const VERSION = "LOAD//FETCH 5.0!";
+const VERSION = "LOAD//FETCH 5.1.0.1";
 var PUBLICVERSION = `5.0! (${userDevice} Port)`;
 console.log("Version: " + VERSION);
 
@@ -138,10 +138,8 @@ if (isMobile && !isNewPlayer) {
     console.log(`new but not mobile`);
 } else if (!isMobile && !isNewPlayer) {
     textY = 670;
-    console.log(`regular`);
 } else {
     textY = HEIGHT / 2;
-    console.log(`mobile and new`);
 }
 
 let songPaths;
@@ -2082,8 +2080,8 @@ function displaySongInfo(setIndex) {
     ctx.fillStyle = "white";
     ctx.font = "22px Arial";
     ctx.textAlign = "right";
-    ctx.fillText(`Song ${indexToDisplay + 1}: ${getSongTitle(currentSong.src)}`, WIDTH - 10, 28);
-    ctx.fillText(getArtist(currentSong.src), WIDTH - 10, 56);
+    ctx.fillText(`Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)}`, WIDTH - 10, 28);
+    ctx.fillText(getArtist(currentSongPath), WIDTH - 10, 56);
     ctx.font = "22px Arial";
     ctx.fillText("BPM: " + BPM + " / Speed: " + noteSpeed, WIDTH - 10, 84);
 
@@ -2602,6 +2600,9 @@ function fetchSongWithProgress(url) {
             if (event.lengthComputable) {
                 const percentComplete = (event.loaded / event.total) * 100;
                 updateLoadingBar(percentComplete);
+                if (extraLog) {
+                    logNotice(`Loading progress: ${percentComplete.toFixed(2)}%`);
+                }
             }
         };
 
@@ -2609,19 +2610,51 @@ function fetchSongWithProgress(url) {
             if (xhr.status === 200) {
                 resolve(xhr.response);
             } else {
-                reject(new Error(xhr.status));
+                reject(new Error(`HTTP error ${xhr.status}: ${xhr.statusText}`));
+                if (extraLog) {
+                    logNotice(`HTTP error ${xhr.status}: ${xhr.statusText}`);
+                }
             }
         };
 
         xhr.onerror = function () {
-            reject(new Error("Network error, Check your internet connection."));
+            reject(new Error("Network error: Check your internet connection."));
+            if (extraLog) {
+                logNotice("Network error: Check your internet connection.");
+            }
         };
 
         xhr.send();
     });
 }
 
-function startGame(index, versionPath, setIndex) {
+async function fetchSongWithTimeout(url, timeout = 7500) {
+    const startTime = Date.now(); // Record the start time
+
+    // Create a timeout promise
+    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Connection timed out")), timeout));
+
+    try {
+        // Use Promise.race to race the fetch against the timeout
+        const response = await Promise.race([fetchSongWithProgress(url), timeoutPromise]);
+        const loadTime = Date.now() - startTime; // Calculate the load time
+        console.log(`Song loaded in ${loadTime} ms.`);
+        if (extraLog) {
+            logNotice(`Song loaded in ${loadTime} ms.`);
+        }
+        return response;
+    } catch (error) {
+        const loadTime = Date.now() - startTime; // Calculate the load time on error
+        if (error.message.includes("timed out")) {
+            console.log(`Connection timed out after ${loadTime} ms`);
+        } else {
+            console.log(`Failed to load song after ${loadTime} ms`);
+        }
+        throw error; // Re-throw the error to be handled in the caller
+    }
+}
+
+async function startGame(index, versionPath, setIndex) {
     songMetadataLoaded = false; // Reset flag to false at the start of the game
 
     // Check and remove songs with low points from localStorage
@@ -2684,7 +2717,7 @@ function startGame(index, versionPath, setIndex) {
     currentSong.volume = currentSongVolume;
 
     // Define the function to handle song metadata
-    function handleSongMetadata() {
+    function handleSongData() {
         songMetadataLoaded = true; // Set the flag to true when metadata is loaded
 
         console.log("Loaded selected song's metadata");
@@ -2794,7 +2827,7 @@ function startGame(index, versionPath, setIndex) {
             requestAnimationFrame(updateCanvas);
         }
 
-        console.log("Song selected: " + getSongTitle(currentSong.src), "by: " + getArtist(currentSong.src));
+        console.log("Song selected: " + getSongTitle(currentSongPath), "by: " + getArtist(currentSong.src));
         console.log("Current song path:", currentSongPath);
         console.log("Beatz.io loaded and playing. Have Fun!");
 
@@ -2822,75 +2855,69 @@ function startGame(index, versionPath, setIndex) {
         document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 5.0!`;
 
         console.log(`indexToDisplay converted in startGame: ${indexToDisplay}`);
+
         hideLoadingBar();
     }
 
     // Check if the song path starts with the specified URL
     if (currentSong.src.startsWith("https://guayabr.github.io")) {
-        // Attempt to fetch the song with progress
+        // Attempt to fetch the song with a timeout
         showLoadingBar();
-        fetchSongWithProgress(currentSongPath)
-            .then((blob) => {
-                currentSong.addEventListener("loadedmetadata", handleSongMetadata);
-                currentSong.addEventListener("error", (ev) => {
-                    logError(`Failed to load metadata for song: ${getSongTitle(currentSongPath)} Randomizing song. | ${ev.message}`);
-                    hideLoadingBar(); // Hide loading bar if an error occurs
-                    songMetadataLoaded = true;
-                    setTimeout(() => {
-                        randomizeSong();
-                    }, 1000);
-                });
-            })
-            .catch((error) => {
-                if (error.message.includes("503")) {
-                    logError(`HTTP 503 (Service Unavailable) Attempting fallback. | ${error}`);
-                    hideLoadingBar(); // Hide loading bar if an error occurs
-                    setTimeout(() => {
-                        // Attempt to play the first song in the songList
-                        currentSongPath = songList[0];
-                        fetchSongWithProgress(currentSongPath)
-                            .then((blob) => {
-                                currentSong.addEventListener("loadedmetadata", handleSongMetadata);
-                                currentSong.addEventListener("error", (ev) => {
-                                    logError(`Failed to load metadata for fallback song: ${getSongTitle(currentSongPath)}. Error: ${ev}`);
-                                    hideLoadingBar(); // Hide loading bar if an error occurs
-                                    setTimeout(() => {
-                                        logError("Unable to load any songs. Please try again later as GitHub's servers might be down.");
-                                        logNotice("https://www.githubstatus.com/");
-                                        const buttons = document.querySelectorAll("button, a"); // Select all buttons and links
-                                        buttons.forEach((button) => (button.disabled = true));
-                                    }, 1000);
-                                });
-                            })
-                            .catch((fallbackError) => {
-                                logError(`Failed to fetch fallback song ${getSongTitle(currentSongPath)}: ${fallbackError.message} | ${fallbackError}`);
-                                hideLoadingBar(); // Hide loading bar if an error occurs
-                                setTimeout(() => {
-                                    logError("Unable to load any songs. Please try again later as GitHub's servers might be down.");
-                                    logNotice("https://www.githubstatus.com/");
-                                    const buttons = document.querySelectorAll("button, a"); // Select all buttons and links
-                                    buttons.forEach((button) => (button.disabled = true));
-                                }, 500);
-                            });
-                    }, 2500);
-                } else {
-                    logError(`Failed to fetch song ${getSongTitle(currentSongPath)}, Randomizing song. | ${error}`);
-                    hideLoadingBar(); // Hide loading bar if an error occurs
-                    songMetadataLoaded = true;
-                    setTimeout(() => {
-                        randomizeSong();
-                    }, 1000);
-                }
+        try {
+            const blob = await fetchSongWithTimeout(currentSongPath, 7500);
+
+            // Create a URL for the fetched blob and assign it to the audio element
+            const blobUrl = URL.createObjectURL(blob);
+            currentSong.src = blobUrl; // Set the src AFTER fetching and creating the blob URL
+
+            // Add event listeners AFTER setting the src to ensure they work correctly
+            currentSong.addEventListener("loadeddata", handleSongData);
+            currentSong.addEventListener("error", (ev) => {
+                logError(`Failed to load data for song: ${getSongTitle(currentSongPath)}. Randomizing song. | ${ev.message}`);
+                hideLoadingBar(); // Hide loading bar if an error occurs
+                songMetadataLoaded = true;
+                setTimeout(() => {
+                    randomizeSong();
+                }, 1000);
             });
+
+            // Start loading the audio by calling load
+            currentSong.load();
+        } catch (error) {
+            if (error.message.includes("timed out")) {
+                logError(`Connection timed out while fetching song: ${getSongTitle(currentSongPath)}. | ${error.message}`);
+                hideLoadingBar();
+                songMetadataLoaded = true;
+                setTimeout(() => {
+                    randomizeSong();
+                }, 1000);
+            } else if (error.message.includes("503")) {
+                logError(`HTTP 503 (Service Unavailable) Attempting fallback. | ${error}`);
+                hideLoadingBar();
+                setTimeout(() => {
+                    // Attempt to play the first song in the songList
+                    currentSongPath = songList[0];
+                    loadAndPlaySong(currentSongPath);
+                }, 2500);
+            } else {
+                logError(`Failed to fetch song ${getSongTitle(currentSongPath)}, Randomizing song. | ${error}`);
+                hideLoadingBar();
+                songMetadataLoaded = true;
+                setTimeout(() => {
+                    randomizeSong();
+                }, 1000);
+            }
+        }
     } else {
         // Use the old method
         currentSong.addEventListener("error", (ev) => {
-            logError(`Failed to load metadata for song: ${getSongTitle(currentSongPath)} Randomizing song. | ${ev}`);
+            logError(`Failed to load metadata for song: ${getSongTitle(currentSongPath)} Randomizing song. | ${ev.message}`);
             setTimeout(() => {
                 randomizeSong();
             }, 1000);
         });
-        currentSong.addEventListener("loadedmetadata", handleSongMetadata);
+        currentSong.addEventListener("loadeddata", handleSongData);
+        currentSong.src = currentSongPath; // Set the src using the old method
     }
 }
 
@@ -2984,7 +3011,7 @@ function displayBestScore(song) {
 
 // Logic to activate when the song ends
 function onSongEnd() {
-    let songName = getSongTitle(currentSong.src);
+    let songName = getSongTitle(currentSongPath);
 
     try {
         saveScore(songName, points, perfectHits, totalMisses, earlyLateHits, maxStreak);
@@ -3006,7 +3033,7 @@ function onSongEnd() {
 // Function to check and display the best score if the selected song has one
 function checkAndDisplayBestScore() {
     if (currentSong && currentSong.src) {
-        const songName = getSongTitle(currentSong.src);
+        const songName = getSongTitle(currentSongPath);
         displayBestScore(songName);
     } else {
         console.log("currentSong or currentSong.src is not defined.");
@@ -3441,7 +3468,7 @@ function updateCanvas(timestamp, setIndex) {
                         clearInterval(speedUpdater);
                         console.log(`Dynamic speeds encountered a "Mismatch//FoundNotCorrect" error. Pausing updates.`);
                         logError("Mismatch//FoundNotCorrect, Pausing updates and restarting song.", 10000);
-                        logNotice("Please notify @GuayabR on twitter for this error. https://x.com/@GuayabR ", "", 10000);
+                        logNotice("Please notify @GuayabR on twitter for this error. https://x.com/@GuayabR ", "", 10000, true);
                         logNotice(
                             "Please specify what song you were playing and if this happened at the start of the song or at a specific timestamp.",
                             "",

@@ -557,4 +557,9 @@ So now you can play any song at any given time! Just press play and let your int
 Fallback 1: Attempt to play song #1: Epilogue.
 Fallback 2: In case Epilogue is unable to load due to the same error, prompt the user to try again later as servers might be down.
 - Added "La Gozadera" by Gente De Zona, and Marc Anthony. (Visualizate)
+//
+
+5.1.0 (LOAD//FETCH 5.0! 27/08/2024)
+- Fixed progress bar being unsynced with the actual data of the song being loaded.
+- Added extra logs option: Logs more notices for informational stuff.
 

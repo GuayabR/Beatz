@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: LOAD//FETCH 5.0.1 test (release.version.subversion.bugfix)
+ * Version: LOAD//FETCH 5.1.0.1 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -10,7 +10,7 @@
 
 const userDevice = detectDeviceType();
 
-const VERSION = "LOAD//FETCH 5.0!";
+const VERSION = "LOAD//FETCH 5.1.0.1";
 var PUBLICVERSION = `5.0! (${userDevice} Port)`;
 console.log("Version: " + VERSION);
 
