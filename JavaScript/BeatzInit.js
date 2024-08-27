@@ -414,7 +414,7 @@ window.addEventListener("unhandledrejection", function (event) {
 });
 
 // Function to dynamically create and display log messages as clickable links if URLs are present
-function logMessage(message, type = "error", color = "red", timeout = 7500) {
+function logMessage(message, type = "error", color = "red", timeout = 7500, format = true) {
     const errorContainer = document.getElementById("errorContainer");
     const errorDiv = document.createElement("div");
     errorDiv.className = "errorLogging";
@@ -425,8 +425,8 @@ function logMessage(message, type = "error", color = "red", timeout = 7500) {
         return text.replace(urlPattern, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
     };
 
-    // Convert message text to include clickable links
-    const formattedMessage = convertUrlsToLinks(message);
+    // Conditionally format message text to include clickable links
+    const formattedMessage = format ? message : convertUrlsToLinks(message);
 
     const noErrorsIndex = errorArray.indexOf("No errors.");
 
@@ -484,22 +484,22 @@ function logMessage(message, type = "error", color = "red", timeout = 7500) {
 }
 
 // Log error function
-function logError(message, timeout) {
+function logError(message, timeout, format = true) {
     const err = message || "Unspecified error.";
-    logMessage(err, "error", "red", timeout);
+    logMessage(err, "error", "red", timeout, format);
 }
 
 // Log warning function
-function logWarn(message, timeout) {
+function logWarn(message, timeout, format = true) {
     const warn = message || "Unspecified warning.";
-    logMessage(warn, "warn", "rgb(255, 100, 0)", timeout);
+    logMessage(warn, "warn", "rgb(255, 100, 0)", timeout, format);
 }
 
 // Log notice function
-function logNotice(message, color, timeout) {
+function logNotice(message, color, timeout, format = true) {
     const noti = message || "Unspecified notice.";
     const BGcol = color || "rgb(49, 0, 128)";
-    logMessage(noti, "notice", BGcol, timeout);
+    logMessage(noti, "notice", BGcol, timeout, format);
 }
 
 // Resource-specific error handling for audio and images
