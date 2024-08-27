@@ -2874,7 +2874,7 @@ function startGame(index, versionPath, setIndex) {
                             });
                     }, 2500);
                 } else {
-                    logError(`Failed to fetch song ${getSongTitle(currentSongPath)}: ${error}`);
+                    logError(`Failed to fetch song ${getSongTitle(currentSongPath)}, Randomizing song. | ${error}`);
                     hideLoadingBar(); // Hide loading bar if an error occurs
                     songMetadataLoaded = true;
                     setTimeout(() => {
