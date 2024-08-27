@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: LOAD//FETCH 5.0 test (release.version.subversion.bugfix)
+ * Version: LOAD//FETCH 5.0.1 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -2679,7 +2679,7 @@ function startGame(index, versionPath, setIndex) {
         currentSong.currentTime = 0; // Reset the song to the beginning
     }
 
-    currentSong = new Audio();
+    currentSong = new Audio(currentSongPath);
     currentSong.volume = currentSongVolume;
 
     // Define the function to handle song metadata
@@ -2825,12 +2825,11 @@ function startGame(index, versionPath, setIndex) {
     }
 
     // Check if the song path starts with the specified URL
-    if (currentSongPath.startsWith("https://guayabr.github.io")) {
+    if (currentSong.src.startsWith("https://guayabr.github.io")) {
         // Attempt to fetch the song with progress
         showLoadingBar();
         fetchSongWithProgress(currentSongPath)
             .then((blob) => {
-                currentSong.src = currentSongPath;
                 currentSong.addEventListener("loadedmetadata", handleSongMetadata);
                 currentSong.addEventListener("error", (ev) => {
                     logError(`Failed to load metadata for song: ${getSongTitle(currentSongPath)} Randomizing song. | ${ev}`);
@@ -2849,7 +2848,6 @@ function startGame(index, versionPath, setIndex) {
                         currentSongPath = songList[0];
                         fetchSongWithProgress(currentSongPath)
                             .then((blob) => {
-                                currentSong.src = currentSongPath;
                                 currentSong.addEventListener("loadedmetadata", handleSongMetadata);
                                 currentSong.addEventListener("error", (ev) => {
                                     logError(`Failed to load metadata for fallback song: ${getSongTitle(currentSongPath)}. Error: ${ev}`);
@@ -2883,7 +2881,6 @@ function startGame(index, versionPath, setIndex) {
             });
     } else {
         // Use the old method
-        currentSong.src = currentSongPath;
         currentSong.addEventListener("error", (ev) => {
             logError(`Failed to load metadata for song: ${getSongTitle(currentSongPath)} Randomizing song. | ${ev}`);
             setTimeout(() => {
