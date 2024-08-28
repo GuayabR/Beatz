@@ -600,6 +600,10 @@ function setupMobileEventListeners() {
     canvas.removeEventListener("mouseleave", handleMouseUp, false);
 }
 
+setInterval(() => {
+    checkForNewRelease(VERSION); // Call every 10 seconds
+}, 10000); // 10000 milliseconds = 10 seconds
+
 // - . / .- -- --- / .- -. --. .  /.--. . .-. --- / - ..- / -. --- / .-.. --- / ... .- -... . ... / -.-- / -. --- / ... . / --.- ..- . / .... .- -.-. . .-.
 
 // Thanks for playing Beatz!

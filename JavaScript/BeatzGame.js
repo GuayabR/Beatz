@@ -279,6 +279,8 @@ if (useFetch) {
     useURL = baseURL;
 }
 
+var availableToPlay = false;
+
 // Function to switch image source
 function switchImage(img, src1, src2) {
     if (img.src.endsWith(src1)) {
@@ -1918,8 +1920,8 @@ function canActivate() {
 function skipToLastSong() {
     if (!canActivate()) return;
 
-    if (!songMetadataLoaded) {
-        console.log("Song metadata not loaded. Please wait before proceeding.");
+    if (!songMetadataLoaded || !availableToPlay) {
+        console.log("Song not loaded or countdown has yet to finish. Please wait before proceeding.");
         return; // Exit the function if metadata isn't loaded
     }
 
@@ -1948,8 +1950,8 @@ function skipToLastSong() {
 function nextSong() {
     if (!canActivate()) return;
 
-    if (!songMetadataLoaded) {
-        console.log("Song metadata not loaded. Please wait before proceeding.");
+    if (!songMetadataLoaded || !availableToPlay) {
+        console.log("Song not loaded or countdown has yet to finish. Please wait before proceeding.");
         return; // Exit the function if metadata isn't loaded
     }
 
@@ -1975,8 +1977,8 @@ function nextSong() {
 function restartSong() {
     if (!canActivate()) return;
 
-    if (!songMetadataLoaded) {
-        console.log("Song metadata not loaded. Please wait before proceeding.");
+    if (!songMetadataLoaded || !availableToPlay) {
+        console.log("Song not loaded or countdown has yet to finish. Please wait before proceeding.");
         return; // Exit the function if metadata isn't loaded
     }
 
@@ -2017,8 +2019,8 @@ function restartSong() {
 function legacyRestartSong() {
     if (!canActivate()) return;
 
-    if (!songMetadataLoaded) {
-        console.log("Song metadata not loaded. Please wait before proceeding.");
+    if (!songMetadataLoaded || !availableToPlay) {
+        console.log("Song not loaded or countdown has yet to finish. Please wait before proceeding.");
         return; // Exit the function if metadata isn't loaded
     }
 
@@ -2036,8 +2038,8 @@ function legacyRestartSong() {
 function skipToFirstSong() {
     if (!canActivate()) return;
 
-    if (!songMetadataLoaded) {
-        console.log("Song metadata not loaded. Please wait before proceeding.");
+    if (!songMetadataLoaded || !availableToPlay) {
+        console.log("Song not loaded or countdown has yet to finish. Please wait before proceeding.");
         return; // Exit the function if metadata isn't loaded
     }
 
@@ -2061,8 +2063,8 @@ function skipToFirstSong() {
 function previousSong() {
     if (!canActivate()) return;
 
-    if (!songMetadataLoaded) {
-        console.log("Song metadata not loaded. Please wait before proceeding.");
+    if (!songMetadataLoaded || !availableToPlay) {
+        console.log("Song not loaded or countdown has yet to finish. Please wait before proceeding.");
         return; // Exit the function if metadata isn't loaded
     }
 
@@ -2113,8 +2115,8 @@ function pickRandomSongIndex() {
 function randomizeSong() {
     if (!canActivate()) return;
 
-    if (!songMetadataLoaded) {
-        console.log("Song metadata not loaded. Please wait before proceeding.");
+    if (!songMetadataLoaded || !availableToPlay) {
+        console.log("Song not loaded or countdown has yet to finish. Please wait before proceeding.");
         return; // Exit the function if metadata isn't loaded
     }
 
@@ -2548,7 +2550,7 @@ function fallbackPause() {
         currentSong.pause();
         playSoundEffect("Resources/SFX/hoverBtn.mp3", 0.5);
         canvasUpdating = false;
-        clearInterval(canvasScalingInterval);
+        manageCanvasScalingInterval(false);
     }
 }
 
@@ -2749,6 +2751,7 @@ async function fetchSongWithTimeout(url, timeout = 15000) {
 
 async function startGame(index, versionPath, setIndex) {
     songMetadataLoaded = false; // Reset flag to false at the start of the game
+    availableToPlay = false;
 
     // Check and remove songs with low points from localStorage
     removeLowPointSongs();
@@ -2809,9 +2812,12 @@ async function startGame(index, versionPath, setIndex) {
     currentSong = new Audio(currentSongPath);
     currentSong.volume = currentSongVolume;
 
+    manageCanvasScalingInterval(false);
+
     // Define the function to handle song metadata
     function handleSongData() {
         songMetadataLoaded = true; // Set the flag to true when metadata is loaded
+        availableToPlay = true;
 
         console.log("Loaded selected song's metadata");
 
@@ -2830,8 +2836,6 @@ async function startGame(index, versionPath, setIndex) {
             up: [],
             right: []
         };
-
-        manageCanvasScalingInterval(true);
 
         const songTitle = getSongTitle(currentSongPath);
         const songConfig = getDynamicSpeed(currentSongPath);
@@ -2939,6 +2943,8 @@ async function startGame(index, versionPath, setIndex) {
 
             loadingText.textContent = "Get Ready."; // Optional: set text to 0% when countdown ends
 
+            availableToPlay = false;
+
             const intervalId = setInterval(() => {
                 percentage -= step;
                 if (percentage <= 0) {
@@ -2946,6 +2952,8 @@ async function startGame(index, versionPath, setIndex) {
                     clearInterval(intervalId); // Stop the countdown when it reaches 0
                     loadingBar.style.width = "0%";
                     loadingBar.textContent = "0"; // Optional: set text to 0% when countdown ends
+
+                    availableToPlay = true;
 
                     // Call additional functions once countdown completes
                     hideLoadingBar();
@@ -2960,6 +2968,8 @@ async function startGame(index, versionPath, setIndex) {
                         canvasUpdating = true; // Set the flag to indicate the canvas is being updated
                         requestAnimationFrame(updateCanvas);
                     }
+
+                    manageCanvasScalingInterval(true);
 
                     console.log("Song selected: " + getSongTitle(currentSongPath), "by: " + getArtist(currentSongPath));
                     console.log("Current song path:", currentSongPath);
@@ -3019,6 +3029,7 @@ async function startGame(index, versionPath, setIndex) {
             currentSong.addEventListener("error", (ev) => {
                 logError(`Failed to load data for song: ${getSongTitle(currentSongPath)}. Randomizing song. | ${ev.message}`);
                 songMetadataLoaded = true;
+                availableToPlay = true;
                 setTimeout(() => {
                     randomizeSong();
                 }, 1000);
@@ -3031,11 +3042,12 @@ async function startGame(index, versionPath, setIndex) {
                 logError(`Connection timed out while fetching song: ${getSongTitle(currentSongPath)}. | ${error.message}`);
                 hideLoadingBar();
                 songMetadataLoaded = true;
+                availableToPlay = true;
                 setTimeout(() => {
                     restartSong();
                 }, 1000);
             } else if (error.message.includes("503")) {
-                logError(`HTTP 503 (Service Unavailable) Attempting fallback. | ${error}`);
+                logError(`HTTP 503 (Service Unavailable) Attempting fallback to song 1. | ${error}`);
                 hideLoadingBar();
                 setTimeout(() => {
                     startGame(0);
@@ -3043,6 +3055,7 @@ async function startGame(index, versionPath, setIndex) {
             } else {
                 logError(`Failed to fetch song ${getSongTitle(currentSongPath)}, Randomizing song. | ${error}`);
                 songMetadataLoaded = true;
+                availableToPlay = true;
                 setTimeout(() => {
                     randomizeSong();
                 }, 1000);
@@ -3052,6 +3065,8 @@ async function startGame(index, versionPath, setIndex) {
         // Use the old method
         currentSong.addEventListener("error", (ev) => {
             logError(`Failed to load metadata for song: ${getSongTitle(currentSongPath)} Randomizing song. | ${ev.message}`);
+            songMetadataLoaded = true;
+            availableToPlay = true;
             setTimeout(() => {
                 randomizeSong();
             }, 1000);
@@ -3071,7 +3086,7 @@ async function startGame(index, versionPath, setIndex) {
 
 function songEnd() {
     endScreenDrawn = true;
-    clearInterval(canvasScalingInterval);
+    manageCanvasScalingInterval(false);
 }
 
 // Score logic
