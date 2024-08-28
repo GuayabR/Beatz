@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: LOAD//FETCH 5.1.0.1 test (release.version.subversion.bugfix)
+ * Version: LOAD//FETCH 5.2.0.2 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -10,7 +10,7 @@
 
 const userDevice = detectDeviceType();
 
-const VERSION = "LOAD//FETCH 5.1.0.1";
+const VERSION = "LOAD//FETCH 5.2.0.2";
 var PUBLICVERSION = `5.0! (${userDevice} Port)`;
 console.log("Version: " + VERSION);
 
@@ -30,7 +30,7 @@ const MIN_NOTE_GAP = 775;
 
 const MAX_HIT_SOUNDS = 5;
 
-const baseURL = "https://guayabr.github.io/Beatz/";
+const baseURL = "https://guayabr.github.io/Beatz/Resources/";
 
 const testingVerHTML = "BeatzGameTesting.html";
 const publicVerHTML = "index.html";
@@ -273,6 +273,14 @@ let rotationAngle = 0; // Initial rotation angle
 let vinylRotationEnabled = false; // Initial rotation state
 let circularImageEnabled = false; // Initial circular image state
 
+var useURL = true;
+
+if (useFetch) {
+    useURL = baseURL;
+}
+
+var availableToPlay = false;
+
 // Function to switch image source
 function switchImage(img, src1, src2) {
     if (img.src.endsWith(src1)) {
@@ -503,7 +511,7 @@ function preloadSongs() {
             "https://guayabr.github.io/Beatz/Resources/Songs/Slide da Treme Melódica v2.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/fantasmas.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/BIKE.mp3",
-            "https://guayabr.github.io/Beatz/Resources/Songs/ARCÀNGEL.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/ARCANGEL.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/TELEKINESIS.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/Bleed it out.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/Grenade.mp3",
@@ -549,7 +557,8 @@ function preloadSongs() {
             "https://guayabr.github.io/Beatz/Resources/Songs/Lunar Abyss.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/Lost.mp3",
             "https://guayabr.github.io/Beatz/Resources/Songs/La Gozadera.mp3",
-            "https://guayabr.github.io/Beatz/Resources/Songs/testingsong.mp3"
+            "https://guayabr.github.io/Beatz/Resources/Songs/SHAKIRA.mp3",
+            "https://guayabr.github.io/Beatz/Resources/Songs/QUEVEDO.mp3"
         ];
     } else {
         console.log(`Loading songs locally, fetching: ${useFetch}`);
@@ -617,7 +626,7 @@ function preloadSongs() {
             "Resources/Songs/Slide da Treme Melódica v2.mp3",
             "Resources/Songs/fantasmas.mp3",
             "Resources/Songs/BIKE.mp3",
-            "Resources/Songs/ARCÀNGEL.mp3",
+            "Resources/Songs/ARCANGEL.mp3",
             "Resources/Songs/TELEKINESIS.mp3",
             "Resources/Songs/Bleed it out.mp3",
             "Resources/Songs/Grenade.mp3",
@@ -663,6 +672,8 @@ function preloadSongs() {
             "Resources/Songs/Lunar Abyss.mp3",
             "Resources/Songs/Lost.mp3",
             "Resources/Songs/La Gozadera.mp3",
+            "Resources/Songs/SHAKIRA.mp3",
+            "Resources/Songs/QUEVEDO.mp3",
 
             "Resources/Songs/testingsong.mp3"
         ];
@@ -737,31 +748,74 @@ function handleClick() {
 
 const songVersions = {
     Finesse: [
-        { path: [`${baseURL}Resources/Songs/Finesse.mp3`], title: "Finesse" },
-        { path: [`${baseURL}Resources/Songs/Finesse (feat. Cardi B).mp3`], title: "Finesse (feat. Cardi B)" }
+        { path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}Finesse.mp3`], title: "Finesse" },
+        {
+            path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}Finesse (feat. Cardi B).mp3`],
+            title: "Finesse (feat. Cardi B)"
+        }
     ],
     "WTF 2": [
-        { path: [`${baseURL}Resources/Songs/WTF 2.mp3`], title: "WTF 2" },
-        { path: [`${baseURL}Resources/Songs/WTF 2 - Slowed.mp3`], title: "WTF 2 - Slowed" },
-        { path: [`${baseURL}Resources/Songs/WTF 2 - Sped Up.mp3`], title: "WTF 2 - Sped Up" }
+        { path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}WTF 2.mp3`], title: "WTF 2" },
+        { path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}WTF 2 - Slowed.mp3`], title: "WTF 2 - Slowed" },
+        { path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}WTF 2 - Sped Up.mp3`], title: "WTF 2 - Sped Up" }
     ],
     "Slide da Treme Melódica v2": [
-        { path: [`${baseURL}Resources/Songs/Slide da Treme Melódica v2.mp3`], title: "Slide da Treme Melódica v2" },
-        { path: [`${baseURL}Resources/Songs/Slide da Treme Melódica v2 - Slowed.mp3`], title: "Slide da Treme Melódica v2 - Slowed" },
-        { path: [`${baseURL}Resources/Songs/Slide da Treme Melódica v2 - Ultra Slowed.mp3`], title: "Slide da Treme Melódica v2 - Ultra Slowed" },
-        { path: [`${baseURL}Resources/Songs/Slide da Treme Melódica v2 - Sped Up.mp3`], title: "Slide da Treme Melódica v2 - Sped Up" }
+        {
+            path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}Slide da Treme Melódica v2.mp3`],
+            title: "Slide da Treme Melódica v2"
+        },
+        {
+            path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}Slide da Treme Melódica v2 - Slowed.mp3`],
+            title: "Slide da Treme Melódica v2 - Slowed"
+        },
+        {
+            path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}Slide da Treme Melódica v2 - Ultra Slowed.mp3`],
+            title: "Slide da Treme Melódica v2 - Ultra Slowed"
+        },
+        {
+            path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}Slide da Treme Melódica v2 - Sped Up.mp3`],
+            title: "Slide da Treme Melódica v2 - Sped Up"
+        }
     ],
     Goosebumps: [
-        { path: [`${baseURL}Resources/Songs/Goosebumps.mp3`], title: "Goosebumps" },
-        { path: [`${baseURL}Resources/Songs/Goosebumps (feat. 21 Savage).mp3`], title: "Goosebumps (feat. 21 Savage)" }
+        { path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}Goosebumps.mp3`], title: "Goosebumps" },
+        {
+            path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}Goosebumps (feat. 21 Savage).mp3`],
+            title: "Goosebumps (feat. 21 Savage)"
+        }
+    ],
+    "MY EYES": [
+        { path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}MY EYES.mp3`], title: "MY EYES" },
+        {
+            path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}MY EYES - Second half.mp3`],
+            title: "MY EYES - Second half"
+        }
     ],
     "The Automotivo Infernal 1.0": [
-        { path: [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0.mp3`], title: "The Automotivo Infernal 1.0" },
-        { path: [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Red.mp3`], title: "The Automotivo Infernal 1.0 - Red" },
-        { path: [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Slowed.mp3`], title: "The Automotivo Infernal 1.0 - Slowed" },
-        { path: [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Sped Up.mp3`], title: "The Automotivo Infernal 1.0 - Sped Up" },
-        { path: [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Red - Slowed.mp3`], title: "The Automotivo Infernal 1.0 - Red - Slowed" },
-        { path: [`${baseURL}Resources/Songs/The Automotivo Infernal 1.0 - Red - Sped Up.mp3`], title: "The Automotivo Infernal 1.0 - Red - Sped Up" }
+        {
+            path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}The Automotivo Infernal 1.0.mp3`],
+            title: "The Automotivo Infernal 1.0"
+        },
+        {
+            path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}The Automotivo Infernal 1.0 - Red.mp3`],
+            title: "The Automotivo Infernal 1.0 - Red"
+        },
+        {
+            path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}The Automotivo Infernal 1.0 - Slowed.mp3`],
+            title: "The Automotivo Infernal 1.0 - Slowed"
+        },
+        {
+            path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}The Automotivo Infernal 1.0 - Sped Up.mp3`],
+            title: "The Automotivo Infernal 1.0 - Sped Up"
+        },
+        {
+            path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}The Automotivo Infernal 1.0 - Red - Slowed.mp3`],
+            title: "The Automotivo Infernal 1.0 - Red - Slowed"
+        },
+        {
+            path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}The Automotivo Infernal 1.0 - Red - Sped Up.mp3`],
+            title: "The Automotivo Infernal 1.0 - Red - Sped Up"
+        }
     ]
     // Add other songs and their versions here
 };
@@ -792,7 +846,7 @@ const songConfigs = {
     VISIONS: { BPM: 157, noteSpeed: 8 },
     24: { BPM: 98, noteSpeed: 8 },
     "WTF 2": { BPM: 116, noteSpeed: 14 },
-    "MY EYES": { BPM: 132, noteSpeed: 12 },
+    "MY EYES": { BPM: 119, noteSpeed: 10 },
     "Can't Slow Me Down": { BPM: 122, noteSpeed: 11 },
     LUNCH: { BPM: 125, noteSpeed: 14.6 },
     "BUTTERFLY EFFECT": { BPM: 141, noteSpeed: 10 },
@@ -829,7 +883,7 @@ const songConfigs = {
     "Slide da Treme Melódica v2": { BPM: 280, noteSpeed: 18 },
     fantasmas: { BPM: 164, noteSpeed: 10 },
     BIKE: { BPM: 105, noteSpeed: 14 },
-    ARCÀNGEL: { BPM: 124, noteSpeed: 14 },
+    ARCANGEL: { BPM: 124, noteSpeed: 14 },
     TELEKINESIS: { BPM: 166, noteSpeed: 12 },
     "Bleed it out": { BPM: 140, noteSpeed: 0 },
     Grenade: { BPM: 110, noteSpeed: 0 },
@@ -874,6 +928,8 @@ const songConfigs = {
     "Lunar Abyss": { BPM: 138, noteSpeed: 10 },
     Lost: { BPM: 105, noteSpeed: 12 },
     "La Gozadera": { BPM: 95, noteSpeed: 10 },
+    SHAKIRA: { BPM: 122, noteSpeed: 10 },
+    QUEVEDO: { BPM: 128, noteSpeed: 12 },
 
     // Song Versions
     "Finesse (feat. Cardi B)": { BPM: 105, noteSpeed: 22 },
@@ -888,7 +944,8 @@ const songConfigs = {
     "The Automotivo Infernal 1.0 - Slowed": { BPM: 117, noteSpeed: 12 },
     "The Automotivo Infernal 1.0 - Sped Up": { BPM: 140, noteSpeed: 12 },
     "The Automotivo Infernal 1.0 - Red - Slowed": { BPM: 140, noteSpeed: 12 },
-    "The Automotivo Infernal 1.0 - Red - Sped Up": { BPM: 140, noteSpeed: 12 }
+    "The Automotivo Infernal 1.0 - Red - Sped Up": { BPM: 140, noteSpeed: 12 },
+    "MY EYES - Second half": { BPM: 147, noteSpeed: 10 }
 };
 
 let savedNotes;
@@ -1146,6 +1203,23 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 222.72, noteSpeed: 8, endScreenDrawn: true }
         ],
         Lost: [{ timestamp: 187.545, noteSpeed: 12, endScreenDrawn: true }],
+        "MY EYES": [
+            { timestamp: 129.81, noteSpeed: 9 },
+            { timestamp: 131.91, noteSpeed: 6 },
+            { timestamp: 147.3, noteSpeed: 10, BPM: 147 },
+            { timestamp: 160.35, noteSpeed: 12 },
+            { timestamp: 173.44, noteSpeed: 16 },
+            { timestamp: 225.68, noteSpeed: 20 },
+            { timestamp: 238.13, noteSpeed: 22 },
+            { timestamp: 238.75, noteSpeed: 22, endScreenDrawn: true }
+        ],
+        "MY EYES - Second half": [
+            { timestamp: 24, noteSpeed: 12 },
+            { timestamp: 37.1, noteSpeed: 16 },
+            { timestamp: 89.35, noteSpeed: 20 },
+            { timestamp: 101.8, noteSpeed: 22 },
+            { timestamp: 102.406, noteSpeed: 22, endScreenDrawn: true }
+        ],
         testingsong: [
             { timestamp: 1, noteSpeed: 10 },
             { timestamp: 2, noteSpeed: 10, BPM: BPM * 2 },
@@ -1227,7 +1301,7 @@ const songToAlbumMap = {
     "Slide da Treme Melódica v2": "Slide da Treme Melódica v2",
     fantasmas: "fantasmas",
     BIKE: "BIKE",
-    ARCÀNGEL: "ARCÀNGEL",
+    ARCANGEL: "ARCANGEL",
     TELEKINESIS: "UTOPIA",
     "Bleed it out": "Minutes To Midnight E",
     Grenade: "Doo-Wops & Hooligans",
@@ -1272,6 +1346,8 @@ const songToAlbumMap = {
     "Lunar Abyss": "Lunar Abyss",
     Lost: "Meteora 20'",
     "La Gozadera": "Visualizate",
+    SHAKIRA: "SHAKIRA",
+    QUEVEDO: "QUEVEDO",
 
     // Song Versions
 
@@ -1287,7 +1363,8 @@ const songToAlbumMap = {
     "The Automotivo Infernal 1.0 - Slowed": "The Automotivo Infernal 1.0",
     "The Automotivo Infernal 1.0 - Sped Up": "The Automotivo Infernal 1.0",
     "The Automotivo Infernal 1.0 - Red - Slowed": "The Automotivo Infernal 1.0",
-    "The Automotivo Infernal 1.0 - Red - Sped Up": "The Automotivo Infernal 1.0"
+    "The Automotivo Infernal 1.0 - Red - Sped Up": "The Automotivo Infernal 1.0",
+    "MY EYES - Second half": "UTOPIA"
 };
 
 // Function to preload images
@@ -1349,7 +1426,7 @@ function preloadImages() {
         "Resources/Covers/Slide da Treme Melódica v2.jpg",
         "Resources/Covers/fantasmas.jpg",
         "Resources/Covers/BIKE.jpg",
-        "Resources/Covers/ARCÀNGEL.jpg",
+        "Resources/Covers/ARCANGEL.jpg",
         "Resources/Covers/Doo-Wops & Hooligans.jpg",
         "Resources/Covers/24K Magic.jpg",
         "Resources/Covers/Not Like Us.jpg",
@@ -1373,6 +1450,8 @@ function preloadImages() {
         "Resources/Covers/Lunar Abyss.jpg",
         "Resources/Covers/Meteora 20'.jpg",
         "Resources/Covers/Visualizate.jpg",
+        "Resources/Covers/SHAKIRA.jpg",
+        "Resources/Covers/QUEVEDO.jpg",
 
         // Song Versions
 
@@ -1487,12 +1566,16 @@ function openSelectedSongModal(songPath, songTitle) {
         const versionDropdownContainer = document.getElementById("versionDropdownContainer");
         const versionDropdown = document.getElementById("versionDropdown");
 
+        var verTitle;
+
         // Function to update modal content
         function updateModalContent(versionPath, versionTitle) {
             const versionConfig = songConfigs[versionTitle] || {};
             songTitleElement.textContent = versionTitle;
             songArtistElement.textContent = getArtist(versionTitle);
             songBPMElement.textContent = versionConfig.BPM || "BPM not available";
+
+            verTitle = versionTitle;
 
             // Display cover image
             const coverImageElement = document.getElementById("songCoverImage");
@@ -1584,7 +1667,7 @@ function openSelectedSongModal(songPath, songTitle) {
 
             selectedSongModal.style.display = "none"; // Close modal after starting the game
             activateKeybinds();
-            saveRecentSong(selectedVersionPath, songTitle, index + 1, songArtist); // Save the recent song
+            saveRecentSong(selectedVersionPath, verTitle, index + 1, songArtist); // Save the recent song
             updateRecentSongButton(); // Update the button text
         });
     }
@@ -1623,6 +1706,7 @@ function filterSongs() {
         const isZesty = songText.includes("drake");
         const isMRL = songText.includes("mrl");
         const isOde = songText.includes("odetari");
+        const isBiza = songText.includes("bizarrap");
         const isLastSong = songText.includes(lastSongIndex);
 
         if (searchInput === "ye" && isKanye) {
@@ -1670,6 +1754,10 @@ function filterSongs() {
             if (!firstVisibleButton) firstVisibleButton = button;
             resultsCount++;
         } else if (searchInput === "odecore" && isOde) {
+            button.style.display = "block";
+            if (!firstVisibleButton) firstVisibleButton = button;
+            resultsCount++;
+        } else if (searchInput === "bzrp" && isBiza) {
             button.style.display = "block";
             if (!firstVisibleButton) firstVisibleButton = button;
             resultsCount++;
@@ -1767,7 +1855,8 @@ var keywordDescriptions = {
     zesty: "Only results from Drake",
     bili: "Only results from Billie Eilish",
     last: "Refers to the last song in the list",
-    odecore: "Only results from Odetari"
+    odecore: "Only results from Odetari",
+    bzrp: "Only results from Bizarrap"
 };
 
 if (isMobile) {
@@ -1776,13 +1865,12 @@ if (isMobile) {
         kdot: "Only results from Kendrick Lamar",
         em: "Only results from Eminem",
         goat: "Only results from The Goats",
-        "got bit by a goat": "Only results from Eminem",
-        marshall: "Only results from Eminem",
         trash: "Only results from Playboi Carti",
         zesty: "Only results from Drake",
         bili: "Only results from Billie Eilish",
         last: "Refers to the last song in the list",
-        odecore: "Only results from Odetari"
+        odecore: "Only results from Odetari",
+        bzrp: "Only results from Bizarrap"
     };
 }
 
@@ -1832,8 +1920,8 @@ function canActivate() {
 function skipToLastSong() {
     if (!canActivate()) return;
 
-    if (!songMetadataLoaded) {
-        console.log("Song metadata not loaded. Please wait before proceeding.");
+    if (!songMetadataLoaded || !availableToPlay) {
+        console.log("Song not loaded or countdown has yet to finish. Please wait before proceeding.");
         return; // Exit the function if metadata isn't loaded
     }
 
@@ -1862,8 +1950,8 @@ function skipToLastSong() {
 function nextSong() {
     if (!canActivate()) return;
 
-    if (!songMetadataLoaded) {
-        console.log("Song metadata not loaded. Please wait before proceeding.");
+    if (!songMetadataLoaded || !availableToPlay) {
+        console.log("Song not loaded or countdown has yet to finish. Please wait before proceeding.");
         return; // Exit the function if metadata isn't loaded
     }
 
@@ -1889,8 +1977,8 @@ function nextSong() {
 function restartSong() {
     if (!canActivate()) return;
 
-    if (!songMetadataLoaded) {
-        console.log("Song metadata not loaded. Please wait before proceeding.");
+    if (!songMetadataLoaded || !availableToPlay) {
+        console.log("Song not loaded or countdown has yet to finish. Please wait before proceeding.");
         return; // Exit the function if metadata isn't loaded
     }
 
@@ -1931,8 +2019,8 @@ function restartSong() {
 function legacyRestartSong() {
     if (!canActivate()) return;
 
-    if (!songMetadataLoaded) {
-        console.log("Song metadata not loaded. Please wait before proceeding.");
+    if (!songMetadataLoaded || !availableToPlay) {
+        console.log("Song not loaded or countdown has yet to finish. Please wait before proceeding.");
         return; // Exit the function if metadata isn't loaded
     }
 
@@ -1950,8 +2038,8 @@ function legacyRestartSong() {
 function skipToFirstSong() {
     if (!canActivate()) return;
 
-    if (!songMetadataLoaded) {
-        console.log("Song metadata not loaded. Please wait before proceeding.");
+    if (!songMetadataLoaded || !availableToPlay) {
+        console.log("Song not loaded or countdown has yet to finish. Please wait before proceeding.");
         return; // Exit the function if metadata isn't loaded
     }
 
@@ -1975,8 +2063,8 @@ function skipToFirstSong() {
 function previousSong() {
     if (!canActivate()) return;
 
-    if (!songMetadataLoaded) {
-        console.log("Song metadata not loaded. Please wait before proceeding.");
+    if (!songMetadataLoaded || !availableToPlay) {
+        console.log("Song not loaded or countdown has yet to finish. Please wait before proceeding.");
         return; // Exit the function if metadata isn't loaded
     }
 
@@ -2027,8 +2115,8 @@ function pickRandomSongIndex() {
 function randomizeSong() {
     if (!canActivate()) return;
 
-    if (!songMetadataLoaded) {
-        console.log("Song metadata not loaded. Please wait before proceeding.");
+    if (!songMetadataLoaded || !availableToPlay) {
+        console.log("Song not loaded or countdown has yet to finish. Please wait before proceeding.");
         return; // Exit the function if metadata isn't loaded
     }
 
@@ -2172,7 +2260,7 @@ function getArtist(songSrc) {
         "Slide da Treme Melódica v2": "DJ FNK, Polaris",
         fantasmas: "Humbe",
         BIKE: "tanger",
-        ARCÀNGEL: "Bizarrap, Arcàngel",
+        ARCANGEL: "Bizarrap, Arcangel",
         TELEKINESIS: "Travis Scott, SZA, Future",
         "Bleed it out": "Linkin Park",
         Grenade: "Bruno Mars",
@@ -2217,6 +2305,8 @@ function getArtist(songSrc) {
         "Lunar Abyss": "Lchavasse",
         Lost: "Linkin Park",
         "La Gozadera": "Gente De Zona, Marc Anthony",
+        SHAKIRA: "Bizarrap, Shakira",
+        QUEVEDO: "Bizarrap, Quevedo",
 
         // Song Versions
 
@@ -2232,7 +2322,8 @@ function getArtist(songSrc) {
         "The Automotivo Infernal 1.0 - Slowed": "MRL, MC GW",
         "The Automotivo Infernal 1.0 - Sped Up": "MRL, MC GW",
         "The Automotivo Infernal 1.0 - Red - Slowed": "MRL, MC GW",
-        "The Automotivo Infernal 1.0 - Red - Sped Up": "MRL, MC GW"
+        "The Automotivo Infernal 1.0 - Red - Sped Up": "MRL, MC GW",
+        "MY EYES - Second half": "Travis Scott"
     };
     let songTitle = getSongTitle(songSrc);
     return artists[songTitle] || "N/A";
@@ -2459,7 +2550,7 @@ function fallbackPause() {
         currentSong.pause();
         playSoundEffect("Resources/SFX/hoverBtn.mp3", 0.5);
         canvasUpdating = false;
-        clearInterval(canvasScalingInterval);
+        manageCanvasScalingInterval(false);
     }
 }
 
@@ -2552,12 +2643,14 @@ function getRandomColor() {
     return `rgb(${r}, ${g}, ${b})`;
 }
 
-function showLoadingBar() {
+function showLoadingBar(resetWidth = false) {
     const loadingBar = document.getElementById("loadingBar");
     const loadingBarCont = document.getElementById("loadingBarContainer");
+    const loadingText = document.getElementById("loadingText");
+    loadingText.innerText = "Loading...";
 
     loadingBarCont.style.position = "fixed";
-    loadingBarCont.style.bottom = "10px"; // Distance from bottom
+    loadingBarCont.style.bottom = "60px"; // Distance from bottom
     loadingBarCont.style.left = "50%"; // Center horizontally
     loadingBarCont.style.transform = "translateX(-50%)"; // Center horizontally
 
@@ -2569,19 +2662,21 @@ function showLoadingBar() {
     loadingBar.style.transition = "width 0.05s linear, height 0.25s ease-out"; // Quick width animation
 
     // Start the width animation for the loading bar
-    loadingBar.style.width = "0%"; // Reset width to start from zero
+    if (resetWidth) loadingBar.style.width = "0%"; // Reset width to start from zero
     loadingBar.style.opacity = "1"; // Ensure the loading bar is visible
 }
 
 function hideLoadingBar() {
     const loadingBarCont = document.getElementById("loadingBarContainer");
     const loadingBar = document.getElementById("loadingBar");
-
     loadingBarCont.style.height = "0px"; // Smoothly reduce height to zero
     loadingBar.style.height = "0px"; // Smoothly reduce height to zero
+    loadingBarCont.style.bottom = "60px"; // Return to original position
+    loadingBarCont.style.width = "80%"; // Initial distance from bottom
     loadingBarCont.style.opacity = "0"; // Fade out the container
     loadingBarCont.style.transition = "opacity 0.5s ease-in-out, height 0.5s ease-in-out"; // Smooth height and opacity transition
     loadingBar.style.transition = "height 0.5s ease-in-out"; // Smooth height transition
+    loadingBarCont.style.transition = `all 0.5s ease-out`;
 }
 
 function updateLoadingBar(percentage) {
@@ -2628,7 +2723,7 @@ function fetchSongWithProgress(url) {
     });
 }
 
-async function fetchSongWithTimeout(url, timeout = 7500) {
+async function fetchSongWithTimeout(url, timeout = 15000) {
     const startTime = Date.now(); // Record the start time
 
     // Create a timeout promise
@@ -2656,6 +2751,7 @@ async function fetchSongWithTimeout(url, timeout = 7500) {
 
 async function startGame(index, versionPath, setIndex) {
     songMetadataLoaded = false; // Reset flag to false at the start of the game
+    availableToPlay = false;
 
     // Check and remove songs with low points from localStorage
     removeLowPointSongs();
@@ -2716,9 +2812,12 @@ async function startGame(index, versionPath, setIndex) {
     currentSong = new Audio(currentSongPath);
     currentSong.volume = currentSongVolume;
 
+    manageCanvasScalingInterval(false);
+
     // Define the function to handle song metadata
     function handleSongData() {
         songMetadataLoaded = true; // Set the flag to true when metadata is loaded
+        availableToPlay = true;
 
         console.log("Loaded selected song's metadata");
 
@@ -2738,8 +2837,6 @@ async function startGame(index, versionPath, setIndex) {
             right: []
         };
 
-        manageCanvasScalingInterval(true);
-
         const songTitle = getSongTitle(currentSongPath);
         const songConfig = getDynamicSpeed(currentSongPath);
 
@@ -2749,6 +2846,12 @@ async function startGame(index, versionPath, setIndex) {
             currentConfigIndex = 0; // Reset currentConfigIndex
             nextSpeedChange = ""; // Reset nextSpeedChange
             speedChanges = true;
+
+            // Clear any existing interval before setting a new one
+            if (speedUpdater) {
+                console.log("existing interval for speed updater");
+                clearInterval(speedUpdater);
+            }
 
             speedUpdater = setInterval(() => {
                 if (currentSong && songConfig && currentConfigIndex < songConfig.length) {
@@ -2815,23 +2918,73 @@ async function startGame(index, versionPath, setIndex) {
             currentConfigIndex = 0;
         }
 
-        currentSong.play(); // Start playing the song immediately
-        songStartTime = Date.now();
-        songStarted = true;
-        gamePaused = false;
-        gameStarted = true;
-        endScreenDrawn = false;
+        function startCountdown() {
+            showLoadingBar(false);
+            const loadingBar = document.getElementById("loadingBar");
+            const loadingBarCont = document.getElementById("loadingBarContainer");
+            const loadingText = document.getElementById("loadingText");
+            let percentage = 100; // Start at 100%
+            const countdownFrom = 3; // Start countdown from 3 seconds
+            const interval = 50; // Interval time in milliseconds (50 milliseconds for smoother update)
+            const totalDuration = countdownFrom * 1000; // Total duration in milliseconds (3 seconds)
+            const step = (100 / totalDuration) * interval; // Calculate step based on smaller interval for smoothness
 
-        if (!canvasUpdating) {
-            canvasUpdating = true; // Set the flag to indicate the canvas is being updated
-            requestAnimationFrame(updateCanvas);
+            // Apply CSS transition for smooth width change and vertical movement
+            loadingBar.style.transition = `width ${interval}ms linear`;
+            loadingBarCont.style.transition = `all 0.5s ease-out`;
+
+            // Move the loading container up initially
+            if (isMobile) {
+                loadingBarCont.style.bottom = "200px"; // Initial distance from bottom
+            } else {
+                loadingBarCont.style.bottom = "300px"; // Initial distance from bottom
+            }
+            loadingBarCont.style.width = "50%"; // Initial width from countdown
+
+            loadingText.textContent = "Get Ready."; // Optional: set text to 0% when countdown ends
+
+            availableToPlay = false;
+
+            const intervalId = setInterval(() => {
+                percentage -= step;
+                if (percentage <= 0) {
+                    percentage = 0; // Ensure percentage does not go below 0
+                    clearInterval(intervalId); // Stop the countdown when it reaches 0
+                    loadingBar.style.width = "0%";
+                    loadingBar.textContent = "0"; // Optional: set text to 0% when countdown ends
+
+                    availableToPlay = true;
+
+                    // Call additional functions once countdown completes
+                    hideLoadingBar();
+                    currentSong.play(); // Start playing the song immediately
+                    songStartTime = Date.now();
+                    songStarted = true;
+                    gamePaused = false;
+                    gameStarted = true;
+                    endScreenDrawn = false;
+
+                    if (!canvasUpdating) {
+                        canvasUpdating = true; // Set the flag to indicate the canvas is being updated
+                        requestAnimationFrame(updateCanvas);
+                    }
+
+                    manageCanvasScalingInterval(true);
+
+                    console.log("Song selected: " + getSongTitle(currentSongPath), "by: " + getArtist(currentSongPath));
+                    console.log("Current song path:", currentSongPath);
+                    console.log("Beatz.io loaded and playing. Have Fun!");
+
+                    currentSong.addEventListener("ended", songEnd);
+                } else {
+                    loadingBar.style.width = percentage + "%";
+
+                    // Calculate the remaining time
+                    const remainingTime = Math.ceil(countdownFrom * (percentage / 100));
+                    loadingBar.textContent = remainingTime;
+                }
+            }, interval);
         }
-
-        console.log("Song selected: " + getSongTitle(currentSongPath), "by: " + getArtist(currentSong.src));
-        console.log("Current song path:", currentSongPath);
-        console.log("Beatz.io loaded and playing. Have Fun!");
-
-        currentSong.addEventListener("ended", songEnd);
 
         document.getElementById("nextButton").style.display = "inline";
         document.getElementById("restartButton").style.display = "inline";
@@ -2849,14 +3002,7 @@ async function startGame(index, versionPath, setIndex) {
         }
 
         document.getElementById("startButton").style.display = "none";
-
-        // Update the page title
-        indexToDisplay = setIndex >= 0 ? setIndex : currentSongIndex;
-        document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 5.0!`;
-
-        console.log(`indexToDisplay converted in startGame: ${indexToDisplay}`);
-
-        hideLoadingBar();
+        startCountdown();
     }
 
     // Check if the song path starts with the specified URL
@@ -2864,18 +3010,26 @@ async function startGame(index, versionPath, setIndex) {
         // Attempt to fetch the song with a timeout
         showLoadingBar();
         try {
-            const blob = await fetchSongWithTimeout(currentSongPath, 7500);
+            const blob = await fetchSongWithTimeout(currentSongPath, 15000);
 
             // Create a URL for the fetched blob and assign it to the audio element
             const blobUrl = URL.createObjectURL(blob);
             currentSong.src = blobUrl; // Set the src AFTER fetching and creating the blob URL
 
             // Add event listeners AFTER setting the src to ensure they work correctly
-            currentSong.addEventListener("loadeddata", handleSongData);
+            currentSong.addEventListener("loadeddata", () => {
+                handleSongData();
+                // Update the page title
+                const indexToDisplay = setIndex >= 0 ? setIndex : currentSongIndex;
+                document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 5.2!`;
+
+                console.log(`indexToDisplay converted in startGame: ${indexToDisplay}`);
+            });
+
             currentSong.addEventListener("error", (ev) => {
                 logError(`Failed to load data for song: ${getSongTitle(currentSongPath)}. Randomizing song. | ${ev.message}`);
-                hideLoadingBar(); // Hide loading bar if an error occurs
                 songMetadataLoaded = true;
+                availableToPlay = true;
                 setTimeout(() => {
                     randomizeSong();
                 }, 1000);
@@ -2888,21 +3042,20 @@ async function startGame(index, versionPath, setIndex) {
                 logError(`Connection timed out while fetching song: ${getSongTitle(currentSongPath)}. | ${error.message}`);
                 hideLoadingBar();
                 songMetadataLoaded = true;
+                availableToPlay = true;
                 setTimeout(() => {
-                    randomizeSong();
+                    restartSong();
                 }, 1000);
             } else if (error.message.includes("503")) {
-                logError(`HTTP 503 (Service Unavailable) Attempting fallback. | ${error}`);
+                logError(`HTTP 503 (Service Unavailable) Attempting fallback to song 1. | ${error}`);
                 hideLoadingBar();
                 setTimeout(() => {
-                    // Attempt to play the first song in the songList
-                    currentSongPath = songList[0];
-                    loadAndPlaySong(currentSongPath);
+                    startGame(0);
                 }, 2500);
             } else {
                 logError(`Failed to fetch song ${getSongTitle(currentSongPath)}, Randomizing song. | ${error}`);
-                hideLoadingBar();
                 songMetadataLoaded = true;
+                availableToPlay = true;
                 setTimeout(() => {
                     randomizeSong();
                 }, 1000);
@@ -2912,18 +3065,28 @@ async function startGame(index, versionPath, setIndex) {
         // Use the old method
         currentSong.addEventListener("error", (ev) => {
             logError(`Failed to load metadata for song: ${getSongTitle(currentSongPath)} Randomizing song. | ${ev.message}`);
+            songMetadataLoaded = true;
+            availableToPlay = true;
             setTimeout(() => {
                 randomizeSong();
             }, 1000);
         });
-        currentSong.addEventListener("loadeddata", handleSongData);
+        // Add event listeners AFTER setting the src to ensure they work correctly
+        currentSong.addEventListener("loadeddata", () => {
+            handleSongData();
+            // Update the page title
+            const indexToDisplay = setIndex >= 0 ? setIndex : currentSongIndex;
+            document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 5.2!`;
+
+            console.log(`indexToDisplay converted in startGame: ${indexToDisplay}`);
+        });
         currentSong.src = currentSongPath; // Set the src using the old method
     }
 }
 
 function songEnd() {
     endScreenDrawn = true;
-    clearInterval(canvasScalingInterval);
+    manageCanvasScalingInterval(false);
 }
 
 // Score logic
@@ -3466,6 +3629,9 @@ function updateCanvas(timestamp, setIndex) {
                     if (!nextSpeedExistsInDynamicSpeeds) {
                         // Mismatch in dynamic speeds detected
                         clearInterval(speedUpdater);
+
+                        nextSpeedChange = null;
+
                         console.log(`Dynamic speeds encountered a "Mismatch//FoundNotCorrect" error. Pausing updates.`);
                         logError("Mismatch//FoundNotCorrect, Pausing updates and restarting song.", 10000);
                         logNotice("Please notify @GuayabR on twitter for this error. https://x.com/@GuayabR ", "", 10000, true);

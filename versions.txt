@@ -559,7 +559,15 @@ Fallback 2: In case Epilogue is unable to load due to the same error, prompt the
 - Added "La Gozadera" by Gente De Zona, and Marc Anthony. (Visualizate)
 //
 
-5.1.0 (LOAD//FETCH 5.0! 27/08/2024)
+5.1.0.1 (LOAD//FETCH 5.1! 27/08/2024)
 - Fixed progress bar being unsynced with the actual data of the song being loaded.
 - Added extra logs option: Logs more notices for informational stuff.
+//
+
+5.2.0.2 (LOAD//FETCH 5.2 28/08/2024)
+After loading a song, a 3 countdown is set so the user has enough time to get ready before starting a song.
+- Added SHAKIRA, By Bizarrap, Shakira.
+- Added QUEVEDO, By Bizarrap, Quevedo.
+- Fixed error 503 falling back to an unspecified function. Now falls back to song #1: Epilogue.
+/ Next update countdown will be customizable.
 

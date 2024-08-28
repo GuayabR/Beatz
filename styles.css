@@ -32,6 +32,7 @@ html {
     position: fixed;
     bottom: 40px;
     left: 50%;
+    z-index: 1010;
     transform: translateX(-50%);
     transition:
         height 0.25s ease-out,

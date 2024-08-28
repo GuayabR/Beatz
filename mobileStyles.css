@@ -41,8 +41,9 @@ body {
     border: 1px solid #ddd;
     margin-top: 10px;
     position: fixed;
-    bottom: 10px;
+    bottom: 40px;
     left: 50%;
+    z-index: 1010;
     transform: translateX(-50%);
     transition:
         height 0.25s ease-out,
@@ -77,19 +78,37 @@ body {
     position: relative;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
     #loadingBarContainer {
-        width: 50%;
-        left: 5%;
+        width: 80%;
+        bottom: 20px;
+        left: 10%;
         transform: none;
+    }
+
+    #loadingText {
+        font-size: 20px;
+    }
+
+    #loadingBar {
+        height: 25px;
     }
 }
 
-@media (min-width: 769px) {
+@media (max-width: 768px) {
     #loadingBarContainer {
-        width: 75%;
-        left: 0;
+        width: 90%;
+        bottom: 10px;
+        left: 5%;
         transform: none;
+    }
+
+    #loadingText {
+        font-size: 16px;
+    }
+
+    #loadingBar {
+        height: 20px;
     }
 }
 
@@ -280,9 +299,9 @@ canvas {
     left: 100px;
     top: 5vh;
     width: 40%;
-    max-height: 90vh;
+    max-height: 85vh;
     overflow: auto;
-    font-size: 7px;
+    font-size: 5px;
     background-color: rgb(255, 255, 255);
     background-color: rgba(0, 0, 0, 0);
 }
@@ -449,8 +468,8 @@ canvas {
     position: relative;
     width: 80%;
     color: rgb(255, 255, 255);
-    font-size: 14px;
-    backdrop-filter: blur(8px);
+    font-size: 12px;
+    backdrop-filter: blur(6px);
 }
 
 .keybind-button {
