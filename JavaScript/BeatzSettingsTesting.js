@@ -49,39 +49,76 @@ function toRepo() {
 
 function toggleFullScreen() {
     if (!document.fullscreenElement) {
-        canvas.requestFullscreen().catch((err) => {
-            console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+        canvasContainer.requestFullscreen().catch((err) => {
             logError(`Error attempting to enable full-screen mode: ${err} | ${err.message} | ${err.name}`);
         });
         console.log("Entered Fullscreen");
+        document.body.classList.add("fullscreen"); // Add fullscreen class to body
         if (userDevice === "Chromebook") {
             canvas.style.scale = "1";
         }
     } else {
         document.exitFullscreen();
         console.log("Exited Fullscreen");
+        document.body.classList.remove("fullscreen"); // Remove fullscreen class from body
         if (userDevice === "Chromebook") {
             canvas.style.scale = "0.9";
         }
     }
 }
 
+// Listen for fullscreen change events to adjust the styles of elements
 document.addEventListener("fullscreenchange", function () {
-    if (document.fullscreenElement) {
+    if (document.fullscreenElement === canvasContainer) {
+        // Adjust styles when entering fullscreen mode
         canvas.style.cursor = "none";
+        backgroundOverlay.style.cursor = "none";
         if (!backgroundIsDefault) {
-            // If the background is transparent, when on fullscreen, ensure no black screen is shown and displays the HTML background
-            canvas.style.background = "url('Resources/BackgroundHtml2.png')";
-            canvas.style.backgroundSize = "cover";
-            canvas.style.backgroundPosition = "center";
+            // Ensure the correct background is displayed
+            BGurl = "url('Resources/BackgroundHtml2.png')";
+            backgroundOverlay.style.backgroundImage = BGurl;
+            backgroundOverlay.style.backgroundSize = "cover";
+            backgroundOverlay.style.backgroundPosition = "center";
         }
+        adjustCanvasForFullscreen();
     } else {
+        // Reset styles when exiting fullscreen mode
+        backgroundOverlay.style.cursor = "default";
         canvas.style.cursor = "default";
         if (!backgroundIsDefault) {
-            canvas.style.background = "transparent"; // If the background is transparent, when fullscreen is toggled off, make the canvas transparent again
+            backgroundOverlay.style.background = "transparent";
         }
+        resetCanvasFromFullscreen();
     }
 });
+
+// Function to adjust canvas styles for fullscreen
+function adjustCanvasForFullscreen() {
+    // Get the aspect ratios
+    const containerWidth = window.innerWidth;
+    const containerHeight = window.innerHeight;
+    const canvasAspectRatio = canvas.width / canvas.height;
+    const containerAspectRatio = containerWidth / containerHeight;
+
+    // Maintain aspect ratio while filling the fullscreen
+    if (canvasAspectRatio > containerAspectRatio) {
+        canvas.style.width = "100%";
+        canvas.style.height = "auto";
+    } else {
+        canvas.style.width = "auto";
+        canvas.style.height = "100%";
+    }
+}
+
+// Function to reset canvas styles when exiting fullscreen mode
+function resetCanvasFromFullscreen() {
+    canvas.style.width = ""; // Reset width to default
+    canvas.style.height = ""; // Reset height to default
+    canvas.style.position = "absolute";
+    canvas.style.top = "50%";
+    canvas.style.left = "50%";
+    canvas.style.transform = "translate(-50%, -50%)";
+}
 
 // Settings
 const settingsModal = document.getElementById("keybindsModal");
@@ -501,8 +538,8 @@ const Presets = {
             songTimeoutAfterSongEndNum: 5000,
             vinylRotation: true,
             circularImage: true,
-            backgroundForCanvas: "transparentBG",
-            customBackgroundBlur: "10",
+            backgroundOption: "defaultBG8",
+            customBackgroundBlur: "0",
             customBackground: "",
             logKeys: false,
             hitSound: "smallClick",
@@ -510,7 +547,9 @@ const Presets = {
             fetchSongs: false,
             playSFX: true,
             pulseOnBPM: true,
-            extraLog: true
+            extraLog: false,
+            BGbrightness: 1,
+            countdownFrom: 0
         }
     },
     VERIDIAN: {
@@ -536,7 +575,7 @@ const Presets = {
             songTimeoutAfterSongEndNum: 5000,
             vinylRotation: true,
             circularImage: true,
-            backgroundForCanvas: "defaultBG",
+            backgroundOption: "defaultBG",
             customBackgroundBlur: "0",
             customBackground: "",
             logKeys: false,
@@ -545,7 +584,9 @@ const Presets = {
             fetchSongs: false,
             playSFX: true,
             pulseOnBPM: true,
-            extraLog: false
+            extraLog: false,
+            BGbrightness: 1,
+            countdownFrom: 3
         }
     },
     OG: {
@@ -571,7 +612,7 @@ const Presets = {
             songTimeoutAfterSongEndNum: 5000,
             vinylRotation: false,
             circularImage: false,
-            backgroundForCanvas: "defaultBG",
+            backgroundOption: "defaultBG",
             customBackgroundBlur: "0",
             customBackground: "",
             logKeys: false,
@@ -580,7 +621,9 @@ const Presets = {
             fetchSongs: false,
             playSFX: false,
             pulseOnBPM: false,
-            extraLog: false
+            extraLog: false,
+            BGbrightness: 1,
+            countdownFrom: 3
         }
     }
 };
@@ -624,7 +667,7 @@ function applyPreset(presetName) {
     document.getElementById("songTimeoutAfterSongEndNum").value = miscellaneous.songTimeoutAfterSongEndNum;
     document.getElementById("vinylRotation").checked = miscellaneous.vinylRotation;
     document.getElementById("circularImage").checked = miscellaneous.circularImage;
-    document.getElementById("defaultBackground").value = miscellaneous.backgroundForCanvas;
+    document.getElementById("defaultBackground").value = miscellaneous.backgroundOption;
     document.getElementById("backdropBlurInput").value = miscellaneous.customBackgroundBlur;
     document.getElementById("logKeysCheck").checked = miscellaneous.logKeys;
     document.getElementById("defaultHitSound").value = miscellaneous.hitSound;
@@ -632,12 +675,14 @@ function applyPreset(presetName) {
     document.getElementById("playSFXcheck").checked = miscellaneous.playSFX;
     document.getElementById("pulseOnBPMcheck").checked = miscellaneous.pulseOnBPM;
     document.getElementById("extraLogCheck").checked = miscellaneous.extraLog;
+    document.getElementById("readyTimerInput").value = miscellaneous.countdownFrom;
+    document.getElementById("brightnessInput").value = miscellaneous.BGbrightness;
 
     if (userDevice !== "iOS") {
         document.getElementById("fetchSongsSite").checked = miscellaneous.fetchSongs;
     }
 
-    if (miscellaneous.backgroundForCanvas === "customBG" && miscellaneous.customBackground) {
+    if (miscellaneous.backgroundOption === "customBG" && miscellaneous.customBackground) {
         document.getElementById("customBGLabel").style.display = "inline";
         document.getElementById("customBGInput").style.display = "inline";
         document.getElementById("customTransparentBGblur").style.display = "inline";
@@ -648,7 +693,7 @@ function applyPreset(presetName) {
         marginCustomBG2.style.display = "inline";
         marginBlur.style.display = "inline";
         marginBlur2.style.display = "inline";
-    } else if (miscellaneous.backgroundForCanvas === "transparentBG") {
+    } else if (miscellaneous.backgroundOption === "transparentBG") {
         document.getElementById("customTransparentBGblur").style.display = "inline";
         document.getElementById("backdropBlurInput").style.display = "inline";
         marginSelect.style.display = "inline";
@@ -670,6 +715,7 @@ function applyPreset(presetName) {
 
     saveSettings();
     logNotice(`Applied preset: ${presetName}`);
+    setTimeout(loadSettings, 100);
 }
 
 // Function to apply the preset based on the one you chose
@@ -695,6 +741,7 @@ function applyPresetKeys(presetName) {
 
     saveSettings();
     logNotice(`Applied preset's keybinds: ${presetName}`);
+    setTimeout(loadSettings, 100);
 }
 
 // Function to apply the preset based on the one you chose
@@ -708,7 +755,7 @@ function applyPresetMisc(presetName) {
     document.getElementById("songTimeoutAfterSongEndNum").value = miscellaneous.songTimeoutAfterSongEndNum;
     document.getElementById("vinylRotation").checked = miscellaneous.vinylRotation;
     document.getElementById("circularImage").checked = miscellaneous.circularImage;
-    document.getElementById("defaultBackground").value = miscellaneous.backgroundForCanvas;
+    document.getElementById("defaultBackground").value = miscellaneous.backgroundOption;
     document.getElementById("backdropBlurInput").value = miscellaneous.customBackgroundBlur;
     document.getElementById("logKeysCheck").checked = miscellaneous.logKeys;
     document.getElementById("defaultHitSound").value = miscellaneous.hitSound;
@@ -716,6 +763,8 @@ function applyPresetMisc(presetName) {
     document.getElementById("playSFXcheck").checked = miscellaneous.playSFX;
     document.getElementById("pulseOnBPMcheck").checked = miscellaneous.pulseOnBPM;
     document.getElementById("extraLogCheck").checked = miscellaneous.extraLog;
+    document.getElementById("readyTimerInput").value = miscellaneous.countdownFrom;
+    document.getElementById("brightnessInput").value = miscellaneous.BGbrightness;
 
     if (userDevice !== "iOS") {
         document.getElementById("fetchSongsSite").checked = miscellaneous.fetchSongs;
@@ -730,7 +779,7 @@ function applyPresetMisc(presetName) {
     const marginSelect = document.getElementById("marginSelect");
     const marginSelect2 = document.getElementById("marginSelect2");
 
-    if (miscellaneous.backgroundForCanvas === "customBG" && miscellaneous.customBackground) {
+    if (miscellaneous.backgroundOption === "customBG" && miscellaneous.customBackground) {
         document.getElementById("customBGLabel").style.display = "inline";
         document.getElementById("customBGInput").style.display = "inline";
         document.getElementById("customTransparentBGblur").style.display = "inline";
@@ -741,7 +790,7 @@ function applyPresetMisc(presetName) {
         marginCustomBG2.style.display = "inline";
         marginBlur.style.display = "inline";
         marginBlur2.style.display = "inline";
-    } else if (miscellaneous.backgroundForCanvas === "transparentBG") {
+    } else if (miscellaneous.backgroundOption === "transparentBG") {
         document.getElementById("customTransparentBGblur").style.display = "inline";
         document.getElementById("backdropBlurInput").style.display = "inline";
         marginSelect.style.display = "inline";
@@ -763,6 +812,7 @@ function applyPresetMisc(presetName) {
 
     saveSettings();
     logNotice(`Applied preset's miscellaneous: ${presetName}`);
+    setTimeout(loadSettings, 100);
 }
 
 function toggleKeyLogger() {
@@ -832,10 +882,16 @@ const defaultMiscellaneous = {
     fetchSongs: false,
     playSFX: true,
     pulseOnBPM: true,
-    extraLog: false
+    extraLog: false,
+    BGbrightness: 1,
+    countdownFrom: 3
 };
 
-var saveSongUsingControllers = false;
+let countdownFrom;
+
+let BGbrightness = 1;
+
+let saveSongUsingControllers = false;
 
 let logKeys = true;
 
@@ -845,7 +901,7 @@ let playSFX = true;
 
 let pulseOnBPM = true;
 
-let BGurl = "url('Resources/Background2.png";
+let BGurl = "url('Resources/defaultBG.png";
 
 let keybinds = { ...defaultKeybinds };
 let miscellaneous = { ...defaultMiscellaneous };
@@ -925,6 +981,13 @@ function loadSettings() {
     savingSongs.value = miscellaneous.saveSongUsingControllers;
 
     document.getElementById("songTimeoutAfterSongEndNum").value = miscellaneous.songTimeoutDelay;
+    songTimeoutDelay = miscellaneous.songTimeoutDelay;
+
+    document.getElementById("readyTimerInput").value = miscellaneous.countdownFrom;
+    countdownFrom = miscellaneous.countdownFrom;
+
+    document.getElementById("brightnessInput").value = miscellaneous.BGbrightness;
+    BGbrightness = Math.min(miscellaneous.BGbrightness, 1); // Ensure brightness does not exceed 1
 
     const savedBackgroundOption = savedMiscellaneous.backgroundOption || "defaultBG";
     const savedCustomBackgroundBlur = savedMiscellaneous.customBackgroundBlur || "0px";
@@ -980,7 +1043,8 @@ function loadSettings() {
 
     switch (savedMiscellaneous.backgroundOption) {
         case "defaultBG":
-            BGurl = `url("Resources/Background2.png")`;
+            BGurl = `url("Resources/defaultBG.png")`;
+            backgroundOverlay.style.backdropFilter = "none";
             backgroundIsDefault = true;
             marginSelect.style.display = "inline";
             marginSelect2.style.display = "inline";
@@ -990,7 +1054,8 @@ function loadSettings() {
             marginBlur2.style.display = "none";
             break;
         case "defaultBG2":
-            BGurl = `url("Resources/Background3.jpg")`;
+            BGurl = `url("Resources/wavyChroma.jpg")`;
+            backgroundOverlay.style.backdropFilter = "none";
             backgroundIsDefault = true;
             marginSelect.style.display = "inline";
             marginSelect2.style.display = "inline";
@@ -1000,7 +1065,8 @@ function loadSettings() {
             marginBlur2.style.display = "none";
             break;
         case "defaultBG3":
-            BGurl = `url("Resources/Background4.png")`;
+            BGurl = `url("Resources/darkSunset.png")`;
+            backgroundOverlay.style.backdropFilter = "none";
             backgroundIsDefault = true;
             marginSelect.style.display = "inline";
             marginSelect2.style.display = "inline";
@@ -1010,7 +1076,52 @@ function loadSettings() {
             marginBlur2.style.display = "none";
             break;
         case "defaultBG4":
-            BGurl = `url("Resources/Background5.jpg")`;
+            BGurl = `url("Resources/blueWave.jpg")`;
+            backgroundOverlay.style.backdropFilter = "none";
+            backgroundIsDefault = true;
+            marginSelect.style.display = "inline";
+            marginSelect2.style.display = "inline";
+            marginCustomBG.style.display = "none";
+            marginCustomBG2.style.display = "none";
+            marginBlur.style.display = "none";
+            marginBlur2.style.display = "none";
+            break;
+        case "defaultBG5":
+            BGurl = `url("Resources/space.jpeg")`;
+            backgroundOverlay.style.backdropFilter = "none";
+            backgroundIsDefault = true;
+            marginSelect.style.display = "inline";
+            marginSelect2.style.display = "inline";
+            marginCustomBG.style.display = "none";
+            marginCustomBG2.style.display = "none";
+            marginBlur.style.display = "none";
+            marginBlur2.style.display = "none";
+            break;
+        case "defaultBG6":
+            BGurl = `url("Resources/galaxy.jpg")`;
+            backgroundOverlay.style.backdropFilter = "none";
+            backgroundIsDefault = true;
+            marginSelect.style.display = "inline";
+            marginSelect2.style.display = "inline";
+            marginCustomBG.style.display = "none";
+            marginCustomBG2.style.display = "none";
+            marginBlur.style.display = "none";
+            marginBlur2.style.display = "none";
+            break;
+        case "defaultBG7":
+            BGurl = `url("Resources/darkerSpace.jpg")`;
+            backgroundOverlay.style.backdropFilter = "none";
+            backgroundIsDefault = true;
+            marginSelect.style.display = "inline";
+            marginSelect2.style.display = "inline";
+            marginCustomBG.style.display = "none";
+            marginCustomBG2.style.display = "none";
+            marginBlur.style.display = "none";
+            marginBlur2.style.display = "none";
+            break;
+        case "defaultBG8":
+            BGurl = `url("Resources/starSystem.jpg")`;
+            backgroundOverlay.style.backdropFilter = "none";
             backgroundIsDefault = true;
             marginSelect.style.display = "inline";
             marginSelect2.style.display = "inline";
@@ -1020,7 +1131,8 @@ function loadSettings() {
             marginBlur2.style.display = "none";
             break;
         case "htmlBG":
-            BGurl = `url("Resources/BackgroundHtml2.png")`;
+            BGurl = "none";
+            backgroundOverlay.style.backdropFilter = `blur(${savedCustomBackgroundBlur}px)`;
             backgroundIsDefault = true;
             marginSelect.style.display = "inline";
             marginSelect2.style.display = "inline";
@@ -1030,8 +1142,8 @@ function loadSettings() {
             marginBlur2.style.display = "none";
             break;
         case "transparentBG":
-            canvas.style.background = "transparent";
-            canvas.style.backdropFilter = `blur(${savedCustomBackgroundBlur}px)`;
+            BGurl = "none";
+            backgroundOverlay.style.backdropFilter = `blur(${savedCustomBackgroundBlur}px)`;
             backgroundIsDefault = false;
             marginSelect.style.display = "inline";
             marginSelect2.style.display = "inline";
@@ -1042,7 +1154,8 @@ function loadSettings() {
             break;
         case "customBG":
             if (savedCustomBackground) {
-                BGurl = `url("${savedCustomBackground}")`;
+                BGurl = `url("${savedCustomBG}")`;
+                backgroundOverlay.style.backdropFilter = `blur(${savedCustomBackgroundBlur}px)`;
             }
             marginSelect.style.display = "inline";
             marginSelect2.style.display = "inline";
@@ -1053,7 +1166,8 @@ function loadSettings() {
             backgroundIsDefault = true;
             break;
         default:
-            BGurl = `url("Resources/Background2.png")`;
+            BGurl = `url("Resources/defaultBG.png")`;
+            backgroundOverlay.style.backdropFilter = "none";
             backgroundIsDefault = true;
             marginSelect.style.display = "inline";
             marginSelect2.style.display = "inline";
@@ -1063,7 +1177,15 @@ function loadSettings() {
             marginBlur2.style.display = "none";
     }
 
+    backgroundOverlay.style.filter = `brightness(${BGbrightness})`;
+
     initializeHitSounds(miscellaneous.hitSound);
+
+    if (savedMiscellaneous.noteStyle === "arrows") {
+        switchToArrows();
+    } else if (savedMiscellaneous.noteStyle === "circles") {
+        switchToCircles();
+    }
 
     console.log("Loaded settings", keybinds, miscellaneous);
 }
@@ -1073,6 +1195,19 @@ function getFileDataUrl(file, callback) {
     reader.onload = function (e) {
         callback(e.target.result);
     };
+    reader.readAsDataURL(file);
+}
+
+function handleFileUpload(file) {
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+        const imageData = e.target.result;
+
+        localStorage.setItem("customBackground", imageData);
+        BGurl = `url("${imageData}")`;
+    };
+
     reader.readAsDataURL(file);
 }
 
@@ -1154,10 +1289,13 @@ function saveSettings() {
         };
     }
 
+    const countdownInputValue = document.getElementById("readyTimerInput").value;
+    const countdownFromParsed = parseFloat(countdownInputValue, 10); // Use 10 to specify decimal parsing
+
     const newMiscellaneous = {
         noteStyle: document.getElementById("defaultNoteStyle").value,
         songTimeoutAfterSongEnd: document.getElementById("songTimeoutAfterSongEnd").checked,
-        songTimeoutDelay: parseInt(document.getElementById("songTimeoutAfterSongEndNum").value) || defaultMiscellaneous.songTimeoutDelay,
+        songTimeoutDelay: parseInt(document.getElementById("songTimeoutAfterSongEndNum").value, 10) || defaultMiscellaneous.songTimeoutDelay,
         vinylRotation: document.getElementById("vinylRotation").checked,
         circularImage: document.getElementById("circularImage").checked,
         backgroundOption: document.getElementById("defaultBackground").value,
@@ -1168,7 +1306,9 @@ function saveSettings() {
         fetchSongs: userDevice === "iOS" || document.getElementById("fetchSongsSite").checked,
         playSFX: document.getElementById("playSFXcheck").checked,
         pulseOnBPM: document.getElementById("pulseOnBPMcheck").checked,
-        extraLog: document.getElementById("extraLogCheck").checked
+        extraLog: document.getElementById("extraLogCheck").checked,
+        BGbrightness: parseFloat(document.getElementById("brightnessInput").value) || defaultMiscellaneous.BGbrightness,
+        countdownFrom: isNaN(countdownFromParsed) ? defaultMiscellaneous.countdownFrom : countdownFromParsed
     };
 
     // Compare new settings with saved settings
@@ -1189,6 +1329,22 @@ function saveSettings() {
     playSFX = newMiscellaneous.playSFX;
     pulseOnBPM = newMiscellaneous.pulseOnBPM;
     extraLog = newMiscellaneous.extraLog;
+
+    // Validation and adjustment of newMiscellaneous values
+    if (newMiscellaneous.BGbrightness > 1) {
+        newMiscellaneous.BGbrightness = 1;
+    } else if (newMiscellaneous.BGbrightness < 0) {
+        newMiscellaneous.BGbrightness = 0;
+    }
+
+    if (newMiscellaneous.countdownFrom < 0) {
+        alert("Please enter a non-negative number for the countdown timer.");
+        return;
+    }
+
+    // Apply the changes to global variables
+    countdownFrom = newMiscellaneous.countdownFrom;
+    BGbrightness = newMiscellaneous.BGbrightness;
 
     const timeoutInputValue = newMiscellaneous.songTimeoutDelay;
 
@@ -1217,40 +1373,62 @@ function saveSettings() {
 
     switch (newMiscellaneous.backgroundOption) {
         case "defaultBG":
-            BGurl = `url("Resources/Background2.png")`;
-            backgroundIsDefault = true;
+            BGurl = `url("Resources/defaultBG.png")`;
+            backgroundOverlay.style.backdropFilter = "none";
             break;
         case "defaultBG2":
-            BGurl = `url("Resources/Background3.jpg")`;
-            backgroundIsDefault = true;
+            BGurl = `url("Resources/wavyChroma.jpg")`;
+            backgroundOverlay.style.backdropFilter = "none";
             break;
         case "defaultBG3":
-            BGurl = `url("Resources/Background4.png")`;
-            backgroundIsDefault = true;
+            BGurl = `url("Resources/darkSunset.png")`;
+            backgroundOverlay.style.backdropFilter = "none";
             break;
         case "defaultBG4":
-            BGurl = `url("Resources/Background5.jpg")`;
-            backgroundIsDefault = true;
+            BGurl = `url("Resources/blueWave.jpg")`;
+            backgroundOverlay.style.backdropFilter = "none";
+            break;
+        case "defaultBG5":
+            BGurl = `url("Resources/space.jpeg")`;
+            backgroundOverlay.style.backdropFilter = "none";
+            break;
+        case "defaultBG6":
+            BGurl = `url("Resources/galaxy.jpg")`;
+            backgroundOverlay.style.backdropFilter = "none";
+            break;
+        case "defaultBG7":
+            BGurl = `url("Resources/darkerSpace.jpg")`;
+            backgroundOverlay.style.backdropFilter = "none";
+            break;
+        case "defaultBG8":
+            BGurl = `url("Resources/starSystem.jpg")`;
+            backgroundOverlay.style.backdropFilter = "none";
             break;
         case "htmlBG":
             BGurl = `url("Resources/BackgroundHtml2.png")`;
-            backgroundIsDefault = true;
+            backgroundOverlay.style.backdropFilter = "none";
             break;
         case "transparentBG":
-            canvas.style.background = "transparent";
-            canvas.style.backdropFilter = `blur(${newMiscellaneous.customBackgroundBlur}px)`;
-            backgroundIsDefault = false;
+            BGurl = "none";
+            backgroundOverlay.style.backdropFilter = `blur(${newMiscellaneous.customBackgroundBlur}px)`;
             break;
         case "customBG":
             const file = document.getElementById("customBGInput").files[0];
             if (file) {
                 handleFileUpload(file);
             }
-            backgroundIsDefault = true;
             break;
         default:
-            BGurl = `url("Resources/Background2.png")`;
-            backgroundIsDefault = true;
+            BGurl = `url("Resources/defaultBG.png")`;
+            backgroundOverlay.style.backdropFilter = "none";
+    }
+
+    backgroundOverlay.style.filter = `brightness(${newMiscellaneous.BGbrightness})`;
+
+    if (newMiscellaneous.noteStyle === "arrows") {
+        switchToArrows();
+    } else if (newMiscellaneous.noteStyle === "circles") {
+        switchToCircles();
     }
 
     if (userDevice === "Desktop" || userDevice === "Chromebook") {
@@ -1272,30 +1450,6 @@ function saveSettings() {
     }, 2500); // Hide the message after 2.5 seconds
 
     console.log("Saved settings", keybinds, miscellaneous);
-
-    playSoundEffect("Resources/SFX/clickBtn.mp3", 0.7);
-}
-
-function handleFileUpload(file) {
-    const reader = new FileReader();
-
-    reader.onload = function (e) {
-        const imageData = e.target.result;
-
-        localStorage.setItem("customBackground", imageData);
-        BGurl = `url("${imageData}")`;
-    };
-
-    reader.readAsDataURL(file);
-}
-
-function applyDefaultNoteStyle() {
-    const noteStyle = localStorage.getItem("noteStyle") || defaultMiscellaneous.noteStyle;
-    if (noteStyle === "circles") {
-        switchToCircles();
-    } else {
-        switchToArrows();
-    }
 }
 
 function toggleNoteStyle() {

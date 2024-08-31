@@ -570,4 +570,16 @@ After loading a song, a 3 countdown is set so the user has enough time to get re
 - Added QUEVEDO, By Bizarrap, Quevedo.
 - Fixed error 503 falling back to an unspecified function. Now falls back to song #1: Epilogue.
 / Next update countdown will be customizable.
+//
+
+5.3.2.4 (LOAD//FETCH 5.3! 30/08/2024)
+New default backgrounds added:
+- Space
+- Darker space
+- Galaxy
+- Star system
+- Countdown before a song is now customizable in the settings menu.
+- Added a brightness customizer to the background (0 - 1)
+- Fixed changed default note style not being applied after saving
+
 

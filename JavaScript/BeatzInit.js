@@ -20,8 +20,15 @@ async function checkForNewRelease(currentVersion) {
     try {
         const response = await fetch(apiUrl);
         const release = await response.json();
+
         const latestVersion = release.tag_name;
         const releaseNotes = release.body; // Release notes
+
+        // Check if any of the fields are undefined
+        if (typeof latestVersion === "undefined" || typeof releaseNotes === "undefined") {
+            console.warn("Latest version or release notes are undefined, not displaying popup.");
+            return; // Exit the function early if any field is undefined
+        }
 
         if (latestVersion !== currentVersion) {
             // A new release is detected
@@ -599,10 +606,6 @@ function setupMobileEventListeners() {
     canvas.removeEventListener("mouseup", handleMouseUp, false);
     canvas.removeEventListener("mouseleave", handleMouseUp, false);
 }
-
-setInterval(() => {
-    checkForNewRelease(VERSION); // Call every 10 seconds
-}, 10000); // 10000 milliseconds = 10 seconds
 
 // - . / .- -- --- / .- -. --. .  /.--. . .-. --- / - ..- / -. --- / .-.. --- / ... .- -... . ... / -.-- / -. --- / ... . / --.- ..- . / .... .- -.-. . .-.
 

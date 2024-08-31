@@ -2,13 +2,16 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Beatz 5.0!</title>
+        <title>Beatz 5.3!</title>
         <link rel="icon" type="image/x-icon" href="Resources/favicon.png" />
         <link rel="stylesheet" id="stylesheet" type="text/css" href="styles.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     </head>
     <body>
-        <canvas id="myCanvas" width="1280" height="720"></canvas>
+        <div id="canvasContainer">
+            <div id="backgroundOverlay"></div>
+            <canvas id="myCanvas" width="1280" height="720"></canvas>
+        </div>
         <div id="loadingBarContainer">
             <div id="loadingText">Loading...</div>
             <div id="loadingBar"></div>
@@ -174,12 +177,19 @@
                     <label for="extraLogCheck">Extra notices? (Dev)</label>
                     <input type="checkbox" id="extraLogCheck" name="extraLogCheck" onchange="toggleExtraLogs()" /><br /><br />
 
+                    <label id="readyTimerLabel" for="readyTimerInput">Seconds before starting a song:</label>
+                    <input type="number" id="readyTimerInput" max="15" /><br /><br />
+
                     <label for="defaultBackground">Background image:</label>
                     <select id="defaultBackground" name="backgroundForCanvas">
                         <option value="defaultBG">Default (Uproxide)</option>
                         <option value="defaultBG2">Wavy chromatic</option>
                         <option value="defaultBG3">Dark orange sunset</option>
                         <option value="defaultBG4">Dark Blue Flow</option>
+                        <option value="defaultBG5">Space</option>
+                        <option value="defaultBG6">Galaxy</option>
+                        <option value="defaultBG7">Darker Space</option>
+                        <option value="defaultBG8">Star System</option>
                         <option value="htmlBG">Copy HTML</option>
                         <option value="transparentBG">Transparent</option>
                         <option value="customBG">Custom background!</option></select
@@ -190,6 +200,9 @@
 
                     <label id="customTransparentBGblur" for="backdropBlurInput" style="display: none">Background blur:</label>
                     <input type="number" id="backdropBlurInput" style="display: none" /><br id="marginBlurBG" /><br id="marginBlurBG2" />
+
+                    <label id="customBrightness" for="brightnessInput">Brightness:</label>
+                    <input type="number" id="brightnessInput" max="1" step="0.01" /><br id="marginBrightBG" /><br id="marginBrightBG2" />
 
                     <span id="settingsSaved" style="color: white; display: none" class="settingsSavedMsg">Settings saved!</span>
                     <button id="saveSettingsBtn" class="save-settings-btn" type="button">Save</button>
@@ -239,7 +252,7 @@
             <button id="contactbtn" onclick="email()"><i class="fa-solid fa-envelope"></i> Contact</button>
         </div>
 
-        <div id="publicToTestToggle"><button id="publicbtn" onclick="toVersion()">Open public game</button><br /><br /></div>
+        <div id="publicToTestToggle"><button id="publicbtn" onclick="toVersion()">Open testing game</button><br /><br /></div>
 
         <h2>
             Background image from:

@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: LOAD//FETCH 5.2.0.2 test (release.version.subversion.bugfix)
+ * Version: LOAD//FETCH 5.3.1.3 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -10,13 +10,17 @@
 
 const userDevice = detectDeviceType();
 
-const VERSION = "LOAD//FETCH 5.2.0.2";
-var PUBLICVERSION = `5.0! (${userDevice} Port)`;
+const VERSION = "LOAD//FETCH 5.3.1.3";
+var PUBLICVERSION = `5.3! (${userDevice} Port)`;
 console.log("Version: " + VERSION);
 
 const canvas = document.getElementById("myCanvas");
 
 const ctx = canvas.getContext("2d");
+
+const backgroundOverlay = document.getElementById("backgroundOverlay");
+
+const canvasContainer = document.getElementById("canvasContainer");
 
 const WIDTH = 1280;
 
@@ -384,15 +388,15 @@ var noteRightPressIMG = new Image();
 
 var noCover = new Image("Resources/Covers/noCover.png"); // Used for covers that are not found in the files (e.g forgot to add it or misspelt it)
 
-var BGbright = new Image("Resources/Background2.png"); // Default background
+var BGbright = new Image("Resources/defaultBG.png"); // Default background
 
-var BG2 = new Image("Resources/Background3.jpg"); // Wavy chromatic background
+var BG2 = new Image("Resources/wavyChroma.jpg"); // Wavy chromatic background
 
-var BG3 = new Image("Resources/Background4.png"); // Dark orange sunset
+var BG3 = new Image("Resources/darkSunset.png"); // Dark orange sunset
 
-var BG4 = new Image("Resources/BackgroundHtml2.png"); // HTML Background (Windows orange-purple bloom)
+var BG4 = new Image("Resources/HTMLbgWin.png"); // HTML Background (Windows orange-purple bloom)
 
-var BG5 = new Image("Resources/Background5.jpg"); // Dark Blue Flow Background
+var BG5 = new Image("Resources/blueWave.jpg"); // Dark Blue Flow Background
 
 console.log("Textures loaded.");
 
@@ -2465,7 +2469,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Settings
 
     loadSettings();
-    applyDefaultNoteStyle();
     updateKeybindsFields();
     toggleNoteStyleButtonDisplay();
     toggleTimeoutInput();
@@ -2482,19 +2485,19 @@ function simulateKeyPress(key) {
 
 window.onload = function () {
     if (userDevice === "Desktop" || userDevice === "Chromebook") {
-        canvas.style.backgroundImage = "url('Resources/BeatzBanner.jpg')";
+        backgroundOverlay.style.backgroundImage = "url('Resources/BeatzBanner.jpg')";
     } else if (userDevice === "Mobile" || userDevice === "Android" || userDevice === "iOS") {
-        canvas.style.backgroundImage = "url('Resources/BeatzBannerMBL.jpg')";
+        backgroundOverlay.style.backgroundImage = "url('Resources/BeatzBannerMBL.jpg')";
     }
 
-    canvas.style.backgroundSize = "cover";
-    canvas.style.backgroundPosition = "center";
+    backgroundOverlay.style.backgroundSize = "cover";
+    backgroundOverlay.style.backgroundPosition = "center";
 
     // Apply the saved blur value from localStorage immediately
     const savedMiscellaneous = JSON.parse(localStorage.getItem("miscellaneous")) || {};
     const savedCustomBackgroundBlur = savedMiscellaneous.customBackgroundBlur || "0px";
     document.getElementById("backdropBlurInput").value = savedCustomBackgroundBlur;
-    canvas.style.backdropFilter = `blur(${savedCustomBackgroundBlur})`;
+    backgroundOverlay.style.backdropFilter = `blur(${savedCustomBackgroundBlur})`;
 
     // Add event listeners to buttons
     document.getElementById("toggleAutoHit").addEventListener("click", toggleAutoHit);
@@ -2643,7 +2646,7 @@ function getRandomColor() {
     return `rgb(${r}, ${g}, ${b})`;
 }
 
-function showLoadingBar(resetWidth = false) {
+function showLoadingBar(resetWidth = true) {
     const loadingBar = document.getElementById("loadingBar");
     const loadingBarCont = document.getElementById("loadingBarContainer");
     const loadingText = document.getElementById("loadingText");
@@ -2696,7 +2699,7 @@ function fetchSongWithProgress(url) {
                 const percentComplete = (event.loaded / event.total) * 100;
                 updateLoadingBar(percentComplete);
                 if (extraLog) {
-                    logNotice(`Loading progress: ${percentComplete.toFixed(2)}%`);
+                    logNotice(`Loading progress: ${percentComplete.toFixed(2)}%`, "", 1000);
                 }
             }
         };
@@ -2707,7 +2710,7 @@ function fetchSongWithProgress(url) {
             } else {
                 reject(new Error(`HTTP error ${xhr.status}: ${xhr.statusText}`));
                 if (extraLog) {
-                    logNotice(`HTTP error ${xhr.status}: ${xhr.statusText}`);
+                    logError(`HTTP error ${xhr.status}: ${xhr.statusText}`, 3000);
                 }
             }
         };
@@ -2715,7 +2718,7 @@ function fetchSongWithProgress(url) {
         xhr.onerror = function () {
             reject(new Error("Network error: Check your internet connection."));
             if (extraLog) {
-                logNotice("Network error: Check your internet connection.");
+                logError("Network error: Check your internet connection.", 5000);
             }
         };
 
@@ -2735,7 +2738,7 @@ async function fetchSongWithTimeout(url, timeout = 15000) {
         const loadTime = Date.now() - startTime; // Calculate the load time
         console.log(`Song loaded in ${loadTime} ms.`);
         if (extraLog) {
-            logNotice(`Song loaded in ${loadTime} ms.`);
+            logNotice(`Song loaded in ${loadTime} ms.`, "", 3000);
         }
         return response;
     } catch (error) {
@@ -2919,15 +2922,42 @@ async function startGame(index, versionPath, setIndex) {
         }
 
         function startCountdown() {
-            showLoadingBar(false);
             const loadingBar = document.getElementById("loadingBar");
             const loadingBarCont = document.getElementById("loadingBarContainer");
             const loadingText = document.getElementById("loadingText");
             let percentage = 100; // Start at 100%
-            const countdownFrom = 3; // Start countdown from 3 seconds
             const interval = 50; // Interval time in milliseconds (50 milliseconds for smoother update)
             const totalDuration = countdownFrom * 1000; // Total duration in milliseconds (3 seconds)
             const step = (100 / totalDuration) * interval; // Calculate step based on smaller interval for smoothness
+
+            if (countdownFrom === 0) {
+                availableToPlay = true;
+
+                // Call additional functions once countdown completes
+                hideLoadingBar();
+                currentSong.play(); // Start playing the song immediately
+                songStartTime = Date.now();
+                songStarted = true;
+                gamePaused = false;
+                gameStarted = true;
+                endScreenDrawn = false;
+
+                if (!canvasUpdating) {
+                    canvasUpdating = true; // Set the flag to indicate the canvas is being updated
+                    requestAnimationFrame(updateCanvas);
+                }
+
+                manageCanvasScalingInterval(true);
+
+                console.log("Song selected: " + getSongTitle(currentSongPath), "by: " + getArtist(currentSongPath));
+                console.log("Current song path:", currentSongPath);
+                console.log("Beatz.io loaded and playing. Have Fun!");
+
+                currentSong.addEventListener("ended", songEnd);
+                return;
+            }
+
+            showLoadingBar(false);
 
             // Apply CSS transition for smooth width change and vertical movement
             loadingBar.style.transition = `width ${interval}ms linear`;
@@ -3338,37 +3368,40 @@ function resizeCanvas() {
     const viewportAspectRatio = viewportWidth / viewportHeight;
 
     let scaleFactor;
-    let canvasWidth, canvasHeight;
+    let containerWidth, containerHeight;
 
     if (viewportAspectRatio > canvasAspectRatio) {
-        // Fit canvas height to viewport height
+        // Fit container height to viewport height
         scaleFactor = viewportHeight / canvas.height;
-        canvasWidth = canvas.width * scaleFactor;
-        canvasHeight = viewportHeight;
+        containerWidth = canvas.width * scaleFactor;
+        containerHeight = viewportHeight;
     } else {
-        // Fit canvas width to viewport width
+        // Fit container width to viewport width
         scaleFactor = viewportWidth / canvas.width;
-        //canvasWidth = canvas.width * scaleFactor;
-        //canvasHeight = viewportHeight;
-        canvasWidth = viewportWidth;
-        canvasHeight = canvas.height * scaleFactor;
+        containerWidth = viewportWidth;
+        containerHeight = canvas.height * scaleFactor;
     }
 
-    // Apply scaling transformation
-    canvas.style.transform = `scale(${scaleFactor * 1.45})`;
-    canvas.style.width = `${canvasWidth}px`;
-    canvas.style.height = `${canvasHeight}px`;
-    canvas.scaleFactor = scaleFactor; // Store the scale factor for use in touch/mouse handling
+    // Apply scaling transformation to the canvas container div
+    canvasContainer.style.transform = `scale(${scaleFactor * 1.45})`;
+    canvasContainer.style.width = `${containerWidth}px`;
+    canvasContainer.style.height = `${containerHeight}px`;
+
+    // Optionally, adjust canvas and background overlay styles within the container
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    backgroundOverlay.style.width = "100%";
+    backgroundOverlay.style.height = "100%";
 }
 
 function checkOrientation() {
     if (window.innerHeight > window.innerWidth) {
         // Portrait mode
-        canvas.style.display = "none";
+        canvasContainer.style.display = "none";
         document.getElementById("orientationMessage").style.display = "block";
     } else {
         // Landscape mode
-        canvas.style.display = "block";
+        canvasContainer.style.display = "block";
         document.getElementById("orientationMessage").style.display = "none";
     }
 }
@@ -3421,22 +3454,21 @@ function updateCanvas(timestamp, setIndex) {
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
     if (document.fullscreenElement) {
-        canvas.style.cursor = "none";
         if (!backgroundIsDefault && document.fullscreenElement) {
-            canvas.style.background = "url('Resources/BackgroundHtml2.png')";
-            canvas.style.backgroundSize = "cover";
-            canvas.style.backgroundPosition = "center";
+            backgroundOverlay.style.background = "url('Resources/HTMLbgWin.png')";
+            backgroundOverlay.style.backgroundSize = "cover";
+            backgroundOverlay.style.backgroundPosition = "center";
         }
     } else if (!backgroundIsDefault && !document.fullscreenElement) {
-        canvas.style.background = "transparent"; // If the background is transparent, when fullscreen is toggled off, make the canvas transparent again
+        backgroundOverlay.style.background = "transparent"; // If the background is transparent, when fullscreen is toggled off, make the backgroundOverlay transparent again
     } else if (backgroundIsDefault && !document.fullscreenElement) {
-        canvas.style.background = BGurl;
-        canvas.style.backgroundSize = "cover";
-        canvas.style.backgroundPosition = "center";
+        backgroundOverlay.style.background = BGurl;
+        backgroundOverlay.style.backgroundSize = "cover";
+        backgroundOverlay.style.backgroundPosition = "center";
     } else if (backgroundIsDefault && document.fullscreenElement) {
-        canvas.style.background = BGurl;
-        canvas.style.backgroundSize = "cover";
-        canvas.style.backgroundPosition = "center";
+        backgroundOverlay.style.background = BGurl;
+        backgroundOverlay.style.backgroundSize = "cover";
+        backgroundOverlay.style.backgroundPosition = "center";
     }
 
     if (!songMetadataLoaded) {
@@ -4211,7 +4243,7 @@ canvas.addEventListener("dblclick", () => {
     takeScreenshotWithBackground(canvas);
 });
 
-function takeScreenshotWithBackground(canvas, backgroundImagePath = "https://guayabr.github.io/Beatz/Resources/Background2.png") {
+function takeScreenshotWithBackground(canvas, backgroundImagePath = "https://guayabr.github.io/Beatz/Resources/defaultBG.png") {
     const tempCanvas = document.createElement("canvas");
     const tempCtx = tempCanvas.getContext("2d");
     const backgroundImage = new Image();
