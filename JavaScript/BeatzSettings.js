@@ -54,16 +54,10 @@ function toggleFullScreen() {
         });
         console.log("Entered Fullscreen");
         document.body.classList.add("fullscreen"); // Add fullscreen class to body
-        if (userDevice === "Chromebook") {
-            canvas.style.scale = "1";
-        }
     } else {
         document.exitFullscreen();
         console.log("Exited Fullscreen");
         document.body.classList.remove("fullscreen"); // Remove fullscreen class from body
-        if (userDevice === "Chromebook") {
-            canvas.style.scale = "0.9";
-        }
     }
 }
 
