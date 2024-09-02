@@ -581,5 +581,13 @@ New default backgrounds added:
 - Countdown before a song is now customizable in the settings menu.
 - Added a brightness customizer to the background (0 - 1)
 - Fixed changed default note style not being applied after saving
+//
+
+5.3.3.5 (LOAD//FETCH 5.3! 02/09/2024)
+- Added Quick Fullscreen.
+Quick fullscreen allows you to quickly pause and unpause your game during fullscreen, useful if your preferred key to pause is "ESCAPE".
+- Added NEON BLADE, by MoonDeity, with its respective version NEON BLADE (Guitar Remix), by Ravens Rock.
+- Added Midnight, by PLAYAMANE and Nateki.
+- Fixed restart song never restarting to your current song version.
 
 

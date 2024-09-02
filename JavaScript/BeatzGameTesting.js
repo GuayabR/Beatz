@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: LOAD//FETCH 5.3.1.3 test (release.version.subversion.bugfix)
+ * Version: LOAD//FETCH 5.3.3.5 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -10,7 +10,7 @@
 
 const userDevice = detectDeviceType();
 
-const VERSION = "LOAD//FETCH 5.3.1.3";
+const VERSION = "LOAD//FETCH 5.3.3.5";
 var PUBLICVERSION = `5.3! (${userDevice} Port)`;
 console.log("Version: " + VERSION);
 
@@ -678,6 +678,8 @@ function preloadSongs() {
             "Resources/Songs/La Gozadera.mp3",
             "Resources/Songs/SHAKIRA.mp3",
             "Resources/Songs/QUEVEDO.mp3",
+            "Resources/Songs/NEON BLADE.mp3",
+            "Resources/Songs/MIDNIGHT.mp3",
 
             "Resources/Songs/testingsong.mp3"
         ];
@@ -820,6 +822,16 @@ const songVersions = {
             path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}The Automotivo Infernal 1.0 - Red - Sped Up.mp3`],
             title: "The Automotivo Infernal 1.0 - Red - Sped Up"
         }
+    ],
+    "NEON BLADE": [
+        {
+            path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}NEON BLADE.mp3`],
+            title: "NEON BLADE"
+        },
+        {
+            path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}NEON BLADE (Guitar Remix).mp3`],
+            title: "NEON BLADE (Guitar Remix)"
+        }
     ]
     // Add other songs and their versions here
 };
@@ -934,6 +946,8 @@ const songConfigs = {
     "La Gozadera": { BPM: 95, noteSpeed: 10 },
     SHAKIRA: { BPM: 122, noteSpeed: 10 },
     QUEVEDO: { BPM: 128, noteSpeed: 12 },
+    "NEON BLADE": { BPM: 190, noteSpeed: 10 },
+    MIDNIGHT: { BPM: 122, noteSpeed: 10 },
 
     // Song Versions
     "Finesse (feat. Cardi B)": { BPM: 105, noteSpeed: 22 },
@@ -949,7 +963,8 @@ const songConfigs = {
     "The Automotivo Infernal 1.0 - Sped Up": { BPM: 140, noteSpeed: 12 },
     "The Automotivo Infernal 1.0 - Red - Slowed": { BPM: 140, noteSpeed: 12 },
     "The Automotivo Infernal 1.0 - Red - Sped Up": { BPM: 140, noteSpeed: 12 },
-    "MY EYES - Second half": { BPM: 147, noteSpeed: 10 }
+    "MY EYES - Second half": { BPM: 147, noteSpeed: 10 },
+    "NEON BLADE (Guitar Remix)": { BPM: 190, noteSpeed: 0 }
 };
 
 let savedNotes;
@@ -1224,6 +1239,35 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 101.8, noteSpeed: 22 },
             { timestamp: 102.406, noteSpeed: 22, endScreenDrawn: true }
         ],
+        "Somewhere I Belong": [
+            { timestamp: 0.9, noteSpeed: 9 },
+            { timestamp: 1.31, noteSpeed: -4 },
+            { timestamp: 1.72, noteSpeed: 9 },
+            { timestamp: 2.39, noteSpeed: 4 },
+            { timestamp: 3.13, noteSpeed: 10 },
+            { timestamp: 3.9, noteSpeed: 2 },
+            { timestamp: 4.47, noteSpeed: 10 },
+            { timestamp: 4.69, noteSpeed: -5 },
+            { timestamp: 5.41, noteSpeed: 4 },
+            { timestamp: 6.12, noteSpeed: 8 },
+            { timestamp: 11.61, noteSpeed: 12 },
+            { timestamp: 11.79, noteSpeed: -12 },
+            { timestamp: 12.0, noteSpeed: 10 }
+        ],
+        "NEON BLADE (Guitar Remix)": [
+            { timestamp: 4.36, noteSpeed: 10 },
+            { timestamp: 5.36, noteSpeed: 20 },
+            { timestamp: 5.46, noteSpeed: 18 },
+            { timestamp: 5.56, noteSpeed: 16 },
+            { timestamp: 5.66, noteSpeed: 15 },
+            { timestamp: 5.76, noteSpeed: 14 },
+            { timestamp: 5.86, noteSpeed: 10 },
+            { timestamp: 10.58, noteSpeed: 12 },
+            { timestamp: 13.04, noteSpeed: 14 },
+            { timestamp: 19.35, noteSpeed: 12 },
+            { timestamp: 20.57, noteSpeed: 10 },
+            { timestamp: 30.01, noteSpeed: 18 }
+        ],
         testingsong: [
             { timestamp: 1, noteSpeed: 10 },
             { timestamp: 2, noteSpeed: 10, BPM: BPM * 2 },
@@ -1352,6 +1396,8 @@ const songToAlbumMap = {
     "La Gozadera": "Visualizate",
     SHAKIRA: "SHAKIRA",
     QUEVEDO: "QUEVEDO",
+    "NEON BLADE": "NEON BLADE",
+    MIDNIGHT: "MIDNIGHT",
 
     // Song Versions
 
@@ -1368,7 +1414,8 @@ const songToAlbumMap = {
     "The Automotivo Infernal 1.0 - Sped Up": "The Automotivo Infernal 1.0",
     "The Automotivo Infernal 1.0 - Red - Slowed": "The Automotivo Infernal 1.0",
     "The Automotivo Infernal 1.0 - Red - Sped Up": "The Automotivo Infernal 1.0",
-    "MY EYES - Second half": "UTOPIA"
+    "MY EYES - Second half": "UTOPIA",
+    "NEON BLADE (Guitar Remix)": "NEON BLADE"
 };
 
 // Function to preload images
@@ -1456,6 +1503,8 @@ function preloadImages() {
         "Resources/Covers/Visualizate.jpg",
         "Resources/Covers/SHAKIRA.jpg",
         "Resources/Covers/QUEVEDO.jpg",
+        "Resources/Covers/NEON BLADE.jpg",
+        "Resources/Covers/MIDNIGHT.jpg",
 
         // Song Versions
 
@@ -1998,11 +2047,13 @@ function restartSong() {
     let versionPath = null;
     let indexSet = currentSongIndex;
 
+    // Iterate through each song title and its versions
     for (const [songTitle, versions] of Object.entries(songVersions)) {
         console.log("Checking song title: " + songTitle);
         for (const version of versions) {
-            if (version.path === currentSongPath) {
-                versionPath = version.path;
+            // Check if currentSongPath exists in the version path array
+            if (version.path.includes(currentSongPath)) {
+                versionPath = version.path[0]; // Assuming you want the first matching path
                 break;
             }
         }
@@ -2012,7 +2063,7 @@ function restartSong() {
     }
 
     if (versionPath) {
-        console.log("Restarting with matched version path: " + versionPath);
+        console.log("%cRestarting with matched version path: " + versionPath, "color: rgb(157, 255, 0);");
         startGame(-1, versionPath, indexSet);
     } else {
         console.log("No matching version path found. Restarting with currentSongIndex: " + currentSongIndex);
@@ -2104,6 +2155,9 @@ function pickRandomSongIndex() {
     } else {
         // Randomly pick between 0-53 or 55-maxIndex
         const random = Math.random();
+        if (random === 54) {
+            console.error("Song index 54 picked.");
+        }
         if (random < 54 / (maxIndex + 1)) {
             // Pick an index between 0 and 53
             randomIndex = Math.floor(random * 54);
@@ -2311,6 +2365,8 @@ function getArtist(songSrc) {
         "La Gozadera": "Gente De Zona, Marc Anthony",
         SHAKIRA: "Bizarrap, Shakira",
         QUEVEDO: "Bizarrap, Quevedo",
+        "NEON BLADE": "MoonDeity",
+        MIDNIGHT: "PLAYAMANE, Nateki",
 
         // Song Versions
 
@@ -2327,7 +2383,8 @@ function getArtist(songSrc) {
         "The Automotivo Infernal 1.0 - Sped Up": "MRL, MC GW",
         "The Automotivo Infernal 1.0 - Red - Slowed": "MRL, MC GW",
         "The Automotivo Infernal 1.0 - Red - Sped Up": "MRL, MC GW",
-        "MY EYES - Second half": "Travis Scott"
+        "MY EYES - Second half": "Travis Scott",
+        "NEON BLADE (Guitar Remix)": "MoonDeity, Ravens Rock"
     };
     let songTitle = getSongTitle(songSrc);
     return artists[songTitle] || "N/A";
@@ -2562,6 +2619,7 @@ function manageCanvasScalingInterval(startInterval) {
 
     if (startInterval && pulseOnBPM) {
         let scaleUpDuration, scaleDownDuration, waitTime;
+        let beatCounter = 0; // Counter to track the number of beats
 
         // Determine animation durations based on BPM
         if (BPM < 200) {
@@ -2583,6 +2641,14 @@ function manageCanvasScalingInterval(startInterval) {
 
         // Create a new interval for scaling the canvas and pulsing the title color
         canvasScalingInterval = setInterval(() => {
+            beatCounter++; // Increment the beat counter each interval
+
+            // Apply effects every other beat if BPM is over 160
+            if (BPM > 170 && beatCounter % 2 !== 0) {
+                // Skip every other beat if BPM > 160
+                return;
+            }
+
             // Apply cubic-bezier easing for scaling up
             title.style.transition = `transform ${scaleUpDuration}s cubic-bezier(0.17, 0.71, 0.51, 0.94), color ${MILLISECONDS_PER_BEAT / 25000}s`;
             title.style.transform = "scale(1.03)";
@@ -2591,8 +2657,27 @@ function manageCanvasScalingInterval(startInterval) {
             img.style.transition = `transform ${scaleUpDuration}s cubic-bezier(0.17, 0.71, 0.51, 0.94)`;
             img.style.transform = "scale(1.025)";
 
+            // Always scale musicIco on every beat
             musicIco.style.transition = `transform ${scaleUpDuration}s cubic-bezier(0.17, 0.71, 0.51, 0.94)`;
             musicIco.style.transform = "scale(1.4)";
+
+            // Adjust brightness or contrast of backgroundOverlay directly
+            const brightnessValue = parseFloat(miscellaneous.BGbrightness); // Convert to a number if necessary
+
+            if (brightnessValue < 1 && brightnessValue > 0.9) {
+                // Change brightness by 0.1 every beat
+                let currentBrightness = parseFloat(getComputedStyle(backgroundOverlay).filter.match(/brightness\(([^)]+)\)/)?.[1] || 1);
+                currentBrightness = Math.min(Math.max(currentBrightness + 0.1, 0), 1.5); // Keep brightness in reasonable bounds
+                backgroundOverlay.style.filter = `brightness(${currentBrightness})`;
+            } else if (brightnessValue <= 0.9) {
+                // Change brightness by 0.25 every beat
+                let currentBrightness = parseFloat(getComputedStyle(backgroundOverlay).filter.match(/brightness\(([^)]+)\)/)?.[1] || 1);
+                currentBrightness = Math.min(Math.max(currentBrightness + 0.15, 0), 1.5); // Keep brightness in reasonable bounds
+                backgroundOverlay.style.filter = `brightness(${currentBrightness})`;
+            }
+
+            // Apply transition to the backgroundOverlay filter property before changing filter values
+            backgroundOverlay.style.transition = `filter ${scaleUpDuration}s cubic-bezier(0.17, 0.71, 0.51, 0.94)`;
 
             // Set a timeout to scale back down after the up animation
             setTimeout(() => {
@@ -2606,6 +2691,17 @@ function manageCanvasScalingInterval(startInterval) {
 
                 musicIco.style.transition = `transform ${scaleDownDuration}s ease-in`;
                 musicIco.style.transform = "scale(1)";
+
+                backgroundOverlay.style.transition = `filter ${scaleDownDuration}s ease-in-out`;
+                backgroundOverlay.style.transform = "scale(1)";
+
+                // Reset brightness or contrast of backgroundOverlay directly
+                backgroundOverlay.style.filter = "brightness(1)"; // Reset to default values
+
+                // Remove the transition after it's done to prevent it from affecting future changes
+                setTimeout(() => {
+                    backgroundOverlay.style.transition = ""; // Clear transition after it's applied
+                }, scaleDownDuration * 1000);
             }, MILLISECONDS_PER_BEAT / waitTime); // Wait to scale down
         }, MILLISECONDS_PER_BEAT);
     }
@@ -3345,6 +3441,8 @@ function updateDebugInfo(deltaTime, timestamp) {
         ctx.fillText(`FPS buffed hit ranges? ${fpsBuffedHitRanges}`, 10, startY + 23 * lineHeight);
         ctx.fillText(`Error array: ${errorArray}`, 10, startY + 24 * lineHeight);
         ctx.fillText(`Notice array: ${noticeArray}`, 10, startY + 25 * lineHeight);
+        ctx.fillText(`quickFullscreen: ${quickFullscreen}`, 10, startY + 26 * lineHeight);
+        ctx.fillText(`onQuickFS: ${onQuickFS}`, 10, startY + 27 * lineHeight);
 
         ctx.font = "14px Arial";
         ctx.textAlign = "right";

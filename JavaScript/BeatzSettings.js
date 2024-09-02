@@ -69,11 +69,16 @@ document.addEventListener("fullscreenchange", function () {
         backgroundOverlay.style.cursor = "none";
         if (!backgroundIsDefault) {
             // Ensure the correct background is displayed
-            BGurl = "url('Resources/BackgroundHtml2.png')";
+            BGurl = "url('Resources/HTMLbgWin.png')";
             backgroundOverlay.style.backgroundImage = BGurl;
             backgroundOverlay.style.backgroundSize = "cover";
             backgroundOverlay.style.backgroundPosition = "center";
         }
+
+        if (onQuickFS) {
+            togglePause();
+        }
+
         adjustCanvasForFullscreen();
     } else {
         // Reset styles when exiting fullscreen mode
@@ -81,6 +86,11 @@ document.addEventListener("fullscreenchange", function () {
         canvas.style.cursor = "default";
         if (!backgroundIsDefault) {
             backgroundOverlay.style.background = "transparent";
+        }
+
+        if (quickFullscreen) {
+            onQuickFS = true;
+            togglePause();
         }
         resetCanvasFromFullscreen();
     }
@@ -543,7 +553,8 @@ const Presets = {
             pulseOnBPM: true,
             extraLog: false,
             BGbrightness: 1,
-            countdownFrom: 0
+            countdownFrom: 0,
+            quickFullscreen: true
         }
     },
     VERIDIAN: {
@@ -580,7 +591,8 @@ const Presets = {
             pulseOnBPM: true,
             extraLog: false,
             BGbrightness: 1,
-            countdownFrom: 3
+            countdownFrom: 3,
+            quickFullscreen: false
         }
     },
     OG: {
@@ -617,7 +629,8 @@ const Presets = {
             pulseOnBPM: false,
             extraLog: false,
             BGbrightness: 1,
-            countdownFrom: 3
+            countdownFrom: 3,
+            quickFullscreen: false
         }
     }
 };
@@ -845,6 +858,16 @@ function togglePulseOnBPM() {
     }
 }
 
+function toggleQuickFS() {
+    quickFullscreen = !quickFullscreen;
+    console.log("Quick Fullscreen is now", quickFullscreen ? "enabled" : "disabled");
+
+    if (quickFullscreen) {
+        // Call the function to show the popup message
+        logNotice("Quick Fullscreen: When in fullscreen, if exited, game will automatically pause, it will unpause when fullscreen is toggled again.");
+    }
+}
+
 const defaultKeybinds = {
     up: ["W"],
     left: ["A"],
@@ -878,7 +901,8 @@ const defaultMiscellaneous = {
     pulseOnBPM: true,
     extraLog: false,
     BGbrightness: 1,
-    countdownFrom: 3
+    countdownFrom: 3,
+    quickFullscreen: false
 };
 
 let countdownFrom;
@@ -891,9 +915,13 @@ let logKeys = true;
 
 let fetchSongs = false; // Fetch songs from guayabr.github.io
 
-let playSFX = true;
+let playSFX;
 
-let pulseOnBPM = true;
+let pulseOnBPM;
+
+let quickFullscreen;
+
+let onQuickFS = false;
 
 let BGurl = "url('Resources/defaultBG.png";
 
@@ -944,6 +972,9 @@ function loadSettings() {
 
     document.getElementById("pulseOnBPMcheck").checked = miscellaneous.pulseOnBPM;
     pulseOnBPM = miscellaneous.pulseOnBPM;
+
+    document.getElementById("quickFScheck").checked = miscellaneous.quickFullscreen;
+    quickFullscreen = miscellaneous.quickFullscreen;
 
     document.getElementById("extraLogCheck").checked = miscellaneous.extraLog;
     extraLog = miscellaneous.extraLog;
@@ -1302,7 +1333,8 @@ function saveSettings() {
         pulseOnBPM: document.getElementById("pulseOnBPMcheck").checked,
         extraLog: document.getElementById("extraLogCheck").checked,
         BGbrightness: parseFloat(document.getElementById("brightnessInput").value) || defaultMiscellaneous.BGbrightness,
-        countdownFrom: isNaN(countdownFromParsed) ? defaultMiscellaneous.countdownFrom : countdownFromParsed
+        countdownFrom: isNaN(countdownFromParsed) ? defaultMiscellaneous.countdownFrom : countdownFromParsed,
+        quickFullscreen: document.getElementById("quickFScheck").checked
     };
 
     // Compare new settings with saved settings
@@ -1323,6 +1355,7 @@ function saveSettings() {
     playSFX = newMiscellaneous.playSFX;
     pulseOnBPM = newMiscellaneous.pulseOnBPM;
     extraLog = newMiscellaneous.extraLog;
+    quickFullscreen = newMiscellaneous.quickFullscreen;
 
     // Validation and adjustment of newMiscellaneous values
     if (newMiscellaneous.BGbrightness > 1) {
@@ -1399,7 +1432,7 @@ function saveSettings() {
             backgroundOverlay.style.backdropFilter = "none";
             break;
         case "htmlBG":
-            BGurl = `url("Resources/BackgroundHtml2.png")`;
+            BGurl = `url("Resources/HTMLbgWin.png")`;
             backgroundOverlay.style.backdropFilter = "none";
             break;
         case "transparentBG":
@@ -1532,7 +1565,16 @@ function updateKeybindsFields() {
     document.getElementById("defaultBackground").value = miscellaneous.backgroundOption;
     document.getElementById("backdropBlurInput").value = miscellaneous.customBackgroundBlur;
     document.getElementById("logKeysCheck").checked = miscellaneous.logKeys;
+    document.getElementById("saveRecentSongs").checked = miscellaneous.saveRecentSongs;
+    document.getElementById("fetchSongsSite").checked = miscellaneous.fetchSongsFromSite;
+    document.getElementById("playSFXcheck").checked = miscellaneous.playButtonSFX;
+    document.getElementById("pulseOnBPMcheck").checked = miscellaneous.pulseOnBPM;
+    document.getElementById("quickFScheck").checked = miscellaneous.quickFullscreen;
+    document.getElementById("extraLogCheck").checked = miscellaneous.extraLog;
+    document.getElementById("readyTimerInput").value = miscellaneous.readyTimer;
+    document.getElementById("brightnessInput").value = miscellaneous.backgroundBrightness;
 
+    // Display settings based on background selection
     if (miscellaneous.backgroundOption === "customBG" && miscellaneous.customBackground) {
         document.getElementById("customBGLabel").style.display = "inline";
         document.getElementById("customBGInput").style.display = "inline";
@@ -1668,13 +1710,13 @@ function initializeEventListeners() {
             saveToHistory();
         });
     }
+    // General event listeners for various settings
     document.getElementById("defaultNoteStyle").addEventListener("change", () => {
         console.log("Change detected in 'defaultNoteStyle' select.");
         saveToHistory();
     });
     document.getElementById("defaultHitSound").addEventListener("change", function (event) {
         console.log("Change detected in 'defaultHitSound' select.");
-        miscellaneous.hitSound = event.target.value; // Update the miscellaneous object
         saveToHistory();
     });
     document.getElementById("logKeysCheck").addEventListener("change", () => {
@@ -1711,6 +1753,34 @@ function initializeEventListeners() {
     });
     document.getElementById("backdropBlurInput").addEventListener("change", () => {
         console.log("Change detected in 'backdropBlurInput' number input.");
+        saveToHistory();
+    });
+    document.getElementById("brightnessInput").addEventListener("change", () => {
+        console.log("Change detected in 'brightnessInput' number input.");
+        saveToHistory();
+    });
+    document.getElementById("fetchSongsSite").addEventListener("change", () => {
+        console.log("Change detected in 'fetchSongsSite' checkbox.");
+        saveToHistory();
+    });
+    document.getElementById("playSFXcheck").addEventListener("change", () => {
+        console.log("Change detected in 'playSFXcheck' checkbox.");
+        saveToHistory();
+    });
+    document.getElementById("pulseOnBPMcheck").addEventListener("change", () => {
+        console.log("Change detected in 'pulseOnBPMcheck' checkbox.");
+        saveToHistory();
+    });
+    document.getElementById("quickFScheck").addEventListener("change", () => {
+        console.log("Change detected in 'quickFScheck' checkbox.");
+        saveToHistory();
+    });
+    document.getElementById("extraLogCheck").addEventListener("change", () => {
+        console.log("Change detected in 'extraLogCheck' checkbox.");
+        saveToHistory();
+    });
+    document.getElementById("readyTimerInput").addEventListener("change", () => {
+        console.log("Change detected in 'readyTimerInput' number input.");
         saveToHistory();
     });
 }

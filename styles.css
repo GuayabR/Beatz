@@ -51,7 +51,7 @@ html {
     display: block;
     border-radius: 10px;
     transition:
-        backdrop-filter ease 0.75s,
+        backdrop-filter 0.75s ease,
         transform 0.25s ease-in;
     max-width: 100%;
     max-height: 100%;
