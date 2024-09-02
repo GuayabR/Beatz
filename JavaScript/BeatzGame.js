@@ -678,6 +678,8 @@ function preloadSongs() {
             "Resources/Songs/La Gozadera.mp3",
             "Resources/Songs/SHAKIRA.mp3",
             "Resources/Songs/QUEVEDO.mp3",
+            "Resources/Songs/NEON BLADE.mp3",
+            "Resources/Songs/MIDNIGHT.mp3",
 
             "Resources/Songs/testingsong.mp3"
         ];
@@ -820,6 +822,15 @@ const songVersions = {
             path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}The Automotivo Infernal 1.0 - Red - Sped Up.mp3`],
             title: "The Automotivo Infernal 1.0 - Red - Sped Up"
         }
+         "NEON BLADE": [
+        {
+            path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}NEON BLADE.mp3`],
+            title: "NEON BLADE"
+        },
+    {
+            path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}NEON BLADE (Guitar Remix).mp3`],
+            title: "NEON BLADE (Guitar Remix)"
+        },
     ]
     // Add other songs and their versions here
 };
@@ -934,6 +945,8 @@ const songConfigs = {
     "La Gozadera": { BPM: 95, noteSpeed: 10 },
     SHAKIRA: { BPM: 122, noteSpeed: 10 },
     QUEVEDO: { BPM: 128, noteSpeed: 12 },
+    "NEON BLADE": { BPM: 190, noteSpeed: 10 },
+    "MIDNIGHT": { BPM: 122, noteSpeed: 10 },
 
     // Song Versions
     "Finesse (feat. Cardi B)": { BPM: 105, noteSpeed: 22 },
@@ -949,7 +962,8 @@ const songConfigs = {
     "The Automotivo Infernal 1.0 - Sped Up": { BPM: 140, noteSpeed: 12 },
     "The Automotivo Infernal 1.0 - Red - Slowed": { BPM: 140, noteSpeed: 12 },
     "The Automotivo Infernal 1.0 - Red - Sped Up": { BPM: 140, noteSpeed: 12 },
-    "MY EYES - Second half": { BPM: 147, noteSpeed: 10 }
+    "MY EYES - Second half": { BPM: 147, noteSpeed: 10 },
+    "NEON BLADE (Guitar Remix)": { BPM: 147, noteSpeed: 10 }
 };
 
 let savedNotes;
@@ -1456,7 +1470,9 @@ function preloadImages() {
         "Resources/Covers/Visualizate.jpg",
         "Resources/Covers/SHAKIRA.jpg",
         "Resources/Covers/QUEVEDO.jpg",
-
+        "Resources/Covers/NEON BLADE.jpg",
+        "Resources/Covers/MIDNIGHT.jpg",
+        
         // Song Versions
 
         "Resources/Covers/WTF 2 - Slowed.jpg",
@@ -2311,6 +2327,8 @@ function getArtist(songSrc) {
         "La Gozadera": "Gente De Zona, Marc Anthony",
         SHAKIRA: "Bizarrap, Shakira",
         QUEVEDO: "Bizarrap, Quevedo",
+        "NEON BLADE": "MoonDeity",
+        "MIDNIGHT": "PLAYAMANE, Nateki",
 
         // Song Versions
 
@@ -2327,7 +2345,8 @@ function getArtist(songSrc) {
         "The Automotivo Infernal 1.0 - Sped Up": "MRL, MC GW",
         "The Automotivo Infernal 1.0 - Red - Slowed": "MRL, MC GW",
         "The Automotivo Infernal 1.0 - Red - Sped Up": "MRL, MC GW",
-        "MY EYES - Second half": "Travis Scott"
+        "MY EYES - Second half": "Travis Scott",
+        "NEON BLADE (Guitar Remix)": "MoonDeity, Ravens Rock",
     };
     let songTitle = getSongTitle(songSrc);
     return artists[songTitle] || "N/A";
