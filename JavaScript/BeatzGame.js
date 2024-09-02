@@ -822,12 +822,13 @@ const songVersions = {
             path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}The Automotivo Infernal 1.0 - Red - Sped Up.mp3`],
             title: "The Automotivo Infernal 1.0 - Red - Sped Up"
         },
+    ]
          "NEON BLADE": [
         {
             path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}NEON BLADE.mp3`],
             title: "NEON BLADE"
         },
-    {
+        {
             path: [`${useURL ? "Resources/Songs/" : "guayabr.github.io/Beatz/Resources/Songs"}NEON BLADE (Guitar Remix).mp3`],
             title: "NEON BLADE (Guitar Remix)"
         },
