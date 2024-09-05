@@ -110,7 +110,7 @@ const notePressImages = {
     Right: noteRightPressIMG
 };
 
-const useFetch = Miscellaneous.fetchSongs;
+const useFetch = misc.fetchSongs;
 
 const headerElement = document.querySelector("h1");
 
@@ -680,6 +680,10 @@ function preloadSongs() {
             "Resources/Songs/QUEVEDO.mp3",
             "Resources/Songs/NEON BLADE.mp3",
             "Resources/Songs/MIDNIGHT.mp3",
+            "Resources/Songs/The Outside.mp3",
+            "Resources/Songs/Chlorine.mp3",
+            "Resources/Songs/Ride.mp3",
+            "Resources/Songs/Heathens.mp3",
 
             "Resources/Songs/testingsong.mp3"
         ];
@@ -948,6 +952,10 @@ const songConfigs = {
     QUEVEDO: { BPM: 128, noteSpeed: 12 },
     "NEON BLADE": { BPM: 190, noteSpeed: 10 },
     MIDNIGHT: { BPM: 122, noteSpeed: 10 },
+    "The Outside": { BPM: 101, noteSpeed: 10 },
+    Chlorine: { BPM: 90, noteSpeed: 10 },
+    Ride: { BPM: 75, noteSpeed: 10 },
+    Heathens: { BPM: 90, noteSpeed: 10 },
 
     // Song Versions
     "Finesse (feat. Cardi B)": { BPM: 105, noteSpeed: 22 },
@@ -1266,7 +1274,31 @@ function getDynamicSpeed(songSrc) {
             { timestamp: 13.04, noteSpeed: 14 },
             { timestamp: 19.35, noteSpeed: 12 },
             { timestamp: 20.57, noteSpeed: 10 },
-            { timestamp: 30.01, noteSpeed: 18 }
+            { timestamp: 30.01, noteSpeed: 18 },
+            { timestamp: 30.01, noteSpeed: 18 },
+            { timestamp: 59.104, noteSpeed: 14 },
+            { timestamp: 60.39, noteSpeed: 16 },
+            { timestamp: 78.13, noteSpeed: 12 },
+            { timestamp: 80.54, noteSpeed: 10 },
+            { timestamp: 85.67, noteSpeed: 14 },
+            { timestamp: 89.45, noteSpeed: 8 },
+            { timestamp: 90.744, noteSpeed: 22 },
+            { timestamp: 95.11, noteSpeed: 16 },
+            { timestamp: 95.79, noteSpeed: 22 },
+            { timestamp: 105.21, noteSpeed: 16 },
+            { timestamp: 105.85, noteSpeed: 22 },
+            { timestamp: 110.28, noteSpeed: 28 },
+            { timestamp: 110.29, noteSpeed: 22 },
+            { timestamp: 110.54, noteSpeed: 28 },
+            { timestamp: 110.55, noteSpeed: 22 },
+            { timestamp: 110.94, noteSpeed: 16 },
+            { timestamp: 120.386, noteSpeed: 14 },
+            { timestamp: 120.97, noteSpeed: 18 },
+            { timestamp: 123.57, noteSpeed: 20 },
+            { timestamp: 126.115, noteSpeed: 22 },
+            { timestamp: 131.11, noteSpeed: 16 },
+            { timestamp: 136, noteSpeed: 16, notes: [] },
+            { timestamp: 137.67, noteSpeed: 16, endScreenDrawn: true }
         ],
         testingsong: [
             { timestamp: 1, noteSpeed: 10 },
@@ -1398,6 +1430,10 @@ const songToAlbumMap = {
     QUEVEDO: "QUEVEDO",
     "NEON BLADE": "NEON BLADE",
     MIDNIGHT: "MIDNIGHT",
+    "The Outside": "Scaled and Icy",
+    Chlorine: "Trench",
+    Ride: "Blurryface",
+    Heathens: "Suicide Squad - The Album",
 
     // Song Versions
 
@@ -1505,6 +1541,9 @@ function preloadImages() {
         "Resources/Covers/QUEVEDO.jpg",
         "Resources/Covers/NEON BLADE.jpg",
         "Resources/Covers/MIDNIGHT.jpg",
+        "Resources/Covers/Scaled and Icy.jpg",
+        "Resources/Covers/Trench.jpg",
+        "Resources/Covers/Suicide Squad - The Album.jpg",
 
         // Song Versions
 
@@ -1726,7 +1765,6 @@ function openSelectedSongModal(songPath, songTitle) {
     }
 }
 
-// Modify filterSongs function to handle the Easter eggs and version selection
 function filterSongs() {
     const searchInput = document.getElementById("songSearchInput").value.trim().toLowerCase();
     const songButtons = document.querySelectorAll(".song-button");
@@ -1746,82 +1784,105 @@ function filterSongs() {
         lastSongIndex = songList.length;
     }
 
-    songButtons.forEach((button) => {
-        const songText = button.textContent.toLowerCase();
-        const isKanye = songText.includes("kanye west");
-        const isKendrick = songText.includes("kendrick lamar");
-        const isEminem = songText.includes("eminem");
-        const isCreo = songText.includes("creo");
-        const isTravis = songText.includes("travis");
-        const isLinkin = songText.includes("linkin park");
-        const isTrash = songText.includes("playboi carti");
-        const isBillie = songText.includes("billie eilish");
-        const isZesty = songText.includes("drake");
-        const isMRL = songText.includes("mrl");
-        const isOde = songText.includes("odetari");
-        const isBiza = songText.includes("bizarrap");
-        const isLastSong = songText.includes(lastSongIndex);
+    // Handle searchInput starting with ">" or "<" followed by a number
+    let match = searchInput.match(/^([<>])(\d+)$/);
+    if (match) {
+        const operator = match[1];
+        const num = parseInt(match[2], 10);
 
-        if (searchInput === "ye" && isKanye) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "kdot" && isKendrick) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "em" && isEminem) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "goat" && (isKanye || isKendrick || isEminem || isCreo || isTravis || isLinkin || isMRL)) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "got bit by a goat" && isEminem) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "marshall" && isEminem) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "marshall mathers" && isEminem) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "trash" && isTrash) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "zesty" && isZesty) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "bili" && isBillie) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "last" && isLastSong) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "odecore" && isOde) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "bzrp" && isBiza) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (songText.includes(searchInput)) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else {
-            button.style.display = "none";
-        }
-    });
+        songButtons.forEach((button, index) => {
+            var songIndex = index + 1; // Convert 0-based index to 1-based
+
+            if (operator === "<") {
+                songIndex = index;
+            }
+
+            if ((operator === ">" && songIndex > num) || (operator === "<" && songIndex < num)) {
+                button.style.display = "block";
+                resultsCount++; // Only count visible buttons
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else {
+                button.style.display = "none";
+            }
+        });
+    } else {
+        songButtons.forEach((button) => {
+            const songText = button.textContent.toLowerCase();
+            const isKanye = songText.includes("kanye west");
+            const isKendrick = songText.includes("kendrick lamar");
+            const isEminem = songText.includes("eminem");
+            const isCreo = songText.includes("creo");
+            const isTravis = songText.includes("travis");
+            const isLinkin = songText.includes("linkin park");
+            const isTrash = songText.includes("playboi carti");
+            const isBillie = songText.includes("billie eilish");
+            const isZesty = songText.includes("drake");
+            const isMRL = songText.includes("mrl");
+            const isOde = songText.includes("odetari");
+            const isBiza = songText.includes("bizarrap");
+            const isLastSong = songText.includes(lastSongIndex);
+
+            if (searchInput === "ye" && isKanye) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "kdot" && isKendrick) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "em" && isEminem) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "goat" && (isKanye || isKendrick || isEminem || isCreo || isTravis || isLinkin || isMRL)) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "got bit by a goat" && isEminem) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "marshall" && isEminem) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "marshall mathers" && isEminem) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "trash" && isTrash) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "zesty" && isZesty) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "bili" && isBillie) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "last" && isLastSong) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "odecore" && isOde) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "bzrp" && isBiza) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (songText.includes(searchInput)) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else {
+                button.style.display = "none";
+            }
+        });
+    }
 
     // Adjust resultsForSearch display and padding
     if (searchInput) {
@@ -2367,6 +2428,10 @@ function getArtist(songSrc) {
         QUEVEDO: "Bizarrap, Quevedo",
         "NEON BLADE": "MoonDeity",
         MIDNIGHT: "PLAYAMANE, Nateki",
+        "The Outside": "twenty one pilots",
+        Chlorine: "twenty one pilots",
+        Ride: "twenty one pilots",
+        Heathens: "twenty one pilots",
 
         // Song Versions
 
@@ -2644,7 +2709,7 @@ function manageCanvasScalingInterval(startInterval) {
             beatCounter++; // Increment the beat counter each interval
 
             // Apply effects every other beat if BPM is over 160
-            if (BPM > 170 && beatCounter % 2 !== 0) {
+            if (BPM > 180 && beatCounter % 2 !== 0) {
                 // Skip every other beat if BPM > 160
                 return;
             }
@@ -2662,17 +2727,12 @@ function manageCanvasScalingInterval(startInterval) {
             musicIco.style.transform = "scale(1.4)";
 
             // Adjust brightness or contrast of backgroundOverlay directly
-            const brightnessValue = parseFloat(miscellaneous.BGbrightness); // Convert to a number if necessary
+            const brightnessValue = parseFloat(misc.BGbrightness); // Convert to a number if necessary
 
-            if (brightnessValue < 1 && brightnessValue > 0.9) {
-                // Change brightness by 0.1 every beat
-                let currentBrightness = parseFloat(getComputedStyle(backgroundOverlay).filter.match(/brightness\(([^)]+)\)/)?.[1] || 1);
-                currentBrightness = Math.min(Math.max(currentBrightness + 0.1, 0), 1.5); // Keep brightness in reasonable bounds
-                backgroundOverlay.style.filter = `brightness(${currentBrightness})`;
-            } else if (brightnessValue <= 0.9) {
+            if (brightnessValue <= 0.9) {
                 // Change brightness by 0.25 every beat
                 let currentBrightness = parseFloat(getComputedStyle(backgroundOverlay).filter.match(/brightness\(([^)]+)\)/)?.[1] || 1);
-                currentBrightness = Math.min(Math.max(currentBrightness + 0.15, 0), 1.5); // Keep brightness in reasonable bounds
+                currentBrightness = Math.min(Math.max(currentBrightness + 0.1, 0), 1.5); // Keep brightness in reasonable bounds
                 backgroundOverlay.style.filter = `brightness(${currentBrightness})`;
             }
 
@@ -2696,7 +2756,7 @@ function manageCanvasScalingInterval(startInterval) {
                 backgroundOverlay.style.transform = "scale(1)";
 
                 // Reset brightness or contrast of backgroundOverlay directly
-                backgroundOverlay.style.filter = "brightness(1)"; // Reset to default values
+                backgroundOverlay.style.filter = `brightness(${misc.BGbrightness})`; // Reset to default values
 
                 // Remove the transition after it's done to prevent it from affecting future changes
                 setTimeout(() => {
