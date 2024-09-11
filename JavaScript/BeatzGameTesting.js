@@ -57,17 +57,12 @@ let notesHit = 0;
 let tutorialStage = 0;
 let isNewPlayer = !localStorage.getItem("newPlayer");
 
-// Retrieve the keybinds object from localStorage and parse it
-var Settings = JSON.parse(localStorage.getItem("keybinds")) || {};
-
-var Miscellaneous = JSON.parse(localStorage.getItem("miscellaneous")) || {};
-
 const tutorialDesktop = {
     initial: {
-        left: Settings.left ? Settings.left[0] : "A",
-        up: Settings.up ? Settings.up[0] : "W",
-        down: Settings.down ? Settings.down[0] : "S",
-        right: Settings.right ? Settings.right[0] : "D"
+        left: keybinds.left ? keybinds.left[0] : "A",
+        up: keybinds.up ? keybinds.up[0] : "W",
+        down: keybinds.down ? keybinds.down[0] : "S",
+        right: keybinds.right ? keybinds.right[0] : "D"
     },
     customizable: "Keybinds are customizable in the gear icon just below the canvas.",
     thankYou: "Thank you for playing Beatz! Enjoy!",
@@ -110,7 +105,7 @@ const notePressImages = {
     Right: noteRightPressIMG
 };
 
-const useFetch = misc.fetchSongs;
+var useFetch;
 
 const headerElement = document.querySelector("h1");
 
@@ -2674,7 +2669,7 @@ window.onload = function () {
     backgroundOverlay.style.backgroundPosition = "center";
 
     // Apply the saved blur value from localStorage immediately
-    const savedMiscellaneous = JSON.parse(localStorage.getItem("miscellaneous")) || {};
+    const savedMiscellaneous = JSON.parse(localStorage.getItem("miscellaneousellaneous")) || {};
     const savedCustomBackgroundBlur = savedMiscellaneous.customBackgroundBlur || "0px";
     document.getElementById("backdropBlurInput").value = savedCustomBackgroundBlur;
     backgroundOverlay.style.backdropFilter = `blur(${savedCustomBackgroundBlur})`;
@@ -2785,7 +2780,7 @@ function manageCanvasScalingInterval(startInterval) {
             musicIco.style.transform = "scale(1.4)";
 
             // Adjust brightness or contrast of backgroundOverlay directly
-            const brightnessValue = parseFloat(misc.BGbrightness); // Convert to a number if necessary
+            const brightnessValue = parseFloat(miscellaneous.BGbrightness); // Convert to a number if necessary
 
             if (brightnessValue <= 0.9) {
                 // Change brightness by 0.25 every beat
@@ -2814,7 +2809,7 @@ function manageCanvasScalingInterval(startInterval) {
                 backgroundOverlay.style.transform = "scale(1)";
 
                 // Reset brightness or contrast of backgroundOverlay directly
-                backgroundOverlay.style.filter = `brightness(${misc.BGbrightness})`; // Reset to default values
+                backgroundOverlay.style.filter = `brightness(${miscellaneous.BGbrightness})`; // Reset to default values
 
                 // Remove the transition after it's done to prevent it from affecting future changes
                 setTimeout(() => {
@@ -3265,13 +3260,13 @@ async function startGame(index, versionPath, setIndex) {
                 handleSongData();
                 // Update the page title
                 const indexToDisplay = setIndex >= 0 ? setIndex : currentSongIndex;
-                document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 5.2!`;
+                document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 5.3!`;
 
                 console.log(`indexToDisplay converted in startGame: ${indexToDisplay}`);
             });
 
             currentSong.addEventListener("error", (ev) => {
-                logError(`Failed to load data for song: ${getSongTitle(currentSongPath)}. Randomizing song. | ${ev.message}`);
+                logError(`Failed to load data for song: ${getSongTitle(currentSongPath)}. Randomizing song. | ${ev.error} ${ev.message} ${ev.filename}`);
                 songMetadataLoaded = true;
                 availableToPlay = true;
                 setTimeout(() => {
@@ -3308,7 +3303,7 @@ async function startGame(index, versionPath, setIndex) {
     } else {
         // Use the old method
         currentSong.addEventListener("error", (ev) => {
-            logError(`Failed to load metadata for song: ${getSongTitle(currentSongPath)} Randomizing song. | ${ev.message}`);
+            logError(`Failed to load metadata for song: ${getSongTitle(currentSongPath)} Randomizing song. | ${ev.error} ${ev.message} ${ev.filename}`);
             songMetadataLoaded = true;
             availableToPlay = true;
             setTimeout(() => {
@@ -3320,7 +3315,7 @@ async function startGame(index, versionPath, setIndex) {
             handleSongData();
             // Update the page title
             const indexToDisplay = setIndex >= 0 ? setIndex : currentSongIndex;
-            document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 5.2!`;
+            document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 5.3!`;
 
             console.log(`indexToDisplay converted in startGame: ${indexToDisplay}`);
         });
