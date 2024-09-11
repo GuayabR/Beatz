@@ -2,7 +2,7 @@
  * Title: Beatz
  * Author: Victor//GuayabR
  * Date: 16/05/2024
- * Version: LOAD//FETCH 5.3.3.5 test (release.version.subversion.bugfix)
+ * Version: LOAD//FETCH 5.3.4.5 test (release.version.subversion.bugfix)
  * GitHub Repository: https://github.com/GuayabR/Beatz
  **/
 
@@ -10,7 +10,7 @@
 
 const userDevice = detectDeviceType();
 
-const VERSION = "LOAD//FETCH 5.3.3.5";
+const VERSION = "LOAD//FETCH 5.3.4.5";
 var PUBLICVERSION = `5.3! (${userDevice} Port)`;
 console.log("Version: " + VERSION);
 
@@ -110,7 +110,7 @@ const notePressImages = {
     Right: noteRightPressIMG
 };
 
-const useFetch = Miscellaneous.fetchSongs;
+const useFetch = misc.fetchSongs;
 
 const headerElement = document.querySelector("h1");
 
@@ -211,6 +211,28 @@ var earlyLateHits = 0;
 let currentStreak = 0;
 
 let maxStreak = 0;
+
+let perfectStreak = 0;
+
+let maxPerfectStreak = 0;
+
+let perfectStrSFX = false;
+
+class Note {
+    constructor(type) {
+        this.type = type;
+    }
+
+    move() {}
+
+    debugType() {
+        console.log(`This is a ${this.type} note.`);
+    }
+
+    debugPos() {
+        console.log(`Current Y position: ${this.yPos}`);
+    }
+}
 
 var noteYPositions = {
     left: [],
@@ -680,6 +702,15 @@ function preloadSongs() {
             "Resources/Songs/QUEVEDO.mp3",
             "Resources/Songs/NEON BLADE.mp3",
             "Resources/Songs/MIDNIGHT.mp3",
+            "Resources/Songs/The Outside.mp3",
+            "Resources/Songs/Chlorine.mp3",
+            "Resources/Songs/Ride.mp3",
+            "Resources/Songs/Heathens.mp3",
+            "Resources/Songs/I Was Never There.mp3",
+            "Resources/Songs/Blinding Lights.mp3",
+            "Resources/Songs/I Feel It Coming.mp3",
+            "Resources/Songs/Reminder.mp3",
+            "Resources/Songs/Double Fantasy.mp3",
 
             "Resources/Songs/testingsong.mp3"
         ];
@@ -948,6 +979,15 @@ const songConfigs = {
     QUEVEDO: { BPM: 128, noteSpeed: 12 },
     "NEON BLADE": { BPM: 190, noteSpeed: 10 },
     MIDNIGHT: { BPM: 122, noteSpeed: 10 },
+    "The Outside": { BPM: 101, noteSpeed: 10 },
+    Chlorine: { BPM: 90, noteSpeed: 10 },
+    Ride: { BPM: 75, noteSpeed: 10 },
+    Heathens: { BPM: 90, noteSpeed: 10 },
+    "I Was Never There": { BPM: 113, noteSpeed: 12 },
+    "Blinding Lights": { BPM: 171, noteSpeed: 10 },
+    "I Feel It Coming": { BPM: 93, noteSpeed: 10 },
+    Reminder: { BPM: 160, noteSpeed: 14 },
+    "Double Fantasy": { BPM: 119, noteSpeed: 12 },
 
     // Song Versions
     "Finesse (feat. Cardi B)": { BPM: 105, noteSpeed: 22 },
@@ -1422,6 +1462,15 @@ const songToAlbumMap = {
     QUEVEDO: "QUEVEDO",
     "NEON BLADE": "NEON BLADE",
     MIDNIGHT: "MIDNIGHT",
+    "The Outside": "Scaled and Icy",
+    Chlorine: "Trench",
+    Ride: "Blurryface",
+    Heathens: "Suicide Squad - The Album",
+    "I Was Never There": "My Dear Melancholy,",
+    "Blinding Lights": "After Hours",
+    "I Feel It Coming": "Starboy",
+    Reminder: "Starboy",
+    "Double Fantasy": "Double Fantasy",
 
     // Song Versions
 
@@ -1529,6 +1578,13 @@ function preloadImages() {
         "Resources/Covers/QUEVEDO.jpg",
         "Resources/Covers/NEON BLADE.jpg",
         "Resources/Covers/MIDNIGHT.jpg",
+        "Resources/Covers/Scaled and Icy.jpg",
+        "Resources/Covers/Trench.jpg",
+        "Resources/Covers/Suicide Squad - The Album.jpg",
+        "Resources/Covers/My Dear Melancholy,.jpg",
+        "Resources/Covers/After Hours.jpg",
+        "Resources/Covers/Starboy.jpg",
+        "Resources/Covers/Double Fantasy.jpg",
 
         // Song Versions
 
@@ -1750,7 +1806,6 @@ function openSelectedSongModal(songPath, songTitle) {
     }
 }
 
-// Modify filterSongs function to handle the Easter eggs and version selection
 function filterSongs() {
     const searchInput = document.getElementById("songSearchInput").value.trim().toLowerCase();
     const songButtons = document.querySelectorAll(".song-button");
@@ -1770,82 +1825,106 @@ function filterSongs() {
         lastSongIndex = songList.length;
     }
 
-    songButtons.forEach((button) => {
-        const songText = button.textContent.toLowerCase();
-        const isKanye = songText.includes("kanye west");
-        const isKendrick = songText.includes("kendrick lamar");
-        const isEminem = songText.includes("eminem");
-        const isCreo = songText.includes("creo");
-        const isTravis = songText.includes("travis");
-        const isLinkin = songText.includes("linkin park");
-        const isTrash = songText.includes("playboi carti");
-        const isBillie = songText.includes("billie eilish");
-        const isZesty = songText.includes("drake");
-        const isMRL = songText.includes("mrl");
-        const isOde = songText.includes("odetari");
-        const isBiza = songText.includes("bizarrap");
-        const isLastSong = songText.includes(lastSongIndex);
+    // Handle searchInput starting with ">" or "<" followed by a number
+    let match = searchInput.match(/^([<>])(\d+)$/);
+    if (match) {
+        const operator = match[1];
+        const num = parseInt(match[2], 10);
 
-        if (searchInput === "ye" && isKanye) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "kdot" && isKendrick) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "em" && isEminem) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "goat" && (isKanye || isKendrick || isEminem || isCreo || isTravis || isLinkin || isMRL)) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "got bit by a goat" && isEminem) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "marshall" && isEminem) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "marshall mathers" && isEminem) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "trash" && isTrash) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "zesty" && isZesty) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "bili" && isBillie) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "last" && isLastSong) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "odecore" && isOde) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (searchInput === "bzrp" && isBiza) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else if (songText.includes(searchInput)) {
-            button.style.display = "block";
-            if (!firstVisibleButton) firstVisibleButton = button;
-            resultsCount++;
-        } else {
-            button.style.display = "none";
-        }
-    });
+        songButtons.forEach((button, index) => {
+            var songIndex = index + 1; // Convert 0-based index to 1-based
+
+            if (operator === "<") {
+                songIndex = index;
+            }
+
+            if ((operator === ">" && songIndex > num) || (operator === "<" && songIndex < num)) {
+                button.style.display = "block";
+                resultsCount++; // Only count visible buttons
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else {
+                button.style.display = "none";
+            }
+        });
+    } else {
+        songButtons.forEach((button) => {
+            const songText = button.textContent.toLowerCase();
+            const isKanye = songText.includes("kanye west");
+            const isKendrick = songText.includes("kendrick lamar");
+            const isEminem = songText.includes("eminem");
+            const isCreo = songText.includes("creo");
+            const isTravis = songText.includes("travis");
+            const isLinkin = songText.includes("linkin park");
+            const isTrash = songText.includes("playboi carti");
+            const isBillie = songText.includes("billie eilish");
+            const isZesty = songText.includes("drake");
+            const isZestyAsf = songText.includes("the weeknd");
+            const isMRL = songText.includes("mrl");
+            const isOde = songText.includes("odetari");
+            const isBiza = songText.includes("bizarrap");
+            const isLastSong = songText.includes(lastSongIndex);
+
+            if (searchInput === "ye" && isKanye) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "kdot" && isKendrick) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "em" && isEminem) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "goat" && (isKanye || isKendrick || isEminem || isCreo || isTravis || isLinkin || isMRL)) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "got bit by a goat" && isEminem) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "marshall" && isEminem) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "marshall mathers" && isEminem) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "trash" && isTrash) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "zesty" && (isZesty || isZestyAsf)) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "bili" && isBillie) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "last" && isLastSong) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "odecore" && isOde) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (searchInput === "bzrp" && isBiza) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else if (songText.includes(searchInput)) {
+                button.style.display = "block";
+                resultsCount++;
+                if (!firstVisibleButton) firstVisibleButton = button;
+            } else {
+                button.style.display = "none";
+            }
+        });
+    }
 
     // Adjust resultsForSearch display and padding
     if (searchInput) {
@@ -2391,6 +2470,15 @@ function getArtist(songSrc) {
         QUEVEDO: "Bizarrap, Quevedo",
         "NEON BLADE": "MoonDeity",
         MIDNIGHT: "PLAYAMANE, Nateki",
+        "The Outside": "twenty one pilots",
+        Chlorine: "twenty one pilots",
+        Ride: "twenty one pilots",
+        Heathens: "twenty one pilots",
+        "I Was Never There": "The Weeknd",
+        "Blinding Lights": "The Weeknd",
+        "I Feel It Coming": "The Weeknd",
+        Reminder: "The Weeknd",
+        "Double Fantasy": "The Weeknd, Future",
 
         // Song Versions
 
@@ -2668,7 +2756,7 @@ function manageCanvasScalingInterval(startInterval) {
             beatCounter++; // Increment the beat counter each interval
 
             // Apply effects every other beat if BPM is over 160
-            if (BPM > 170 && beatCounter % 2 !== 0) {
+            if (BPM > 180 && beatCounter % 2 !== 0) {
                 // Skip every other beat if BPM > 160
                 return;
             }
@@ -2686,17 +2774,12 @@ function manageCanvasScalingInterval(startInterval) {
             musicIco.style.transform = "scale(1.4)";
 
             // Adjust brightness or contrast of backgroundOverlay directly
-            const brightnessValue = parseFloat(miscellaneous.BGbrightness); // Convert to a number if necessary
+            const brightnessValue = parseFloat(misc.BGbrightness); // Convert to a number if necessary
 
-            if (brightnessValue < 1 && brightnessValue > 0.9) {
-                // Change brightness by 0.1 every beat
-                let currentBrightness = parseFloat(getComputedStyle(backgroundOverlay).filter.match(/brightness\(([^)]+)\)/)?.[1] || 1);
-                currentBrightness = Math.min(Math.max(currentBrightness + 0.1, 0), 1.5); // Keep brightness in reasonable bounds
-                backgroundOverlay.style.filter = `brightness(${currentBrightness})`;
-            } else if (brightnessValue <= 0.9) {
+            if (brightnessValue <= 0.9) {
                 // Change brightness by 0.25 every beat
                 let currentBrightness = parseFloat(getComputedStyle(backgroundOverlay).filter.match(/brightness\(([^)]+)\)/)?.[1] || 1);
-                currentBrightness = Math.min(Math.max(currentBrightness + 0.15, 0), 1.5); // Keep brightness in reasonable bounds
+                currentBrightness = Math.min(Math.max(currentBrightness + 0.1, 0), 1.5); // Keep brightness in reasonable bounds
                 backgroundOverlay.style.filter = `brightness(${currentBrightness})`;
             }
 
@@ -2720,7 +2803,7 @@ function manageCanvasScalingInterval(startInterval) {
                 backgroundOverlay.style.transform = "scale(1)";
 
                 // Reset brightness or contrast of backgroundOverlay directly
-                backgroundOverlay.style.filter = "brightness(1)"; // Reset to default values
+                backgroundOverlay.style.filter = `brightness(${misc.BGbrightness})`; // Reset to default values
 
                 // Remove the transition after it's done to prevent it from affecting future changes
                 setTimeout(() => {
@@ -3171,7 +3254,7 @@ async function startGame(index, versionPath, setIndex) {
                 handleSongData();
                 // Update the page title
                 const indexToDisplay = setIndex >= 0 ? setIndex : currentSongIndex;
-                document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz 5.3!`;
+                document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 5.2!`;
 
                 console.log(`indexToDisplay converted in startGame: ${indexToDisplay}`);
             });
@@ -3226,7 +3309,7 @@ async function startGame(index, versionPath, setIndex) {
             handleSongData();
             // Update the page title
             const indexToDisplay = setIndex >= 0 ? setIndex : currentSongIndex;
-            document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz 5.3!`;
+            document.title = `Song ${indexToDisplay + 1}: ${getSongTitle(currentSongPath)} | Beatz Testing 5.2!`;
 
             console.log(`indexToDisplay converted in startGame: ${indexToDisplay}`);
         });
@@ -3666,6 +3749,7 @@ function updateCanvas(timestamp, setIndex) {
         }
     }
 
+    // Current Score
     ctx.fillStyle = "white";
     ctx.font = "30px Arial";
     ctx.textAlign = "left";
@@ -3674,16 +3758,31 @@ function updateCanvas(timestamp, setIndex) {
     ctx.fillText("Perfects: " + perfectHits, 10, 115);
     ctx.fillText("Early/Late: " + earlyLateHits, 10, 155);
 
+    // Version text
     ctx.fillStyle = "white";
     ctx.font = "13px Arial";
     ctx.textAlign = "center";
     ctx.fillText(PUBLICVERSION, WIDTH / 2, HEIGHT - 6);
 
+    // Current + Max streak
     ctx.font = "30px Arial";
     ctx.textAlign = "center";
-    ctx.fillText("" + currentStreak, WIDTH / 2, HEIGHT / 2 - 120);
+    ctx.fillText(currentStreak, WIDTH / 2, HEIGHT / 2 - 120);
     ctx.font = "15px Arial";
-    ctx.fillText("( " + maxStreak + " )", WIDTH / 2, HEIGHT / 2 - 160);
+    ctx.fillText(maxStreak, WIDTH / 2, HEIGHT / 2 - 160);
+
+    // Perfect streaks
+    if (perfectStreak >= 10) {
+        ctx.font = "28px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(perfectStreak, WIDTH / 2, HEIGHT / 2 - 20);
+        ctx.font = "12px Arial";
+        ctx.fillText(maxPerfectStreak, WIDTH / 2, HEIGHT / 2 - 60);
+        if (!perfectStrSFX) {
+            playSoundEffect("Resources/SFX/clickBtn.mp3", 0.75);
+            perfectStrSFX = true;
+        }
+    }
 
     if (perfectText.active) {
         ctx.fillStyle = "white";
@@ -4023,139 +4122,6 @@ function moveNotes(timeDelta) {
     updateNotes(timeDelta);
 }
 
-function autoHitPerfectNotes() {
-    // Hit notes perfectly, disables point saving after a song ends
-    for (let type in noteYPositions) {
-        for (let i = 0; i < noteYPositions[type].length; i++) {
-            let yPos = noteYPositions[type][i];
-            if (yPos >= PERFECT_HIT_RANGE_MIN) {
-                triggerHit(type);
-                break;
-            }
-        }
-    }
-}
-
-function triggerHit(type) {
-    // So the note changes to pressed for 0.1 seconds
-    if (type === "up") {
-        upPressed = true;
-        setTimeout(() => {
-            upPressed = false;
-        }, 100);
-    } else if (type === "down") {
-        downPressed = true;
-        setTimeout(() => {
-            downPressed = false;
-        }, 100);
-    } else if (type === "left") {
-        leftPressed = true;
-        setTimeout(() => {
-            leftPressed = false;
-        }, 100);
-    } else if (type === "right") {
-        rightPressed = true;
-        setTimeout(() => {
-            rightPressed = false;
-        }, 100);
-    }
-}
-
-function checkHits() {
-    // Makes the pressed note image appear on top of the normal note
-    if (leftPressed) {
-        let xPos = noteXPositions.left;
-        ctx.drawImage(noteLeftPressIMG, xPos - noteWidth / 2, 550, noteWidth, noteHeight);
-        checkHit("left");
-    }
-    if (downPressed) {
-        let xPos = noteXPositions.down;
-        ctx.drawImage(noteDownPressIMG, xPos - noteWidth / 2 - 15, 550, noteWidth, noteHeight);
-        checkHit("down");
-    }
-    if (upPressed) {
-        let xPos = noteXPositions.up;
-        ctx.drawImage(noteUpPressIMG, xPos - noteWidth / 2 + 15, 550, noteWidth, noteHeight);
-        checkHit("up");
-    }
-    if (rightPressed) {
-        let xPos = noteXPositions.right;
-        ctx.drawImage(noteRightPressIMG, xPos - noteWidth / 2, 550, noteWidth, noteHeight);
-        checkHit("right");
-    }
-}
-
-function checkHit(noteType) {
-    // Checks if you have hit a note, and adds it to your stats in-game
-    for (let i = 0; i < noteYPositions[noteType].length; i++) {
-        let yPos = noteYPositions[noteType][i];
-        if (yPos >= HIT_Y_RANGE_MIN && yPos <= HIT_Y_RANGE_MAX) {
-            // If the moving note is in range to hit
-            if (yPos >= PERFECT_HIT_RANGE_MIN && yPos <= PERFECT_HIT_RANGE_MAX) {
-                // If the moving note is in range to hit perfectly
-                points += 1; // Increment by 1 point for perfect hit
-                perfectHits++; // Add a perfect hit to your score
-                perfectText.active = true; // Enable perfect text
-                perfectText.timer = 500; // Set timer for perfect text (0.5 seconds)
-                lastPerfectHitNoteType = noteType; // Store the last perfect hit note type, used for debug view
-
-                // Trigger animation on perfect hit, an animation has yet not been added, will add a proper pulse animation in further updated
-                notePulsing = true;
-                // Set a timer to stop the animation after 0.25 seconds (250 milliseconds)
-                setTimeout(() => {
-                    notePulsing = false;
-                }, 200);
-            } else {
-                // If you have hit the note really early or really lately
-                points += 0.5; // Increment by 0.5 points for early or late hit
-                earlyLateHits++; // Add an early/late hit to your score
-                earlyLateText.active = true; // Enable early/late text
-                earlyLateText.timer = 500; // Set timer for early/late text (0.5 seconds)
-                lastEarlyLateNoteType = noteType; // Store the last early/late hit note type, used for debug view
-            }
-
-            // Update streaks
-            currentStreak++;
-            if (currentStreak > maxStreak) {
-                maxStreak = currentStreak;
-            }
-
-            notesHit++;
-            if (notesHit === 4) {
-                tutorialStage = 1;
-                textY = 670;
-                cycleTutorialStages();
-            }
-
-            lastNoteType = noteType; // Used for debug view
-
-            noteYPositions[noteType].splice(i, 1); // Delete the note after its been hit to prepare for a new one to spawn
-            let hitSound = hitSounds[currentHitSoundIndex];
-            hitSound.currentTime = 0;
-            hitSound.play();
-            hitSound.volume = currentHitSoundVolume;
-            currentHitSoundIndex = (currentHitSoundIndex + 1) % MAX_HIT_SOUNDS;
-            break;
-        }
-    }
-}
-
-function cycleTutorialStages() {
-    if (tutorialStage < 6) {
-        const interval = tutorialStage === 2 || tutorialStage === 3 || tutorialStage === 4 ? 2000 : 5000;
-        setTimeout(() => {
-            tutorialStage++;
-            cycleTutorialStages();
-        }, interval);
-    } else if (tutorialStage === 6) {
-        setTimeout(() => {
-            tutorialStage = 0;
-            isNewPlayer = false; // End the tutorial after the final message
-            localStorage.setItem("newPlayer", "false");
-        }, 5000);
-    }
-}
-
 function toggleHitboxes() {
     showHitboxes = !showHitboxes;
     logNotice(`Hitboxes ${showHitboxes ? "enabled" : "disabled"}`, "rgb(0, 50, 0)", 2000);
@@ -4250,6 +4216,149 @@ function drawMovingNotes(timeDelta) {
     }
 }
 
+function autoHitPerfectNotes() {
+    // Hit notes perfectly, disables point saving after a song ends
+    for (let type in noteYPositions) {
+        for (let i = 0; i < noteYPositions[type].length; i++) {
+            let yPos = noteYPositions[type][i];
+            if (yPos >= PERFECT_HIT_RANGE_MIN) {
+                triggerHit(type);
+                break;
+            }
+        }
+    }
+}
+
+function triggerHit(type) {
+    // So the note changes to pressed for 0.1 seconds
+    if (type === "up") {
+        upPressed = true;
+        setTimeout(() => {
+            upPressed = false;
+        }, 100);
+    } else if (type === "down") {
+        downPressed = true;
+        setTimeout(() => {
+            downPressed = false;
+        }, 100);
+    } else if (type === "left") {
+        leftPressed = true;
+        setTimeout(() => {
+            leftPressed = false;
+        }, 100);
+    } else if (type === "right") {
+        rightPressed = true;
+        setTimeout(() => {
+            rightPressed = false;
+        }, 100);
+    }
+}
+
+function checkHits() {
+    // Makes the pressed note image appear on top of the normal note
+    if (leftPressed) {
+        let xPos = noteXPositions.left;
+        ctx.drawImage(noteLeftPressIMG, xPos - noteWidth / 2, 550, noteWidth, noteHeight);
+        checkHit("left");
+    }
+    if (downPressed) {
+        let xPos = noteXPositions.down;
+        ctx.drawImage(noteDownPressIMG, xPos - noteWidth / 2 - 15, 550, noteWidth, noteHeight);
+        checkHit("down");
+    }
+    if (upPressed) {
+        let xPos = noteXPositions.up;
+        ctx.drawImage(noteUpPressIMG, xPos - noteWidth / 2 + 15, 550, noteWidth, noteHeight);
+        checkHit("up");
+    }
+    if (rightPressed) {
+        let xPos = noteXPositions.right;
+        ctx.drawImage(noteRightPressIMG, xPos - noteWidth / 2, 550, noteWidth, noteHeight);
+        checkHit("right");
+    }
+}
+
+function checkHit(noteType) {
+    // Checks if you have hit a note, and adds it to your stats in-game
+    for (let i = 0; i < noteYPositions[noteType].length; i++) {
+        let yPos = noteYPositions[noteType][i];
+        if (yPos >= HIT_Y_RANGE_MIN && yPos <= HIT_Y_RANGE_MAX) {
+            // If the moving note is in range to hit
+            if (yPos >= PERFECT_HIT_RANGE_MIN && yPos <= PERFECT_HIT_RANGE_MAX) {
+                // If the moving note is in range to hit perfectly
+                points += 1; // Increment by 1 point for perfect hit
+                perfectHits++; // Add a perfect hit to your score
+                perfectText.active = true; // Enable perfect text
+                perfectText.timer = 500; // Set timer for perfect text (0.5 seconds)
+                lastPerfectHitNoteType = noteType; // Store the last perfect hit note type, used for debug view
+                perfectStreak++;
+
+                // Trigger animation on perfect hit, an animation has yet not been added, will add a proper pulse animation in further updated
+                notePulsing = true;
+                // Set a timer to stop the animation after 0.25 seconds (250 milliseconds)
+                setTimeout(() => {
+                    notePulsing = false;
+                }, 200);
+            } else {
+                // If you have hit the note really early or really lately
+                points += 0.5; // Increment by 0.5 points for early or late hit
+                earlyLateHits++; // Add an early/late hit to your score
+                earlyLateText.active = true; // Enable early/late text
+                earlyLateText.timer = 500; // Set timer for early/late text (0.5 seconds)
+                lastEarlyLateNoteType = noteType; // Store the last early/late hit note type, used for debug view
+                perfectStreak = 0;
+                if (perfectStrSFX) {
+                    playSoundEffect("Resources/SFX/clickBtn.mp3", 0.75);
+                    perfectStrSFX = false;
+                }
+            }
+
+            // Update streaks
+            currentStreak++;
+            if (currentStreak > maxStreak) {
+                maxStreak = currentStreak;
+            }
+
+            if (perfectStreak > maxPerfectStreak) {
+                maxPerfectStreak = perfectStreak;
+            }
+
+            notesHit++;
+            if (notesHit === 4) {
+                tutorialStage = 1;
+                textY = 670;
+                cycleTutorialStages();
+            }
+
+            lastNoteType = noteType; // Used for debug view
+
+            noteYPositions[noteType].splice(i, 1); // Delete the note after its been hit to prepare for a new one to spawn
+            let hitSound = hitSounds[currentHitSoundIndex];
+            hitSound.currentTime = 0;
+            hitSound.play();
+            hitSound.volume = currentHitSoundVolume;
+            currentHitSoundIndex = (currentHitSoundIndex + 1) % MAX_HIT_SOUNDS;
+            break;
+        }
+    }
+}
+
+function cycleTutorialStages() {
+    if (tutorialStage < 6) {
+        const interval = tutorialStage === 2 || tutorialStage === 3 || tutorialStage === 4 ? 2000 : 5000;
+        setTimeout(() => {
+            tutorialStage++;
+            cycleTutorialStages();
+        }, interval);
+    } else if (tutorialStage === 6) {
+        setTimeout(() => {
+            tutorialStage = 0;
+            isNewPlayer = false; // End the tutorial after the final message
+            localStorage.setItem("newPlayer", "false");
+        }, 5000);
+    }
+}
+
 function checkMisses() {
     // Checks wether you've missed a note, sometimes doesn't register in low framerates and high note speed, working on a fix
     for (let type in noteYPositions) {
@@ -4262,6 +4371,15 @@ function checkMisses() {
 
                 // Reset current streak
                 currentStreak = 0;
+
+                if (perfectStreak >= 10) {
+                    if (perfectStrSFX) {
+                        playSoundEffect("Resources/SFX/clickBtn.mp3", 0.75);
+                        perfectStrSFX = false;
+                    }
+                }
+
+                perfectStreak = 0;
 
                 missText.active = true; // Enable missed hit text
                 missText.timer = 500; // Set timer for missed hit text (0.5 seconds)

@@ -588,6 +588,21 @@ New default backgrounds added:
 Quick fullscreen allows you to quickly pause and unpause your game during fullscreen, useful if your preferred key to pause is "ESCAPE".
 - Added NEON BLADE, by MoonDeity, with its respective version NEON BLADE (Guitar Remix), by Ravens Rock.
 - Added Midnight, by PLAYAMANE and Nateki.
-- Fixed restart song never restarting to your current song version.
+- Fixed restart song not restarting to your current song version.
+//
+
+5.3.4.5 (LOAD//FETCH 5.3! 09/09/2024)
+- Inputting > or < in the song list search will now search for songs over or under that song index.
+Added 9 new songs:
+- My Dear Melancholy, | I Was Never There - The Weeknd
+- After Hours | Blinding Lights - The Weeknd
+- Starboy | I Feel It Coming - The Weeknd
+- Starboy | Reminder - The Weeknd
+- Single | Double Fantasy - The Weeknd
+- Scaled And Icy | The Outside - twenty one pilots
+- Trench | Chlorine - twenty one pilots
+- Blurryface | Ride - twenty one pilots
+- Suicide Squad: The Album | Heathens - twenty one pilots
+//
 
 

@@ -552,7 +552,7 @@ const Presets = {
             playSFX: true,
             pulseOnBPM: true,
             extraLog: false,
-            BGbrightness: 1,
+            BGbrightness: 0.7,
             countdownFrom: 0,
             quickFullscreen: true
         }
@@ -926,7 +926,7 @@ let onQuickFS = false;
 let BGurl = "url('Resources/defaultBG.png";
 
 let keybinds = { ...defaultKeybinds };
-let miscellaneous = { ...defaultMiscellaneous };
+let misc = { ...defaultMiscellaneous };
 
 let keybindsHistory = [];
 let miscellaneousHistory = [];
@@ -943,12 +943,12 @@ function loadSettings() {
         updateKeybindsFields();
     }
 
-    miscellaneous = { ...defaultMiscellaneous, ...savedMiscellaneous };
+    misc = { ...defaultMiscellaneous, ...savedMiscellaneous };
 
     // Automatically set fetchSongs to true if userDevice is iOS
-    if (userDevice === "iOS" && miscellaneous.fetchSongs === false) {
+    if (userDevice === "iOS" && misc.fetchSongs === false) {
         fetchSongs = true;
-        miscellaneous.fetchSongs = true;
+        misc.fetchSongs = true;
         console.log("iPhone detected. Fetching songs...");
         setTimeout(() => {
             saveSettings();
@@ -961,58 +961,58 @@ function loadSettings() {
         checkbox.disabled = true;
     }
 
-    document.getElementById("logKeysCheck").checked = miscellaneous.logKeys;
-    logKeys = miscellaneous.logKeys;
+    document.getElementById("logKeysCheck").checked = misc.logKeys;
+    logKeys = misc.logKeys;
 
-    document.getElementById("fetchSongsSite").checked = miscellaneous.fetchSongs;
-    fetchSongs = miscellaneous.fetchSongs;
+    document.getElementById("fetchSongsSite").checked = misc.fetchSongs;
+    fetchSongs = misc.fetchSongs;
 
-    document.getElementById("playSFXcheck").checked = miscellaneous.playSFX;
-    playSFX = miscellaneous.playSFX;
+    document.getElementById("playSFXcheck").checked = misc.playSFX;
+    playSFX = misc.playSFX;
 
-    document.getElementById("pulseOnBPMcheck").checked = miscellaneous.pulseOnBPM;
-    pulseOnBPM = miscellaneous.pulseOnBPM;
+    document.getElementById("pulseOnBPMcheck").checked = misc.pulseOnBPM;
+    pulseOnBPM = misc.pulseOnBPM;
 
-    document.getElementById("quickFScheck").checked = miscellaneous.quickFullscreen;
-    quickFullscreen = miscellaneous.quickFullscreen;
+    document.getElementById("quickFScheck").checked = misc.quickFullscreen;
+    quickFullscreen = misc.quickFullscreen;
 
-    document.getElementById("extraLogCheck").checked = miscellaneous.extraLog;
-    extraLog = miscellaneous.extraLog;
+    document.getElementById("extraLogCheck").checked = misc.extraLog;
+    extraLog = misc.extraLog;
 
-    document.getElementById("saveRecentSongs").checked = miscellaneous.saveSongUsingControllers;
-    saveSongUsingControllers = miscellaneous.saveSongUsingControllers;
+    document.getElementById("saveRecentSongs").checked = misc.saveSongUsingControllers;
+    saveSongUsingControllers = misc.saveSongUsingControllers;
 
-    document.getElementById("songTimeoutAfterSongEnd").checked = miscellaneous.songTimeoutAfterSongEnd;
-    restartSongTimeout = miscellaneous.songTimeoutAfterSongEnd;
+    document.getElementById("songTimeoutAfterSongEnd").checked = misc.songTimeoutAfterSongEnd;
+    restartSongTimeout = misc.songTimeoutAfterSongEnd;
 
-    document.getElementById("circularImage").checked = miscellaneous.circularImage;
-    circularImageEnabled = miscellaneous.circularImage;
+    document.getElementById("circularImage").checked = misc.circularImage;
+    circularImageEnabled = misc.circularImage;
     toggleVinylRotation();
 
     const vinylRotationCheckbox = document.getElementById("vinylRotation");
-    vinylRotationCheckbox.checked = miscellaneous.vinylRotation;
-    vinylRotationEnabled = miscellaneous.vinylRotation;
+    vinylRotationCheckbox.checked = misc.vinylRotation;
+    vinylRotationEnabled = misc.vinylRotation;
 
     const defaultNoteStyleDropdown = document.getElementById("defaultNoteStyle");
-    defaultNoteStyleDropdown.value = miscellaneous.noteStyle;
+    defaultNoteStyleDropdown.value = misc.noteStyle;
 
     const hitSoundDropdown = document.getElementById("defaultHitSound");
-    hitSoundDropdown.value = miscellaneous.hitSound;
+    hitSoundDropdown.value = misc.hitSound;
 
     const loggingKeysCheck = document.getElementById("logKeysCheck");
-    loggingKeysCheck.value = miscellaneous.logKeys;
+    loggingKeysCheck.value = misc.logKeys;
 
     const savingSongs = document.getElementById("saveRecentSongs");
-    savingSongs.value = miscellaneous.saveSongUsingControllers;
+    savingSongs.value = misc.saveSongUsingControllers;
 
-    document.getElementById("songTimeoutAfterSongEndNum").value = miscellaneous.songTimeoutDelay;
-    songTimeoutDelay = miscellaneous.songTimeoutDelay;
+    document.getElementById("songTimeoutAfterSongEndNum").value = misc.songTimeoutDelay;
+    songTimeoutDelay = misc.songTimeoutDelay;
 
-    document.getElementById("readyTimerInput").value = miscellaneous.countdownFrom;
-    countdownFrom = miscellaneous.countdownFrom;
+    document.getElementById("readyTimerInput").value = misc.countdownFrom;
+    countdownFrom = misc.countdownFrom;
 
-    document.getElementById("brightnessInput").value = miscellaneous.BGbrightness;
-    BGbrightness = Math.min(miscellaneous.BGbrightness, 1); // Ensure brightness does not exceed 1
+    document.getElementById("brightnessInput").value = misc.BGbrightness;
+    BGbrightness = Math.min(misc.BGbrightness, 1); // Ensure brightness does not exceed 1
 
     const savedBackgroundOption = savedMiscellaneous.backgroundOption || "defaultBG";
     const savedCustomBackgroundBlur = savedMiscellaneous.customBackgroundBlur || "0px";
@@ -1204,7 +1204,7 @@ function loadSettings() {
 
     backgroundOverlay.style.filter = `brightness(${BGbrightness})`;
 
-    initializeHitSounds(miscellaneous.hitSound);
+    initializeHitSounds(misc.hitSound);
 
     if (savedMiscellaneous.noteStyle === "arrows") {
         switchToArrows();
@@ -1212,7 +1212,7 @@ function loadSettings() {
         switchToCircles();
     }
 
-    console.log("Loaded settings", keybinds, miscellaneous);
+    console.log("Loaded settings", keybinds, misc);
 }
 
 function getFileDataUrl(file, callback) {
@@ -1464,11 +1464,11 @@ function saveSettings() {
     localStorage.setItem("miscellaneous", JSON.stringify(newMiscellaneous));
 
     keybinds = { ...newKeybinds };
-    miscellaneous = { ...newMiscellaneous };
+    misc = { ...newMiscellaneous };
 
     // Reset and initialize hit sounds
     hitSounds = [];
-    initializeHitSounds(miscellaneous.hitSound);
+    initializeHitSounds(misc.hitSound);
 
     saveMessage.style.display = "block";
     saveMessage.innerHTML = "Settings saved!<br><br>";
@@ -1476,7 +1476,7 @@ function saveSettings() {
         saveMessage.style.display = "none";
     }, 2500); // Hide the message after 2.5 seconds
 
-    console.log("Saved settings", keybinds, miscellaneous);
+    console.log("Saved settings", keybinds, misc);
 }
 
 function toggleNoteStyle() {
@@ -1530,7 +1530,7 @@ function resetSettings() {
         localStorage.removeItem("keybinds");
         localStorage.removeItem("miscellaneous");
         keybinds = { ...defaultKeybinds };
-        miscellaneous = { ...defaultMiscellaneous };
+        misc = { ...defaultMiscellaneous };
         updateKeybindsFields();
         loadSettings();
         saveMessage.innerHTML = "Settings have been reset.<br><br>";
@@ -1556,31 +1556,31 @@ function updateKeybindsFields() {
         document.getElementById("openKeybindsKey").value = keybinds.openSettings.join(", ");
     }
 
-    document.getElementById("defaultNoteStyle").value = miscellaneous.noteStyle;
-    document.getElementById("defaultHitSound").value = miscellaneous.hitSound;
-    document.getElementById("songTimeoutAfterSongEnd").checked = miscellaneous.songTimeoutAfterSongEnd;
-    document.getElementById("songTimeoutAfterSongEndNum").value = miscellaneous.songTimeoutDelay;
-    document.getElementById("vinylRotation").checked = miscellaneous.vinylRotation;
-    document.getElementById("circularImage").checked = miscellaneous.circularImage;
-    document.getElementById("defaultBackground").value = miscellaneous.backgroundOption;
-    document.getElementById("backdropBlurInput").value = miscellaneous.customBackgroundBlur;
-    document.getElementById("logKeysCheck").checked = miscellaneous.logKeys;
-    document.getElementById("saveRecentSongs").checked = miscellaneous.saveRecentSongs;
-    document.getElementById("fetchSongsSite").checked = miscellaneous.fetchSongsFromSite;
-    document.getElementById("playSFXcheck").checked = miscellaneous.playButtonSFX;
-    document.getElementById("pulseOnBPMcheck").checked = miscellaneous.pulseOnBPM;
-    document.getElementById("quickFScheck").checked = miscellaneous.quickFullscreen;
-    document.getElementById("extraLogCheck").checked = miscellaneous.extraLog;
-    document.getElementById("readyTimerInput").value = miscellaneous.readyTimer;
-    document.getElementById("brightnessInput").value = miscellaneous.backgroundBrightness;
+    document.getElementById("defaultNoteStyle").value = misc.noteStyle;
+    document.getElementById("defaultHitSound").value = misc.hitSound;
+    document.getElementById("songTimeoutAfterSongEnd").checked = misc.songTimeoutAfterSongEnd;
+    document.getElementById("songTimeoutAfterSongEndNum").value = misc.songTimeoutDelay;
+    document.getElementById("vinylRotation").checked = misc.vinylRotation;
+    document.getElementById("circularImage").checked = misc.circularImage;
+    document.getElementById("defaultBackground").value = misc.backgroundOption;
+    document.getElementById("backdropBlurInput").value = misc.customBackgroundBlur;
+    document.getElementById("logKeysCheck").checked = misc.logKeys;
+    document.getElementById("saveRecentSongs").checked = misc.saveRecentSongs;
+    document.getElementById("fetchSongsSite").checked = misc.fetchSongsFromSite;
+    document.getElementById("playSFXcheck").checked = misc.playButtonSFX;
+    document.getElementById("pulseOnBPMcheck").checked = misc.pulseOnBPM;
+    document.getElementById("quickFScheck").checked = misc.quickFullscreen;
+    document.getElementById("extraLogCheck").checked = misc.extraLog;
+    document.getElementById("readyTimerInput").value = misc.readyTimer;
+    document.getElementById("brightnessInput").value = misc.backgroundBrightness;
 
     // Display settings based on background selection
-    if (miscellaneous.backgroundOption === "customBG" && miscellaneous.customBackground) {
+    if (misc.backgroundOption === "customBG" && misc.customBackground) {
         document.getElementById("customBGLabel").style.display = "inline";
         document.getElementById("customBGInput").style.display = "inline";
         document.getElementById("customTransparentBGblur").style.display = "inline";
         document.getElementById("backdropBlurInput").style.display = "inline";
-    } else if (miscellaneous.backgroundOption === "transparentBG") {
+    } else if (misc.backgroundOption === "transparentBG") {
         document.getElementById("customTransparentBGblur").style.display = "inline";
         document.getElementById("backdropBlurInput").style.display = "inline";
     } else {
@@ -1596,13 +1596,13 @@ function saveToHistory() {
     console.log("Saving to history...");
 
     keybindsHistory = keybindsHistory.slice(0, keybindsIndex + 1);
-    miscellaneousHistory = miscellaneousHistory.slice(0, keybindsIndex + 1);
+    miscHistory = miscHistory.slice(0, keybindsIndex + 1);
 
     console.log("Current Keybinds:", keybinds);
-    console.log("Current Miscellaneous:", miscellaneous);
+    console.log("Current Miscellaneous:", misc);
 
     keybindsHistory.push(JSON.stringify(keybinds));
-    miscellaneousHistory.push(JSON.stringify(miscellaneous));
+    miscellaneousHistory.push(JSON.stringify(misc));
 
     keybindsIndex++;
 
@@ -1620,10 +1620,10 @@ function undoKeybinds() {
 
         keybindsIndex--;
         keybinds = JSON.parse(keybindsHistory[keybindsIndex]);
-        miscellaneous = JSON.parse(miscellaneousHistory[keybindsIndex]);
+        misc = JSON.parse(miscellaneousHistory[keybindsIndex]);
 
         console.log("Restored Keybinds:", keybinds);
-        console.log("Restored Miscellaneous:", miscellaneous);
+        console.log("Restored Miscellaneous:", misc);
 
         updateKeybindsFields();
         console.log("Undo successful. Current history index:", keybindsIndex);
@@ -1639,10 +1639,10 @@ function redoKeybinds() {
 
         keybindsIndex++;
         keybinds = JSON.parse(keybindsHistory[keybindsIndex]);
-        miscellaneous = JSON.parse(miscellaneousHistory[keybindsIndex]);
+        misc = JSON.parse(miscellaneousHistory[keybindsIndex]);
 
         console.log("Restored Keybinds:", keybinds);
-        console.log("Restored Miscellaneous:", miscellaneous);
+        console.log("Restored Miscellaneous:", misc);
 
         updateKeybindsFields();
         console.log("Redo successful. Current history index:", keybindsIndex);
